@@ -1,0 +1,16 @@
+uses
+	CtrlLib,
+	MediaPool,
+	AudioCore;
+
+file
+	Browser.h,
+	Browser.cpp,
+	MediaBay.h,
+	MediaBay.cpp,
+	LoopBrowser.h,
+	LoopBrowser.cpp,
+	SoundBrowser.h,
+	SoundBrowser.cpp,
+	Tagging.h,
+	Tagging.cpp;

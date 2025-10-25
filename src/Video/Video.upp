@@ -1,0 +1,13 @@
+uses
+	FileIO,
+	MediaPool;
+
+file
+	Video.h,
+	Video.cpp,
+	AudioFromVideo.h,
+	AudioFromVideo.cpp,
+	ReplaceAudio.h,
+	ReplaceAudio.cpp,
+	Thumbnail.h,
+	Thumbnail.cpp;

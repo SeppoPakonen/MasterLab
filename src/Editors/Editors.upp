@@ -1,0 +1,18 @@
+uses
+	CtrlLib,
+	Draw,
+	AudioCore;
+
+file
+	Editors.h,
+	Editors.cpp,
+	KeyEditor.h,
+	KeyEditor.cpp,
+	DrumEditor.h,
+	DrumEditor.cpp,
+	ScoreEditor.h,
+	ScoreEditor.cpp,
+	ListEditor.h,
+	ListEditor.cpp,
+	InPlaceEditor.h,
+	InPlaceEditor.cpp;

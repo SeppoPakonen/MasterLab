@@ -1,0 +1,11 @@
+uses
+	CtrlLib,
+	ProjectMgmt;
+
+file
+	Preferences.h,
+	Preferences.cpp,
+	KeyCommands.h,
+	KeyCommands.cpp,
+	Mapping.h,
+	Mapping.cpp;

@@ -1,0 +1,16 @@
+uses
+	AudioCore,
+	AudioFX,
+	CtrlLib;
+
+file
+	AudioAnalysis.h,
+	AudioAnalysis.cpp,
+	Spectrum.h,
+	Spectrum.cpp,
+	Statistics.h,
+	Statistics.cpp,
+	Hitpoints.h,
+	Hitpoints.cpp,
+	Warp.h,
+	Warp.cpp;

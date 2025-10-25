@@ -1,0 +1,12 @@
+uses
+	CtrlLib;
+
+file
+	HelpAbout.h,
+	HelpAbout.cpp,
+	Credits.h,
+	Credits.cpp,
+	Registration.h,
+	Registration.cpp,
+	WebLinks.h,
+	WebLinks.cpp;

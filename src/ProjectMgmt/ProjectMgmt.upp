@@ -1,0 +1,16 @@
+uses
+	Core,
+	CtrlCore,
+	CtrlLib,
+	Draw,
+	AudioCore;
+
+file
+	ProjectMgmt.h,
+	ProjectMgmt.cpp,
+	Commands.h,
+	Commands.cpp,
+	History.h,
+	History.cpp,
+	Selection.h,
+	Selection.cpp;

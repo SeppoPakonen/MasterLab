@@ -1,0 +1,18 @@
+uses
+	CtrlLib,
+	FileIO,
+	AudioCore;
+
+file
+	MediaPool.h,
+	MediaPool.cpp,
+	PoolWindow.h,
+	PoolWindow.cpp,
+	Conform.h,
+	Conform.cpp,
+	Convert.h,
+	Convert.cpp,
+	Search.h,
+	Search.cpp,
+	Integrity.h,
+	Integrity.cpp;

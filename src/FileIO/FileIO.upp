@@ -1,0 +1,23 @@
+uses
+	Core,
+	CtrlCore,
+	CtrlLib,
+	AudioCore,
+	AudioFX,
+	AudioGraph;
+
+file
+	FileIO.h,
+	FileIO.cpp,
+	Import.h,
+	Import.cpp,
+	Export.h,
+	Export.cpp,
+	MediaFormatRegistry.h,
+	MediaFormatRegistry.cpp,
+	RecentFiles.h,
+	RecentFiles.cpp,
+	Backup.h,
+	Backup.cpp,
+	Templates.h,
+	Templates.cpp;

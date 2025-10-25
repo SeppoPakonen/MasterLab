@@ -1,0 +1,10 @@
+uses
+	CtrlLib;
+
+file
+	Windowing.h,
+	Windowing.cpp,
+	Workspace.h,
+	Workspace.cpp,
+	WindowRegistry.h,
+	WindowRegistry.cpp;

@@ -1,0 +1,13 @@
+uses
+	CtrlLib,
+	AudioCore;
+
+file
+	TransportUI.h,
+	TransportUI.cpp,
+	Metronome.h,
+	Metronome.cpp,
+	CycleRange.h,
+	CycleRange.cpp,
+	PrePostRoll.h,
+	PrePostRoll.cpp;

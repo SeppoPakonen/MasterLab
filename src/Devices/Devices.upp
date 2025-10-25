@@ -1,0 +1,18 @@
+uses
+	CtrlLib,
+	AudioCore,
+	AudioFX;
+
+file
+	Devices.h,
+	Devices.cpp,
+	AudioDeviceManager.h,
+	AudioDeviceManager.cpp,
+	MidiDeviceManager.h,
+	MidiDeviceManager.cpp,
+	PluginManager.h,
+	PluginManager.cpp,
+	ReWireHost.h,
+	ReWireHost.cpp,
+	VideoDevice.h,
+	VideoDevice.cpp;

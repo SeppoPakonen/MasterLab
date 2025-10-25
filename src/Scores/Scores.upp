@@ -1,0 +1,14 @@
+uses
+	CtrlLib,
+	Draw,
+	Editors;
+
+file
+	Scores.h,
+	Scores.cpp,
+	LayoutEngine.h,
+	LayoutEngine.cpp,
+	NotationModel.h,
+	NotationModel.cpp,
+	Functions.h,
+	Functions.cpp;
