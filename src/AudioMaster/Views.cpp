@@ -1,6 +1,8 @@
 #include "AudioMaster.h"  // This includes all necessary headers including AudioUI/AudioUI.h
 
-void MainView::SetLabel(String s) {if (win) win->SetViewLabel(s);}
+void MainView::SetLabel(String s) {
+	SubWindowCtrl::Title(s);
+}
 
 MultiChannelView::MultiChannelView() {
 	InitLayout();
@@ -46,8 +48,8 @@ void CombinedView::InitLayout() {
 	SetLabel("Combined View");
 	
 	// Create a vertical splitter: MultiChannelView above, MixerView below
-	win->InitView(topView);
-	win->InitView(bottomView);
+	topView.win = win;
+	bottomView.win = win;
 	
 	splitter.Vert(topView, bottomView);
 	splitter.SetPos(6666);

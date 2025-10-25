@@ -14,8 +14,9 @@ namespace am::ui {
 class MainWindow;
 
 
-class MainView : public Ctrl {
+class MainView : public SubWindowCtrl {
 public:
+	virtual void InitLayout() = 0;
 	void SetLabel(String s);
 	
 	MainWindow* win = 0;
@@ -27,7 +28,7 @@ public:
 	MultiChannelView();
 	
 private:
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class MixerView : public MainView {
@@ -35,7 +36,7 @@ public:
 	MixerView();
 	
 private:
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class MasteringView : public MainView {
@@ -43,7 +44,7 @@ public:
 	MasteringView();
 	
 private:
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class AnalysisView : public MainView {
@@ -51,7 +52,7 @@ public:
 	AnalysisView();
 	
 private:
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class CombinedView : public MainView {
@@ -63,7 +64,7 @@ public:
 	MixerView bottomView;
 	
 private:
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class PostViewWrapper : public MainView {
@@ -73,7 +74,7 @@ public:
 	
 private:
 	am::ui::PostView postView; // Pointer to avoid needing full definition in header
-	void InitLayout();
+	void InitLayout() override;
 };
 
 class PostGraphViewWrapper : public MainView {
@@ -83,7 +84,7 @@ public:
 	
 private:
 	am::ui::PostGraphView postGraphView; // Pointer to avoid needing full definition in header
-	void InitLayout();
+	void InitLayout() override;
 };
 
 #endif

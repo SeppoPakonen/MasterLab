@@ -14,15 +14,13 @@ enum ViewType {
 };
 
 class MainWindow : public TopWindow {
-	String view_status;
 	
 public:
 	typedef MainWindow CLASSNAME;
 	MainWindow();
 	void SetView(int type);
-	void SetViewLabel(String s);
 	void RefreshTitle();
-	void InitView(MainView& v);
+	void InitView(MainView& v, Ptr<SubWindow>& win);
 	
 private:
 	void Menu(Bar& bar);
@@ -501,6 +499,16 @@ private:
 	CombinedView combinedView;
 	PostViewWrapper postView;
 	PostGraphViewWrapper postGraphView;
+	
+	// SubWindow instances to view
+	Ptr<SubWindow> masteringWin;
+	Ptr<SubWindow> multiChannelWin;
+	Ptr<SubWindow> mixerWin;
+	Ptr<SubWindow> analysisWin;
+	Ptr<SubWindow> combinedWin;
+	Ptr<SubWindow> postWin;
+	Ptr<SubWindow> postGraphWin;
+	
 };
 
 #endif

@@ -16,13 +16,13 @@ MainWindow::MainWindow() {
 	Add(workspace.SizePos());
 	
 	// Create view instances
-	InitView(masteringView);
-	InitView(multiChannelView);
-	InitView(mixerView);
-	InitView(analysisView);
-	InitView(combinedView);
-	InitView(postView);
-	InitView(postGraphView);
+	InitView(masteringView, masteringWin);
+	InitView(multiChannelView, multiChannelWin);
+	InitView(mixerView, mixerWin);
+	InitView(analysisView, analysisWin);
+	InitView(combinedView, combinedWin);
+	InitView(postView, postWin);
+	InitView(postGraphView, postGraphWin);
 	
 	currentView = NULL;
 	
@@ -30,12 +30,15 @@ MainWindow::MainWindow() {
 	SetView(0); // Default to Mastering view
 }
 
-void MainWindow::InitView(MainView& v) {
+void MainWindow::InitView(MainView& v, Ptr<SubWindow>& win) {
 	v.win = this;
+	win = &workspace.AddWindow(v);
+	v.InitLayout();
 }
 
 void MainWindow::SetView(int type) {
 	
+	// TODO convert following to use workspace windows: select the window. e.g. currentView -> currentWin->Activate or something, I dont know
 	#if 0
 	// Remove current view if exists
 	if(currentView) {
@@ -79,16 +82,9 @@ void MainWindow::SetView(int type) {
 	
 }
 
-void MainWindow::SetViewLabel(String s) {
-	view_status = s;
-	RefreshTitle();
-}
-
 void MainWindow::RefreshTitle() {
 	String s;
 	s << "MasterLab";
-	if (!view_status.IsEmpty())
-		s << " :: " << view_status;
 	SetTitle(s);
 }
 
