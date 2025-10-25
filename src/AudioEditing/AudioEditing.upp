@@ -1,0 +1,15 @@
+uses
+	AudioCore,
+	AudioOps;
+
+file
+	AudioEditing.h,
+	AudioEditing.cpp,
+	AudioImportPrefs.h,
+	AudioImportPrefs.cpp,
+	TimeStretchPrefs.h,
+	TimeStretchPrefs.cpp,
+	SnapSettings.h,
+	SnapSettings.cpp,
+	FadeBehavior.h,
+	FadeBehavior.cpp;

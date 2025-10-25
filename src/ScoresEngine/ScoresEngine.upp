@@ -1,0 +1,15 @@
+uses
+	Scores,
+	Editors;
+
+file
+	ScoresEngine.h,
+	ScoresEngine.cpp,
+	ScorePrefs.h,
+	ScorePrefs.cpp,
+	ScoreColors.h,
+	ScoreColors.cpp,
+	ScoreEditingPrefs.h,
+	ScoreEditingPrefs.cpp,
+	NoteLayerPrefs.h,
+	NoteLayerPrefs.cpp;

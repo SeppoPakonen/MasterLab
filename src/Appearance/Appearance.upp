@@ -1,0 +1,10 @@
+uses
+	Theme;
+
+file
+	Appearance.h,
+	Appearance.cpp,
+	InterfaceAdjust.h,
+	InterfaceAdjust.cpp,
+	MixerPreview.h,
+	MixerPreview.cpp;

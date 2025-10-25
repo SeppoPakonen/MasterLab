@@ -390,14 +390,154 @@ empty
 
 
 #### Scores
+- ArrayCtrl(Columns={Events, Active, Color}), whole area. Items (all has active on):
+	- Selected Staff ; X ; wine red
+	- Active Staff ; X ; navy blue
+	- Sel Active Staff; X; Violet
+	- Muted Note ; X; Gray
+	- Graphic Note; X; Light Green
+	- Hidden Note; Gray
+	- Moved Graphic; X; Very Light Green
+	- Move Slur; X; Very Light Green
+	- VST; X; Very Light Blue
 
 
+#### Scores / Editing
+- ArrayCtrl(Columns=Key, Value, hidden header). Items (value can be empty or X):
+	- Display Arrow Tool after Inserting Symbol;
+	- Double-Click Symbol to get Pencil Tool;
+	- Keep Crescendo Symbols "Horizontal";
+	- Keep moved Notes within Key;
+	- Ted Notes selected as Single Units;
+	- Global Staff Spacings with Alt-Gr;
+	- Auto Layout Don't hide first staff;
+	- Show Braces in Edit Mode; X
+	- "Apply" closes Property Windows
+	- Show Position Cursor; X
+	- Animate Note Cursor; X
+	- Show Note Info by the Mouse;
+	- Snap Slurs when dragging;
+	- Unlock Layout when editing single parts;
+	- Double-click on staff flips between full score/part;
+	- Layout Tool Compatibility Mode
+	- Hide Notes beyond limits
+- EditIntSpinNotNull(default=4); Label("Default Number of Bars per Staff")
 
 
+#### Scores / Note Layer
+- LabelBox("")
+	- Horizontal splitter
+		- list of one liners
+			- EditIntSpinNotNull(default=1); Label("Braces")
+			- EditIntSpinNotNull(default=1); Label("Bar Numbers")
+			- EditIntSpinNotNull(default=1); Label("Staff Names")
+			- EditIntSpinNotNull(default=1); Label("Stems")
+			- EditIntSpinNotNull(default=1); Label("Keys")
+			- EditIntSpinNotNull(default=1); Label("Clefs")
+			- EditIntSpinNotNull(default=1); Label("Bar Lines")
+		- list of one liners
+			- EditIntSpinNotNull(default=1); Label("Staves")
+			- EditIntSpinNotNull(default=1); Label("Note Symbols")
+			- EditIntSpinNotNull(default=1); Label("Graphics")
+			- EditIntSpinNotNull(default=1); Label("Slurs")
+			- EditIntSpinNotNull(default=1); Label("Notes")
+			- EditIntSpinNotNull(default=1); Label("Rests")
+			- EditIntSpinNotNull(default=1); Label("Time Signatures")
+
+
+#### Transport
+- list of one liners
+	- Option(default=false); Label("Playback Toggle triggers Local Preview")
+	- Option(default=true); Label("Zoom while Locating in Time Scale")
+	- EditIntSpinNotNull(default=2); Label("Cursor Width")
+	- Option(default=false); Label("Return to Start Position on Stop")
+	- Option(default=true); Label("Deactivate Punch In on Stop")
+	- Option(default=false); Label("Stop after Automatic Punch Out")
+	- Option(default=true); Label("Stop playback while winding")
+	- LabelBox("Wind Speed Options")
+		- Radio(Adjust to Zoom ; Fixed)
+		- EditIntSpinNotNull(default=4); Label("Speed Factor")
+		- EditIntSpinNotNull(default=4); Label("Fast Wind Factor")
+	- Option(default=false); Label("Show Timecode Subframes")
+	- EditIntSpinNotNull(default=60); Label("User Definable Framerate")
+	- Option(default=false); Label("Stationary Cursor")
+	- Option(default=false); Label("Locate when Clicked in Empty Space")
+
+
+#### Transport / Scrub
+- list of one liners
+	- Label("min"); Slider(); Label("max"); Label("Scrub Response (Speed)")
+	- Label("min"); Slider(); Label("max"); Label("Scrub Volume")
+	- Option(default=true); Label("CPU Saving Scrub Mode")
+
+
+#### VST
+- list of one liners
+	- Option(default=false); Label("Connect Sends automatically for each newly created Channel")
+	- Option(default=true); Label("Instruments use Automation Read All and Write All")
+	- Option(default=true); Label("Mute Pre-Send when Mute")
+	- Option(default=true); Label("Group Channels: Mute Sources as well")
+	- EditIntSpinNotNull(default="0.0 ms"); Label("Delay Compensation Threshold (for Recording)")
+	- Option(default=true); Label("Active dialog 'Export warnings as text file'")
+	- Option(default=false); Label("Use Cubase 3 EQ Settings As Default")
+	- DropList(Stereo Dual Panner ; Stereo Combined Panner ; (x) Stereo Balance Panner ); Label("Default Stereo Panner Mode")
+	- Option(default=false); Label("Link Send Routing Panners to Channel Panner as Default")
+	- DropList( Manual ; While Record Enabled ; While Record Running ; Tapemachine Style ); Label("Auto Monitoring")
+	- Option(default=false); Label("Warn on Processing Overloads")
+
+
+#### VST / Plug-ins
+- list of one liners
+	- Option(default=true); Label("Warn Before Removing Modified Effects")
+	- Option(default=true); Label("Open Effect Editor After Loading It")
+	- DropList( Always ; Do not ; (x) Always ask to); Label("Create MIDI track when loading VSTi")
+	- Option(default=true); Label("Suspend VST3 plug-in processing when no audio signals are received")
+	- Option(default=false); Label("Sort VST Plug-ins Menu By Vendor")
+	- Option(default=true); Label("Plug-in Editors 'Always on Top'")
+
+
+#### VST / Metering
+- list of one liners
+	- Option(default=true); Label("Map Input Bus Metering to Audio Track (in Direct Monitoring)")
+	- EditIntSpinNotNull(default="3000 ms"); Label("Meters' Peak Hold Time")
+	- EditIntSpinNotNull(default="20 dB/s"); Label("Meters' Slow Fallback")
+	- EditIntSpinNotNull(default="40 dB/s"); Label("Meters' Fast Fallback")
+
+
+#### VST / Control Room
+- list of one liners
+	- Option(default=true); Label("Show Control Room Volume in Transport Panel")
+	- Option(default=false); Label("Disable Talkback during Recording")
+	- Option(default=false); Label("Use Phones Channel as Preview Channel")
+	- Option(default=true); Label("Dim Studio during Talkback")
+	- Option(default=true); Label("Signal Presence Indicators")
+	- Option(default=true); Label("Show Multi-Channel Speaker Solo")
+	- Option(default=true); Label("Show Downmix Presets")
+	- Option(default=true); Label("Metronome Option in Studio Channels")
+	- Option(default=true); Label("Metronome Option in Control Room & Phones Channels")
+	- Option(default=true); Label("Show Reference Level")
+	- EditDobuleSpinNotNull(default=-20.0); Label("Reference level")
+	- EditDobuleSpinNotNull(default=-30.0); Label("Max Dim Volume")
+
+
+#### VariAudio
+- list of one liners
+	- Option(default=false); Label("Inhibit warning when changing the Sample Data")
+	- Option(default=false); Label("Inhibit warning when applying Offline Processes")
+	
+	
+
+In DropList widgets, ";" character separates options and option with (x) is default (if set, otherwise first).
+
+
+So these values, possible values and default values gives a lot of insight how the program should be implemented and configured.
+
+
+/*
+Values for copy/paste editing:
 	- Option(default=false); Label("")
 	- Option(default=true); Label("")
 	- EditIntSpinNotNull(default=""); Label("")
 	- EditString(default=""); Label("")
 	- DropList( ); Label("")
-
-In DropList widgets, ";" character separates options and option with (x) is default (if set, otherwise first).
+*/

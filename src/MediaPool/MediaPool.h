@@ -11,5 +11,6 @@ using namespace Upp;
 #include "Convert.h"
 #include "Search.h"
 #include "Integrity.h"
+#include "MediaSettings.h"
 
 #endif

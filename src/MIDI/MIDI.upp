@@ -1,0 +1,15 @@
+uses
+	AudioCore,
+	Editors;
+
+file
+	MIDI.h,
+	MIDI.cpp,
+	MidiChase.h,
+	MidiChase.cpp,
+	MidiFilterConfig.h,
+	MidiFilterConfig.cpp,
+	MidiDisplay.h,
+	MidiDisplay.cpp,
+	MidiFilePrefs.h,
+	MidiFilePrefs.cpp;

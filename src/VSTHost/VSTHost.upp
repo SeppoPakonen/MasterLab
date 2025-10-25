@@ -1,0 +1,8 @@
+uses
+	Devices,
+	AudioFX,
+	AudioCore;
+
+file
+	VstHostPrefs.h,
+	VstHostPrefs.cpp;

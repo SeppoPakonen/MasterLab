@@ -1,0 +1,11 @@
+uses
+	Draw,
+	CtrlLib;
+
+file
+	Theme.h,
+	Theme.cpp,
+	WorkAreaTheme.h,
+	WorkAreaTheme.cpp,
+	MeterTheme.h,
+	MeterTheme.cpp;

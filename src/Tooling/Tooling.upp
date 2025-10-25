@@ -1,0 +1,9 @@
+uses
+	ProjectMgmt,
+	Editors;
+
+file
+	Tooling.h,
+	Tooling.cpp,
+	ToolModifiers.h,
+	ToolModifiers.cpp;

@@ -8,5 +8,6 @@ using namespace Upp;
 #include "AudioFromVideo.h"
 #include "ReplaceAudio.h"
 #include "Thumbnail.h"
+#include "VideoPrefs.h"
 
 #endif

@@ -15,4 +15,6 @@ file
 	Search.h,
 	Search.cpp,
 	Integrity.h,
-	Integrity.cpp;
+	Integrity.cpp,
+	MediaSettings.h,
+	MediaSettings.cpp;

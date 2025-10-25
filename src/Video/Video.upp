@@ -10,4 +10,6 @@ file
 	ReplaceAudio.h,
 	ReplaceAudio.cpp,
 	Thumbnail.h,
-	Thumbnail.cpp;
+	Thumbnail.cpp,
+	VideoPrefs.h,
+	VideoPrefs.cpp;
