@@ -1,7 +1,7 @@
 #pragma once
 #include "AudioTypes.h"
 namespace am {
-struct Clip; // fwd (defined in Clip.h)
+struct Clip; // forward declaration for same-package reference
 struct EffectChain; // fwd (in AudioFX)
 struct Channel {
     Vector<Clip> clips;

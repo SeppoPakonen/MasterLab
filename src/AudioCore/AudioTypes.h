@@ -1,5 +1,5 @@
 #pragma once
-#include <Core/Core.h>
+
 namespace am {
     using Sample = float;
     using SampleRate = int;

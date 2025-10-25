@@ -2,7 +2,8 @@ uses
 	AudioCore,
 	AudioFX,
 	AudioGraph,
-	AudioMaster;
+	AudioMaster,
+	CtrlLib;
 
 file
 	AudioUI.h,
