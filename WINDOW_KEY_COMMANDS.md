@@ -1,0 +1,1744 @@
+# Key Commands
+You open this menu via menubar: File -> Key Commands...
+
+
+## Content
+- top row (25px)
+	- Button("Open All", icon=plus); Button("Close All", icon=minus); EditString(""); Button("Search", icon=magnifying_glass); // So these modifies TreeCtrl and allow filtering values in TreeCtrl for searching
+- vertical splitter // lower macro section is hidden initially (SetPos(9999)), and is shown with Show Macros button (SetPos(5000)).
+	- horizontal-splitter // for all functions and user's keyboard shortcuts
+		- TreeCtrl // functions
+		- ParentCtrl (vertical static layout)
+			- ArrayCtrl(Columns=Keys) // Shortcut keyboard keys for selected TreeCtrl item
+			- Button("Delete", icon=trashbin)
+			- Button("Assign") // adds the button what is typed below in EditString to new item to the list on top
+			- EditString(""); // This has specialized functionality, that it listens what keyboard events is sent to it and changes the test to show only that
+			- Label("Assigned to:"); // Label for list of value, which already uses the the key what is in the EditString on top
+			- Label(""); // this has the function, which already has the shortcut key in EditString
+			- Button("Select"); // sets the TreeCtrl cursor to the item, that is said in the Label on top of this (the colliding function with same shortcut key)
+			- Label("Presets:")
+			- DropList({list of saved presets}); Button("Save", icon=floppy); Button("Delete", icon=trashbin); Button("Open", icon=opened_folder);
+	- horizontal-splitter // For user's macros
+		- TreeCtrl // macros
+		- ParentCtrl
+			- Button("New Macro"); // Just adds an item to TreeCtrl and allows the editing of TreeCtrl item as EditString
+			- Button("Add Command") // adds the selected functions (TreeCtrl) item to this macro-item in this macro-TreeCtrl
+			- Button("Delete"); // deletes macro or command in a macro based on what is selected in macro-TreeCtrl
+- bottom row buttons
+	- aligned left
+		- Button("Help");
+	- aligned right
+		- Button("Show Macros"); Button("Reset All"); Button("OK")
+
+
+## Possible commands
+These commands reveals a lot of the functionality of this program.
+
+- Add Track
+	- Arranger
+	- Audio
+	- Audio Mono
+	- Browse Sounds...
+	- Folder
+	- FX Channel
+	- Group Channel
+	- Instrument
+	- Marker
+	- MIDI
+	- Ruler
+	- Signature
+	- Tempo
+	- Transpose
+	- Video
+- Analyze
+	- Spectrum Analyzer
+	- Statistics
+- Arranger
+	- Activate
+	- First Repeat
+	- Last Repeat
+	- Next Chain Step
+	- Previous Chain Step
+- Audio
+	- Adjust Fades to Range
+	- Auto-Grid
+	- Bounce
+	- Close Gaps
+	- Constrain Delay Compensation
+	- Crossfade
+	- Decrement Event Volume
+	- Decrement Fade In Length
+	- Decrement Fade Out Length
+	- Delete Overlaps
+	- Detect Silence
+	- Disable/Enable Track
+	- Dissolve Part
+	- Event or Range as Region
+	- Events from Regions
+	- Events to Part
+	- Fade In to Cursor
+	- Fade Out to Cursor
+	- Find Selected in Pool
+	- Freeze Edits
+	- Increment Event Volume
+	- Increment Fade In Length
+	- Increment Fade Out Length
+	- Minimize File
+	- Open Fade Editors
+	- Open Process History
+	- Remove Fades
+	- Remove Volume Curve
+	- Set Tempo From Event
+	- Snap Point to Cursor
+	- Stretch to Project Tempo
+	- To Origin
+	- Update Origin
+- Audio Realtime Processing
+	- Create Warp Tabs from Hitpoints
+	- Flatten Realtime Processing
+	- Quantize Audio
+	- Unstretch Audio
+- Automation
+	- Delete All Automation in Project
+	- Delete Automation in Range
+	- Delete Automation of Selected Tracks
+	- Hide All Automation
+	- Hide Automation
+	- Next Automation Mode
+	- Open Panel
+	- Show All - Used Only
+	- Show All EQ Automation
+	- Show All Insert Automation
+	- Show All Pan Automation
+	- Show All Send Automation
+	- Show All Used Automation
+	- Show All Volume Automation
+	- Show Automation
+	- Show Used Automation (Selected Tracks)
+	- Suspend Reading All
+	- Suspend Reading EQ
+	- Suspend Reading Inserts
+	- Suspend Reading Mute
+	- Suspend Reading Others
+	- Suspend Reading Pan
+	- Suspend Reading Sends
+	- Suspend Reading Volume
+	- Suspend Writing All
+	- Suspend Writing EQ
+	- Suspend Writing Inserts
+	- Suspend Writing Mute
+	- Suspend Writing Others
+	- Suspend Writing Pan
+	- Suspend Writing Sends
+	- Suspend Writing Volume
+	- Toggle Read Enable All Tracks
+	- Toggle Read Enable Selected Tracks
+	- Toggle Write Enable All Tracks
+	- Toggle Write Enable Selected Tracks
+- Beat Designer
+	- Fill Loop with Pattern
+	- Insert Pattern at Cursor
+	- Insert Pattem at Left Locator
+	- Insert Subbank at Cursor
+	- Insert Subbank at Left Locator
+- Control Room
+	- Section: Extended
+	- Section: Routing
+	- Section: Show Left Strip
+	- Section: Show Right Strip
+	- Speaker Solo: Cancel
+	- Speaker Solo: Center
+	- Speaker Solo: Front
+	- Speaker Solo: Left
+	- Speaker Solo: Left of Center
+	- Speaker Solo: LeftRight
+	- Speaker Solo: LFE
+	- Speaker Solo: Rear
+	- Speaker Solo: Rear to Front
+	- Speaker Solo: Right
+	- Speaker Solo: Right of Center
+	- Speaker Solo: Solo to Center
+	- Speaker Solo: Suround Left
+	- Speaker Solo: Surround Right
+	- Switch: Activate Phones
+	- Switch: Activate Speakers
+	- Switch: Activate Studio 1
+	- Switch: Activate Studio 2
+	- Switch: Activate Studio 3
+	- Switch: Activate Studio 4
+	- Switch: AFL/PFL
+	- Switch: Cick Active
+	- Switch: Dim Active
+	- Switch: Folddawn Select
+	- Switch: Folddown Select 1
+	- Switch: Activate studio 1
+	- Switch: Activate Studio 2
+	- Switch: Activate Studio 3
+	- Switch: Activate Studio 4
+	- Switch: AFL/PFL
+	- Switch: Cick Active
+	- Switch: Dim Active
+	- Switch: Folddawn Select
+	- Switch: Folddawn Select 1
+	- Switch: Folddawn Select 2
+	- Switch: Folddawn Select 3
+	- Switch: Folddawn Select 4
+	- Switch: Listen Cancel
+	- Switch: Listen Enable
+	- Switch: Reference Level Active
+	- Switch: Source Select
+	- Switch: Speakers Select
+	- Switch: Speakers Select 1
+	- Switch: Speakers Select 2
+	- Switch: Speakers Select 3
+	- Switch: Speakers Select 4
+	- Switch: Talkback Active
+	- Views: Meter
+- Devices
+	- Control Room Miser
+	- Control Room Overview
+	- FL Studio ReWire
+	- Melodyne ReWite
+	- MIDI Device Monoger
+	- Mixer
+	- Mixer 2
+	- Mixer 3
+	- MMC Master
+	- Plugin Information
+	- Remaining Record Time Display
+	- Setup
+	- Show Panel
+	- Time Display
+	- Video
+	- Virtual Keyboard
+	- VST Connections
+	- VST Instruments
+	- VST Perfomance
+	- Waves ReWire
+- Edit
+	- Activate Newt Part
+	- Activate Previous Patt
+	- Auto Select Events under Curser
+	- Automation follows Events
+	- Autoscrol
+	- Copy
+	- Crop Range
+	- Cut
+	- Cut Time
+	- Deactivate All Solo
+	- Delete
+	- Delete Time
+	- Duplicate
+	- Edit Active Part Only
+	- Edit Channel Settings
+	- Edit Inplace
+	- Edt VST Instrument
+	- Enlarge Selected Track
+	- Equal pitch - all Octaves
+	- Equal pitch - same Octave
+	- Fill Loop
+	- Global Copy
+	- Group
+	- History
+	- Insert Bars
+	- Insert Silence
+	- Invert Selection
+	- Lane Display Type
+	- Left Selection Side to Cursor
+	- Lock
+	- Lock/Unlock Track
+	- Monitor
+	- Move Insert Cursor Ta Part Start
+	- Move to Back
+	- Move to Cursor
+	- Move to Front
+	- Mute
+	- Mute Events
+	- Mute/Unmute Objects
+	- New Version
+	- Open
+	- Open Device Pane!
+	- Open Drum Editor
+	- Open In-Place Editor
+	- Open Key Editor
+	- Open List Editor
+	- Open Scote Editor
+	- Open/Close Editor
+	- Paste
+	- Paste at Origin
+	- Paste by Name
+	- Paste Time
+	- Paste Time at Origin
+	- Process Tempo
+	- Project Logical Editor
+	- Record Enable
+	- Redo
+	- Remove Versions
+	- Repeat
+	- Right Selection Side to Cursor
+	- Ruler Display Format
+	- Ruler Mode: Bars+Beats Linear
+	- Ruler Mode: Time Linear
+	- Select All
+	- Select All on Tracks
+	- Select Contollers in Note Range
+	- Select Event
+	- Select from Cursor to End
+	- Select from Start to Cursor
+	- Select in Loop
+	- Select Next Grid Type
+	- Select Next Snap Type
+	- Select None
+	- Select Prev Grid Type
+	- Select Prev Snap Type
+	- Snap On/Off
+	- Snap Type: Events
+	- Snap Type: Events + Cursor
+	- Snap Type: Events + Grid + Cursor
+	- Snap Type: Grid
+	- Snap Type: Grid + Cursor
+	- Snap Type: Grid Relative
+	- Snap Type: Magnetic Cursor
+	- Snap Type: Shuffle
+	- Solo
+	- Solo Defeat
+	- Split at Cursor
+	- Split Loop
+	- Split Range
+	- To Real Copy
+	- Undo
+	- Ungroup
+	- Unlock
+	- Unmute All
+	- Unmute Events
+- Editors
+	- Show/Hide Infoview
+	- Show/Hide Inspector
+	- Show/Hide Overview
+- Export
+	- OMF...
+- File
+	- Back up Project
+	- Cleanup
+	- Close
+	- Export Audio Mixdown
+	- Export Master Track
+	- Export MIDI File
+	- Export MIDI Loop
+	- Export MusicXML
+	- Export Pool
+	- Export Selected Tracks
+	- Import Audio File
+	- Import Audio from Video
+	- Import from Audio CD
+	- Import Master Track
+	- Import MIDI File
+	- Import MusicXML
+	- Import Pool
+	- Import Track Archive
+	- Import Video File
+	- Key Commands
+	- New
+	- New Library
+	- Open
+	- Open Library
+	- Page Setup
+	- Preferences
+	- Print
+	- Quit
+	- Replace Audio in Video File
+	- Revert
+	- Save
+	- Save As
+	- Save as Template
+	- Save Library...
+	- Save New Version
+	- Scores...
+- Focus
+	- Back
+	- Escape
+	- Fore
+	- Hit
+- Hitpoints
+	- Calculate
+	- Create Audio Slices from Hitpoints
+	- Create Groove Quantize from Hitpoints
+	- Create Markers from Hitpoints
+	- Divide Audio Events at Hitpoints
+	- Part To Groove
+	- Remove Hitpoints
+- Import
+	- OMF...
+- Inspector
+	- Open Next Section
+	- Open Previous Section
+	- Toggle Channel Section
+	- Toggle EQCurve Section
+	- Toggle EQs Section
+	- Toggle Inserts Section
+	- Toggle Notepad Section
+	- Toggle Parameters Section
+	- Toggle Sends Section
+	- Toggle Standard Section
+	- Toggle Studio Sends Section
+- Media
+	- Conform Files
+	- Convert Files
+	- Create Folder
+	- Empty Trash
+	- Find
+	- Find Missing Fes
+	- Generate Thumbnail Cache
+	- Import Audio from Video
+	- Import from Audio CD
+	- Import Medium
+	- Insert into Project at Cursor
+	- Inset into Project at Lett Locator
+	- Inset into Project at Origin
+	- New Version
+	- Open Loop Browser
+	- Open MediaBay
+	- Open Sound Browser
+	- Prepare Archive
+	- Preview Active On/Off
+	- Preview AutoPlay On/Off
+	- Preview Cycle On/Off
+	- Preview in Context On/Off
+	- Preview Start
+	- Preview Stop
+	- Preview Syne On/Off
+	- Reconstruct
+	- Remove Missing Fes
+	- Remove Unused Media
+	- Reset Search
+	- Revert
+	- Search MediaBay
+	- Select In Project
+	- Set Record Folder
+	- Write Attributes to File
+- MIDI
+	- Auto Select Controllers
+	- Bounce Selection
+	- Controller Lane Setup 1
+	- Controller Lane Setup 10
+	- Controller Lane Setup 11
+	- Controller Lane Setup 12
+	- Controller Lane Setup 13
+	- Controller Lane Setup 14
+	- Controller Lane Setup 15
+	- Controller Lane Setup 16
+	- Controller Lane Setup 2
+	- Controller Lane Setup 3
+	- Controller Lane Setup 4
+	- Controller Lane Setup 5
+	- Controller Lane Setup 6
+	- Controller Lane Setup 7
+	- Controller Lane Setup 8
+	- Controller Lane Setup 9
+	- Delete Continuous Controllers
+	- Delete Controllers
+	- Delete Doubles
+	- Delete Notes
+	- Delete Overlaps (mono)
+	- Delete Overlaps (poly)
+	- Dissolve Part
+	- Drum Map Setup...
+	- Extract MIDI Automation
+	- Fixed Lengths
+	- Fixed Velocity
+	- Freeze MIDI Modirs
+	- Freeze Quantize
+	- Insert Velocity 1
+	- Insert Velocity 2
+	- Insert Velocity 3
+	- Insert Velocity 4
+	- Insert Velocity 5
+	- Iterative Quantize
+	- Legato
+	- Logical Editor...
+	- Merge MIDI in Loop
+	- Merge Tempo from Tapping
+	- O-Note Conversion
+	- Open CC Automation Setup Dialog
+	- Open Insert Velactes Dialog
+	- Patt To Groove
+	- Pedals to Note Length
+	- Quantize
+	- Quantize Ends
+	- Quantize Lengths
+	- Quantize Setup
+	- Repeat Loop
+	- Reset
+	- Restict Polyphony
+	- Reverse
+	- Thin Out
+	- Toggle MIDI Input
+	- Toggle Step Input
+	- Transpose
+	- Undo Quantize
+	- Velocity
+	- VST Expression Setup...
+- MIDI Quantize |
+	- Auto Quantize On/Off
+	- Select Next Quantize
+	- Select Prev Quantize
+	- Set Quantize to 1/1
+	- Set Quantize to 1/128
+	- Set Quantize to 1/16
+	- Set Quantize to 1/2
+	- Set Quantize to 1/32
+	- Set Quantize to 1/4
+	- Set Quantize to 1/64
+	- Set Quantize to 1/8
+	- Toggle Quantize Dotted
+	- Toggle Quantize Triplet
+- Mixer
+	- Arm All Audia Tracks
+	- Bypass: EQs
+	- Bypass: Inserts
+	- Bypass: Sends
+	- Channels: Can Hide: Clear
+	- Channels: Can Hide: Reset All
+	- Channels: Can Hide: Set
+	- Command Target: All Channels
+	- Command Target: Exclude Inputs
+	- Command Target: Exclude Outputs
+	- Command Target: Selected Only
+	- Disarm All Audio Tracks
+	- File: Load All Mixer Settings
+	- File: Load Selected Chamels
+	- File: Save All Mixer Settings
+	- File: Save Selected Channels
+	- Hide: Audio
+	- Hide: Can Hide
+	- Hide: Groups
+	- Hide: Inputs
+	- Hide: Instuments
+	- Hide: MIDI
+	- Hide: Outputs
+	- Hide: Returns
+	- Hide: Reveal All
+	- Hide: ReWire
+	- Link Channels
+	- Meters: Fast Release
+	- Meters: Hold Forever
+	- Meters: Hold Peaks
+	- Meters: Input
+	- Meters: Post Fader
+	- Meters: Past Panner
+	- Meters: Reset
+	- Presets: Popup
+	- Presets: Remove
+	- Presets: Store
+	- Section: Extended
+	- Section: Routing
+	- Settings: Close All
+	- Settings: Next Settings
+	- Settings: Open/Close Selected
+	- Show VST Connections
+	- Unlink Channels
+	- Views: Empty
+	- Views: EOs
+	- Views: EQs +
+	- Views: EQs Curve
+	- Views: Inserts
+	- Views: Meter
+	- Views: Overview
+	- Views: Panner
+	- Views: Sends
+	- Views: Sends 1-4
+	- Views: Sends 5-8
+	- Views: Studio Sends
+	- Width: Narrow
+	- Width: Wide
+	- Windows: Close All
+	- Windows: Next Mixer
+- Navigate
+	- Add Dawn
+	- Add Left
+	- Add Fight
+	- Add Up
+	- Back
+	- Bottom
+	- Down
+	- Fore
+	- Left
+	- Less
+	- More
+	- Right
+	- Toggle Selection
+	- Top
+	- Up
+- Nudge
+	- Down
+	- Down More
+	- End Left
+	- End Right
+	- Graphical Bottom
+	- Graphical Left
+	- Graphical Right
+	- Graphical Top
+	- Left
+	- Loop Range Left
+	- Loop Range Right
+	- Right
+	- Start Left
+	- Start Right
+	- Up
+	- Up More
+- Preferences
+	- Audio - Audio Cycle Record Mode
+	- Audio - Background Color Modulation
+	- Audio - Create Audio Images During Record
+	- Audio - Fade Handles always on Top
+	- Audio - Hitpoints have Q-Points
+	- Audio - Interpolate Audio Images
+	- Audio - On Processing Shared Clips
+	- Audio - Remove Regions/Markers on all Ofline Processes
+	- Audio - Show Event Volume Curves Always
+	- Audio - Show Waveforms
+	- Audio - Snap to Zero Crossing
+	- Audio - Thick Fade Lines
+	- Audio - Treat Muted Audio Events tke Deleted
+	- Audio - Use Mouse Wheel for Event Volume and Fades
+	- Audio - Wave Image Style
+	- Control Room - Dim Studio during Takback
+	- Control Room - Disable Talkback during Fecerding
+	- Control Room - Metronome Option in Contrl oom & Phones Channels
+	- Contiol Room - Metronome Option in Studio Channels
+	- Control Room - Shows Cantiol Rom Volume in Transport Panel
+	- Control Room - Show Downmix Presets
+	- Control Room - Show MultiChannel Speaker Solo
+	- Control Room - Show Reference Level
+	- Contiol Room - Signal Presence Indicators
+	- Control Room - Use Phones Channel as Preview Channel
+	- Controls - Knob Mode:
+	- Controls - Slider Made
+	- Controls - Value Box/Time Control Mode
+	- Editing - Auto Select Events under Cursor
+	- Editing - Automation follows Events
+	- Editing - Cycle Follows Range Selection
+	- Editing - Default Track Time Type
+	- Editing - Delete Overlaps
+	- Editing - Link Editors
+	- Editing - Lock Event Attibutes
+	- Editing - Parrts Get Track Names
+	- Editing - Quick Zoom
+	- Editing - Track Selection Follows Event Selection
+	- Editing - Use Up/Down Navigation Commands fr Selecting Tracks only
+	- Event Display - Colorize Event Background
+	- Event Display - Show Data on Small Track Heights
+	- Event Display - Show E vent Names
+	- Event Display - Transparent Events
+	- General - Auto Save
+	- General - On Startup
+	- General - Run Setup on Create New Project
+	- General - Show Tips
+	- General - Usage Profle
+	- MediaBay - Allow Editing in Viewer
+	- MediaBay - Show File Extensions
+	- MediaBay - Stop scanning folders when closing MediaBay
+	- Metering - Map Input Bus Metering to Audio Track (in Direct Moritoing}
+	- MIDI - Audition through MIDI Inserts/Sends
+	- MIDI - Edt as Drums when Drum Map is assigned
+	- MIDI - Insert Reset Events after Recard
+	- MIDI - Legato Mode: Selected Only
+	- MIDI - MIDI Thru Active
+	- MIDI - Note Name Style
+	- MIDI - Part Data Mode
+	- MIDI - Replace Recording in Editors
+	- MIDI - Reset an Stop
+	- MIDI - Retrospective Record
+	- MIDI - Select Controlers in Note Range: Use Extended Note Contest
+	- MIDI - Show Controllers
+	- MIDI - Snap MIDI Parts to Bars
+	- MIDI - Solo Record in MIDI Editors
+	- MIDI - Split MIDI Controllers
+	- MIDI - Split MIDI Events
+	- Plug-ins - Create MIDI track when loading VSTi
+	- Plug-ins - Open Effect Editor After Loading it
+	- Plug-ins - Plugin Editors “Always on Top”
+	- Plug-ins - Sort VST Plugins Menu By Vendor
+	- Plug-ins - Suspend VST3 plug-in pracessing when no audio signals are received
+	- Plug-ins - Warn Before Removing Madifed Effects
+	- Project & Mixer - Auto Track Color Mode
+	- Project & Mixer - Deep Track Folding
+	- Project & Mixer - Enable Record on Selected Track
+	- Project & Mixer - Enable Solo on Selected Track
+	- Project & Miker - Enlarge Selected Track
+	- Project & Mixer - Scroll to selected
+	- Project & Mikes - Select Channel/Track on Edit Setings
+	- Project & Miker - Select Channel/Track on Solo
+	- Project & Mixer - Sync Project and Mixer Selection
+	- Rulers- Use Strong Colors
+	- Scrub - CPU Saving Scub Mode
+	- Tools - Popup Toolbox on right Click
+	- Tools - Select Took Shaw Extra Info
+	- Tools Use Cross Hair Cursor
+	- Tools - Warn belote switching Display Domain (Timewarp Tool)
+	- Tools - Zoom Tool Standard Mode: Horizontal Zooming Only
+	- Transport - Deactivate Punch In an Stop
+	- Transport - Locate when Clicked in Empty Space
+	- Transport - Playback Toggle triggers Local Preview
+	- Transport - Return to Start Position on Stop
+	- Transport - Show Timecode Subframes
+	- Transport - Stationary Cursors
+	- Transport - Stop ater Automatic Punch Out
+	- Transport - Stop playback while winding
+	- Transport - Zoom while Locating in Time Scale
+	- VariAudio - Inhibit warning when applying Offine Processes
+	- VariAudio - Inhibit warning when changing the Sample Data
+	- Video - Extract Audio on Impart Video File
+	- Video - Generate Thumbnail Cache on Import Video File
+	- Video - Show Video Thumbnails
+	- VST - Activate dialog 'Export warnings as text fle!
+	- VST - Auto Mentoring
+	- VST - Connect Sends automaticaly for each newly created Channel
+	- VST - Default Stereo Panner Made
+	- VST - Group Channels: Mute Sources as well
+	- VST - Instruments use Automation lead All and Wie All
+	- VST - Link Send Routing Panners to Channel Panner as Default
+	- VST - Mute Pre-Send when Mute
+	- VST - Use Cubase 3 EQ Settings as Default
+	- VST - Warn on Processing Overloads
+- Preset
+	- Nest
+	- Open Browser
+	- Previous
+- Process
+	- Envelope
+	- Fade In
+	- Fade Out
+	- Gain
+	- Merge Clipboard
+	- Noise Gate
+	- Normalize
+	- Phase Reverse
+	- Fitch Shift
+	- Remove DC Offset
+	- Resample
+	- Reverse
+	- Silence
+	- Stereo Flip
+	- Time Stretch
+- Process Logical Preset
+	- Add Note [+12], if Modwheel is above 64
+	- add volume 0 fo end of note
+	- del patch changes
+	- del velocity below 30
+	- del velocity below 35
+	- del velocity below 40
+	- del velocity below 45
+	- del.aftertouch
+	- Delete all Controller in Cycle Range
+	- delete black keys
+	- Delete each 5th note
+	- delete muted
+	- delete short notes
+	- Delete SMF Events
+	- double tempo
+	- downbeat accent (4-4)
+	- ettact note (c3 60)
+	- extract volume and pan
+	- fiter off beats
+	- fixed velocity 100
+	- half tempo
+	- high notes to channel 1
+	- init
+	- insert midi volume for velocity
+	- Kill Notes on C-Major
+	- low notes to channel 2
+	- push back - 4
+	- push forward +4
+	- random notes (c3 to c5)
+	- random velocity (60 to 100)
+	- Scale down Velocity in Sustain Range
+	- Select all Events beyond Cursar
+	- Select all Events in Cycle Range
+	- set notes to fied pitch (3)
+	- Shift Key C1 Transpose by 24
+	- Shift Notes by 12 Ticks beyond Cursor
+	- Transform Notes after D#3 or C#3
+	- transpose +12
+	- transpose 12
+	- Transpase EventelnSustainRlange
+- Process Plugin
+	- AmpSimulstor
+	- Aphex Vintage Exciter Mono
+	- Aphex Vintage Exciter Stereo
+	- API-2500 Man
+	- API-2500 Stereo
+	- API-550A Mono
+	- API-550A Stereo
+	- API-550B Mono
+	- API-550B Stereo
+	- API-560 Mono
+	- API-560 Stereo
+	- ARP2600 V Efx
+	- AudioTrack Mono
+	- AudioTrack Stereo
+	- AutoPan
+	- AutoTuneVST
+	- AVOX CHOIR
+	- AVOX DUO
+	- AVOX PUNCH
+	- AVOX SYBIL
+	- AVOX THROAT
+	- Base Rider Live Mono
+	- Base Rider Live Stereo
+	- Base Rider Mono
+	- Bass Rider Stereo
+	- BitCrusher
+	- C1 comp Mono
+	- C1 comp Stereo
+	- C1 comp-gate Mono
+	- C1 comp-gate Stereo
+	- C1 comp-sc Mono
+	- C1 comp-sc Stereo
+	- C1 gate Mono
+	- C1 gate Stereo
+	- 360 5.0
+	- 360 5.1
+	- C4 Mono
+	- C4 Stereo
+	- C6 Mono
+	- C6 Stereo
+	- C6-SideChain Mono
+	- C6-SideChain Stereo
+	- Center Stereo
+	- Chorus2
+	- Chopper
+	- Chorus
+	- CLA Base Mono/Stereo
+	- CLA Base Stereo
+	- CLA Drums Mono/Stereo
+	- CLA Drums Stereo
+	- CLA Effects Mono/Stereo
+	- CLA Effects Stereo
+	- CLA Guitars Mono/Stereo
+	- CLA Guitars Stereo
+	- CLA Unplugged Mono/Stereo
+	- CLA Unplugged Stereo
+	- CLA Vocals Mono/Stereo
+	- CLA Vocals Stereo
+	- CLA-2A Mono
+	- CLA-2A Stereo
+	- CLA-3A Mono
+	- CLA-3A Stereo
+	- CLA-76 Mono
+	- CLA-76 Stereo
+	- CleanComp
+	- Cloner
+	- Compressor
+	- DaTube
+	- DeBreath Mono
+	- DeClicker
+	- DeEsser
+	- DeEsser Mono
+	- DeEsser Stereo
+	- DeNoiser
+	- Distortion
+	- Doppler Mono/Stereo
+	- Doppler Stereo
+	- Dorrough Mono
+	- Dorrough Stereo
+	- Dorrough360 5.0
+	- Dorrough360 5.1
+	- DoubleDelay
+	- Doubler2 Mono
+	- Doubler2 Meno/Stereo
+	- Doubler2 Stereo
+	- Doubler4 Mono
+	- Doubler4 Mono/Stereo
+	- Doubler4 Stereo
+	- DualFiter
+	- Dynamics
+	- kramer BA Mono
+	- Ekramer BA Stereo
+	- Ekramer DR Mono
+	- Ekramer DR Stereo
+	- Ekramer FX Mono/Stereo
+	- Ekramer FX Stereo
+	- Ekramer GT Mono/Stereo
+	- Ekramer GT Stereo
+	- Ekramer VC Meno/Stereo
+	- Ekramer VC Stereo
+	- Enigma Mono/Stereo
+	- Enigma Stereo
+	- EnvelopeShaper
+	- EQ 1
+	- Expander
+	- Externalizer
+	- FilterVST
+	- Flanger
+	- Gate
+	- GEQ Classic Mono
+	- GEQ Classic Stereo
+	- GEQ Modern Mono
+	- GEQ Modern Stereo
+	- Grungelizer
+	- GTR Amp 2Cab Mono
+	- GTR Amp Mono
+	- GTR Amp Mono/Stereo
+	- GTR Amp Stereo
+	- GTR Solo Taol Rack Mono/Stereo
+	- GTR Solo Taol Rack Stereo
+	- GTR Stomp 2 Mono
+	- GTR Stomp 2 Mono/Stereo
+	- GTR Stomp 2 Stereo
+	- GTR Stomp 4 Mono
+	- GTR Stomp 4 Mono/Stereo
+	- GTR Stomp 4 Stereo
+	- GTR Stomp 6 Mono
+	- GTR Stomp 6 Mono/Stereo
+	- GTR Stomp 6 Stereo
+	- GTR Tool Rack Mono/Stereo
+	- GTR Tool Rack Stereo
+	- GTR Tuner Mono
+	- H-Comp Mono
+	- H-Comp Stereo
+	- H-Delay Mono
+	- H-Delay Mono/Stereo
+	- H-Delay Stereo
+	- H-EQ Mono
+	- H-EQ Stereo
+	- IDR Mono
+	- IDR Stereo
+	- IDR360 6.0
+	- IDR360 5.1
+	- InPhase Live Mono
+	- InPhase Live Stereo
+	- InPhase LT Live Mono
+	- InPhase LT Live Stereo
+	- InPhase LT Mono
+	- InPhase LT Stereo
+	- InPhase Mono
+	- InPhase Stereo
+	- IR1 efficient Stereo
+	- IR1 full Stereo
+	- IR1 Mono
+	- IR1 Mono/Stereo
+	- IR1 efficient Stereo
+	- IR1 full Stereo
+	- IR1 Mono
+	- IR1 Mono/Stereo
+	- IR360 discrete Mono/5.0
+	- IR360 eff discrete 6.0
+	- IR360 eff discrete 5.1
+	- IR360 eff discrete Stereo/5.0
+	- IR360 eff s eld Stereo/5.0
+	- IR360 sound field 5.0
+	- IR360 sound field 5.1
+	- IR360 sound field Mono/5.0
+	- IR360 sound field Stereo/.0
+	- IRLive Mono
+	- IRLive Mono/Stereo
+	- IRLive Stereo
+	- J37 Mone
+	- J37 Stereo
+	- JJP-Bass Mono
+	- JJP-Bass Mono/Stereo
+	- JJP-Bass Stereo
+	- JJP-Cymb-Perc Mono/Stereo
+	- JJP-Cymb-Perc Stereo
+	- JJP-Drums Mono
+	- JJP-Drums Mono/Stereo
+	- JJP-Drums Stereo
+	- JJP-Guitars Mono/Stereo
+	- JJP-Guitars Stereo
+	- JJP-Strings Keys Mono/Stereo
+	- JJP-Strings Keys Stereo
+	- JJP-Vocals Mono/Stereo
+	- JJP-Vocals Stereo
+	- Kramer HLS Mono
+	- Kramer HLS Stereo
+	- Kramer PIE Mono
+	- Kramer PIE Stereo
+	- Kramer Tape Mono
+	- Kramer Tape Stereo
+	- L1 limiter Mono
+	- L1 limiter Stereo
+	- L1+ Ultramasimizer Stereo
+	- L2 Mono
+	- L2 Stereo
+	- L3 MultiMaximizer Mono
+	- L3 MultiManimizer Stereo
+	- L3 UltraMaximizer Mono
+	- L3 UltraMaximizer Stereo
+	- L3-LL Multi Mono
+	- L3-LL Multi Stereo
+	- L3-LL Ultra Man
+	- L3-LL Ultra Stereo
+	- L316 Mono
+	- L316 Stereo
+	- L360 5.0
+	- L360 5.1
+	- Leveler
+	- LFE3605.1
+	- LFE360 Mono
+	- Limiter
+	- LinEQ Broadband Mono
+	- LinEQ Broadband Stereo
+	- LinEQ Lowband Mono
+	- LinEQ Lowband Stereo
+	- LinMB Mone
+	- LinMB Stereo
+	- LoAir 5.0/5.1
+	- LoAir 5.1
+	- LoAir Mono
+	- LoAir Stereo
+	- M360 Manager 6.0
+	- M360 Manager 5.0/5.1
+	- M360 Manager 5.1
+	- M360 Mixdown 0
+	- M360 Mixdown 5.1
+	- MannyM Delay Mono/Stereo
+	- ManryM Delay Stereo
+	- MannyM Distortion Mono
+	- ManryM Distoton Stereo
+	- ManryM EQ Mono
+	- ManryM EQ Stereo
+	- ManryM Reverb Mono
+	- ManryM Reverb Mono/Stereo
+	- ManryM Reverb Stereo
+	- MannyM Tone Shaper Mono
+	- MannyM Tone Shaper Stereo
+	- ManryM TripleD Mono
+	- MannyM TripleD Stereo
+	- Maserati ACG Mono/Stereo
+	- Maserati ACG Stereo
+	- Maserati B72 Mono
+	- Maserati B72 Mono/Stereo
+	- Maserati B72 Stereo
+	- Maserati DRM Mono
+	- Maserati DRM Stereo
+	- Maserati GRP Mono
+	- Maserati GRP Stereo
+	- Maserati GTi Mono/Stereo
+	- Maserati GTi Stereo
+	- Maserati HMX Mono/Stereo
+	- Maserati HMX Stereo
+	- Maserati VX1 Mono/Stereo
+	- Maserati VX1 Stereo
+	- Maximizer
+	- MaxxBass Mono
+	- MaxxBass Stereo
+	- MaxxVolume Mono
+	- MaxxVolume Stereo
+	- MetaFilter Mono
+	- MetaFilter Mono/Stereo
+	- MetaFilter Stereo
+	- MetaFlanger Mono
+	- MetaFlanger Mono/Stereo
+	- MetaFlanger Stereo
+	- Metalizer
+	- MIDI Gate
+	- minimoogvEfx
+	- Mix6to2
+	- ModDelay
+	- ModMachine
+	- MondoMod Mono
+	- MondoMod Mono/Stereo
+	- MondoMod Stereo
+	- MonoDelay
+	- MonoToStereo
+	- Morphoder Mono
+	- Morphoder Mono/Stereo
+	- Morphoder Stereo
+	- MultibandCompresser
+	- MultiCompressor
+	- MultiScope
+	- MV2 Mono
+	- MV2 Stereo
+	- MV360 5.0
+	- MV360 5.1
+	- NaturalVerb
+	- NLS Buss Mono
+	- NLS Buss Stereo
+	- NLS Channel Mono
+	- NLS Channel Stereo
+	- Noise Gate
+	- NS1 Mono
+	- NS1 Stereo
+	- NuendoEQ2
+	- Octaver
+	- Oneknab Brighter Mono
+	- Oneknab Bighter Stereo
+	- Oneknab Driver Mono
+	- Oneknab Driver Stereo
+	- Oneknab Fiter Mono
+	- Oneknab Fiter Stereo
+	- Oneknab Louder Mono
+	- Oneknab Louder Stereo
+	- Oneknab Phatter Mono
+	- Oneknab Phatter Stereo
+	- Oneknab Pressure Mono
+	- Oneknab Pressure Stereo
+	- Oneknab Wetter Mono
+	- Oneknab Wetter Meno/Stereo
+	- Oneknab Wetter Stereo
+	- Overdrive
+	- PAZ: Analyzer Stereo
+	- PAZ: Frequency Mono
+	- PAZ. Frequency Stereo
+	- PAZ: Meters Mono
+	- PAZ: Meters Stereo
+	- PAZ: Position Stereo
+	- PeakMaster
+	- Phaser
+	- PingPongDelay
+	- Pitch Conect
+	- PS22 Split Mono/Stereo
+	- PS22 Split Stereo
+	- PS22 Spread Mono/Stereo
+	- PS22 Spread Stereo
+	- PS22 Spread{10} Mono/Stereo
+	- PS22 Spread{10) Stereo
+	- PS22 XSplit Mono
+	- PS22 XSplit Stereo
+	- PuigChild 660 Mono
+	- PuigChild 670 Stereo
+	- PuigTec EQP1A Mono
+	- PuigTec EQP1A Stereo
+	- PuigTec MEQ5 Mono
+	- PuigTec MEQ5 Stereo
+	- Puncher
+	- Q
+	- Q-Capture Mono
+	- Q-Clone Mono
+	- Q-Clone Stereo
+	- Q1 Mono
+	- Q1 Stereo
+	- Q10 Mono
+	- Q10 Stereo
+	- Q2 Mono
+	- Q2 Stereo
+	- Q3 Mono
+	- Q3 Stereo
+	- Q4 Mono
+	- Q4 Stereo
+	- Q6 Mono
+	- Q6 Stereo
+	- Q8 Mono
+	- Q8 Stereo
+	- QuadraFuzz
+	- R360 5.0
+	- R360 5.1
+	- R360 Mono/6.0
+	- R360 Mono/5.1
+	- R360 Stereo/6.0
+	- R360 Stereo/5.1
+	- RBass Mono
+	- RBass Stereo
+	- Channel Mono
+	- Channel Mono/Stereo
+	- Channel Stereo
+	- Compressor Mono
+	- Compressor Stereo
+	- RDeEsser Mono
+	- RDeEsser Stereo
+	- REDD17 Mono
+	- REDD17 Stereo
+	- REDD37-51 Mono
+	- REDD37-51 Stereo
+	- Reel ADT Mono
+	- Reel ADT Mono/Stereo
+	- Reel ADT Stereo
+	- Reel ADT2V Mono/Stereo
+	- Reel ADT2V Stereo
+	- Renaissance Aux Mono
+	- Renaissance Aux Stereo
+	- REQ 2Mono
+	- REQ 2 Stereo
+	- REQ 4Mono
+	- REQ 4 Stereo
+	- REQ 6Mono
+	- REQ 6 Stereo
+	- Reverb A
+	- Reverb B
+	- Reverb C
+	- ReVerence
+	- RingModulator
+	- Roomworks
+	- Roomworks SE
+	- Rotary
+	- Rotary
+	- RS56 Mono
+	- RS56 Stereo
+	- RVerb Mono/Stereo
+	- RVerb Stereo
+	- Vox Mono
+	- Vox Stereo
+	- S1 Imager Stereo
+	- S1 MS Matrix Stereo
+	- S1 Shuffler Stereo
+	- S360 Imager 5.0
+	- S360 Imager 5.1
+	- S360 Imager Mono/5.0,
+	- S360 Imager Mono/5.1
+	- S360 Imager Stereo/5.0,
+	- S360 Imager Stereo/5.1
+	- S360 Panner Mono/5.0
+	- S360 Panner Mono/S1
+	- S360 Panner Stereo/6.0
+	- S360 Panner Stereo/5.1
+	- Scheps 73 Mono
+	- SMPTEGenerator
+	- SoftCipper
+	- SoundShifter Graphic Mono
+	- SoundShifter Graphic Stereo
+	- SoundShifter Parametc Mono
+	- SoundShifter Parametic Stereo
+	- SoundShifter Pitch Mono
+	- SoundShifter Pitch Stereo
+	- SSLChannel Mono
+	- SSLChannel Stereo
+	- SSLComp Mono
+	- SSLComp Stereo
+	- SSLEQ Mono
+	- SSLEQ Stereo
+	- SSLEQChannel Mono
+	- SSLEQChannel Stereo
+	- StepFiter
+	- StereoDelay
+	- StereoEcho
+	- StereoEnhancer
+	- StereoExpander
+	- StudioChorus
+	- StudioEQ
+	- SuperTap 2-Taps Mono
+	- SuperTap 2-Taps Mono/Stereo
+	- SuperTap 2-Taps Stereo
+	- SuperTap 2-Taps Mono
+	- SuperTap 6-Taps Mono/Stereo
+	- SuperTap 6-Taps Stereo
+	- SurroundDither
+	- SurroundPan
+	- Symphonic
+	- TestGenerater
+	- TG12345 Mono
+	- TG12345 Stereo
+	- The Kings Microphones Mono
+	- The Kings Microphones Stereo
+	- ToneBoaster
+	- Tonic
+	- ToolsOne
+	- Tranceformer
+	- TransX Multi Mono
+	- TransX Mult Stereo
+	- TransX Wide Mono
+	- TransX Wide Stereo
+	- Tremolo
+	- TrueVerb Mono
+	- TrueVerb Mono/Stereo
+	- TrueVerb Stereo
+	- Tuner
+	- UltraPitch 3 Voices Mono
+	- UtraPitch 3 Voices Mono/Stereo
+	- UltraPitch 6 Veices Mono
+	- UltraPitch 6 Voices Mono/Stereo
+	- UltraPitch Shift Mono
+	- UltraPitch Shift Mono/Stereo
+	- UM225 Stereo/6.0
+	- UM226 Stereo/5.1
+	- w22
+	- uv22HR
+	- Comp Mono
+	- Comp Stereo
+	- VEQ3 Mono
+	- VEQ3 Stereo
+	- VEQ4 Mono
+	- VEQ4 Stereo
+	- Vibrato
+	- VintageCompressor
+	- Vitamin Mono
+	- Vitamin Stereo
+	- Vocal Rider Live Mono
+	- Vocal Rider Live Stereo
+	- Vocal Rider Mono
+	- Vocal Rider Stereo
+	- Vocoder
+	- VSTDynamics
+	- W43 Mono
+	- WA43 Stereo
+	- WahWah
+	- WavesTune Lite Mono
+	- WavesTune Lite Stereo
+	- WavesTune Mono
+	- WavesTune Stereo
+	- WLM Meter 5.0
+	- WLM Meter 5.1
+	- WLM Meter Mono
+	- WLM Meter Stereo
+	- WLM Plus 5.0.
+	- WLM Plus 5.1
+	- WLM Plus Mono
+	- WLM Plus Stereo
+	- WNS Mono
+	- WNS Stereo
+	- X-Click Mono
+	- X-Click Stereo
+	- X-Crackle Mono
+	- X-Crackle Stereo
+	- X-Hum Mono
+	- X-Hum Stereo
+	- X-Noise Mono
+	- X-Noise Stereo
+	- Z-Noise Mono
+	- Z-Noise Stereo
+- Process Project Logical Editor
+	- init
+	- Add a Date to selected MIDI + Audio Tracks
+	- Colorize small MIDI parts
+	- Delete all Automation beyond cursor
+	- Delete all Automation Tracks
+	- Delete empty parts
+	- Delete empty tracks
+	- Delete Events beyond Song cursor
+	- Delete MIDI tracks
+	- Delete muted tracks
+	- Delete muted elements
+	- Delete muted MIDI parts
+	- Delete small Part and Events
+	- Delete Time signatures
+	- Delete Volume Automation
+	- English to German conversion
+	- Move selected events by 1000 bars
+	- Quantize 18th if selected
+	- Quantize &thif selected
+	- Quantize Stat by 480 ticks if unquantized
+	- Randomize Start Poston for MIDI Parts by 10 Ticks
+	- Rename and Renumber Audiotracks
+	- Select if exactly matching cycle
+	- Select if not an the beat
+	- Select MIDI Parts named Drum
+	- Set length to one bar i less than one bar
+	- Shift events by 2 frames
+	- Shift selected events by 2 frames
+	- Toggle Folder open state if name contains MIDI
+	- Toggle Inserts Bypass for MIDI
+	- Toggle lanes active
+	- Toggle Mute MIDI Tracks
+	- Toggle Mute, it name contsins vac
+	- Trim selected Autemation by 10%
+	- Unmute all muted MIDI tacks
+- Project
+	- Auto Fades Settings
+	- Beat Calculator
+	- Bring To Front
+	- Duplicate Tracks
+	- Folding: Fold Tracks
+	- Folding: Toggle Selected Track
+	- Folding: Toggle Tracks
+	- Folding: Unfold Tracks
+	- Notepad
+	- Open Browser
+	- Open Layout
+	- Open Markers
+	- Open Pool
+	- Open Tempo Track
+	- Remove Empty Tracks
+	- Remove Track
+	- Select Track: Add Next
+	- Select Track: Add Prev
+	- Select Track: Next
+	- Select Track: Prev
+	- Set Timecode
+	- Setup
+	- Show/Hide Track Colors
+	- Track Cantols Settings
+	- Track Preset: Next
+	- Track Preset: Open Browser
+	- Track Preset: Previous
+	- VST Preset: Next
+	- VST Preset: Open Browser
+	- VST Preset: Previous
+- Sample Editor
+	- Reanalyze Audio
+	- VariAudio - Disable Pitch Changes
+	- VariAudio - Disable Warp Changes
+	- VariAudio - Extract MIDI (no Dialog)
+	- VariAudio - Extract MIDI...
+	- VariAudio - Quantize Pitch
+	- VariAudio - Reset Pitch + Warp Changes
+	- VariAudio - Reset Pitch Changes
+	- VariAudio - Reset Warp Changes
+- Score Align Elements
+	- Bottom
+	- Center Horizontally
+	- Center Vertically
+	- Dynamics
+	- Left
+	- Right
+	- Top
+- Score Functions
+	- 100%
+	- 120%
+	- 200%
+	- 300%
+	- 400%
+	- 50%
+	- 600%
+	- 75%
+	- Auto Layout
+	- Auto Layout: Bars and Staves
+	- Auto Layout: Hide All Emply Staves
+	- Auto Layout: Hide Emply Staves
+	- Auto Layout: Move All Bars
+	- Auto Layout: Move All Staves
+	- Auto Layout: Move Bars
+	- Auto Layout: Move Staves
+	- Auto Layout: Optimize All
+	- Auto Layout: Spread All Pages
+	- Auto Layout: Spread Page
+	- Build Accelerando...
+	- Build N-Tuplet...
+	- Build Repeat...
+	- Build Trill...
+	- Convert to Grace Note
+	- Display Markers
+	- Enharmonic Shift: #
+	- Enharmonic Shift: ##
+	- Enharmonic Shift: ()
+	- Enharmonic Shift: ?
+	- Enharmonic Shift: b
+	- Enharmonic Shift: bb
+	- Enharmonic Shift: no (hide)
+	- Enhatmonic Shift: off (automatic)
+	- Explode
+	- Extract Veioes
+	- Flip
+	- Force Update
+	- Get Info
+	- Group Notes
+	- Hide
+	- Insert Slur
+	- Insert Voice: 1
+	- Insert Voice: 2
+	- Insert Voice: 3
+	- Insert Voice: 4
+	- Insert Voice: Next
+	- Insert Voice: Previous
+	- Make Chord Symbols
+	- Make Guitar Symbols
+	- Marker Track to Farm
+	- Meige All Staves
+	- Move To String 1
+	- Move To String 10
+	- Move To String 11
+	- Move To String 12
+	- Move To String 2
+	- Move To String 3
+	- Move To String 4
+	- Move To String 5
+	- Move To String 6
+	- Move To String 7
+	- Move To String 8
+	- Move To String 9
+	- Move To Voice 1
+	- Move To Voice 2
+	- Move To Voice 3
+	- Move To Voice 4
+	- Move To Voice 5
+	- Move To Voice 6
+	- Move To Voice 7
+	- Move To Voice 8
+	- Number of Bars
+	- One down
+	- One up
+	- Paste Note Attributes
+	- Position Panel
+	- Reset Layout...
+	- Scores Notes to MIDI
+	- Spacer and Hidden to Layout
+	- Verse 1
+	- Verse 2
+	- Verse 3
+	- Verse 4
+	- Verse 5
+	- Verse 6
+- Score Meter Seale
+	- 100%
+	- 120%
+	- 200%
+	- 300%
+	- 400%
+	- 50%
+	- 500%
+	- 75%
+	- CM
+	- Edt Mode: 100%
+	- Edit Mode: 150%
+	- Edit Mode: 200%
+	- Edit Mode: 50%
+	- Edit Mode: 80%
+	- Fit Page
+	- Fit Width
+	- Hide Unused
+	- Inch
+	- Off
+	- PT
+- Scote Symbol Palettes
+	- Chord Symbols
+	- Clef etc.
+	- Clefs
+	- Custom
+	- Dynamics
+	- Graphics
+	- Guitar Symbols
+	- Keys
+	- Layout
+	- Line / Trill
+	- Note Symbols
+	- Other
+	- Project Symbols
+	- Time Sign
+	- User Symbols
+	- Words
+- Scores
+	- Auto Group Notes
+	- Find and Replace...
+	- Lytics From Clipboard
+	- Move to Next Page
+	- Move to Previous Page
+	- Page Mode
+	- Settings...
+	- Setup Layout
+	- Show List...
+	- Staff Setup
+	- Text From Clipboard
+	- User Symbols...
+- Scores Statusbar
+	- Toggle Filter: Bar Handles
+	- Toggle Filter: Cutflag
+	- Toggle Filter: Grouping
+	- Toggle Filter: Hidden Notes
+	- Toggle Filter: Hide
+	- Toggle Filter: Layout Tool
+	- Toggle Filter: Quantize
+	- Toggle Filter: Split Rests
+	- Toggle Filter: Stems/Beams
+- Set Insert Length
+	- 1/ 1
+	- 1/ 2
+	- 1/ 4
+	- 1/ 8
+	- 1/ 16
+	- 1/ 32
+	- 1/ 64
+	- 1/ 128
+	- Toggle Dotted
+	- Toggle Triplet
+- Tool
+	- Color Tool
+	- Curve Tool
+	- Cut Tool
+	- Delete Tool
+	- Display Quantize Tool
+	- Draw Tool
+	- Drumstick Tool
+	- Export Range Tool
+	- Free Warp Tool
+	- Glue Tool
+	- Layout Tool
+	- Mute Tool
+	- Nest Tool
+	- Play Tool
+	- Popup Tools
+	- Previous Tool
+	- Range Tool
+	- Score Zoom Tool
+	- Scrub Tool
+	- Select Tool
+	- Split Tool
+	- TimeWarp Tool
+	- Tool 1
+	- Tool 10
+	- Tool 2
+	- Tool 3
+	- Tool 4
+	- Tool 5
+	- Tool 6
+	- Tool 7
+	- Tool 8
+	- Tool 9
+	- Trim Tool
+	- Zoom Tool
+- Transport
+	- Activate/Deactivate Tempo Track
+	- Auto Punch In
+	- Auto Punch Out
+	- Cycle
+	- Exchange Time Formats
+	- Fast Forward
+	- Fast Rewind
+	- Forward
+	- Gtoo End
+	- Input Left Locator
+	- Input Position
+	- Input Right Locator
+	- Input Tempo
+	- Insert Cycle Marker
+	- Insert Marker
+	- Jog Left
+	- Jog Right
+	- Locate Next Event
+	- Locate Next Marker
+	- Locate Previous Event
+	- Locate Previous Marker
+	- Locate Selection
+	- Locate Selection End
+	- Locators to Selection
+	- Lock Record
+	- Loop Selection
+	- Metronome On
+	- Metronome Setup
+	- Nudge +1 Frame
+	- Nudge -1 Frame
+	- Nudge Cursor left
+	- Nudge Cursor right
+	- Panel
+	- Play fom Selection End
+	- Play fom Selection Start
+	- Play Selection Range
+	- Play until Next Marker
+	- Play until Selection End
+	- Play until Selection Start
+	- Post-roll from Selection End
+	- Post-roll from Selection Start
+	- Pre-roll Selection End
+	- Pre-roll Selection Start
+	- Precount On
+	- Project Synchronization Setup
+	- Recall Cycle Marker 1
+	- Recall Cycle Marker 2
+	- Recall Cycle Marker 3
+	- Recall Cycle Marker 4
+	- Recall Cycle Marker 5
+	- Recall Cycle Marker 6
+	- Recall Cycle Marker 7
+	- Recall Cycle Marker 8
+	- Recall Cycle Marker 9
+	- Record
+	- Restart
+	- Retrospective Record
+	- Return to Start Position
+	- Return to Zero
+	- Rewind
+	- Set Left Locator
+	- Set Marker 1
+	- Set Marker 2
+	- Set Marker 3
+	- Set Marker 4
+	- Set Marker 5
+	- Set Marker 6
+	- Set Marker 7
+	- Set Marker 8
+	- Set Marker 9
+	- Set Right Locator
+	- Shuttle Play 1/2x
+	- Shuttle Play 1/4x
+	- Shuttle Play 1/8x
+	- Shuttle Play 1x
+	- Shuttle Play 2x
+	- Shuttle Play 4x
+	- Shuttle Play 8x
+	- Shuttle Play Reverse 1/2x
+	- Shuttle Play Reverse 1/4x
+	- Shuttle Play Reverse 1/8x
+	- Shuttle Play Reverse 1x
+	- Shuttle Play Reverse 2x
+	- Shuttle Play Reverse 4x
+	- Shuttle Play Reverse 8x
+	- Start
+	- Start Record at Left Locator
+	- StartStop
+	- StartStop Preview
+	- Step Back Bar
+	- Step Bar
+	- Stop
+	- To Cycle Marker 1
+	- To Cycle Marker 2
+	- To Cycle Marker 3
+	- To Cycle Marker 4
+	- To Cycle Marker 5
+	- To Cycle Marker 6
+	- To Cycle Marker 7
+	- To Cycle Marker 8
+	- To Cycle Marker 9
+	- To Left Locator
+	- To Marker 1
+	- To Marker 2
+	- To Marker 3
+	- To Marker 4
+	- To Marker 5
+	- To Marker 6
+	- To Marker 7
+	- To Marker 8
+	- To Marker 9
+	- To Right Locator
+	- Unlock Record
+	- Use External Sync
+	- Use Post-roll
+	- Use Pre-/Post-Roll
+	- Use Pre-roll
+- Windows
+	- Close All
+	- Maximize
+	- Minimize
+	- Minimize All
+	- Restore All
+- Workspaces
+	- Lock/Unlock Active Workspace
+	- New
+	- Organize
+	- Workspace 1
+	- Workspace 2
+	- Workspace 3
+	- Workspace 4
+	- Workspace 5
+	- Workspace 6
+	- Workspace 7
+	- Workspace 8
+	- Workspace 9
+- Zoom
+	- Redo Zoom
+	- Undo Zoom
+	- Zoom 4 Tracks
+	- Zoom 8 Tracks
+	- Zoom Cycle Marker 1
+	- Zoom Cycle Marker 2
+	- Zoom Cycle Marker 3
+	- Zoom Cycle Marker 4
+	- Zoom Cycle Marker 5
+	- Zoom Cycle Marker 6
+	- Zoom Cycle Marker 7
+	- Zoom Cycle Marker 8
+	- Zoom Cycle Marker 9
+	- Zoom Full
+	- Zoom In
+	- Zoom In Tracks
+	- Zoom In Vertically
+	- Zoom In Tracks
+	- Zoom Out
+	- Zoom Out Tracks
+	- Zoom Out Vertically
+	- Zoom Preset 1
+	- Zoom Preset 2
+	- Zoom Preset 3
+	- Zoom Preset 4
+	- Zoom Preset 5
+	- Zoom to Event
+	- Zaom to Locators
+	- Zaom to Locators
+	- Zoom to Locators
+	- Zoom to Selection
+	- Zoom to Selection Horizontally
+	- Zoom Tracks 1 Row
+	- Zoom Tracks 2 Rows
+	- Zoom Tracks 3 Rows
+	- Zoom Tracks 4 Rows
+	- Zoom Tracks Exclusive
+	- Zoom Tracks Full
+	- Zoom Tracks Minimal
+	- Zoom Tracks N Rows
