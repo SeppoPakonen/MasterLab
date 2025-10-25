@@ -148,3 +148,21 @@ Everything in Vector<> must be trivially copyable, but Array<> doesn't have that
 If class' methods uses THISBACK macros, then class definition must have e.g. (the class is Node) "typedef Node CLASSNAME;" statement.
 
 So, because we use RAII, avoid using new operator everywhere. If it is being used, it must be contained in RAII containers immediately. It cannot be created just for stack memory, to a pointer in the middle of a function. You will NEVER use pointers for OWNED variables, but if you need to transfer ownership, you may create One<T> wrapper. You will NEVER need to delete values in destructor (unless you are making a container template class).
+
+## Task Execution Protocol
+
+When Codex is instructed to *"work"* or *"execute tasks"*, it must:
+
+1. Open `TASKS.md`.
+2. Identify the first item listed under **TODO**.
+3. Move that item to **IN PROGRESS** and begin work according to its instructions.
+4. Once complete, move the same item to **DONE**.
+5. Commit any resulting files or documentation changes.
+6. Include commit messages in the format:
+
+   ```
+   codex: complete task <task number> — <short description>
+   ```
+
+All development tasks must exist within `TASKS.md` and follow this status-tracking system.
+No direct implementation tasks are executed unless defined in `TASKS.md`.
