@@ -4,6 +4,8 @@
 This repository contains an audio editor and mastering tool built in **C++** using the **Ultimate++ framework**.  
 All source packages follow the U++ assembly/package conventions.
 
+Be sure to check how U++ programs are done from "~/upp/uppsrc/ide" package if you are not sure.
+
 ## Directory Layout
 ```
 uppsrc/        ← Ultimate++ core sources (external dependency)
