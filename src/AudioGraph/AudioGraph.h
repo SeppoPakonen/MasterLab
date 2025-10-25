@@ -1,9 +1,9 @@
 #ifndef _AudioGraph_AudioGraph_h_
 #define _AudioGraph_AudioGraph_h_
 
-#include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
+
 #include "MultiChannelLayout.h"
 #include "Port.h"
 #include "Edge.h"
@@ -13,5 +13,6 @@
 #include "Routing.h"
 #include "BusWithInternalGraph.h"
 #include "PostGraph.h"
+
 
 #endif

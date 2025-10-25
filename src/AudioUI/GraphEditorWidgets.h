@@ -1,7 +1,6 @@
 #ifndef _AudioUI_GraphEditorWidgets_h_
 #define _AudioUI_GraphEditorWidgets_h_
 
-#include <CtrlLib/CtrlLib.h>
 // Note: Requires AudioGraph/Node.h and AudioGraph/Edge.h - included via main header in .cpp files
 
 namespace am::ui {

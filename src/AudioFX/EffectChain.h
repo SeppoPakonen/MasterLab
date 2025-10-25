@@ -6,12 +6,14 @@
 namespace am {
 struct Effect; // Forward declaration for same-package type
 struct EffectChain {
-    Vector< Ptr<Effect> > effects; // U++ Ptr smart ptr
+    Array<Effect> effects;
+    
     void Add(Effect* e) { effects.Add(e); }
     void Process(AudioBuffer& io) {
-        for(auto& e : effects) if(e) e->Process(io);
+        for(auto& e : effects)
+			e.Process(io);
     }
 };
-}
 
 #endif
+}

@@ -4,6 +4,7 @@
 // Note: Requires AudioCore/AudioCore.h (for Sample, SampleRate) - included via main header in .cpp files
 
 namespace am {
+	
 struct AudioBuffer {
     SampleRate rate = 48000;
     int channels = 2;
@@ -12,6 +13,7 @@ struct AudioBuffer {
     int GetFrames() const;
     int GetChannels() const { return channels; }
 };
+
 }
 
 #endif

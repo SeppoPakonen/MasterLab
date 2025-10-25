@@ -71,9 +71,13 @@ Don't have dependency #include statements in non-main headers.
 
 You may add "// #include "...dependency.." as comment for clarity, but they are included elsewhere and the classes are present without additional #include statement.
 
-The compiler already sees classes, but YOU don't. E.g. don't add that "#include <AudioCore/AudioCore.h>" in "src/AudioFX/Limiter.h" for compiler, but add it as COMMENT for YOU only.
+The compiler already sees the classes, but YOU don't. For example, don't add "#include <AudioCore/AudioCore.h>" to "src/AudioFX/Limiter.h" for the compiler, add it as a COMMENT just for YOU.
 
-And I repeat, this doesn' change any architectural changes. This ONLY affects preprocessor. The ONLY problem is YOU not understanding how headers and code dependencies are included.
+Fix the problems by looking for "\n#include" in ".h" files and if it's not a main header, convert it to a comment. Almost the same applies to c/cpp files: look for "\n#include" in ".cpp" files and if it's not a main header, convert it to a comment, UNLESS it's really only needed in the implementation, which is very possible, but check if it's already in the main header.
+
+And I repeat, this doesn't change any architectural changes. This ONLY affects the preprocessor. The ONLY problem is that YOU don't understand how to include headers and code dependencies.
+
+This means that you can't just add include statements and hope for the best, thinking that everything is fine now that the included headers are chained. You MUST also consider circular dependencies through the main headers. They would have broken silently even with the previous include technique.
 
 ### Forward declaration
 Do all forward declarations in the beginning of main-header, so they don't need to be forward declared in every header.
@@ -124,5 +128,23 @@ When writing or maintaining code:
 U++ packages behave as independent modular units.  
 Their boundaries are defined by `.upp` manifests and main headers.  
 This convention guarantees consistency, avoids circular dependencies, and makes the codebase predictable for both Codex and human developers.
+
+### Classes
+There's no smart-pointers in U++ really, but you should use RAII.
+This is not a proper solution:
+```
+Vector< Ptr<Node> > nodes;
 ```
 
+Instead this is proper solution:
+```
+Array<Node> nodes;
+```
+
+For "smart-values" you may add raw classes to Value class, and then use proper value-based semantics. But no, there's no valid mid-ground between value-semantics and RAII.
+
+Everything in Vector<> must be trivially copyable, but Array<> doesn't have that requirement. Pointers to Vector<> cannot be trusted almost ever. But you may trust pointers to vector ranges, if you take both begin and end pointers at the beginning. Even that should be used only in very fast loops. You may trust pointers to Array<>, but add additional Ptr/Pte semantics (struct Obj : Pte<Obj> {}; Ptr<Obj> o;) if you must be sure.
+
+If class' methods uses THISBACK macros, then class definition must have e.g. (the class is Node) "typedef Node CLASSNAME;" statement.
+
+So, because we use RAII, avoid using new operator everywhere. If it is being used, it must be contained in RAII containers immediately. It cannot be created just for stack memory, to a pointer in the middle of a function. You will NEVER use pointers for OWNED variables, but if you need to transfer ownership, you may create One<T> wrapper. You will NEVER need to delete values in destructor (unless you are making a container template class).

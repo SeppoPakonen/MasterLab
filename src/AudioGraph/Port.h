@@ -4,20 +4,14 @@
 // Note: Requires MultiChannelLayout.h (from same package) - available via main header in .cpp files
 
 namespace am {
+	
 enum class PortDir { In, Out };
 struct Port {
     String name;
     PortDir dir = PortDir::In;
     MultiChannelLayout layout;
 };
+
 }
 
 #endif
-namespace am {
-enum class PortDir { In, Out };
-struct Port {
-    String name;
-    PortDir dir = PortDir::In;
-    MultiChannelLayout layout;
-};
-}

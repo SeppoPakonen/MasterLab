@@ -2,6 +2,7 @@
 #define _AudioCore_Clip_h_
 
 namespace am {
+	
 struct Clip : IIdentified {
     String filepath;
     FrameIndex start_frame = 0;   // position on timeline
@@ -10,6 +11,7 @@ struct Clip : IIdentified {
     struct Meta { String name; };
     Meta meta;
 };
+
 }
 
 #endif

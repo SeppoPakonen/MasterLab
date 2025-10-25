@@ -2,23 +2,24 @@
 
 MainWindow::MainWindow() {
 	Sizeable().Zoomable();
+	RefreshTitle();
 	
 	// Initialize status bar
 	AddFrame(status);
-	status.SetText("AudioMaster - Ready");
+	status = "AudioMaster - Ready";
 	
 	// Initialize view container
 	AddFrame(menu);
 	Add(viewContainer.SizePos());
 	
 	// Create view instances
-	masteringView = new MasteringView();
-	multiChannelView = new MultiChannelView();
-	mixerView = new MixerView();
-	analysisView = new AnalysisView();
-	combinedView = new CombinedView();
-	postView = new PostViewWrapper();
-	postGraphView = new PostGraphViewWrapper();
+	InitView(masteringView);
+	InitView(multiChannelView);
+	InitView(mixerView);
+	InitView(analysisView);
+	InitView(combinedView);
+	InitView(postView);
+	InitView(postGraphView);
 	
 	currentView = NULL;
 	
@@ -26,37 +27,41 @@ MainWindow::MainWindow() {
 	SetView(0); // Default to Mastering view
 }
 
+void MainWindow::InitView(MainView& v) {
+	v.win = this;
+}
+
 void MainWindow::SetView(int type) {
 	// Remove current view if exists
 	if(currentView) {
-		viewContainer.Remove(*currentView);
+		viewContainer.RemoveChild(currentView);
 	}
 	
 	// Select the new view
 	switch(type) {
 		case 0: // Mastering view
-			currentView = masteringView;
+			currentView = &masteringView;
 			break;
 		case 1: // Multi-channel view
-			currentView = multiChannelView;
+			currentView = &multiChannelView;
 			break;
 		case 2: // Mixer view
-			currentView = mixerView;
+			currentView = &mixerView;
 			break;
 		case 3: // Analysis view
-			currentView = analysisView;
+			currentView = &analysisView;
 			break;
 		case 4: // Combined view
-			currentView = combinedView;
+			currentView = &combinedView;
 			break;
 		case 5: // Post view
-			currentView = postView;
+			currentView = &postView;
 			break;
 		case 6: // Post graph view
-			currentView = postGraphView;
+			currentView = &postGraphView;
 			break;
 		default:
-			currentView = masteringView;
+			currentView = &masteringView;
 			break;
 	}
 	
@@ -66,6 +71,19 @@ void MainWindow::SetView(int type) {
 	}
 }
 
+void MainWindow::SetViewLabel(String s) {
+	view_status = s;
+	RefreshTitle();
+}
+
+void MainWindow::RefreshTitle() {
+	String s;
+	s << "MasterLab";
+	if (!view_status.IsEmpty())
+		s << " :: " << view_status;
+	SetTitle(s);
+}
+
 void MainWindow::Menu(Bar& bar) {
 	bar.Add("File", THISBACK(OnFile));
 	bar.Add("View", THISBACK(OnView));
@@ -73,29 +91,27 @@ void MainWindow::Menu(Bar& bar) {
 	bar.Add("Help", THISBACK(OnHelp));
 }
 
-void MainWindow::OnView() {
-	MenuBar vbar;
-	vbar.Add("Mastering", CtrlImg::newdir(), THISBACK(OnMasteringView));
-	vbar.Add("Multi-Channel", CtrlImg::file(), THISBACK(OnMultiChannelView));
+void MainWindow::OnView(Bar& vbar) {
+	vbar.Add("Mastering", CtrlImg::new_doc(), THISBACK(OnMasteringView));
+	vbar.Add("Multi-Channel", CtrlImg::new_doc(), THISBACK(OnMultiChannelView));
 	vbar.Add("Mixer", CtrlImg::copy(), THISBACK(OnMixerView));
 	vbar.Add("Analysis", CtrlImg::paste(), THISBACK(OnAnalysisView));
-	vbar.Add("Combined", CtrlImg::deletefile(), THISBACK(OnCombinedView));
-	vbar.AddSeparator();
-	vbar.Add("Post", CtrlImg::newdir(), THISBACK(OnPostView));
-	vbar.Add("Post Graph", CtrlImg::file(), THISBACK(OnPostGraphView));
-	Popup(vbar);
+	vbar.Add("Combined", CtrlImg::remove(), THISBACK(OnCombinedView));
+	vbar.Separator();
+	vbar.Add("Post", CtrlImg::new_doc(), THISBACK(OnPostView));
+	vbar.Add("Post Graph", CtrlImg::new_doc(), THISBACK(OnPostGraphView));
 }
 
-void MainWindow::OnFile() {
-	PromptOK("File menu clicked");
+void MainWindow::OnFile(Bar& bar) {
+	// add: bar.Add(...
 }
 
-void MainWindow::OnSettings() {
-	PromptOK("Settings menu clicked");
+void MainWindow::OnSettings(Bar& bar) {
+	// add: bar.Add(...
 }
 
-void MainWindow::OnHelp() {
-	PromptOK("Help menu clicked");
+void MainWindow::OnHelp(Bar& bar) {
+	// add: bar.Add(...
 }
 
 void MainWindow::OnMasteringView() {

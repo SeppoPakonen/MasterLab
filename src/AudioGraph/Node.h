@@ -5,10 +5,11 @@
 // Note: Requires AudioFX/AudioFX.h and Port.h - included via main header in .cpp files
 
 namespace am {
+	
 struct Effect; // Forward declaration
 struct Port; // Forward declaration for same package
 
-struct Node {
+struct Node : Pte<Node> {
     String label;
     Ptr<Effect> effect;     // optional: effect processor hosted by node
     Vector<Port> inputs;
@@ -16,6 +17,7 @@ struct Node {
     virtual ~Node(){}
     virtual bool IsContainer() const { return false; }
 };
+
 }
 
 #endif

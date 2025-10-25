@@ -1,8 +1,8 @@
 #ifndef _AudioFX_AudioFX_h_
 #define _AudioFX_AudioFX_h_
 
-#include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
+
 #include "Effect.h"
 #include "EffectChain.h"
 #include "Gain.h"

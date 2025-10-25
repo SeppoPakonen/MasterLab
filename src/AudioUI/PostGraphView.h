@@ -1,10 +1,10 @@
 #ifndef _AudioUI_PostGraphView_h_
 #define _AudioUI_PostGraphView_h_
 
-#include <CtrlLib/CtrlLib.h>
 // Note: Requires AudioGraph/AudioGraph.h and Breadcrumb.h - included via main header in .cpp files
 
 namespace am::ui {
+	
 using namespace Upp;
 struct PostGraphView : ParentCtrl {
     Graph* graph = nullptr; // current graph at this depth
@@ -13,6 +13,7 @@ struct PostGraphView : ParentCtrl {
     void SetGraph(Graph* g);
     PostGraphView();
 };
+
 }
 
 #endif

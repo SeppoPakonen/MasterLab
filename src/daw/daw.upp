@@ -2,7 +2,8 @@ uses
 	AudioUI;
 
 file
-	daw.h;
+	daw.h,
+	main.cpp;
 
 mainconfig
 	"" = "GUI";

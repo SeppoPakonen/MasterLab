@@ -2,6 +2,8 @@
 #define _AudioCore_AudioCore_h_
 
 #include <Core/Core.h>
+using namespace Upp;
+
 #include "AudioTypes.h"
 #include "AudioBuffer.h"
 #include "IIdentified.h"

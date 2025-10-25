@@ -1,7 +1,6 @@
 #ifndef _AudioMaster_Views_h_
 #define _AudioMaster_Views_h_
 
-#include <CtrlLib/CtrlLib.h>
 // Note: This header uses types from AudioUI/AudioUI.h - full types available 
 // when implementation files include AudioMaster/AudioMaster.h
 
@@ -12,7 +11,18 @@ namespace am::ui {
     struct PostGraphView; // Forward declaration
 }
 
-class MultiChannelView : public Ctrl {
+class MainWindow;
+
+
+class MainView : public Ctrl {
+public:
+	void SetLabel(String s);
+	
+	MainWindow* win = 0;
+	
+};
+
+class MultiChannelView : public MainView {
 public:
 	MultiChannelView();
 	
@@ -20,7 +30,7 @@ private:
 	void InitLayout();
 };
 
-class MixerView : public Ctrl {
+class MixerView : public MainView {
 public:
 	MixerView();
 	
@@ -28,7 +38,7 @@ private:
 	void InitLayout();
 };
 
-class MasteringView : public Ctrl {
+class MasteringView : public MainView {
 public:
 	MasteringView();
 	
@@ -36,7 +46,7 @@ private:
 	void InitLayout();
 };
 
-class AnalysisView : public Ctrl {
+class AnalysisView : public MainView {
 public:
 	AnalysisView();
 	
@@ -44,31 +54,35 @@ private:
 	void InitLayout();
 };
 
-class CombinedView : public Ctrl {
+class CombinedView : public MainView {
 public:
 	CombinedView();
+	
+	Splitter splitter;
+	MultiChannelView topView;
+	MixerView bottomView;
 	
 private:
 	void InitLayout();
 };
 
-class PostViewWrapper : public Ctrl {
+class PostViewWrapper : public MainView {
 public:
 	PostViewWrapper();
 	~PostViewWrapper();
 	
 private:
-	am::ui::PostView* postView; // Pointer to avoid needing full definition in header
+	am::ui::PostView postView; // Pointer to avoid needing full definition in header
 	void InitLayout();
 };
 
-class PostGraphViewWrapper : public Ctrl {
+class PostGraphViewWrapper : public MainView {
 public:
 	PostGraphViewWrapper();
 	~PostGraphViewWrapper();
 	
 private:
-	am::ui::PostGraphView* postGraphView; // Pointer to avoid needing full definition in header
+	am::ui::PostGraphView postGraphView; // Pointer to avoid needing full definition in header
 	void InitLayout();
 };
 
