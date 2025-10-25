@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _AudioMaster_AudioMaster_h_
+#define _AudioMaster_AudioMaster_h_
 
 #include <Core/Core.h>
 #include <Draw/Draw.h>
@@ -9,3 +10,5 @@
 #include "AudioFX/AudioFX.h"
 #include "AudioGraph/AudioGraph.h"
 #include "AudioUI/AudioUI.h"
+
+#endif

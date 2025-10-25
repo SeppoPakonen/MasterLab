@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _AudioCore_AudioCore_h_
+#define _AudioCore_AudioCore_h_
 
 #include <Core/Core.h>
 #include "AudioTypes.h"
@@ -11,3 +12,5 @@
 #include "Bus.h"
 #include "Mixer.h"
 #include "Project.h"
+
+#endif

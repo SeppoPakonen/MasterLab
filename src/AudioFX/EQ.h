@@ -1,5 +1,8 @@
-#pragma once
-#include "Effect.h"
+#ifndef _AudioFX_EQ_h_
+#define _AudioFX_EQ_h_
+
+// Note: Requires AudioCore/AudioCore.h (for AudioBuffer) - included via main header in .cpp files
+
 namespace am {
 struct EQ : Effect {
     // placeholder bands
@@ -9,3 +12,5 @@ struct EQ : Effect {
     String Name() const override { return "EQ"; }
 };
 }
+
+#endif

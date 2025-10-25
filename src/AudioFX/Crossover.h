@@ -1,5 +1,8 @@
-#pragma once
-#include "Effect.h"
+#ifndef _AudioFX_Crossover_h_
+#define _AudioFX_Crossover_h_
+
+// Note: Requires AudioCore/AudioCore.h and Effect.h - included via main header in .cpp files
+
 namespace am {
 struct Crossover : Effect {
     // splits into N bands; routing handled by graph layer
@@ -8,3 +11,5 @@ struct Crossover : Effect {
     String Name() const override { return "Crossover"; }
 };
 }
+
+#endif

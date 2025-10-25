@@ -54,6 +54,31 @@ abc/abc.h
 This main header is the **only** header that should include other headers.  
 Other `.h` files within the same package must not contain `#include` directives except for **inline includes** (see below).
 
+
+### Headers
+Don't use #pragma once inheaders but the style of
+
+```
+#ifndef _daw_daw_h_
+#define _daw_daw_h_
+
+// all content of the file
+
+#endif
+```
+
+Don't have dependency #include statements in non-main headers.
+
+You may add "// #include "...dependency.." as comment for clarity, but they are included elsewhere and the classes are present without additional #include statement.
+
+The compiler already sees classes, but YOU don't. E.g. don't add that "#include <AudioCore/AudioCore.h>" in "src/AudioFX/Limiter.h" for compiler, but add it as COMMENT for YOU only.
+
+### Forward declaration
+Do all forward declarations in the beginning of main-header, so they don't need to be forward declared in every header.
+
+AI may add comments, if it looks otherwise, that no classes have been included yet, since we don't use inside-non-main-header inclusions anymore.
+
+
 ### Inline Includes
 If template classes or inline functions require definitions within headers, these may be placed in `.hpp` files.  
 Such `.hpp` files are included where necessary using inline includes:

@@ -1,5 +1,8 @@
-#pragma once
-#include <AudioCore/AudioCore.h>  // Use main header instead
+#ifndef _AudioFX_Effect_h_
+#define _AudioFX_Effect_h_
+
+// Note: Requires AudioCore/AudioCore.h (for SampleRate, AudioBuffer) - included via main header in .cpp files
+
 namespace am {
 struct Effect {
     virtual ~Effect() {}
@@ -8,3 +11,5 @@ struct Effect {
     virtual String Name() const = 0;
 };
 }
+
+#endif

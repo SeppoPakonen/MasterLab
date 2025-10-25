@@ -1,5 +1,5 @@
-#pragma once
-#include "AudioTypes.h"
+#ifndef _AudioCore_Bus_h_
+#define _AudioCore_Bus_h_
 
 namespace am {
 struct EffectChain; // fwd (in AudioFX)
@@ -10,3 +10,5 @@ struct Bus {
 // Forward decl for specialized bus with internal routing graph (see AudioGraph)
 struct BusWithInternalGraph;
 }
+
+#endif

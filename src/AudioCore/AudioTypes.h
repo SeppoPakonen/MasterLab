@@ -1,4 +1,7 @@
-#pragma once
+#ifndef _AudioCore_AudioTypes_h_
+#define _AudioCore_AudioTypes_h_
+
+#include <Core/Core.h>
 
 namespace am {
     using Sample = float;
@@ -11,3 +14,5 @@ namespace am {
         static ChannelSet Mono();
     };
 }
+
+#endif

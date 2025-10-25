@@ -1,8 +1,9 @@
-#pragma once
-#include "AudioTypes.h"
+#ifndef _AudioCore_Mixer_h_
+#define _AudioCore_Mixer_h_
+
 namespace am {
-struct Channel; // fwd
-struct Bus; // fwd
+struct Channel; // Forward declaration - full type provided by main header
+struct Bus; // Forward declaration - full type provided by main header
 struct Mixer {
     Vector<Channel*> channels;
     Bus* master = nullptr;
@@ -10,11 +11,5 @@ struct Mixer {
     void MixBlock(AudioBuffer& out);
 };
 }
-namespace am {
-struct Mixer {
-    Vector<Channel*> channels;
-    Bus* master = nullptr;
-    // simple pan-law and mix placeholder API
-    void MixBlock(AudioBuffer& out);
-};
-}
+
+#endif

@@ -1,6 +1,6 @@
-#pragma once
-#include "AudioTypes.h"
-#include "IIdentified.h"
+#ifndef _AudioCore_Clip_h_
+#define _AudioCore_Clip_h_
+
 namespace am {
 struct Clip : IIdentified {
     String filepath;
@@ -11,3 +11,5 @@ struct Clip : IIdentified {
     Meta meta;
 };
 }
+
+#endif

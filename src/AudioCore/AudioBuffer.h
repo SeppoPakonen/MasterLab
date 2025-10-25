@@ -1,4 +1,7 @@
-#pragma once
+#ifndef _AudioCore_AudioBuffer_h_
+#define _AudioCore_AudioBuffer_h_
+
+#include "AudioTypes.h"
 
 namespace am {
 struct AudioBuffer {
@@ -10,3 +13,5 @@ struct AudioBuffer {
     int GetChannels() const { return channels; }
 };
 }
+
+#endif

@@ -2,7 +2,7 @@
 #define _AudioMaster_Views_h_
 
 #include <CtrlLib/CtrlLib.h>
-#include "../AudioUI/AudioUI.h"  // Use main header
+#include <AudioUI/AudioUI.h>  // Required for the view types used in the classes
 
 using namespace Upp;
 
