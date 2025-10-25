@@ -27,9 +27,17 @@ public:
 private:
 	void Menu(Bar& bar);
 	void OnFile(Bar& bar);
-	void OnView(Bar& bar);
-	void OnSettings(Bar& bar);
+	void OnEdit(Bar& bar);
+	void OnProject(Bar& bar);
+	void OnAudio(Bar& bar);
+	void OnMIDI(Bar& bar);
+	void OnScores(Bar& bar);
+	void OnMedia(Bar& bar);
+	void OnTransport(Bar& bar);
+	void OnDevices(Bar& bar);
+	void OnWindow(Bar& bar);
 	void OnHelp(Bar& bar);
+
 	void OnMasteringView();
 	void OnMultiChannelView();
 	void OnMixerView();

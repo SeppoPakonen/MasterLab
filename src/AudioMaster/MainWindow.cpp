@@ -86,32 +86,56 @@ void MainWindow::RefreshTitle() {
 
 void MainWindow::Menu(Bar& bar) {
 	bar.Add("File", THISBACK(OnFile));
-	bar.Add("View", THISBACK(OnView));
-	bar.Add("Settings", THISBACK(OnSettings));
+	bar.Add("Edit", THISBACK(OnEdit));
+	bar.Add("Project", THISBACK(OnProject));
+	bar.Add("Audio", THISBACK(OnAudio));
+	bar.Add("MIDI", THISBACK(OnMIDI));
+	bar.Add("Scores", THISBACK(OnScores));
+	bar.Add("Media", THISBACK(OnMedia));
+	bar.Add("Transport", THISBACK(OnTransport));
+	bar.Add("Devices", THISBACK(OnDevices));
+	bar.Add("Window", THISBACK(OnWindow));
 	bar.Add("Help", THISBACK(OnHelp));
 }
 
-void MainWindow::OnView(Bar& vbar) {
-	vbar.Add("Mastering", CtrlImg::new_doc(), THISBACK(OnMasteringView));
-	vbar.Add("Multi-Channel", CtrlImg::new_doc(), THISBACK(OnMultiChannelView));
-	vbar.Add("Mixer", CtrlImg::copy(), THISBACK(OnMixerView));
-	vbar.Add("Analysis", CtrlImg::paste(), THISBACK(OnAnalysisView));
-	vbar.Add("Combined", CtrlImg::remove(), THISBACK(OnCombinedView));
-	vbar.Separator();
-	vbar.Add("Post", CtrlImg::new_doc(), THISBACK(OnPostView));
-	vbar.Add("Post Graph", CtrlImg::new_doc(), THISBACK(OnPostGraphView));
+void MainWindow::OnEdit(Bar& bar) {
+	
 }
 
-void MainWindow::OnFile(Bar& bar) {
-	// add: bar.Add(...
+void MainWindow::OnProject(Bar& bar) {
+	
 }
 
-void MainWindow::OnSettings(Bar& bar) {
-	// add: bar.Add(...
+void MainWindow::OnAudio(Bar& bar) {
+	
+}
+
+void MainWindow::OnMIDI(Bar& bar) {
+	
+}
+
+void MainWindow::OnScores(Bar& bar) {
+	
+}
+
+void MainWindow::OnMedia(Bar& bar) {
+	
+}
+
+void MainWindow::OnTransport(Bar& bar) {
+	
+}
+
+void MainWindow::OnDevices(Bar& bar) {
+	
+}
+
+void MainWindow::OnWindow(Bar& bar) {
+	
 }
 
 void MainWindow::OnHelp(Bar& bar) {
-	// add: bar.Add(...
+	
 }
 
 void MainWindow::OnMasteringView() {
