@@ -19,13 +19,3 @@ struct Node {
 }
 
 #endif
-namespace am {
-struct Node {
-    String label;
-    Ptr<Effect> effect;     // optional: effect processor hosted by node
-    Vector<Port> inputs;
-    Vector<Port> outputs;
-    virtual ~Node(){}
-    virtual bool IsContainer() const { return false; }
-};
-}

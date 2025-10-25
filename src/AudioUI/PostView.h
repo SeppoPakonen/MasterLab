@@ -14,11 +14,3 @@ struct PostView : ParentCtrl {
 }
 
 #endif
-namespace am::ui {
-using namespace Upp;
-struct PostView : ParentCtrl {
-    PostGraph* post = nullptr; // not owned
-    void SetPost(PostGraph* p) { post = p; Refresh(); }
-    PostView();
-};
-}
