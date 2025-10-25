@@ -3,7 +3,8 @@ uses
 	AudioFX,
 	AudioGraph,
 	AudioMaster,
-	CtrlLib;
+	CtrlLib,
+	SubWindowCtrl;
 
 file
 	AudioUI.h,

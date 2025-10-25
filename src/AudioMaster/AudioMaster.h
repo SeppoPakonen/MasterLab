@@ -9,6 +9,7 @@
 using namespace Upp;
 
 // Local dependencies
+#include <SubWindowCtrl/SubWindowCtrl.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
 #include <AudioGraph/AudioGraph.h>
