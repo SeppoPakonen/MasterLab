@@ -1,3 +1,6 @@
+uses
+	ProjectMgmt;
+
 file
 	AudioMaster.h,
 	AudioMaster.cpp,

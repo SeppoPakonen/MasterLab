@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lay version="1" x="280" y="40">
+    <preset_list type="DropList" frame="Border(1)" text="Preset List"/>
+    <preset_save type="Button" frame="Border(1)" text="Save"/>
+    <preset_delete type="Button" frame="Border(1)" text="Delete"/>
+    <preset_open type="Button" frame="Border(1)" text="Open"/>
+</lay>

@@ -31,6 +31,64 @@ protected:
 	Row* CreateKeyAssignRow(const String& label);
 };
 
+// Preference panel registry
+class PanelRegistry {
+public:
+	static PanelRegistry& Instance();
+	
+	void RegisterPanel(const String& category, const String& subcategory, std::function<PreferencesPane*()> factory);
+	Vector<String> GetCategories() const;
+	Vector<String> GetSubcategories(const String& category) const;
+	PreferencesPane* CreatePanel(const String& category, const String& subcategory) const;
+	
+private:
+	PanelRegistry() = default;
+	HashMap<String, VectorMap<String, std::function<PreferencesPane*()>>> registry;
+};
+
+// Registration helper macro
+#define REGISTER_PREF_PANEL(category, subcategory, panel_class) \
+	static struct panel_class##Registrar { \
+		panel_class##Registrar() { \
+			PanelRegistry::Instance().RegisterPanel(category, subcategory, []() { return new panel_class(); }); \
+		} \
+	} panel_class##_registrar;
+
+// Preference dialog implementation
+class PreferencesDlg : public WithPreferencesLayout<TopWindow> {
+public:
+	typedef PreferencesDlg CLASSNAME;
+	PreferencesDlg();
+	
+private:
+	void DataIn();
+	void DataOut();
+	void RefreshTree();
+	void SelectTree(const String& category, const String& subcategory);
+	void OnTreeSel();
+	void OnApply();
+	void OnOK();
+	void OnCancel();
+	void OnDefaults();
+	void OnHelp();
+	void OnPresetChange();
+	void OnPresetStore();
+	void OnPresetRename();
+	void OnPresetDelete();
+	
+	TreeCtrl tree;
+	CtrlHolder view_holder;
+	PreferencesPane* current_panel = nullptr;
+	PreferencesModel model;
+	Button help, defaults, apply, ok, cancel;
+	
+	// Preset functionality
+	DropList preset_list;
+	Button preset_store, preset_rename, preset_delete;
+	Option preset_marked_only;
+	PreferencePresetManager preset_mgr;
+};
+
 // Supporting UI controls
 class Row : public Ctrl {
 public:
@@ -152,6 +210,11 @@ private:
 	EditString edit;
 	Button assign;
 };
+
+#include "WithPreferencesLayout.h"
+
+// Use the layout defined in the .lay file
+typedef WithPreferencesLayoutCls<TopWindow> WithPreferencesLayout;
 
 // PrefKey template for typed key bindings
 template<typename T>

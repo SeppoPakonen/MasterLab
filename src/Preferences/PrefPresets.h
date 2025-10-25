@@ -11,21 +11,25 @@ class PreferencePresetManager {
 public:
 	PreferencePresetManager();
 	
-	// Preset CRUD operations
-	bool CreatePreset(const String& name, const PreferencesModel& model);
-	bool LoadPreset(const String& name, PreferencesModel& model);
-	bool UpdatePreset(const String& name, const PreferencesModel& model);
-	bool DeletePreset(const String& name);
+	void LoadPresets();
+	void SavePreset(const String& name, const PreferencesModel& model);
+	void LoadPreset(const String& name, PreferencesModel& model);
+	void DeletePreset(const String& name);
 	Vector<String> GetPresetNames() const;
 	
-	// "Store marked only" functionality
-	bool SaveMarkedOnly(const String& name, const PreferencesModel& model, const BitSet& changed);
+	// CRUD operations for presets
+	void CreatePreset(const String& name, const PreferencesModel& model);
+	void UpdatePreset(const String& name, const PreferencesModel& model);
+	void ReadPreset(const String& name, PreferencesModel& model);
+	void DeletePreset(const String& name);
 	
-	// Apply preset
-	bool ApplyPreset(const String& name, PreferencesModel& model);
+	// Functionality for "store marked only"
+	void SetMarkedOnly(bool marked_only);
+	bool IsMarkedOnly() const;
 	
 private:
-	String presets_directory;
+	HashMap<String, PreferencesModel> presets;
+	bool marked_only = false;
 };
 
 }

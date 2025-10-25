@@ -13,4 +13,6 @@ file
 	History.h,
 	History.cpp,
 	Selection.h,
-	Selection.cpp;
+	Selection.cpp,
+	AK.h,
+	AK.key;

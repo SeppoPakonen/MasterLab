@@ -1,6 +1,13 @@
 uses
 	CtrlLib,
-	ProjectMgmt;
+	ProjectMgmt,
+	AudioCore,
+	AudioFX,
+	AudioGraph,
+	MediaPool,
+	Devices,
+	Editors,
+	Scores;
 
 file
 	Preferences.h,
@@ -8,4 +15,26 @@ file
 	KeyCommands.h,
 	KeyCommands.cpp,
 	Mapping.h,
-	Mapping.cpp;
+	Mapping.cpp,
+	PrefModel.h,
+	PrefModel.cpp,
+	PrefStore.h,
+	PrefStore.cpp,
+	PrefPresets.h,
+	PrefPresets.cpp,
+	PrefUI.h,
+	PrefUI.cpp,
+	panels/PrefAppearance.h,
+	panels/PrefAppearance.cpp,
+	panels/PrefEditingAudio.h,
+	panels/PrefEditingAudio.cpp,
+	panels/PrefEventDisplay.h,
+	panels/PrefEventDisplay.cpp,
+	panels/PrefMIDI.h,
+	panels/PrefMIDI.cpp,
+	WithPreferencesLayout.h,
+	WithPreferencesLayout.lay,
+	KeyCommandsDlg.h,
+	KeyCommandsDlg.cpp,
+	WithPresetsLayout.h,
+	WithPresetsLayout.lay;

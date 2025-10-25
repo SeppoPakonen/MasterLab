@@ -1,4 +1,5 @@
 #include "Preferences.h"
+#include <ProjectMgmt/AK.h>  // Include AK definitions
 namespace am {
 
 KeyCommands::KeyCommands() {
@@ -7,7 +8,32 @@ KeyCommands::KeyCommands() {
 
 void KeyCommands::LoadCommands() {
 	LOG("Loading key commands");
-	// Stub - implement actual command loading
+	
+	// Load key command mappings from storage
+	// For now, initialize with defaults from the AK.key file
+	
+	// Clear existing commands
+	commands.Clear();
+	
+	// Add default key commands
+	AddCommand({AKKeys::FILE_NEW_PROJECT, "Ctrl+N", "File/New Project"});
+	AddCommand({AKKeys::FILE_OPEN, "Ctrl+O", "File/Open..."});
+	AddCommand({AKKeys::FILE_SAVE, "Ctrl+S", "File/Save"});
+	AddCommand({AKKeys::FILE_SAVE_AS, "Ctrl+Shift+S", "File/Save As..."});
+	AddCommand({AKKeys::FILE_CLOSE, "Ctrl+W", "File/Close"});
+	
+	AddCommand({AKKeys::EDIT_UNDO, "Ctrl+Z", "Edit/Undo"});
+	AddCommand({AKKeys::EDIT_REDO, "Ctrl+Y", "Edit/Redo"});
+	AddCommand({AKKeys::EDIT_CUT, "Ctrl+X", "Edit/Cut"});
+	AddCommand({AKKeys::EDIT_COPY, "Ctrl+C", "Edit/Copy"});
+	AddCommand({AKKeys::EDIT_PASTE, "Ctrl+V", "Edit/Paste"});
+	AddCommand({AKKeys::EDIT_DELETE, "Del", "Edit/Delete"});
+	
+	AddCommand({AKKeys::TRANSPORT_PLAY, "Space", "Transport/Play"});
+	AddCommand({AKKeys::TRANSPORT_STOP, "Ctrl+Space", "Transport/Stop"});
+	AddCommand({AKKeys::TRANSPORT_RECORD, "R", "Transport/Record"});
+	
+	AddCommand({AKKeys::PREFERENCES_OPEN, "Ctrl+,", "File/Preferences..."});
 }
 
 void KeyCommands::SaveCommands() {
@@ -35,6 +61,51 @@ void KeyCommands::UpdateCommand(int commandId, const String& newKeySequence) {
 			break;
 		}
 	}
+}
+
+String KeyCommands::GetKeyName(int key_id) const {
+	// In a real implementation, this would map key IDs to readable names
+	// For now, we'll return a placeholder
+	switch(key_id) {
+		case AKKeys::FILE_NEW_PROJECT: return "File/New Project";
+		case AKKeys::FILE_OPEN: return "File/Open...";
+		case AKKeys::FILE_SAVE: return "File/Save";
+		case AKKeys::FILE_SAVE_AS: return "File/Save As...";
+		case AKKeys::FILE_CLOSE: return "File/Close";
+		case AKKeys::EDIT_UNDO: return "Edit/Undo";
+		case AKKeys::EDIT_REDO: return "Edit/Redo";
+		case AKKeys::EDIT_CUT: return "Edit/Cut";
+		case AKKeys::EDIT_COPY: return "Edit/Copy";
+		case AKKeys::EDIT_PASTE: return "Edit/Paste";
+		case AKKeys::EDIT_DELETE: return "Edit/Delete";
+		case AKKeys::TRANSPORT_PLAY: return "Transport/Play";
+		case AKKeys::TRANSPORT_STOP: return "Transport/Stop";
+		case AKKeys::TRANSPORT_RECORD: return "Transport/Record";
+		case AKKeys::PREFERENCES_OPEN: return "File/Preferences...";
+		default: return "Unknown Command";
+	}
+}
+
+int KeyCommands::GetKeyId(const String& key_name) const {
+	// In a real implementation, this would map readable names to key IDs
+	// For now, we'll return a placeholder
+	if(key_name == "File/New Project") return AKKeys::FILE_NEW_PROJECT;
+	if(key_name == "File/Open...") return AKKeys::FILE_OPEN;
+	if(key_name == "File/Save") return AKKeys::FILE_SAVE;
+	if(key_name == "File/Save As...") return AKKeys::FILE_SAVE_AS;
+	if(key_name == "File/Close") return AKKeys::FILE_CLOSE;
+	if(key_name == "Edit/Undo") return AKKeys::EDIT_UNDO;
+	if(key_name == "Edit/Redo") return AKKeys::EDIT_REDO;
+	if(key_name == "Edit/Cut") return AKKeys::EDIT_CUT;
+	if(key_name == "Edit/Copy") return AKKeys::EDIT_COPY;
+	if(key_name == "Edit/Paste") return AKKeys::EDIT_PASTE;
+	if(key_name == "Edit/Delete") return AKKeys::EDIT_DELETE;
+	if(key_name == "Transport/Play") return AKKeys::TRANSPORT_PLAY;
+	if(key_name == "Transport/Stop") return AKKeys::TRANSPORT_STOP;
+	if(key_name == "Transport/Record") return AKKeys::TRANSPORT_RECORD;
+	if(key_name == "File/Preferences...") return AKKeys::PREFERENCES_OPEN;
+	
+	return -1; // Not found
 }
 
 }

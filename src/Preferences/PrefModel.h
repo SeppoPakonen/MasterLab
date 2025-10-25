@@ -85,6 +85,21 @@ struct EditingPrefs {
 	
 	// Drag delay
 	int drag_delay_ms = 200;
+	
+	// Audio-specific settings
+	String time_stretch_algorithm = "realtime"; // { mplex_4 | realtime }
+	bool treat_muted_as_deleted = false;
+	bool use_mouse_wheel_for_volume = false;
+	bool hitpoints_have_qpoints = false;
+	bool remove_regions_on_offline_processes = false;
+	bool snap_to_zero_crossing = false;
+	
+	// Import audio settings
+	String import_audio_behavior = "open_options"; // { open_options | use_settings }
+	bool copy_to_working_dir = false;
+	bool convert_and_copy = false;
+	bool split_multichannel_files = false;
+	String import_version_behavior = "open_options"; // { open_options | assume_new | assume_skipping }
 };
 
 struct EventDisplayPrefs {

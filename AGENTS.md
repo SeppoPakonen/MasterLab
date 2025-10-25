@@ -168,3 +168,35 @@ When Codex is instructed to *"work"* or *"execute tasks"*, it must:
 
 All development tasks must exist within `TASKS.md` and follow this status-tracking system.
 No direct implementation tasks are executed unless defined in `TASKS.md`.
+
+## U++ Key System Implementation
+
+When implementing U++ accelerator keys, follow this pattern:
+
+1. Create a `.key` file with KEY(...) macros:
+```
+KEY(COMMAND_NAME, "Menu Path/Command Name", "Key Sequence")
+```
+
+2. Use these macros in source files:
+```cpp
+#define KEYGROUPNAME "AK"
+#define KEYNAMESPACE AKKeys
+#define KEYFILE      <ProjectMgmt/AK.key>
+#include             <CtrlLib/key_source.h>
+```
+
+3. For header files, use:
+```cpp
+#define KEYGROUPNAME "AK"
+#define KEYNAMESPACE AKKeys
+#define KEYFILE      <ProjectMgmt/AK.key>
+#include             <CtrlLib/key_header.h>
+```
+
+This generates appropriate command IDs and access functions that integrate with U++'s menu and accelerator system.
+
+Example from ~/upp/reference/AK/AK.upp:
+- The AK.key file uses KEY(...) macros for defining commands
+- The AK.h file uses key_header.h to generate accessors
+- The system integrates with U++'s menu and accelerator framework

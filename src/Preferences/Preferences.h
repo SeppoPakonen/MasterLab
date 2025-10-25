@@ -19,5 +19,6 @@ using namespace Upp;
 #include "PrefUI.h"
 #include "KeyCommands.h"
 #include "Mapping.h"
+#include "KeyCommandsDlg.h"
 
 #endif
