@@ -1,57 +1,143 @@
 # TASKS — Development Workflow
 
-## WAITING FOR FURTHER INFORMATION
-- Implement File menu functionality
-- Implement Edit menu functionality
-- Implement Project menu functionality
-- Implement Audio menu functionality
-- Implement MIDI menu functionality
-- Implement Scores menu functionality
-- Implement Media menu functionality
-- Implement Transport menu functionality
-- Implement Devices menu functionality
-- Implement Window menu functionality
-- Implement Help menu functionality
-- Test all package interfaces and dependencies
+## PHASE 1: CORE FOUNDATION (Months 1-3)
+*Milestone: Basic Project Management*
+
+### Immediate Priorities
+1. Expand ProjectMgmt with full command system architecture
+2. Implement CommandManager with registry and dispatch functionality
+3. Create Command base class and specific command implementations
+4. Implement Undo/Redo stack with History class
+5. Implement FileIO package with basic project operations
+6. Extend AudioCore with basic track and event model
+
+### Secondary Priorities
+7. Define stable command IDs for all functions in WINDOW_KEY_COMMANDS.md
+8. Create CommandContext for execution context management
+9. Implement basic menu system binding to CommandIDs
+10. Add required methods to AudioCore/Mixer.h class
+
+## PHASE 2: BASIC EDITING INFRASTRUCTURE (Months 4-6)
+*Milestone: Functional Audio/MIDI Editing*
+
+### Primary Tasks
+11. Complete Editors package with core editor types (Key, List)
+12. Implement basic AudioOps processing capabilities
+13. Implement basic MidiOps processing capabilities
+14. Build basic transport system in TransportUI
+15. Create basic editing tools in Editors/Tools
+
+### Supporting Tasks
+16. Implement complete menu system binding to CommandIDs
+17. Create ViewFrame to host all editor views
+18. Implement StatusBar display for mode hints and job progress
+19. Create minimal UI hooks in MainWindow
+20. Implement ProjectMgmt::CommandManager
+
+## PHASE 3: ADVANCED EDITING FEATURES (Months 7-9)
+*Milestone: Professional Editing Capabilities*
+
+### Primary Tasks
+21. Complete Editors package with all editor types (Drum, Score, InPlace)
+22. Implement advanced AudioOps processing capabilities
+23. Implement advanced MidiOps processing capabilities
+24. Build advanced editing tools in Editors/Tools
+25. Extend AudioCore with advanced track hierarchy
+
+### Supporting Tasks
+26. Implement Event system with audio, MIDI, automation support
+27. Create TrackParameter and automation systems
+28. Implement advanced track types (folder, group, FX, instrument)
+29. Build Selection system for multi-item operations
+
+## PHASE 4: PLUGIN ARCHITECTURE (Months 10-12)
+*Milestone: Plugin Hosting and Integration*
+
+### Primary Tasks
+30. Extend Devices package with complete plugin hosting system
+31. Implement PluginManager with discovery and loading capabilities
+32. Create VST/AU/AAX plugin wrappers
+33. Implement plugin parameter and preset management
+34. Create plugin GUI integration system
+
+### Supporting Tasks
+35. Implement Plugin discovery cache in Devices::PluginManager
+36. Add required methods to AudioCore/Mixer.h class
+37. Implement runtime observers for ThemeManager, Editors, Transport, PluginManager, Scores
+38. Create Async job queue: FileIO::JobQueue
+
+## PHASE 5: SCRIPTING AND AUTOMATION (Months 13-15)
+*Milestone: Scripting Engine and Advanced Automation*
+
+### Primary Tasks
+39. Create Scripts package for logical processing
+40. Implement ScriptEngine with execution environment
+41. Create LogicalProcessor for script evaluation
+42. Implement PresetManager for process presets
+43. Create MacroRecorder for user-defined command sequences
+
+### Supporting Tasks
+44. Implement preferences storage via U++ Ini/Json
+45. Add migration code in PreferencesStore::Migrate
+46. Implement ProjectMgmt::Clipboard functionality
+47. Implement ProjectMgmt::Keymap
+
+## PHASE 6: PROFESSIONAL FEATURES (Months 16-18)
+*Milestone: Professional Production Environment*
+
+### Primary Tasks
+48. Complete MediaPool package with advanced media management
+49. Implement Views system for different display modes
+50. Create Windowing package with workspace management
+51. Build HelpAbout package with documentation and support
+
+### Supporting Tasks
+52. Implement PreferencePresetManager with preset CRUD and "store marked only" functionality
+53. Implement PreferencesPane base class for all panels
+54. Implement PrefKey<T> template for typed key bindings
+55. Implement persistence schema with versioning in PreferencesStore
+
+## PHASE 7: OPTIMIZATION AND POLISH (Months 19-21)
+*Milestone: Performance Optimization and Quality Assurance*
+
+### Primary Tasks
+56. Optimize real-time audio processing performance
+57. Implement comprehensive testing framework
+58. Fix bugs and improve stability
+59. Enhance cross-platform compatibility
+
+### Supporting Tasks
+60. Complete documentation and tutorial content
+61. Implement performance monitoring and diagnostics
+62. Create professional marketing materials
+63. Set up customer support infrastructure
+
+## PHASE 8: MARKET RELEASE (Month 22)
+*Milestone: Commercial Release*
+
+### Primary Tasks
+64. Create installer and distribution system
+65. Implement licensing and registration system
+66. Set up update mechanism
+67. Launch marketing campaign
+
+### Supporting Tasks
+68. Create community forums and support channels
+69. Publish video tutorials and documentation
+70. Establish ongoing maintenance plan
+71. Create roadmap for future development
 
 ## TODO
 
-23. Implement PreferencesModel with hierarchical in-memory model
-24. Implement PreferencesStore with JSON/INI persistence and versioning
-25. Implement PreferencePresetManager with preset CRUD and "store marked only" functionality
-26. Implement PreferencesPane base class for all panels
-27. Implement PrefKey<T> template for typed key bindings
-28. Implement persistence schema with versioning in PreferencesStore
-29. Implement TreeCtrl wiring with panel registry in PrefUI
-30. Implement panel lifecycle methods (Init, Load, Store) for all preference panels
-31. Create CommandIDs for Preferences/Key Commands dialogs
-32. Implement runtime observers for ThemeManager, Editors, Transport, PluginManager, Scores
-33. Add migration code in PreferencesStore::Migrate
-34. Create .upp files for new packages with proper uses declarations
-35. Create AudioOps package with files: AudioOps.h, AudioOps.cpp, OfflineOps.h, OfflineOps.cpp, Fades.h, Fades.cpp, Crossfade.h, Crossfade.cpp, Bounce.h, Bounce.cpp, Normalize.h, Normalize.cpp, Phase.h, Phase.cpp, DCOffset.h, DCOffset.cpp, Resample.h, Resample.cpp, TimeStretch.h, TimeStretch.cpp, PitchShift.h, PitchShift.cpp, Reverse.h, Reverse.cpp, Silence.h, Silence.cpp, StereoFlip.h, StereoFlip.cpp, GainOps.h, GainOps.cpp, Envelope.h, Envelope.cpp
-36. Create MidiOps package with files: MidiOps.h, MidiOps.cpp, Quantize.h, Quantize.cpp, Transpose.h, Transpose.cpp, Functions.h, Functions.cpp, LogicalEditor.h, LogicalEditor.cpp, Presets.h, Presets.cpp
-37. Define stable command IDs in ProjectMgmt/Commands.h
-38. Implement central dispatcher in ProjectMgmt/Commands.cpp
-39. Create History class with Undo/Redo functionality
-40. Create Selection class for selection sets
-41. Implement ProjectMgmt::Clipboard functionality
-42. Implement Menu construction in AudioMaster/MainWindow.cpp binding to CommandID
-43. Add required methods to AudioCore/Project.h class
-44. Add required methods to AudioCore/Transport.h class
-45. Add required methods to AudioCore/Mixer.h class
-46. Implement ProjectMgmt::CommandManager
-47. Implement ProjectMgmt::Keymap
-48. Create Async job queue: FileIO::JobQueue
-49. Implement preferences storage via U++ Ini/Json
-50. Implement Plugin discovery cache in Devices::PluginManager
-51. Create minimal UI hooks in MainWindow
-52. Implement StatusBar display for mode hints and job progress
-53. Create ViewFrame to host Editors, MediaPool, Browser, Score views, Mixers, Transport
-54. Create .upp files for each package with proper uses declarations
+### Core Command System Implementation
+72. Create CommandIDs for Preferences/Key Commands dialogs
+73. Implement TreeCtrl wiring with panel registry in PrefUI
+74. Implement panel lifecycle methods (Init, Load, Store) for all preference panels
+75. Create .upp files for new packages with proper uses declarations
 
 ## IN PROGRESS
 
-22. Implement UI controls in PrefUI: Row, LabelBox, ColorRect, LabeledSlider, etc.
+* (empty)
 
 ## DONE
 
@@ -83,11 +169,9 @@
 26. Create Preferences package with files: Preferences.h, Preferences.cpp, KeyCommands.h, KeyCommands.cpp, Mapping.h, Mapping.cpp
 27. Create Video package with files: Video.h, Video.cpp, AudioFromVideo.h, AudioFromVideo.cpp, ReplaceAudio.h, ReplaceAudio.cpp, Thumbnail.h, Thumbnail.cpp
 
+## References
 
-## IN PROGRESS
-
-* (empty)
-
-## DONE
-
-* (empty)
+- See IMPLEMENTATION_ROADMAP.md for detailed phase breakdown
+- See COMMAND_ARCHITECTURE_PLAN.md for technical architecture
+- See COMMAND_CATEGORY_MAPPING.md for category-to-package mapping
+- See CLASS_FUNCTION_REQUIREMENTS.md for detailed class/function specifications

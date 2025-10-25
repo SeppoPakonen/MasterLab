@@ -721,7 +721,7 @@ These commands reveals a lot of the functionality of this program.
 	- Silence
 	- Stereo Flip
 	- Time Stretch
-- Process Logical Preset
+- Process Logical Preset // (these are all script files)
 	- Add Note [+12], if Modwheel is above 64
 	- add volume 0 fo end of note
 	- del patch changes
@@ -762,7 +762,7 @@ These commands reveals a lot of the functionality of this program.
 	- transpose +12
 	- transpose 12
 	- Transpase EventelnSustainRlange
-- Process Plugin
+- Process Plugin // (These are all external plugins)
 	- AmpSimulstor
 	- Aphex Vintage Exciter Mono
 	- Aphex Vintage Exciter Stereo
@@ -1286,7 +1286,7 @@ These commands reveals a lot of the functionality of this program.
 	- X-Noise Stereo
 	- Z-Noise Mono
 	- Z-Noise Stereo
-- Process Project Logical Editor
+- Process Project Logical Editor // (these are all script files)
 	- init
 	- Add a Date to selected MIDI + Audio Tracks
 	- Colorize small MIDI parts
