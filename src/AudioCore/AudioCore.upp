@@ -1,27 +1,17 @@
-{
-	"Name": "AudioCore",
-	"Type": 0,
-	"Version": 1,
-	"Uses": [
-		"Core"
-	],
-	"Src": [
-		"AudioTypes.h",
-		"AudioBuffer.h",
-		"AudioBuffer.cpp",
-		"IIdentified.h",
-		"IIdentified.cpp",
-		"Clip.h",
-		"Timeline.h",
-		"Transport.h",
-		"Transport.cpp",
-		"Channel.h",
-		"Bus.h",
-		"Mixer.h",
-		"Mixer.cpp",
-		"Project.h"
-	],
-	"Precomp": "",
-	"Doc": "",
-	"Title": ""
-}
+file
+	AudioCore.h,
+	AudioBuffer.h,
+	AudioBuffer.cpp,
+	AudioTypes.h,
+	Bus.h,
+	Channel.h,
+	Clip.h,
+	IIdentified.h,
+	IIdentified.cpp,
+	Mixer.h,
+	Mixer.cpp,
+	Project.h,
+	Timeline.h,
+	Transport.h,
+	Transport.cpp;
+

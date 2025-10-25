@@ -4,3 +4,14 @@ uses
 	AudioGraph,
 	AudioMaster;
 
+file
+	AudioUI.h,
+	Breadcrumb.h,
+	GraphEditorWidgets.cpp,
+	GraphEditorWidgets.h,
+	Breadcrumb.cpp,
+	PostGraphView.h,
+	PostGraphView.cpp,
+	PostView.h,
+	PostView.cpp;
+

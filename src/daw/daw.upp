@@ -1,6 +1,9 @@
 uses
 	AudioUI;
 
+file
+	daw.h;
+
 mainconfig
 	"" = "";
 
