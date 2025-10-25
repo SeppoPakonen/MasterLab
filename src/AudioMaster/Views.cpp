@@ -1,4 +1,4 @@
-#include "Views.h"
+#include "AudioMaster.h"  // This includes all necessary headers including AudioUI/AudioUI.h
 
 MultiChannelView::MultiChannelView() {
 	InitLayout();
@@ -67,7 +67,12 @@ void CombinedView::InitLayout() {
 }
 
 PostViewWrapper::PostViewWrapper() {
+	postView = new am::ui::PostView();  // Allocate the UI object
 	InitLayout();
+}
+
+PostViewWrapper::~PostViewWrapper() {
+	delete postView;  // Clean up
 }
 
 void PostViewWrapper::InitLayout() {
@@ -75,11 +80,18 @@ void PostViewWrapper::InitLayout() {
 	AddFrame(StaticRect(Color(255, 220, 255)));
 	
 	// Initialize the post view
-	AddChild(&postView);
+	if (postView) {
+		AddChild(postView);
+	}
 }
 
 PostGraphViewWrapper::PostGraphViewWrapper() {
+	postGraphView = new am::ui::PostGraphView();  // Allocate the UI object
 	InitLayout();
+}
+
+PostGraphViewWrapper::~PostGraphViewWrapper() {
+	delete postGraphView;  // Clean up
 }
 
 void PostGraphViewWrapper::InitLayout() {
@@ -87,5 +99,7 @@ void PostGraphViewWrapper::InitLayout() {
 	AddFrame(StaticRect(Color(220, 255, 255)));
 	
 	// Initialize the post graph view
-	AddChild(&postGraphView);
+	if (postGraphView) {
+		AddChild(postGraphView);
+	}
 }
