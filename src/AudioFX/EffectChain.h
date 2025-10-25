@@ -5,7 +5,7 @@
 
 namespace am {
 struct Effect; // Forward declaration for same-package type
-struct EffectChain {
+struct EffectChain : Ptr<EffectChain> {
     Array<Effect> effects;
     
     void Add(Effect* e) { effects.Add(e); }

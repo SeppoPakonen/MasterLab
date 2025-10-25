@@ -6,8 +6,8 @@ namespace am {
 struct Channel; // Forward declaration - full type provided by main header
 struct Bus; // Forward declaration - full type provided by main header
 struct Mixer {
-    Vector<Channel*> channels;
-    Bus* master = nullptr;
+    Array<Channel> channels;
+    Ptr<Bus> master;
     // simple pan-law and mix placeholder API
     void MixBlock(AudioBuffer& out);
 };

@@ -4,7 +4,7 @@
 namespace am {
 	
 struct EffectChain; // fwd (in AudioFX)
-struct Bus {
+struct Bus : Pte<Bus> {
     String name = "Master";
     EffectChain* fx = nullptr; // master/bus effect chain
 };
