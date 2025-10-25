@@ -65,3 +65,27 @@ void CombinedView::InitLayout() {
 	splitter->Horz(*topView, *bottomView);
 	AddChild(splitter);
 }
+
+PostViewWrapper::PostViewWrapper() {
+	InitLayout();
+}
+
+void PostViewWrapper::InitLayout() {
+	SetLabel("Post View");
+	AddFrame(StaticRect(Color(255, 220, 255)));
+	
+	// Initialize the post view
+	AddChild(&postView);
+}
+
+PostGraphViewWrapper::PostGraphViewWrapper() {
+	InitLayout();
+}
+
+void PostGraphViewWrapper::InitLayout() {
+	SetLabel("Post Graph View");
+	AddFrame(StaticRect(Color(220, 255, 255)));
+	
+	// Initialize the post graph view
+	AddChild(&postGraphView);
+}

@@ -1,0 +1,27 @@
+{
+	"Name": "AudioCore",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core"
+	],
+	"Src": [
+		"AudioTypes.h",
+		"AudioBuffer.h",
+		"AudioBuffer.cpp",
+		"IIdentified.h",
+		"IIdentified.cpp",
+		"Clip.h",
+		"Timeline.h",
+		"Transport.h",
+		"Transport.cpp",
+		"Channel.h",
+		"Bus.h",
+		"Mixer.h",
+		"Mixer.cpp",
+		"Project.h"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

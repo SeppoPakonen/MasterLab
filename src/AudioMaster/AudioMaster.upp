@@ -1,7 +1,26 @@
-<AudioMaster>
-<AudioMaster.h>
-<AudioMaster.cpp>
-<MainWindow.h>
-<MainWindow.cpp>
-<Views.h>
-<Views.cpp>
+{
+	"Name": "AudioMaster",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"Draw",
+		"CtrlCore",
+		"CtrlLib",
+		"AudioCore",
+		"AudioFX",
+		"AudioGraph",
+		"AudioUI"
+	],
+	"Src": [
+		"AudioMaster.h",
+		"AudioMaster.cpp",
+		"MainWindow.h",
+		"MainWindow.cpp",
+		"Views.h",
+		"Views.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

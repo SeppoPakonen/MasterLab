@@ -18,6 +18,8 @@ MainWindow::MainWindow() {
 	mixerView = new MixerView();
 	analysisView = new AnalysisView();
 	combinedView = new CombinedView();
+	postView = new PostViewWrapper();
+	postGraphView = new PostGraphViewWrapper();
 	
 	currentView = NULL;
 	
@@ -48,6 +50,12 @@ void MainWindow::SetView(int type) {
 		case 4: // Combined view
 			currentView = combinedView;
 			break;
+		case 5: // Post view
+			currentView = postView;
+			break;
+		case 6: // Post graph view
+			currentView = postGraphView;
+			break;
 		default:
 			currentView = masteringView;
 			break;
@@ -66,10 +74,6 @@ void MainWindow::Menu(Bar& bar) {
 	bar.Add("Help", THISBACK(OnHelp));
 }
 
-void MainWindow::OnFile() {
-	PromptOK("File menu clicked");
-}
-
 void MainWindow::OnView() {
 	MenuBar vbar;
 	vbar.Add("Mastering", CtrlImg::newdir(), THISBACK(OnMasteringView));
@@ -77,7 +81,14 @@ void MainWindow::OnView() {
 	vbar.Add("Mixer", CtrlImg::copy(), THISBACK(OnMixerView));
 	vbar.Add("Analysis", CtrlImg::paste(), THISBACK(OnAnalysisView));
 	vbar.Add("Combined", CtrlImg::deletefile(), THISBACK(OnCombinedView));
+	vbar.AddSeparator();
+	vbar.Add("Post", CtrlImg::newdir(), THISBACK(OnPostView));
+	vbar.Add("Post Graph", CtrlImg::file(), THISBACK(OnPostGraphView));
 	Popup(vbar);
+}
+
+void MainWindow::OnFile() {
+	PromptOK("File menu clicked");
 }
 
 void MainWindow::OnSettings() {
@@ -106,4 +117,12 @@ void MainWindow::OnAnalysisView() {
 
 void MainWindow::OnCombinedView() {
 	SetView(4);
+}
+
+void MainWindow::OnPostView() {
+	SetView(5);
+}
+
+void MainWindow::OnPostGraphView() {
+	SetView(6);
 }

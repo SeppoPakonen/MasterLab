@@ -1,0 +1,27 @@
+{
+	"Name": "AudioGraph",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"AudioCore",
+		"AudioFX"
+	],
+	"Src": [
+		"MultiChannelLayout.h",
+		"Port.h",
+		"Edge.h",
+		"Node.h",
+		"SubgraphNode.h",
+		"Graph.h",
+		"Graph.cpp",
+		"Routing.h",
+		"Routing.cpp",
+		"BusWithInternalGraph.h",
+		"PostGraph.h",
+		"PostGraph.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

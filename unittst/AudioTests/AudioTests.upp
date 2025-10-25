@@ -1,0 +1,19 @@
+{
+	"Name": "AudioTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"AudioCore",
+		"AudioFX",
+		"AudioGraph"
+	],
+	"Src": [
+		"GraphTopologyTests.cpp",
+		"EffectChainTests.cpp",
+		"ChannelClipTests.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

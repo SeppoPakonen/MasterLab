@@ -2,6 +2,8 @@
 #define _AudioMaster_Views_h_
 
 #include <CtrlLib/CtrlLib.h>
+#include "../AudioUI/PostView.h"
+#include "../AudioUI/PostGraphView.h"
 
 using namespace Upp;
 
@@ -42,6 +44,24 @@ public:
 	CombinedView();
 	
 private:
+	void InitLayout();
+};
+
+class PostViewWrapper : public Ctrl {
+public:
+	PostViewWrapper();
+	
+private:
+	am::ui::PostView postView;
+	void InitLayout();
+};
+
+class PostGraphViewWrapper : public Ctrl {
+public:
+	PostGraphViewWrapper();
+	
+private:
+	am::ui::PostGraphView postGraphView;
 	void InitLayout();
 };
 

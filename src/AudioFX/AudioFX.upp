@@ -1,0 +1,28 @@
+{
+	"Name": "AudioFX",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"AudioCore"
+	],
+	"Src": [
+		"Effect.h",
+		"EffectChain.h",
+		"Gain.h",
+		"Gain.cpp",
+		"EQ.h",
+		"EQ.cpp",
+		"Compressor.h",
+		"Compressor.cpp",
+		"Limiter.h",
+		"Limiter.cpp",
+		"Crossover.h",
+		"Crossover.cpp",
+		"Splitter.h",
+		"Splitter.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}
