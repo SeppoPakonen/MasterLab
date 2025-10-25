@@ -2,7 +2,7 @@
 #define _AudioMaster_MainWindow_h_
 
 #include <CtrlLib/CtrlLib.h>
-#include "Views.h"
+#include <AudioUI/AudioUI.h>  // Use main header instead
 
 using namespace Upp;
 

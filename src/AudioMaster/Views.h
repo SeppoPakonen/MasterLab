@@ -2,8 +2,7 @@
 #define _AudioMaster_Views_h_
 
 #include <CtrlLib/CtrlLib.h>
-#include "../AudioUI/PostView.h"
-#include "../AudioUI/PostGraphView.h"
+#include "../AudioUI/AudioUI.h"  // Use main header
 
 using namespace Upp;
 

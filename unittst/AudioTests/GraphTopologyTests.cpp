@@ -1,7 +1,6 @@
 #include <Core/Core.h>
-#include "../src/AudioGraph/PostGraph.h"
-#include "../src/AudioFX/Crossover.h"
-#include "../src/AudioFX/Splitter.h"
+#include "../src/AudioGraph/AudioGraph.h"
+#include "../src/AudioFX/AudioFX.h"
 
 CONSOLE_APP_MAIN {
     using namespace Upp;

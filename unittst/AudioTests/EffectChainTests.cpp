@@ -1,8 +1,6 @@
 #include <Core/Core.h>
-#include "../src/AudioFX/EffectChain.h"
-#include "../src/AudioFX/Gain.h"
-#include "../src/AudioFX/Limiter.h"
-#include "../src/AudioCore/AudioBuffer.h"
+#include "../src/AudioFX/AudioFX.h"
+#include "../src/AudioCore/AudioCore.h"
 
 CONSOLE_APP_MAIN {
     using namespace Upp;

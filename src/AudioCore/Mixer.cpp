@@ -1,4 +1,4 @@
-#include "Mixer.h"
+#include "AudioCore.h"
 namespace am {
 void Mixer::MixBlock(AudioBuffer& out) {
     // Simple mixing implementation - sum all channels
@@ -15,7 +15,7 @@ void Mixer::MixBlock(AudioBuffer& out) {
     // Mix each channel with gain and panning
     for(Channel* ch : channels) {
         if(ch) {
-            // Apply gain and pan to this channel
+            // Apply gain and panning to this channel
             // This is a simplified approach - real implementation would be more complex
         }
     }

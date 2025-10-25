@@ -1,5 +1,4 @@
-#include "MainWindow.h"
-#include "Views.h"
+#include "AudioMaster.h"
 
 MainWindow::MainWindow() {
 	Sizeable().Zoomable();

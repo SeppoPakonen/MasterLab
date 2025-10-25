@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "AudioGraph.h"
 namespace am {
 int Graph::AddNode(Node* n) {
     int index = nodes.GetCount();

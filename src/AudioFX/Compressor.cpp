@@ -1,4 +1,4 @@
-#include "Compressor.h"
+#include "AudioFX.h"
 namespace am {
 void Compressor::Process(AudioBuffer& io) {
     // Placeholder implementation - just pass through

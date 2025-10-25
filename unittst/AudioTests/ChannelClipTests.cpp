@@ -1,7 +1,5 @@
 #include <Core/Core.h>
-#include "../src/AudioCore/Channel.h"
-#include "../src/AudioCore/Clip.h"
-#include "../src/AudioCore/AudioTypes.h"
+#include "../src/AudioCore/AudioCore.h"
 
 CONSOLE_APP_MAIN {
     using namespace Upp;

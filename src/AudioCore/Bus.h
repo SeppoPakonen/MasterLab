@@ -1,7 +1,8 @@
 #pragma once
 #include "AudioTypes.h"
+
 namespace am {
-struct EffectChain;
+struct EffectChain; // fwd (in AudioFX)
 struct Bus {
     String name = "Master";
     EffectChain* fx = nullptr; // master/bus effect chain

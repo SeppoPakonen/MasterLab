@@ -1,4 +1,4 @@
-#include "Gain.h"
+#include "AudioFX.h"
 namespace am {
 void Gain::Process(AudioBuffer& io) {
     // Apply gain in dB to all channels

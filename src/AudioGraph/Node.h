@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/Core.h>
-#include "../AudioFX/Effect.h"
+#include <AudioFX/AudioFX.h>  // Use main header instead
 #include "Port.h"
 namespace am {
 struct Node {

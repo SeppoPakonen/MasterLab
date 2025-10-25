@@ -1,6 +1,6 @@
 #pragma once
 #include <CtrlLib/CtrlLib.h>
-#include "../AudioGraph/PostGraph.h"
+#include "../AudioGraph/AudioGraph.h"  // Include main header of AudioGraph
 namespace am::ui {
 using namespace Upp;
 struct PostView : ParentCtrl {

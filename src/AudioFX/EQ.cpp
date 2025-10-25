@@ -1,4 +1,4 @@
-#include "EQ.h"
+#include "AudioFX.h"
 namespace am {
 void EQ::Process(AudioBuffer& io) {
     // Placeholder implementation - just pass through

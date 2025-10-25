@@ -1,6 +1,6 @@
 #pragma once
 #include <CtrlLib/CtrlLib.h>
-#include "../AudioGraph/Graph.h"
+#include "../AudioGraph/AudioGraph.h"  // Include main header of AudioGraph
 #include "Breadcrumb.h"
 namespace am::ui {
 using namespace Upp;

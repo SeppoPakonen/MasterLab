@@ -1,5 +1,5 @@
 #pragma once
-#include "../AudioCore/Bus.h"
+#include "../AudioCore/Bus.h"  // Only the specific header needed
 #include "Graph.h"
 namespace am {
 struct BusWithInternalGraph : am::Bus {

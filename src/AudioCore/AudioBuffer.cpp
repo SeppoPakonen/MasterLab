@@ -1,4 +1,4 @@
-#include "AudioBuffer.h"
+#include "AudioCore.h"
 namespace am {
 void AudioBuffer::Resize(int ch, int frames) {
     channels = ch;

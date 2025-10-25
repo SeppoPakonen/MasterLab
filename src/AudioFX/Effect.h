@@ -1,6 +1,5 @@
 #pragma once
-#include "../AudioCore/AudioTypes.h"
-#include "../AudioCore/AudioBuffer.h"
+#include <AudioCore/AudioCore.h>  // Use main header instead
 namespace am {
 struct Effect {
     virtual ~Effect() {}
