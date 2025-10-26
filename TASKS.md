@@ -242,6 +242,7 @@
 ### MEDIUM PRIORITY
 81. Create .upp files for new packages with proper uses declarations
 94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
+98. Enrich `DSP::ZenCoreMFXCatalogue` with parameter templates and apply defaults in ZenCore model expansions
 
 ### FUTURE CONSIDERATION
 * Implement comprehensive error handling across all systems
