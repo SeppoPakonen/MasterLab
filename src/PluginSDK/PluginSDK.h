@@ -57,6 +57,10 @@ struct ProcessContext {
 	TransportInfo transport;
 	ModulationBus* modulation = nullptr;
 	int frames = 0;
+	Vector<NoteEvent>* midi_input = nullptr;
+	Vector<NoteEvent>* midi_output = nullptr;
+	Vector<ControlEvent>* control_input = nullptr;
+	Vector<ControlEvent>* control_output = nullptr;
 };
 
 struct ParameterDescriptor {
@@ -93,6 +97,7 @@ public:
 	struct Edge {
 		String source;
 		String destination;
+		bool active = true;
 	};
 
 	void Add(const String& source, const String& destination);
@@ -100,6 +105,26 @@ public:
 
 private:
 	Vector<Edge> edges;
+};
+
+struct GraphNode {
+	String id;
+	String label;
+	String group;
+};
+
+struct GraphEdge {
+	String from;
+	String to;
+	bool audio = false;
+	bool control = false;
+	bool active = true;
+};
+
+struct GraphVisualization {
+	Vector<GraphNode> nodes;
+	Vector<GraphEdge> edges;
+	void Clear();
 };
 
 class AnalyzerTap {
@@ -121,10 +146,13 @@ public:
 
 	ParameterSet& Parameters();
 	const ParameterSet& Parameters() const;
+	GraphVisualization& Graph();
+	const GraphVisualization& Graph() const;
 
 protected:
 	ParameterSet parameter_set;
 	AudioConfig current_config;
+	GraphVisualization graph;
 };
 
 class InstrumentProcessor : public PluginProcessor {
@@ -133,6 +161,40 @@ public:
 	void NoteOff(const NoteEvent& evt);
 	void ControlChange(const ControlEvent& evt);
 	void AllNotesOff();
+};
+
+class MidiEffectProcessor {
+public:
+	virtual ~MidiEffectProcessor() {}
+
+	virtual void Prepare(const AudioConfig& cfg);
+	virtual void Reset();
+	virtual void Process(ProcessContext& ctx, Vector<NoteEvent>& in_notes, Vector<NoteEvent>& out_notes,
+		Vector<ControlEvent>& in_controls, Vector<ControlEvent>& out_controls) = 0;
+
+	void SetParameter(const String& id, double value);
+	double GetParameter(const String& id) const;
+
+	ParameterSet& Parameters();
+	const ParameterSet& Parameters() const;
+	GraphVisualization& Graph();
+	const GraphVisualization& Graph() const;
+
+protected:
+	ParameterSet parameter_set;
+	AudioConfig current_config;
+	GraphVisualization graph;
+};
+
+class MidiInstrumentProcessor : public MidiEffectProcessor {
+public:
+	void Prepare(const AudioConfig& cfg) override;
+	void Reset() override;
+	void Process(ProcessContext& ctx, Vector<NoteEvent>& in_notes, Vector<NoteEvent>& out_notes,
+		Vector<ControlEvent>& in_controls, Vector<ControlEvent>& out_controls) override;
+
+protected:
+	virtual void GeneratePattern(ProcessContext& ctx, Vector<NoteEvent>& out_notes, Vector<ControlEvent>& out_controls) = 0;
 };
 
 } // namespace PluginSDK

@@ -273,6 +273,7 @@
 28. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md and capture results in EFFECTS.md/INSTRUMENTS.md
 29. Update root/packet `AGENTS.md` files to capture core class implementation details for EFFECTS/INSTRUMENTS blueprints
 30. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
+31. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
 
 ## References
 

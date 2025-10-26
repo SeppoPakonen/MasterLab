@@ -71,10 +71,16 @@ void RoutingMap::Add(const String& source, const String& destination) {
 	Edge& e = edges.Add();
 	e.source = source;
 	e.destination = destination;
+	e.active = true;
 }
 
 const Vector<RoutingMap::Edge>& RoutingMap::GetEdges() const {
 	return edges;
+}
+
+void GraphVisualization::Clear() {
+	nodes.Clear();
+	edges.Clear();
 }
 
 void PluginProcessor::Prepare(const AudioConfig& config) {
@@ -100,6 +106,14 @@ const ParameterSet& PluginProcessor::Parameters() const {
 	return parameter_set;
 }
 
+GraphVisualization& PluginProcessor::Graph() {
+	return graph;
+}
+
+const GraphVisualization& PluginProcessor::Graph() const {
+	return graph;
+}
+
 void InstrumentProcessor::NoteOn(const NoteEvent&) {
 }
 
@@ -110,6 +124,52 @@ void InstrumentProcessor::ControlChange(const ControlEvent&) {
 }
 
 void InstrumentProcessor::AllNotesOff() {
+}
+
+void MidiEffectProcessor::Prepare(const AudioConfig& cfg) {
+	current_config = cfg;
+}
+
+void MidiEffectProcessor::Reset() {
+}
+
+void MidiEffectProcessor::SetParameter(const String& id, double value) {
+	parameter_set.SetValueById(id, value);
+}
+
+double MidiEffectProcessor::GetParameter(const String& id) const {
+	return parameter_set.GetValueById(id);
+}
+
+ParameterSet& MidiEffectProcessor::Parameters() {
+	return parameter_set;
+}
+
+const ParameterSet& MidiEffectProcessor::Parameters() const {
+	return parameter_set;
+}
+
+GraphVisualization& MidiEffectProcessor::Graph() {
+	return graph;
+}
+
+const GraphVisualization& MidiEffectProcessor::Graph() const {
+	return graph;
+}
+
+void MidiInstrumentProcessor::Prepare(const AudioConfig& cfg) {
+	MidiEffectProcessor::Prepare(cfg);
+}
+
+void MidiInstrumentProcessor::Reset() {
+	MidiEffectProcessor::Reset();
+}
+
+void MidiInstrumentProcessor::Process(ProcessContext& ctx, Vector<NoteEvent>& in_notes, Vector<NoteEvent>& out_notes,
+	Vector<ControlEvent>& in_controls, Vector<ControlEvent>& out_controls) {
+	(void)in_notes;
+	(void)in_controls;
+	GeneratePattern(ctx, out_notes, out_controls);
 }
 
 } // namespace PluginSDK
