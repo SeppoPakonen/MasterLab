@@ -1,5 +1,34 @@
 # MIDI Inserts
 
+## Stub Package Overview
+- `midi_inserts/Arpache5` — Real-time arpeggiator with configurable play order, step size, and note length.
+- `midi_inserts/ArpacheSX` — Advanced polyphonic arpeggiator with Classic and Sequence modes sharing pattern data with StepDesigner.
+- `midi_inserts/AutoLFO` — Tempo-synchronised MIDI LFO generator for CC automation.
+- `midi_inserts/BeatDesigner` — Drum-oriented step sequencer with velocity lanes and pattern presets.
+- `midi_inserts/Chorder` — Chord trigger/layer insert with preset voicings and play styles.
+- `midi_inserts/MidiCompressor` — Velocity/length compressor for MIDI notes.
+- `midi_inserts/ContextGate` — Context-aware gate with polyphonic and monophonic modes.
+- `midi_inserts/Density` — Density/velocity redistribution tool for beat emphasis.
+- `midi_inserts/MidiController` — Eight-lane controller router with per-row toggles.
+- `midi_inserts/MidiEcho` — Echo/delay generator with velocity, pitch, and length decay.
+- `midi_inserts/MidiModifiers` — Compact transform grid for transpose, velocity, range, and randomisation tasks.
+- `midi_inserts/MidiMonitor` — Diagnostic monitor capturing filtered MIDI events.
+- `midi_inserts/MicroTuner` — Pitch-class tuning insert for cent-level adjustments.
+- `midi_inserts/NoteToCC` — Converts note velocity to controller messages.
+- `midi_inserts/Quantizer` — Real-time timing quantiser with swing, strength, and delay.
+- `midi_inserts/StepDesigner` — Melodic step sequencer with CC lanes and pattern banks.
+- `midi_inserts/TrackControl` — GS/XG macro controller panel with effect selectors.
+- `midi_inserts/Transformer` — Rule-based logical editor for filtering, transforming, or inserting events.
+
+## Feature Snapshot & Shared Infrastructure
+- Arpache family reuses `MidiGraph::InputCollector`, `MidiGraph::LatchBuffer`, `MidiGraph::OrderResolver`, and `MidiGraph::ClockDividerNode` for unified chord capture and timing.
+- BeatDesigner/StepDesigner/ArpacheSX sequence lanes share `MidiSequencer::StepGrid`, `MidiSequencer::AutomationLane`, `MidiSequencer::PatternMemory`, and `MidiGraph::PatternScheduler` for pattern editing.
+- Harmony-related inserts (Chorder, ArpacheSX, MicroTuner) pull from `MidiHarmony::ChordPresetLibrary`, `MidiHarmony::VoicingEngine`, and `MidiPitch::TuningTable` to ensure presets align across tools.
+- Dynamics-focused inserts (MidiCompressor, Density, MidiModifiers) rely on `MidiDynamics::VelocityCurve`, `MidiDynamics::GainStage`, and `MidiRandom::DeterministicStream` for consistent velocity shaping/humanisation.
+- Controller utilities (MidiController, TrackControl, AutoLFO, NoteToCC) centralise routing via `MidiRouting::ControllerMatrix` and metadata from `MidiRouting::ControllerLibrary`.
+- Transformer presets and MidiModifiers grids share the `MidiLogic::RuleEngine` primitives; full preset text now lives under `scripts/midi_inserts/transformer/` for reuse.
+
+
 ## Reference software
 
 ### Arpache 5
@@ -379,249 +408,12 @@ Integer 0-15
 
 	
 #### Presets
-So these are the presets included. 
 
-##### Added for Version 3
+Preset definitions have been exported to `scripts/midi_inserts/transformer/` as individual `.md` files for reuse in tooling and automation:
 
-###### Add Note [+12], if Mod/Wheel is above 64
-(;Type Is; Equal; Note; ; ;; &&
- ;Last Event; Equal; MIDI Status; 176; ;; &&
- ;Last Event; Equal; Value 1; 1; ;; &&
- ;Last Event; Equal; Value 2; 64; );;;
--> Value 1; Add; 12; ;
-Function: Insert
+- `added_for_version_3/` — Add Note [+12], if Mod/Wheel is above 64; Delete all Controllers in Cycle Range; Delete each 5th note; Delete SMF Events; Kill Notes on C-Major; Scale down Velocity in Sustain Range; Select all Events beyond Cursor; Select all Events in Cycle Range; Shift Key C1 Transpose by 24; Shift Notes by 12 Ticks beyond Cursor; Transform Notes after D#3 or C#3; Transpose EventsInSistainRange.
+- `experimental/` — add volume 0 to end of note; delete black keys; downbeat accent (4/4); extract volume and pan; filter off beats; insert mid iVolume for velocity.
+- `standard_set_1/` — delete muted; delete short notes; double tempo; fixed velocity 100; half tempo; push back -4; push forward +4; random notes (c3 to c5); random velocity (60 to 100).
+- `standard_set_2/` — del.aftertouch; del patch changes; del velocity below 30; del velocity below 35; del velocity below 40; del velocity below 45; extract note (c3 60); high notes to channel 1; low notes to channel 2; set notes to fixed pitch (c3); transpose -12; transpose +12.
 
-###### Delete SMF Events
-(;Type Is; Equal; SMF Event; ; ;)
-Function: Delete
-
-###### Delete all Controllers in Cycle Range
-(;Type Is; Equal; Controller; ; ;; And;
- ;Position; Inside Cycle;;;PPQ;);;
-Function: Delete
-
-###### Delete each 5th note
-(;Type Is; Equal; Note; ; ;; And;
- ;Last Event; Every other Event;Eventcounter;5;;);;
-Function: Delete
-
-###### Kill Notes on C-Major
-(;Type Is;Equal;Note;;;;And;
- ;Last Event;Equal;Midi Status;144;;;And;
- ;Last Event;Equal;Note is playing;60;;;And;
- ;Last Event;Equal;Note is playing;64/E3;;;And;
- ;Last Event;Equal;Note is playing;67/G3;;);;
-Function: Delete
-
-###### Scale down Velocity in Sustain Range
-(;Type Is;Equal;Note;;;;And;
- ;Last Event;Equal;Midi Status;176/Controller;;;And;
- ;Last Event;Equal;Value 1;64/E3;;;And;
- ;Last Event;Equal;Value 2;64/E3;;);;
-->Value 2; Multiply by;0.75;;
-Function: Transform
-
-###### Select all Events beyond Cursor
-(;Position;Beyond Cursor;;;PPQ;);;
-Function: Insert Exclusive
-
-###### Select all Events in Cycle Range
-(;Position;Inside Cycle;;;PPQ;);;
-Function: Insert Exclusive
-
-###### Shift Key C1 Transpose by 24
-(;Type Is;Equal;Note;;;;And;
- ;Last Event;Equal;Note is playing;36;;);;
-->Value 1; Add;24;;
-Function: Transform
-
-###### Shift Notes by 12 Ticks beyond Cursor
-(;Type Is;Equal;Note;;;;And;
- ;Position;Beyond Cursor;;;PPQ;);;
-->Position;Add;0.00.00.012;PPQ;
-Function: Transform
-
-###### Transform Notes after D#3 or C#3
-(;Type Is;Equal;Note;;;;And;
- ;Last Event;Equal;Midi Status;144/Note;;;And;
- ;Last Event;Equal;Value 1;61/C#3;;;Or;
- ;Last Event;Equal;Value 1;63/D#3;;);;
-->Value 1; Set to fixed value;D3;;
-Function: Transform
-
-###### Transpose EventsInSistainRange
-(;Type Is;Equal;Note;;;;And;
- ;Last Event;Equal;Midi Status;176;;;And;
- ;Last Event;Equal;Value 1;64;;;And;
- ;Last Event;Bigger;Value 2;64;;);;
-->Value 1; Add;12;;
-Function: Transform
-
-##### experimental
-###### add volume 0 to end of note
-(;Type Is;Equal;Note;;;);;
-->Type;Set to fixed value;Controller;;
-->Position;Add Length;;;
-->Value 1;Set to fixed value;7;;
-->Value 2;Set to fixed value;0;;
-Function: Insert
-
-###### delete black keys
-(;Type Is;Equal;Note;;;;And;
-(;Pitch;Note is equal to;C#;;;;Or;
- ;Pitch;Note is equal to;D#;;;;Or;
- ;Pitch;Note is equal to;F#;;;;Or;
- ;Pitch;Note is equal to;G#;;;;Or;
- ;Pitch;Note is equal to;A#;;;));;
-Function: Delete
-
-###### downbeat accent (4, -4)
-(;Type Is;Equal;Note;;;;And;
- ;Position;Inside Bar Range;420;559;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;0;100;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;900;1050;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1377;1500;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1815;1920;DRAWER_RANGE_INSIDE_BAR;);;
-->Value2;Add;30;;
-Function: Transform
-
-###### extract volume and pan
-(;Type Is;Equal;Controllerr;;;;And;
-(;MIDI Controller No.;Equal;CC 7 (Main Volume);;;Or;
- ;MIDI Controller No.;Equal;CC 10 (Pan);;));;
-Function: Insert Exclusive
-
-###### filter off beats
-(;Type Is;Equal;Note;;;;And;
-(;Position;Inside Bar Range;80;160;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;200;280;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;320;400;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;560;640;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;800;880;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;680;760;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1040;1120;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1160;1240;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1280;1360;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1520;1600;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1640;1720;DRAWER_RANGE_INSIDE_BAR;;Or;
- ;Position;Inside Bar Range;1760;1840;DRAWER_RANGE_INSIDE_BAR;));;
-Function: Delete
- 
-###### insert mid ivolume for velocity
-(;Type Is;Equal;Note;;;);;
-->Type;Set to fixed value;Controller;;
-->Value 1;Set to fixed value;7;;
-Function: Insert
-
-##### standard set 1
-###### delete muted
-(;Property;Property is set; Event is muted;;;);;
-Function: Delete
-
-###### delete short notes
-(;Type Is;Equal;Note;;;;And;
-;Length;Less;0.00.00.020;PPQ;);;
-Function: Delete
-
-###### double tempo
-(;Type Is;Equal;Note;;;;Or;
- ;Type Is;Unequal;Note;;;);;
-->Length;Divide by;2.00;;
-->Position;Divide by;2.00;;
-Function: Transform
-
-###### fixed velocity 100
-(;Type Is;Equal;Note;;;);;
-->Value 2;Set to fixed value;100;;
-Function: Transform
-
-###### half tempo
-(;Type Is;Equal;Note;;;;Or;
- ;Type Is;Unequal;Note;;;);;
-->Length;Multiply by;2.00;;
-->Position;Multiply by;2.00;;
-Function: Transform
-
-###### push back -4
-(;Type Is;Equal;Note;;;);;
-->Position;Subtract;0.00.00.004;PPQ;
-Function: Transform
-
-###### push forward +4
-(;Type Is;Equal;Note;;;);;
-->Position;Add;0.00.00.004;PPQ;
-Function: Transform
-
-###### random notes (c3 to c5)
-(;Type Is;Equal;Note;;;);;
-->Value 1;Set Random Values between; 60; 84;
-Function: Transform
-
-###### random velocity (60 to 100)
-(;Type Is;Equal;Note;;;);;
-->Value 2;Set Random Values between; 60; 100;
-Function: Transform
-
-##### standard set 2
-###### del patch changes
-(;Type Is;Equal;Program Change;;;;Or;
-(;Type Is;Equal;Controller;;;;And;
-(;Value 1;Equal;0;;;;Or;
- ;Value 1;Equal;32;;;)));;
-Function: Delete
-
-###### del velocity below 30
-(;Type Is;Equal;Note;;;;And;
- ;Velocity;Less;30;;;);;
-Function: Delete
-
-###### del velocity below 35
-(;Type Is;Equal;Note;;;;And;
- ;Velocity;Less;35;;;);;
-Function: Delete
-
-###### del velocity below 40
-(;Type Is;Equal;Note;;;;And;
- ;Velocity;Less;40;;;);;
-Function: Delete
-
-###### del velocity below 45
-(;Type Is;Equal;Note;;;;And;
- ;Velocity;Less;45;;;);;
-Function: Delete
-
-###### del.aftertouch
-(;Type Is;Equal;Aftertouch;;;);;
-Function: Delete
-
-###### extract note (c3 60)
-(;Type Is;Equal;Note;;;;And;
- ;Pitch;Equal;60;;;);;
-Function: Insert Exclusive
-
-###### high notes to channel 1
-(;Type Is;Equal;Note;;;;And;
- ;Pitch;Bigger;C3;;;);;
-->Channel; Set to fixed value; 1;;
-Function: Transform
-
-###### low notes to channel 2
-(;Type Is;Equal;Note;;;;And;
- ;Pitch;Less;C3;;;);;
-->Channel;Set to fixed value;2;;
-Function: Transform
-
-###### set notes to fixed pitch (c3)
-(;Type Is;Equal;Note;;;);;
-->Value 1;Set to fixed value;60;;
-Function: Transform
-
-###### transpose +12
-(;Type Is;Equal;Note;;;);;
-->Value 1;Add;12;;
-Function: Transform
-
-###### transpose -12
-(;Type Is;Equal;Note;;;);;
-->Value 1;Subtract;12;;
-Function: Transform
+Each preset file preserves the original logical-editor syntax so scripts can be imported or processed programmatically without reformatting.

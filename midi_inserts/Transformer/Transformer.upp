@@ -1,0 +1,7 @@
+uses
+	PluginSDK;
+
+file
+	AGENTS.md,
+	Transformer.h,
+	Transformer.cpp;

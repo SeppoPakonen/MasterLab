@@ -43,17 +43,23 @@
 
 ### Primary Tasks
 11. Complete Editors package with core editor types (Key, List)
-12. Implement basic AudioOps processing capabilities
-13. Implement basic MidiOps processing capabilities
-14. Build basic transport system in TransportUI
-15. Create basic editing tools in Editors/Tools
+12. Establish MidiInsert processing framework in PluginSDK and register stub packages
+13. Implement Arpache5/ArpacheSX arpeggiators with shared chord tracking and order resolver modules
+14. Implement Chorder, ContextGate, and MicroTuner using shared harmony/tuning services
+15. Implement BeatDesigner, StepDesigner, and AutoLFO pattern engines with common pattern storage
+16. Implement core MIDI processing inserts (MidiCompressor, Density, MidiModifiers, MidiEcho, NoteToCC)
+17. Implement controller/utility inserts (MidiController, TrackControl, MidiMonitor, Quantizer, Transformer)
+18. Implement basic AudioOps processing capabilities
+19. Implement basic MidiOps processing capabilities
+20. Build basic transport system in TransportUI
+21. Create basic editing tools in Editors/Tools
 
 ### Supporting Tasks
-16. Implement complete menu system binding to CommandIDs
-17. Create ViewFrame to host all editor views
-18. Implement StatusBar display for mode hints and job progress
-19. Create minimal UI hooks in MainWindow
-20. Implement ProjectMgmt::CommandManager
+22. Implement complete menu system binding to CommandIDs
+23. Create ViewFrame to host all editor views
+24. Implement StatusBar display for mode hints and job progress
+25. Create minimal UI hooks in MainWindow
+26. Implement ProjectMgmt::CommandManager
 
 ## PHASE 3: ADVANCED EDITING FEATURES (Months 7-9)
 *Milestone: Professional Editing Capabilities*
@@ -70,17 +76,17 @@
 - Selection system supports multi-item operations
 
 ### Primary Tasks
-21. Complete Editors package with all editor types (Drum, Score, InPlace)
-22. Implement advanced AudioOps processing capabilities
-23. Implement advanced MidiOps processing capabilities
-24. Build advanced editing tools in Editors/Tools
-25. Extend AudioCore with advanced track hierarchy
+27. Complete Editors package with all editor types (Drum, Score, InPlace)
+28. Implement advanced AudioOps processing capabilities
+29. Implement advanced MidiOps processing capabilities
+30. Build advanced editing tools in Editors/Tools
+31. Extend AudioCore with advanced track hierarchy
 
 ### Supporting Tasks
-26. Implement Event system with audio, MIDI, automation support
-27. Create TrackParameter and automation systems
-28. Implement advanced track types (folder, group, FX, instrument)
-29. Build Selection system for multi-item operations
+32. Implement Event system with audio, MIDI, automation support
+33. Create TrackParameter and automation systems
+34. Implement advanced track types (folder, group, FX, instrument)
+35. Build Selection system for multi-item operations
 
 ## PHASE 4: PLUGIN ARCHITECTURE (Months 10-12)
 *Milestone: Plugin Hosting and Integration*
@@ -97,17 +103,17 @@
 - Async job queue handles background operations
 
 ### Primary Tasks
-30. Extend Devices package with complete plugin hosting system
-31. Implement PluginManager with discovery and loading capabilities
-32. Create VST/AU/AAX plugin wrappers
-33. Implement plugin parameter and preset management
-34. Create plugin GUI integration system
+36. Extend Devices package with complete plugin hosting system
+37. Implement PluginManager with discovery and loading capabilities
+38. Create VST/AU/AAX plugin wrappers
+39. Implement plugin parameter and preset management
+40. Create plugin GUI integration system
 
 ### Supporting Tasks
-35. Implement Plugin discovery cache in Devices::PluginManager
-36. Add required methods to AudioCore/Mixer.h class
-37. Implement runtime observers for ThemeManager, Editors, Transport, PluginManager, Scores
-38. Create Async job queue: FileIO::JobQueue
+41. Implement Plugin discovery cache in Devices::PluginManager
+42. Add required methods to AudioCore/Mixer.h class
+43. Implement runtime observers for ThemeManager, Editors, Transport, PluginManager, Scores
+44. Create Async job queue: FileIO::JobQueue
 
 ## PHASE 5: SCRIPTING AND AUTOMATION (Months 13-15)
 *Milestone: Scripting Engine and Advanced Automation*
@@ -124,17 +130,17 @@
 - Preferences storage system is fully implemented
 
 ### Primary Tasks
-39. Create Scripts package for logical processing
-40. Implement ScriptEngine with execution environment
-41. Create LogicalProcessor for script evaluation
-42. Implement PresetManager for process presets
-43. Create MacroRecorder for user-defined command sequences
+45. Create Scripts package for logical processing
+46. Implement ScriptEngine with execution environment
+47. Create LogicalProcessor for script evaluation
+48. Implement PresetManager for process presets
+49. Create MacroRecorder for user-defined command sequences
 
 ### Supporting Tasks
-44. Implement preferences storage via U++ Ini/Json
-45. Add migration code in PreferencesStore::Migrate
-46. Implement ProjectMgmt::Clipboard functionality
-47. Implement ProjectMgmt::Keymap
+50. Implement preferences storage via U++ Ini/Json
+51. Add migration code in PreferencesStore::Migrate
+52. Implement ProjectMgmt::Clipboard functionality
+53. Implement ProjectMgmt::Keymap
 
 ## PHASE 6: PROFESSIONAL FEATURES (Months 16-18)
 *Milestone: Professional Production Environment*
@@ -151,16 +157,16 @@
 - Help and documentation system is accessible
 
 ### Primary Tasks
-48. Complete MediaPool package with advanced media management
-49. Implement Views system for different display modes
-50. Create Windowing package with workspace management
-51. Build HelpAbout package with documentation and support
+54. Complete MediaPool package with advanced media management
+55. Implement Views system for different display modes
+56. Create Windowing package with workspace management
+57. Build HelpAbout package with documentation and support
 
 ### Supporting Tasks
-52. Implement PreferencePresetManager with preset CRUD and "store marked only" functionality
-53. Implement PreferencesPane base class for all panels
-54. Implement PrefKey<T> template for typed key bindings
-55. Implement persistence schema with versioning in PreferencesStore
+58. Implement PreferencePresetManager with preset CRUD and "store marked only" functionality
+59. Implement PreferencesPane base class for all panels
+60. Implement PrefKey<T> template for typed key bindings
+61. Implement persistence schema with versioning in PreferencesStore
 
 ## PHASE 7: OPTIMIZATION AND POLISH (Months 19-21)
 *Milestone: Performance Optimization and Quality Assurance*
@@ -177,16 +183,16 @@
 - Documentation and tutorials are complete
 
 ### Primary Tasks
-56. Optimize real-time audio processing performance
-57. Implement comprehensive testing framework
-58. Fix bugs and improve stability
-59. Enhance cross-platform compatibility
+62. Optimize real-time audio processing performance
+63. Implement comprehensive testing framework
+64. Fix bugs and improve stability
+65. Enhance cross-platform compatibility
 
 ### Supporting Tasks
-60. Complete documentation and tutorial content
-61. Implement performance monitoring and diagnostics
-62. Create professional marketing materials
-63. Set up customer support infrastructure
+66. Complete documentation and tutorial content
+67. Implement performance monitoring and diagnostics
+68. Create professional marketing materials
+69. Set up customer support infrastructure
 
 ## PHASE 8: MARKET RELEASE (Month 22)
 *Milestone: Commercial Release*
@@ -203,36 +209,36 @@
 - Marketing campaign is launched successfully
 
 ### Primary Tasks
-64. Create installer and distribution system
-65. Implement licensing and registration system
-66. Set up update mechanism
-67. Launch marketing campaign
+70. Create installer and distribution system
+71. Implement licensing and registration system
+72. Set up update mechanism
+73. Launch marketing campaign
 
 ### Supporting Tasks
-68. Create community forums and support channels
-69. Publish video tutorials and documentation
-70. Establish ongoing maintenance plan
-71. Create roadmap for future development
+74. Create community forums and support channels
+75. Publish video tutorials and documentation
+76. Establish ongoing maintenance plan
+77. Create roadmap for future development
 
 ## TODO
 
 ### HIGH PRIORITY
-72. Create CommandIDs for Preferences/Key Commands dialogs
-73. Implement TreeCtrl wiring with panel registry in PrefUI
-74. Implement panel lifecycle methods (Init, Load, Store) for all preference panels
-76. Implement shared DSP infrastructure (AudioFX/AudioAnalysis): `DSP::SignalBus`, `DSP::ParameterSet`, `DSP::ModMatrix`, `DSP::LatencyBuffer`, `DSP::Analyzer` service hooks, and `DSP::PresetManager` with automation bridging to `UI::RackView`
-77. Build vocal design and neural processing cores (AudioFX): `DSP::VoiceFeatureExtractor`, `DSP::HarmonyGenerator`, `DSP::StyleTransferNet`, `DSP::VoiceEncoder/Decoder`, `DSP::FormantMorpher`, and supporting gain/normalization stages
-78. Implement mastering, loudness, and spectral control modules (AudioAnalysis/AudioFX): `DSP::LUFSMeter`, `DSP::ISPDetector`, `DSP::AutoGainScheduler`, `DSP::MasterAssistant`, `DSP::Stabilizer`, `DSP::ImpactShaper`, `DSP::PriorityAllocator`, and `DSP::DitherEngine`
-79. Develop modulation, sequencing, and macro frameworks (AudioFX/AudioUI): `DSP::MotionSequencer`, `DSP::SceneMorph`, `DSP::StepSequencer`, `DSP::ModuleSwitcher`, `DSP::MacroController`, `UI::RackView`, `UI::SceneManager`, and `UI::XYPAD`
-80. Implement synth voice architecture (AudioCore): `Synth::VoiceManager`, `Synth::ModMatrix`, `Synth::EnvelopeBank`, `Synth::LFOBank`, `Synth::WavetableOsc`, `Synth::OscillatorVA`, `Synth::FilterCascade`, `Synth::UnisonStack`, and `Synth::FormantShaper`
-81. Implement sample streaming and articulation systems (Media/MediaPool): `Sample::StreamEngine`, `Sample::RoundRobin`, `Sample::LoopPool`, `Sample::SliceEngine`, `Sample::TimeStretch`, `Sample::ArticulationEngine`, `Sample::MicMixer`, `Sample::PedalModel`, `Sample::VintageDAC`, `Sample::DFDStream`, and `Sample::Zone`
-82. Implement spatial calibration and immersive processing frameworks (Devices/AudioFX): `Calibration::MeasurementAnalyzer`, `Calibration::PhaseAnalyzer`, `Calibration::DelaySolver`, `DSP::FIRDesigner`, `DSP::IIRDesigner`, `DSP::AmbisonicsEncoder`, `DSP::BinauralRenderer`, `DSP::HeadTracker`, and `DSP::SurroundMeterBridge`
-83. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
-86. Integrate `PluginSDK::GraphVisualization` with AudioUI rack/macro surfaces to render node/edge diagrams and active-path overlays
-87. Build shared AI/groove/phrase services (`DSP::AIRecommender`, `Midi::GrooveExtractor`, `Midi::PhraseDatabase`) powering Bandmate-style suggestions across audio and MIDI stubs
+78. Create CommandIDs for Preferences/Key Commands dialogs
+79. Implement TreeCtrl wiring with panel registry in PrefUI
+80. Implement panel lifecycle methods (Init, Load, Store) for all preference panels
+82. Implement shared DSP infrastructure (AudioFX/AudioAnalysis): `DSP::SignalBus`, `DSP::ParameterSet`, `DSP::ModMatrix`, `DSP::LatencyBuffer`, `DSP::Analyzer` service hooks, and `DSP::PresetManager` with automation bridging to `UI::RackView`
+83. Build vocal design and neural processing cores (AudioFX): `DSP::VoiceFeatureExtractor`, `DSP::HarmonyGenerator`, `DSP::StyleTransferNet`, `DSP::VoiceEncoder/Decoder`, `DSP::FormantMorpher`, and supporting gain/normalization stages
+84. Implement mastering, loudness, and spectral control modules (AudioAnalysis/AudioFX): `DSP::LUFSMeter`, `DSP::ISPDetector`, `DSP::AutoGainScheduler`, `DSP::MasterAssistant`, `DSP::Stabilizer`, `DSP::ImpactShaper`, `DSP::PriorityAllocator`, and `DSP::DitherEngine`
+85. Develop modulation, sequencing, and macro frameworks (AudioFX/AudioUI): `DSP::MotionSequencer`, `DSP::SceneMorph`, `DSP::StepSequencer`, `DSP::ModuleSwitcher`, `DSP::MacroController`, `UI::RackView`, `UI::SceneManager`, and `UI::XYPAD`
+86. Implement synth voice architecture (AudioCore): `Synth::VoiceManager`, `Synth::ModMatrix`, `Synth::EnvelopeBank`, `Synth::LFOBank`, `Synth::WavetableOsc`, `Synth::OscillatorVA`, `Synth::FilterCascade`, `Synth::UnisonStack`, and `Synth::FormantShaper`
+87. Implement sample streaming and articulation systems (Media/MediaPool): `Sample::StreamEngine`, `Sample::RoundRobin`, `Sample::LoopPool`, `Sample::SliceEngine`, `Sample::TimeStretch`, `Sample::ArticulationEngine`, `Sample::MicMixer`, `Sample::PedalModel`, `Sample::VintageDAC`, `Sample::DFDStream`, and `Sample::Zone`
+88. Implement spatial calibration and immersive processing frameworks (Devices/AudioFX): `Calibration::MeasurementAnalyzer`, `Calibration::PhaseAnalyzer`, `Calibration::DelaySolver`, `DSP::FIRDesigner`, `DSP::IIRDesigner`, `DSP::AmbisonicsEncoder`, `DSP::BinauralRenderer`, `DSP::HeadTracker`, and `DSP::SurroundMeterBridge`
+89. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
+92. Integrate `PluginSDK::GraphVisualization` with AudioUI rack/macro surfaces to render node/edge diagrams and active-path overlays
+93. Build shared AI/groove/phrase services (`DSP::AIRecommender`, `Midi::GrooveExtractor`, `Midi::PhraseDatabase`) powering Bandmate-style suggestions across audio and MIDI stubs
 ### MEDIUM PRIORITY
-75. Create .upp files for new packages with proper uses declarations
-88. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
+81. Create .upp files for new packages with proper uses declarations
+94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
 
 ### FUTURE CONSIDERATION
 * Implement comprehensive error handling across all systems
@@ -257,26 +263,27 @@
 9. Expand Preferences package with new files: PrefModel.h/.cpp, PrefStore.h/.cpp, PrefPresets.h/.cpp, PrefUI.h/.cpp, panel files (PrefAppearance.h/.cpp, PrefEditing.h/.cpp, etc.)
 10. Create Theme package with files: Theme.h, Theme.cpp, WorkAreaTheme.h, WorkAreaTheme.cpp, MeterTheme.h, MeterTheme.cpp
 11. Create Tooling package with files: ToolModifiers.h, ToolModifiers.cpp
-12. Extend MediaPool (Media package) with MediaSettings.h/.cpp
-13. Create MIDI package with files: MidiChase.h/.cpp, MidiFilterConfig.h/.cpp, MidiDisplay.h/.cpp, MidiFilePrefs.h/.cpp
-14. Create AudioEditing package with files: AudioImportPrefs.h/.cpp, TimeStretchPrefs.h/.cpp, SnapSettings.h/.cpp, FadeBehavior.h/.cpp
-15. Create TransportPrefs package with files: TransportPrefs.h/.cpp
-16. Create VSTHost package with files: VstHostPrefs.h/.cpp
-17. Create ScoresEngine package with files: ScorePrefs.h/.cpp, ScoreColors.h/.cpp, ScoreEditingPrefs.h/.cpp, NoteLayerPrefs.h/.cpp
-18. Create Video package additions with VideoPrefs.h/.cpp
-19. Create Appearance package with InterfaceAdjust.h/.cpp, MixerPreview.h/.cpp
-20. Add new methods to AudioCore/Transport.h as specified in design
-21. Add new methods to AudioCore/Project.h as specified in design
-22. Implement UI controls in PrefUI: Row, LabelBox, ColorRect, LabeledSlider, etc.
-23. Create Devices package with files: Devices.h, Devices.cpp, AudioDeviceManager.h, AudioDeviceManager.cpp, MidiDeviceManager.h, MidiDeviceManager.cpp, PluginManager.h, PluginManager.cpp, ReWireHost.h, ReWireHost.cpp, VideoDevice.h, VideoDevice.cpp
-24. Create Windowing package with files: Windowing.h, Windowing.cpp, Workspace.h, Workspace.cpp, WindowRegistry.h, WindowRegistry.cpp
-25. Create HelpAbout package with files: HelpAbout.h, HelpAbout.cpp, Credits.h, Credits.cpp, Registration.h, Registration.cpp, WebLinks.h, WebLinks.cpp
-26. Create Preferences package with files: Preferences.h, Preferences.cpp, KeyCommands.h, KeyCommands.cpp, Mapping.h, Mapping.cpp
-27. Create Video package with files: Video.h, Video.cpp, AudioFromVideo.h, AudioFromVideo.cpp, ReplaceAudio.h, ReplaceAudio.cpp, Thumbnail.h, Thumbnail.cpp
-28. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md and capture results in EFFECTS.md/INSTRUMENTS.md
-29. Update root/packet `AGENTS.md` files to capture core class implementation details for EFFECTS/INSTRUMENTS blueprints
-30. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
-31. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
+18. Extend MediaPool (Media package) with MediaSettings.h/.cpp
+19. Create MIDI package with files: MidiChase.h/.cpp, MidiFilterConfig.h/.cpp, MidiDisplay.h/.cpp, MidiFilePrefs.h/.cpp
+20. Create AudioEditing package with files: AudioImportPrefs.h/.cpp, TimeStretchPrefs.h/.cpp, SnapSettings.h/.cpp, FadeBehavior.h/.cpp
+21. Create TransportPrefs package with files: TransportPrefs.h/.cpp
+22. Create VSTHost package with files: VstHostPrefs.h/.cpp
+23. Create ScoresEngine package with files: ScorePrefs.h/.cpp, ScoreColors.h/.cpp, ScoreEditingPrefs.h/.cpp, NoteLayerPrefs.h/.cpp
+24. Create Video package additions with VideoPrefs.h/.cpp
+25. Create Appearance package with InterfaceAdjust.h/.cpp, MixerPreview.h/.cpp
+26. Add new methods to AudioCore/Transport.h as specified in design
+27. Add new methods to AudioCore/Project.h as specified in design
+28. Implement UI controls in PrefUI: Row, LabelBox, ColorRect, LabeledSlider, etc.
+29. Create Devices package with files: Devices.h, Devices.cpp, AudioDeviceManager.h, AudioDeviceManager.cpp, MidiDeviceManager.h, MidiDeviceManager.cpp, PluginManager.h, PluginManager.cpp, ReWireHost.h, ReWireHost.cpp, VideoDevice.h, VideoDevice.cpp
+30. Create Windowing package with files: Windowing.h, Windowing.cpp, Workspace.h, Workspace.cpp, WindowRegistry.h, WindowRegistry.cpp
+31. Create HelpAbout package with files: HelpAbout.h, HelpAbout.cpp, Credits.h, Credits.cpp, Registration.h, Registration.cpp, WebLinks.h, WebLinks.cpp
+32. Create Preferences package with files: Preferences.h, Preferences.cpp, KeyCommands.h, KeyCommands.cpp, Mapping.h, Mapping.cpp
+33. Create Video package with files: Video.h, Video.cpp, AudioFromVideo.h, AudioFromVideo.cpp, ReplaceAudio.h, ReplaceAudio.cpp, Thumbnail.h, Thumbnail.cpp
+34. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md and capture results in EFFECTS.md/INSTRUMENTS.md
+35. Update root/packet `AGENTS.md` files to capture core class implementation details for EFFECTS/INSTRUMENTS blueprints
+36. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
+37. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
+38. Document MIDI insert stubs, extract Transformer presets into scripts directory, and update roadmap
 
 ## References
 
