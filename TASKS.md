@@ -222,6 +222,9 @@
 
 ## TODO
 
+### IMMEDIATE REQUESTS
+*None currently.*
+
 ### HIGH PRIORITY
 78. Create CommandIDs for Preferences/Key Commands dialogs
 79. Implement TreeCtrl wiring with panel registry in PrefUI
@@ -284,6 +287,7 @@
 36. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
 37. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
 38. Document MIDI insert stubs, extract Transformer presets into scripts directory, and update roadmap
+95. Re-analyze Roland ZENOLOGY reference material and update ZenCoreFxRack/ZenCoreWorkstation packages to match ZEN-Core architecture and shared repository code
 
 ## References
 
