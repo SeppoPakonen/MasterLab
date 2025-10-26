@@ -13,5 +13,7 @@ file
 	Gain.cpp,
 	Limiter.h,
 	Limiter.cpp,
+	ZenCoreCatalogue.h,
+	ZenCoreCatalogue.cpp,
 	Splitter.h,
 	Splitter.cpp;

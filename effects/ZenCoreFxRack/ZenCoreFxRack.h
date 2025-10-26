@@ -2,6 +2,7 @@
 #define _effects_zencorefxrack_zencorefxrack_h_
 
 #include <PluginSDK/PluginSDK.h>
+#include <AudioFX/AudioFX.h>
 
 namespace Effects {
 
@@ -22,12 +23,15 @@ private:
 	struct RackSlot {
 		String id;
 		String node_id;
+		int node_index = -1;
 		int enable_param = -1;
 		int algorithm_param = -1;
 		int mix_param = -1;
 		int tone_param = -1;
 		int feedback_param = -1;
 		int character_param = -1;
+		int algorithm_index = 0;
+		String algorithm_label;
 		Vector<int> control_edges;
 		int input_edge = -1;
 		int output_edge = -1;
@@ -60,6 +64,7 @@ private:
 	void UpdateGraphActivity();
 	void AdvanceMotionLFO(double delta_seconds);
 	void UpdateEnvelopeFollower(const PluginSDK::ProcessContext& ctx);
+	void RefreshAlgorithmMetadata();
 	double GetParameterValue(int index) const;
 
 	Vector<RackSlot> ifx_slots;

@@ -42,12 +42,13 @@
 - Parameters registered through `PluginSDK::ParameterSet` with grouped IDs (`partial1_cutoff`, `scene_morph`, `motion_rate`, `drumPad05_decay`, etc.).
 - Graph metadata exposed via `PluginSDK::GraphVisualization` for UI rack diagrams and ACTIVE-PATH highlighting.
 - Forward-looking hooks:
-  - `Synth::VoiceManager` and `Sample::StreamEngine` from `AudioCore` for voice + sampling duties.
+  - Runtime voice allocation handled by `Synth::VoiceManager` (AudioCore) with per-voice morph/motion state caching (extend for legato/MPE in Task 86).
+  - `Sample::StreamEngine` from MediaPool for PCM partial streaming once implemented.
   - `Automation::MotionDesigner` and `DSP::SceneMorph` (AudioFX) for modulation/morphing.
   - `FX::ZenCoreFxRack` (effects package) for shared FX catalogue.
 
 ## TODO / Next Steps
-1. Bridge to `AudioCore::Synth::VoiceManager` once implemented (Task 86).
+1. Extend `AudioCore::Synth::VoiceManager` with legato, voice stealing, and MPE zoning behaviour (Task 86).
 2. Implement drum kit mode parameter templating (per-pad rotaries) using `PluginSDK::GraphVisualization` detail nodes.
 3. Provide preset import/export to `DSP::PresetManager` with patch compatibility metadata.
 4. Evaluate splitting package into per-model instrument shells (e.g., `ZenModel_JX8P`, `ZenModel_JUNO106`) that reuse shared partial/FX scaffolding.

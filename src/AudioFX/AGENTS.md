@@ -10,6 +10,7 @@ AudioFX owns the reusable processing blocks required by the effect implementatio
 - **`DSP::ModMatrix`** — Normalised modulation matrix with `AddSource`, `AddDestination`, and `ComputeConnections()` to produce per-sample modulation buffers driven by LFOs, envelopes, MIDI, or macro controllers.
 - **`DSP::LatencyBuffer`** — Provides `Configure(int lookahead)` and `Process(BufferView in, BufferView out)` to support look-ahead stages; reports latency to host and to `SignalBus`.
 - **`DSP::PresetManager`** — JSON-backed preset service. Core methods include `LoadPreset(const String& id)`, `StorePreset(const Preset& preset)`, and `EnumerateLibrary()`; shared between internal FX and exported plug-ins.
+- **`DSP::ZenCoreMFXCatalogue`** — Central registry of Zen-Core MFX/TFX algorithms with metadata flags (category, combination support) used by ZenCoreFxRack and model-expansion presets.
 
 ## Modulation, Sequencing, and Macro Control
 

@@ -11,5 +11,6 @@
 #include "Limiter.h"
 #include "Crossover.h"
 #include "Splitter.h"
+#include "ZenCoreCatalogue.h"
 
 #endif

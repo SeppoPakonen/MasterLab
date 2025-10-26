@@ -13,6 +13,7 @@ using namespace Upp;
 #include "Channel.h"
 #include "Bus.h"
 #include "Mixer.h"
+#include "Synth.h"
 #include "Project.h"
 
 #endif

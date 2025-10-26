@@ -2,6 +2,7 @@
 #define _instruments_zencoreworkstation_zencoreworkstation_h_
 
 #include <PluginSDK/PluginSDK.h>
+#include <AudioCore/AudioCore.h>
 
 namespace Instruments {
 
@@ -22,6 +23,7 @@ private:
 	static constexpr int kDrumPadCount = 16;
 	static constexpr int kMotionLaneCount = 3;
 	static constexpr int kMacroCount = 4;
+	static constexpr int kMaxVoices = 64;
 
 	struct PartialSlot {
 		String id;
@@ -68,6 +70,7 @@ private:
 	};
 
 	struct VoiceState {
+		int voice_id = -1;
 		int note = -1;
 		double velocity = 0.0;
 		Vector<double> partial_gains;
@@ -92,6 +95,7 @@ private:
 	Vector<MotionLane> motion_lanes;
 	Vector<SceneMacro> scene_macros;
 	Vector<VoiceState> active_voices;
+	am::Synth::VoiceManager voice_manager;
 
 	int morph_param = -1;
 	int scene_blend_param = -1;

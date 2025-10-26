@@ -34,6 +34,9 @@ ZenCoreWorkstation::ZenCoreWorkstation() {
 
 void ZenCoreWorkstation::Prepare(const PluginSDK::AudioConfig& cfg) {
 	PluginSDK::PluginProcessor::Prepare(cfg);
+	voice_manager.Configure(kMaxVoices);
+	voice_manager.AllNotesOff();
+	active_voices.Clear();
 	AdvanceMotionLanes(0.0);
 	RefreshVoiceGains();
 	UpdateGraphActivity();
@@ -41,6 +44,7 @@ void ZenCoreWorkstation::Prepare(const PluginSDK::AudioConfig& cfg) {
 
 void ZenCoreWorkstation::Reset() {
 	PluginSDK::PluginProcessor::Reset();
+	voice_manager.AllNotesOff();
 	active_voices.Clear();
 	for(MotionLane& lane : motion_lanes) {
 		lane.phase = 0.0;
@@ -74,27 +78,20 @@ void ZenCoreWorkstation::Process(PluginSDK::ProcessContext& ctx) {
 
 void ZenCoreWorkstation::NoteOn(const PluginSDK::NoteEvent& evt) {
 	PluginSDK::InstrumentProcessor::NoteOn(evt);
-	VoiceState state;
-	state.note = evt.note;
-	state.velocity = Upp::Clamp(evt.velocity / 127.0, 0.0, 1.0);
-	state.partial_gains.SetCount(partials.GetCount(), 0.0);
-	state.morph_position = GetParameterValue(morph_param);
-	active_voices.Add(state);
+	double velocity = Upp::Clamp(evt.velocity / 127.0, 0.0, 1.0);
+	voice_manager.NoteOn(evt.note, velocity);
 	RefreshVoiceGains();
 }
 
 void ZenCoreWorkstation::NoteOff(const PluginSDK::NoteEvent& evt) {
 	PluginSDK::InstrumentProcessor::NoteOff(evt);
-	for(int i = active_voices.GetCount() - 1; i >= 0; --i) {
-		if(active_voices[i].note == evt.note) {
-			active_voices.Remove(i);
-			break;
-		}
-	}
+	voice_manager.NoteOff(evt.note);
+	RefreshVoiceGains();
 }
 
 void ZenCoreWorkstation::AllNotesOff() {
 	PluginSDK::InstrumentProcessor::AllNotesOff();
+	voice_manager.AllNotesOff();
 	active_voices.Clear();
 }
 
@@ -351,22 +348,51 @@ void ZenCoreWorkstation::AdvanceMotionLanes(double delta_seconds) {
 
 void ZenCoreWorkstation::RefreshVoiceGains() {
 	bool drum_mode = GetParameterValue(engine_mode_param) > 0.5;
-	for(VoiceState& voice : active_voices) {
-		voice.partial_gains.SetCount(partials.GetCount(), 0.0);
-		for(int i = 0; i < partials.GetCount(); ++i) {
-			const PartialSlot& slot = partials[i];
-			bool enabled = !drum_mode && GetParameterValue(slot.enable_param) > 0.5;
-			if(!enabled)
-				continue;
-			double level = GetParameterValue(slot.level_param);
-			double motion = 0.0;
-			for(const MotionLane& lane : motion_lanes)
-				motion += lane.last_value;
-			double morph = GetParameterValue(morph_param);
-			voice.partial_gains[i] = voice.velocity * Upp::Clamp(level + motion * 0.1, 0.0, 1.0) * (1.0 - morph * 0.1);
+	double motion_sum = 0.0;
+	for(const MotionLane& lane : motion_lanes)
+		motion_sum += lane.last_value;
+	double morph = GetParameterValue(morph_param);
+
+	Vector<VoiceState> previous;
+	previous <<= active_voices;
+	Vector<VoiceState> updated;
+
+	voice_manager.ForEachActive([&](am::Synth::VoiceHandle& handle) {
+		VoiceState state;
+		bool reused = false;
+		for(const VoiceState& existing : previous) {
+			if(existing.voice_id == handle.id) {
+				state = existing;
+				reused = true;
+				break;
+			}
 		}
-		voice.morph_position = GetParameterValue(morph_param);
-	}
+		state.voice_id = handle.id;
+		state.note = handle.note;
+		state.velocity = handle.velocity;
+		state.releasing = handle.releasing;
+		state.morph_position = morph;
+		state.partial_gains.SetCount(partials.GetCount(), 0.0);
+
+		if(!drum_mode) {
+			for(int i = 0; i < partials.GetCount(); ++i) {
+				const PartialSlot& slot = partials[i];
+				bool enabled = GetParameterValue(slot.enable_param) > 0.5;
+				if(!enabled)
+					continue;
+				double level = GetParameterValue(slot.level_param);
+				double gain = state.velocity * Upp::Clamp(level + motion_sum * 0.1, 0.0, 1.0) * (1.0 - morph * 0.1);
+				state.partial_gains[i] = gain;
+			}
+		}
+
+		if(!reused && state.partial_gains.IsEmpty())
+			state.partial_gains.SetCount(partials.GetCount(), 0.0);
+
+		updated.Add(state);
+	});
+
+	active_voices = pick(updated);
 }
 
 double ZenCoreWorkstation::GetParameterValue(int index) const {

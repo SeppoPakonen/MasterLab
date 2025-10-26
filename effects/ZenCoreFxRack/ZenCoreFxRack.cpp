@@ -28,6 +28,7 @@ ZenCoreFxRack::ZenCoreFxRack() {
 	RegisterParameters();
 	BuildRouting();
 	BuildGraph();
+	RefreshAlgorithmMetadata();
 	UpdateGraphActivity();
 }
 
@@ -36,6 +37,7 @@ void ZenCoreFxRack::Prepare(const PluginSDK::AudioConfig& cfg) {
 	envelope_state = 0.0;
 	AdvanceMotionLFO(0.0);
 	UpdateGraphActivity();
+	RefreshAlgorithmMetadata();
 }
 
 void ZenCoreFxRack::Reset() {
@@ -46,6 +48,7 @@ void ZenCoreFxRack::Reset() {
 		lane.last_value = 0.0;
 	}
 	UpdateGraphActivity();
+	RefreshAlgorithmMetadata();
 }
 
 void ZenCoreFxRack::Process(PluginSDK::ProcessContext& ctx) {
@@ -57,6 +60,7 @@ void ZenCoreFxRack::Process(PluginSDK::ProcessContext& ctx) {
 	AdvanceMotionLFO(delta_seconds);
 	UpdateEnvelopeFollower(ctx);
 	UpdateGraphActivity();
+	RefreshAlgorithmMetadata();
 
 	if(!ctx.input.IsValid() || !ctx.output.IsValid()) {
 		return;
@@ -183,9 +187,11 @@ void ZenCoreFxRack::RegisterParameters() {
 	envelope_release_param = AddParameter(params, "env_release", "Envelope Release", 0.0, 1.0, 0.4);
 	envelope_sensitivity_param = AddParameter(params, "env_sensitivity", "Envelope Sensitivity", 0.0, 1.0, 0.5);
 
+	const Vector<am::DSP::ZenCoreAlgorithm>& catalogue = am::DSP::ZenCoreMFXCatalogue::List();
+	double max_algorithm_index = catalogue.IsEmpty() ? 0.0 : (double)(catalogue.GetCount() - 1);
 	for(RackSlot& slot : ifx_slots) {
 		slot.enable_param = AddParameter(params, Format("slot%s_enable", slot.id), Format("Slot %s Enable", slot.id), 0.0, 1.0, 1.0);
-		slot.algorithm_param = AddParameter(params, Format("slot%s_algorithm", slot.id), Format("Slot %s Algorithm", slot.id), 0.0, 90.0, 0.0, false);
+		slot.algorithm_param = AddParameter(params, Format("slot%s_algorithm", slot.id), Format("Slot %s Algorithm", slot.id), 0.0, max_algorithm_index, 0.0, false);
 		slot.mix_param = AddParameter(params, Format("slot%s_mix", slot.id), Format("Slot %s Mix", slot.id), 0.0, 1.0, 0.5);
 		slot.tone_param = AddParameter(params, Format("slot%s_time", slot.id), Format("Slot %s Time", slot.id), 0.0, 1.0, 0.4);
 		slot.feedback_param = AddParameter(params, Format("slot%s_feedback", slot.id), Format("Slot %s Feedback", slot.id), 0.0, 1.0, 0.2);
@@ -193,12 +199,14 @@ void ZenCoreFxRack::RegisterParameters() {
 	}
 
 	mfx_slot.enable_param = AddParameter(params, "mfx_enable", "MFX Enable", 0.0, 1.0, 1.0);
+	mfx_slot.algorithm_param = AddParameter(params, "mfx_algorithm", "MFX Algorithm", 0.0, max_algorithm_index, 5.0, false);
 	mfx_slot.mix_param = AddParameter(params, "mfx_mix", "MFX Mix", 0.0, 1.0, 0.4);
 	mfx_slot.tone_param = AddParameter(params, "mfx_time", "MFX Time", 0.0, 1.0, 0.5);
 	mfx_slot.feedback_param = AddParameter(params, "mfx_feedback", "MFX Feedback", 0.0, 1.0, 0.25);
 	mfx_slot.character_param = AddParameter(params, "mfx_character", "MFX Character", 0.0, 1.0, 0.35);
 
 	tfx_slot.enable_param = AddParameter(params, "tfx_enable", "TFX Enable", 0.0, 1.0, 1.0);
+	tfx_slot.algorithm_param = AddParameter(params, "tfx_algorithm", "TFX Algorithm", 0.0, max_algorithm_index, 8.0, false);
 	tfx_slot.mix_param = AddParameter(params, "tfx_mix", "TFX Mix", 0.0, 1.0, 0.5);
 	tfx_slot.tone_param = AddParameter(params, "tfx_time", "TFX Time", 0.0, 1.0, 0.6);
 	tfx_slot.feedback_param = AddParameter(params, "tfx_feedback", "TFX Feedback", 0.0, 1.0, 0.35);
@@ -270,10 +278,10 @@ void ZenCoreFxRack::BuildGraph() {
 
 	add_node("Input", "Input", "IO");
 	add_node("Pre", "Pre", "FX");
-	for(const RackSlot& slot : ifx_slots)
-		add_node(slot.node_id, Format("Slot %s", slot.id), "FX");
-	add_node(mfx_slot.node_id, "MFX", "FX");
-	add_node(tfx_slot.node_id, "TFX", "FX");
+	for(RackSlot& slot : ifx_slots)
+		slot.node_index = add_node(slot.node_id, Format("Slot %s", slot.id), "FX");
+	mfx_slot.node_index = add_node(mfx_slot.node_id, "MFX", "FX");
+	tfx_slot.node_index = add_node(tfx_slot.node_id, "TFX", "FX");
 	add_node("Output", "Output", "IO");
 	add_node("MotionDesigner", "Motion Designer", "Mod");
 	add_node("MacroMorph", "Macro Morph", "Macro");
@@ -363,6 +371,7 @@ void ZenCoreFxRack::BuildGraph() {
 
 	motion_bus_edge = add_control_edge("MotionDesigner", mfx_slot.node_id);
 	macro_bus_edge = add_control_edge("MacroMorph", mfx_slot.node_id);
+	RefreshAlgorithmMetadata();
 }
 
 void ZenCoreFxRack::UpdateGraphActivity() {
@@ -483,6 +492,38 @@ void ZenCoreFxRack::UpdateEnvelopeFollower(const PluginSDK::ProcessContext& ctx)
 	double coeff = target > envelope_state ? std::pow(0.1, 1.0 - attack) : std::pow(0.1, 1.0 - release);
 	envelope_state += (target - envelope_state) * (1.0 - coeff);
 	envelope_state = Upp::Clamp(envelope_state, 0.0, 4.0);
+}
+
+void ZenCoreFxRack::RefreshAlgorithmMetadata() {
+	PluginSDK::GraphVisualization& g = Graph();
+	const Vector<am::DSP::ZenCoreAlgorithm>& catalogue = am::DSP::ZenCoreMFXCatalogue::List();
+	auto resolve_label = [&](bool combination, const String& name) {
+		if(combination)
+			return Format("%s (Combo)", name);
+		return name;
+	};
+	auto update_slot = [&](RackSlot& slot) {
+		double selector = slot.algorithm_param >= 0 ? GetParameterValue(slot.algorithm_param) : 0.0;
+		if(!catalogue.IsEmpty()) {
+			int index = Upp::Clamp((int)std::round(selector), 0, catalogue.GetCount() - 1);
+			slot.algorithm_index = index;
+			const am::DSP::ZenCoreAlgorithm& algo = catalogue[index];
+			slot.algorithm_label = resolve_label(algo.combination, algo.name);
+		} else {
+			slot.algorithm_index = 0;
+			slot.algorithm_label = "Bypass";
+		}
+		if(slot.node_index >= 0 && slot.node_index < g.nodes.GetCount()) {
+			String prefix = slot.id;
+			if(slot.id.GetCount() == 1)
+				prefix = Format("Slot %s", slot.id);
+			g.nodes[slot.node_index].label = Format("%s — %s", prefix, slot.algorithm_label);
+		}
+	};
+	for(RackSlot& slot : ifx_slots)
+		update_slot(slot);
+	update_slot(mfx_slot);
+	update_slot(tfx_slot);
 }
 
 double ZenCoreFxRack::GetParameterValue(int index) const {

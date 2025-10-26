@@ -33,10 +33,10 @@
   - Scene morph controls (`scene_morph`, `scene_balance`, `macro_assign1`).
   - Envelope follower attack/release/sensitivity.
 - Uses `PluginSDK::RoutingMap` to publish serial chain plus optional parallel returns (e.g., Combination dual parallel path).
-- Shares algorithm catalogue with future `DSP::ZenCoreMFXCatalogue` (AudioFX package).
+- Shares algorithm catalogue via `DSP::ZenCoreMFXCatalogue` (AudioFX package) to surface slot labels and combination flags.
 
 ## TODO / Next Steps
-1. Implement slot descriptor tables linked to `DSP::ZenCoreMFXCatalogue`.
+1. Enrich `DSP::ZenCoreMFXCatalogue` entries with parameter templates and combination signal maps.
 2. Expose Combination processor routing to `PluginSDK::GraphVisualization` (nested nodes).
 3. Integrate with `AudioAnalysis::DSP::Analyzer` for per-slot metering.
 4. Coordinate preset metadata with instrument patches (shared macros, scene morph snapshots).
