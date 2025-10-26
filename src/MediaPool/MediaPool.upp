@@ -4,6 +4,7 @@ uses
 	AudioCore;
 
 file
+	AGENTS.md,
 	MediaPool.h,
 	MediaPool.cpp,
 	PoolWindow.h,

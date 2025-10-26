@@ -1,4 +1,5 @@
 file
+	AGENTS.md,
 	AudioFX.h,
 	Compressor.h,
 	Compressor.cpp,
@@ -14,4 +15,3 @@ file
 	Limiter.cpp,
 	Splitter.h,
 	Splitter.cpp;
-

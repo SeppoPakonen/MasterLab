@@ -4,6 +4,7 @@ uses
 	AudioFX;
 
 file
+	AGENTS.md,
 	Devices.h,
 	Devices.cpp,
 	AudioDeviceManager.h,

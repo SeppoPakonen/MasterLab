@@ -25,10 +25,16 @@ The MediaPool package handles the central asset pool functionality including med
 - Checks the integrity of media in the pool
 - Verifies that media files are accessible and valid
 
+## Sample Playback & Instrument Assets
+- `Sample::StreamEngine` (Media package) performs disk streaming for large instruments; MediaPool coordinates prefetch caching and purge thresholds.
+- `Sample::RoundRobin`, `Sample::ArticulationEngine`, and `Sample::MicMixer` provide articulation management for Kontakt-style libraries; Pool metadata tracks mappings so `AudioCore` can request the right assets at load time.
+- `Sample::LoopPool`, `Sample::SliceEngine`, and `Sample::TimeStretch` support Momentum-style loop remixing; search/indexing exposes slice descriptors for quick audition.
+
 ## Relations to Other Packages
 - `CtrlLib`: UI controls and framework for pool window
 - `FileIO`: File operations for media handling
 - `AudioCore`: Integration with audio content
+- `AudioFX`: Accesses analysis metadata (transients, pitch) generated during ingestion for transient-aware processors.
 
 ## Package Classes Relations
 - PoolWindow displays content managed by other components

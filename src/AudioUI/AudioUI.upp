@@ -7,6 +7,7 @@ uses
 	SubWindowCtrl;
 
 file
+	AGENTS.md,
 	AudioUI.h,
 	Breadcrumb.h,
 	GraphEditorWidgets.cpp,
@@ -16,4 +17,3 @@ file
 	PostGraphView.cpp,
 	PostView.h,
 	PostView.cpp;
-

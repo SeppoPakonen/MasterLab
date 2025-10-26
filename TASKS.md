@@ -220,6 +220,14 @@
 72. Create CommandIDs for Preferences/Key Commands dialogs
 73. Implement TreeCtrl wiring with panel registry in PrefUI
 74. Implement panel lifecycle methods (Init, Load, Store) for all preference panels
+76. Implement shared DSP infrastructure (AudioFX/AudioAnalysis): `DSP::SignalBus`, `DSP::ParameterSet`, `DSP::ModMatrix`, `DSP::LatencyBuffer`, `DSP::Analyzer` service hooks, and `DSP::PresetManager` with automation bridging to `UI::RackView`
+77. Build vocal design and neural processing cores (AudioFX): `DSP::VoiceFeatureExtractor`, `DSP::HarmonyGenerator`, `DSP::StyleTransferNet`, `DSP::VoiceEncoder/Decoder`, `DSP::FormantMorpher`, and supporting gain/normalization stages
+78. Implement mastering, loudness, and spectral control modules (AudioAnalysis/AudioFX): `DSP::LUFSMeter`, `DSP::ISPDetector`, `DSP::AutoGainScheduler`, `DSP::MasterAssistant`, `DSP::Stabilizer`, `DSP::ImpactShaper`, `DSP::PriorityAllocator`, and `DSP::DitherEngine`
+79. Develop modulation, sequencing, and macro frameworks (AudioFX/AudioUI): `DSP::MotionSequencer`, `DSP::SceneMorph`, `DSP::StepSequencer`, `DSP::ModuleSwitcher`, `DSP::MacroController`, `UI::RackView`, `UI::SceneManager`, and `UI::XYPAD`
+80. Implement synth voice architecture (AudioCore): `Synth::VoiceManager`, `Synth::ModMatrix`, `Synth::EnvelopeBank`, `Synth::LFOBank`, `Synth::WavetableOsc`, `Synth::OscillatorVA`, `Synth::FilterCascade`, `Synth::UnisonStack`, and `Synth::FormantShaper`
+81. Implement sample streaming and articulation systems (Media/MediaPool): `Sample::StreamEngine`, `Sample::RoundRobin`, `Sample::LoopPool`, `Sample::SliceEngine`, `Sample::TimeStretch`, `Sample::ArticulationEngine`, `Sample::MicMixer`, `Sample::PedalModel`, `Sample::VintageDAC`, `Sample::DFDStream`, and `Sample::Zone`
+82. Implement spatial calibration and immersive processing frameworks (Devices/AudioFX): `Calibration::MeasurementAnalyzer`, `Calibration::PhaseAnalyzer`, `Calibration::DelaySolver`, `DSP::FIRDesigner`, `DSP::IIRDesigner`, `DSP::AmbisonicsEncoder`, `DSP::BinauralRenderer`, `DSP::HeadTracker`, and `DSP::SurroundMeterBridge`
+83. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
 
 ### MEDIUM PRIORITY
 75. Create .upp files for new packages with proper uses declarations
@@ -231,7 +239,6 @@
 
 ## IN PROGRESS
 
-* Task 71. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md
 * Organizing and prioritizing remaining TODO items in TASKS.md (Task 72-75)
 * Updating project documentation and tracking systems
 
@@ -264,6 +271,8 @@
 25. Create HelpAbout package with files: HelpAbout.h, HelpAbout.cpp, Credits.h, Credits.cpp, Registration.h, Registration.cpp, WebLinks.h, WebLinks.cpp
 26. Create Preferences package with files: Preferences.h, Preferences.cpp, KeyCommands.h, KeyCommands.cpp, Mapping.h, Mapping.cpp
 27. Create Video package with files: Video.h, Video.cpp, AudioFromVideo.h, AudioFromVideo.cpp, ReplaceAudio.h, ReplaceAudio.cpp, Thumbnail.h, Thumbnail.cpp
+28. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md and capture results in EFFECTS.md/INSTRUMENTS.md
+29. Update root/packet `AGENTS.md` files to capture core class implementation details for EFFECTS/INSTRUMENTS blueprints
 
 ## References
 

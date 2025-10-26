@@ -21,6 +21,7 @@ reference/         ← Reference code and sample implementations
 - Each `.upp` file lists *all* source files in that package.
 - Packages can reference each other through U++ assembly definitions.
 - Assemblies are declared within Ultimate++ IDE (TheIDE) or configuration files.
+- Every package maintains an `AGENTS.md` at the root of the package directory documenting key classes and responsibilities. List this file first in the package’s `.upp` manifest so the IDE surfaces it at the top of the file tree.
 
 ## Build Rules
 - Initially, **no Makefiles or CMake**.  

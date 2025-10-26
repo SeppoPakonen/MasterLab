@@ -2,6 +2,7 @@ uses
 	Core;
 
 file
+	AGENTS.md,
 	AudioCore.h,
 	AudioBuffer.h,
 	AudioBuffer.cpp,
@@ -17,4 +18,3 @@ file
 	Timeline.h,
 	Transport.h,
 	Transport.cpp;
-
