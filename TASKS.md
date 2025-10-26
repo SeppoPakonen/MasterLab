@@ -228,7 +228,6 @@
 81. Implement sample streaming and articulation systems (Media/MediaPool): `Sample::StreamEngine`, `Sample::RoundRobin`, `Sample::LoopPool`, `Sample::SliceEngine`, `Sample::TimeStretch`, `Sample::ArticulationEngine`, `Sample::MicMixer`, `Sample::PedalModel`, `Sample::VintageDAC`, `Sample::DFDStream`, and `Sample::Zone`
 82. Implement spatial calibration and immersive processing frameworks (Devices/AudioFX): `Calibration::MeasurementAnalyzer`, `Calibration::PhaseAnalyzer`, `Calibration::DelaySolver`, `DSP::FIRDesigner`, `DSP::IIRDesigner`, `DSP::AmbisonicsEncoder`, `DSP::BinauralRenderer`, `DSP::HeadTracker`, and `DSP::SurroundMeterBridge`
 83. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
-
 ### MEDIUM PRIORITY
 75. Create .upp files for new packages with proper uses declarations
 
@@ -273,6 +272,7 @@
 27. Create Video package with files: Video.h, Video.cpp, AudioFromVideo.h, AudioFromVideo.cpp, ReplaceAudio.h, ReplaceAudio.cpp, Thumbnail.h, Thumbnail.cpp
 28. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md and capture results in EFFECTS.md/INSTRUMENTS.md
 29. Update root/packet `AGENTS.md` files to capture core class implementation details for EFFECTS/INSTRUMENTS blueprints
+30. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
 
 ## References
 

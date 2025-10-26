@@ -1,0 +1,115 @@
+#include "PluginSDK.h"
+
+namespace PluginSDK {
+
+bool AudioBus::IsValid() const {
+	return channels != nullptr && channel_count > 0 && frame_count >= 0;
+}
+
+float* AudioBus::GetChannel(int index) const {
+	if(!channels || index < 0 || index >= channel_count)
+		return nullptr;
+	return channels[index];
+}
+
+void ModulationBus::Clear() {
+	lanes.Clear();
+	lane_length = 0;
+}
+
+int ParameterSet::Add(const ParameterDescriptor& descriptor) {
+	int index = descriptors.GetCount();
+	descriptors.Add(descriptor);
+	ParameterState& state = states.Add();
+	state.value = descriptor.default_value;
+	return index;
+}
+
+bool ParameterSet::SetValue(int index, double value) {
+	if(index < 0 || index >= states.GetCount())
+		return false;
+	const ParameterDescriptor& desc = descriptors[index];
+	states[index].value = Upp::Clamp(value, desc.min, desc.max);
+	return true;
+}
+
+double ParameterSet::GetValue(int index) const {
+	if(index < 0 || index >= states.GetCount())
+		return 0.0;
+	return states[index].value;
+}
+
+bool ParameterSet::SetValueById(const String& id, double value) {
+	for(int i = 0; i < descriptors.GetCount(); ++i) {
+		if(descriptors[i].id == id)
+			return SetValue(i, value);
+	}
+	return false;
+}
+
+double ParameterSet::GetValueById(const String& id) const {
+	for(int i = 0; i < descriptors.GetCount(); ++i) {
+		if(descriptors[i].id == id)
+			return states[i].value;
+	}
+	return 0.0;
+}
+
+const ParameterDescriptor* ParameterSet::Find(const String& id) const {
+	for(int i = 0; i < descriptors.GetCount(); ++i) {
+		if(descriptors[i].id == id)
+			return &descriptors[i];
+	}
+	return nullptr;
+}
+
+const Vector<ParameterDescriptor>& ParameterSet::Descriptors() const {
+	return descriptors;
+}
+
+void RoutingMap::Add(const String& source, const String& destination) {
+	Edge& e = edges.Add();
+	e.source = source;
+	e.destination = destination;
+}
+
+const Vector<RoutingMap::Edge>& RoutingMap::GetEdges() const {
+	return edges;
+}
+
+void PluginProcessor::Prepare(const AudioConfig& config) {
+	current_config = config;
+}
+
+void PluginProcessor::Reset() {
+}
+
+void PluginProcessor::SetParameter(const String& id, double value) {
+	parameter_set.SetValueById(id, value);
+}
+
+double PluginProcessor::GetParameter(const String& id) const {
+	return parameter_set.GetValueById(id);
+}
+
+ParameterSet& PluginProcessor::Parameters() {
+	return parameter_set;
+}
+
+const ParameterSet& PluginProcessor::Parameters() const {
+	return parameter_set;
+}
+
+void InstrumentProcessor::NoteOn(const NoteEvent&) {
+}
+
+void InstrumentProcessor::NoteOff(const NoteEvent&) {
+}
+
+void InstrumentProcessor::ControlChange(const ControlEvent&) {
+}
+
+void InstrumentProcessor::AllNotesOff() {
+}
+
+} // namespace PluginSDK

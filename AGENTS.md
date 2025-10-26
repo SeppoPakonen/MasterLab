@@ -10,6 +10,8 @@ Be sure to check how U++ programs are done from "~/upp/uppsrc/ide" package if yo
 ```
 uppsrc/        ← Ultimate++ core sources (external dependency)
 src/               ← Main program assembly (packages with .upp files)
+effects/           ← Stub effect packages replacing commercial plug-ins
+instruments/       ← Stub instrument packages replacing commercial plug-ins
 unittst/           ← Unit test assembly
 tutorials/         ← Tutorial projects (for learning and experiments)
 reference/         ← Reference code and sample implementations

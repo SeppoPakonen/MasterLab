@@ -1,0 +1,7 @@
+uses
+	PluginSDK;
+
+file
+	AGENTS.md,
+	SpatialSurroundSuite.h,
+	SpatialSurroundSuite.cpp;

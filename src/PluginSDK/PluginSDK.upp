@@ -1,0 +1,7 @@
+uses
+	Core;
+
+file
+	AGENTS.md,
+	PluginSDK.h,
+	PluginSDK.cpp;
