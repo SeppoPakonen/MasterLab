@@ -1,0 +1,115 @@
+# Reference software
+Here's some additional commercial products to think about. I don't see MasterLab as competition at all, since succeeding in marketplace is mostly about marketing and that kind of product leadership. It's about making money with psychological exploits. I wish them good luck.
+
+## Effects
+- Roland ZENOLOGY
+- APU Loudness Compressor
+- APU Loudness Limiter
+- APU Loudness Analyzer
+- Cymatics Omnivox
+- iZotope: Dialogue Match
+- iZotope: Nectar 4 Advanecd
+- iZotope: Neutron
+- iZotope: Velvet
+- iZotope: Ozone Advanced 11
+- Replay Neural Voice Changer
+- Synchro Arts VocAlign
+- Steinberg Spectralayers (as editor FX)
+- KSHMR Essentials
+- Celemony Melodyne 5
+- Crave DSP: Crave Transient EQ
+- FabFilter: Timeless 2
+- Sonible: SmartReverb
+- Sugar Bytes: Effectrix
+- W.A. Production: Kick Shaper
+- Native Instruments: Guitar Rig
+
+### Waves effects
+- Curves AQ: The world’s first autonomous EQ
+- Clarity VX: AI-powered noise removal for vocals and voice
+- Vocal Rider: Get consistent vocal levels—automatically and fast
+- Sync Vx: Match the time & pitch of multiple vocal tracks, for tighter vocal productions
+- IDX Intelligent Dynamics: Smart energy optimizer for instant punch & focus in your tracks
+- Silk Vocal: Smart EQ & dynamics for vocals
+- Equator: Smarter resonance suppression & frequency unmasking
+- H-Reverb Hybrid Reverb: Lush reverb sounds with unlimited tweakability
+- Vitamin Sonic Enhancer: Add excitement, spark and definition to any track, while mixing or mastering
+- X-FDBK: Automatic feedback elimination for clearer live sound 
+- Primary Source Expander: Reduce mic bleed in live shows—instantly
+- Sibilance: De-essing with Organic ReSynthesis technology 
+- Abbey Road Studio 3: Abbey Road’s flagship mix room—modeled for reliable mixing on headphones (note: IR mixroom)
+- MaxxBass: Enhance bass and add low end, even on small speakers
+- Space Rider: Spatial effects suite with ‘secret weapon’ dynamic Rider
+- Torque: Tune the pitch of drums, in your recordings or live
+- Brauer Motion: Create moving, 3D-like spherical auto-panning effects
+- Abbey Road Chambers: Immerse your music in historic chamber reverbs
+- Greg Wells VoiceCentric: Vocal mixing made easy by Adele, Dua Lipa producer
+- Center: Fine-tune stereo tracks by separately controlling center and sides
+- Nx – Virtual Mix Room over Headphones: Virtual acoustic mix room for mixing on headphones
+- Abbey Road Vinyl: Give your music the vintage warmth and detailed retro effects of vinyl records
+- WNS Noise Suppressor: Reduce background noise with dialog and vocals 
+- Bass Rider: Mix with Consistent Bass Levels—Automatically 
+- Playlist Rider: Auto-adjusts consistent levels for multiple audio sources in real time
+- Magma Springs: Spring reverb – 7 types, endless style
+- PS22 Stereo Maker: Convert mono to stereo, or widen the stereo image
+- Z-Noise: Noiseprint-based noise reduction for music
+- LoAir: Subharmonic generator for stereo and surround sources
+- Submarine: Add bigger, deeper subs to your tracks
+- Kaleidoscopes: Super-suite of colorful modulation effects
+- Doppler: Doppler effects for film, sound design, and music
+- Enigma: Time delay, frequency-shift, and filtering effects
+- Greg Wells PianoCentric: Make pianos and keys sit perfectly in the mix
+- eMo D5 Dynamics: Multiple dynamics processor, for stage or studio
+- SuperTap: Flexible delays inspired by analog tape echo
+- PRS SuperModels: Guitar Amp Simulation: Stunning Realism Meets Superior Tone
+- IR-Live Convolution Reverb: Authentic reverb capturing real-world acoustic spaces, for both studio production and live sound
+- eMo Q4 Equalizer: 4-band paragraphic EQ optimized for the stage 
+- B360 Ambisonics Encoder: Convert mono, stereo, and surround to 360° Ambisonics B-format mixes
+- Lofi Space: Lofi-style reverb and delay plugin
+- Q-Clone: Convert any hardware EQ curve into a plugin preset
+- Dorrough Surround: Precision audio metering for 5.0 and 5.1 surround 
+- W43 Noise Reduction Plugin: Reduce ambient noise in audio-for-video productions
+- GTR Solo: Streamlined amp sim and effects for stage or studio
+- InPhase LT: Simplified phase alignment and correction tool
+- StudioRack: Smart plugin chainer, now with StudioVerse: Thousands of mix-ready chains w/ AI search
+- Lil Tube: Instant analog tube saturation 
+- GTR3 Amps: Versatile amp sims, cabinets, and mics for guitar and bass
+- GTR3 Stomps: Stompbox guitar effects complement amp sims
+- GTR3 ToolRack: Studio or live performance host for GTR3 modules
+- GTR3 Tuner: Precision tuning reference for stringed instruments
+- IDR360 Bit Re-Quantizer: Reduce audio bit depth and add noise-shaped dither
+- L3 Ultramaximizer: Multiband technology with a streamlined interface
+- L3-LL Multimaximizer: Low-latency, 5-band multimaximizer
+- L3-LL Ultramaximizer: Ultra-low latency with 5-band level maximization
+- DTS Neural™ Surround UpMix: Adapt stereo content to quad, 5.1, or 7.1 surround 
+- DTS Neural™ Surround DownMix: Render 5.1 or 7.1 surround content to a stereo mix 
+- DTS Neural™ Mono2Stereo: Render mono to stereo for broadcast and streaming
+- CLA EchoSphere: Plate reverb with slapback echo, optimized for lead vocals
+- Waves Stream: Remote audio collaboration in a single click: Share your DAW audio in real time
+- StudioVerse Audio Effects: A library of mixing presets – inside your DAW
+- WavesTune: Instant vocal pitch correction, in the studio or live
+
+## Instruments
+- Roland ZENOLOGY
+- BigFishAudio Momentum Pro
+- reFX Nexus
+- Toontrack EZkeys 2
+- Toontrack EZDrummer 2
+- LennarDigital: Sylenth1
+- Togu Audio Line: TAL-Sampler
+- Native Instruments: Massive
+- Native Instruments: Kontakt
+- Native Instruments: Battery
+- Native Instruments: Reaktor
+
+### Waves instruments
+- Grand Rhapsody Piano: Luxurious acoustic grand, multi-miked and sampled to perfection
+- Bass Fingers: Nuanced multi-sampled fingerstyle bass with keyswitched articulations
+- Element 2.0 Virtual Analog Synth: Subtractive analog synth with effects and sequencer
+- TRACT System Calibration: Room-tuning program integrates with Smaart® analysis 
+- Codex Wavetable Synth: Monster synth with a massive sonic palette
+- Electric 88 Piano: The sound and soul that defined 70s funk, jazz and rock
+- Flow Motion FM Synth: FM synth engine with virtual analog processing 
+- Bass Slapper: The most nuanced and realistic slap bass plugin ever created
+- Sub Align: Align PA system subs and tops for phase integrity
+- StudioVerse Instruments: A library of virtual instrument chains – inside your DAW

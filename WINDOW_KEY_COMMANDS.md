@@ -1062,21 +1062,21 @@ These commands reveals a lot of the functionality of this program.
 	- NS1 Stereo
 	- NuendoEQ2
 	- Octaver
-	- Oneknab Brighter Mono
-	- Oneknab Bighter Stereo
-	- Oneknab Driver Mono
-	- Oneknab Driver Stereo
-	- Oneknab Fiter Mono
-	- Oneknab Fiter Stereo
-	- Oneknab Louder Mono
-	- Oneknab Louder Stereo
-	- Oneknab Phatter Mono
-	- Oneknab Phatter Stereo
-	- Oneknab Pressure Mono
-	- Oneknab Pressure Stereo
-	- Oneknab Wetter Mono
-	- Oneknab Wetter Meno/Stereo
-	- Oneknab Wetter Stereo
+	- OneKnob Brighter Mono
+	- OneKnob Bighter Stereo
+	- OneKnob Driver Mono
+	- OneKnob Driver Stereo
+	- OneKnob Fiter Mono
+	- OneKnob Fiter Stereo
+	- OneKnob Louder Mono
+	- OneKnob Louder Stereo
+	- OneKnob Phatter Mono
+	- OneKnob Phatter Stereo
+	- OneKnob Pressure Mono
+	- OneKnob Pressure Stereo
+	- OneKnob Wetter Mono
+	- OneKnob Wetter Meno/Stereo
+	- OneKnob Wetter Stereo
 	- Overdrive
 	- PAZ: Analyzer Stereo
 	- PAZ: Frequency Mono
