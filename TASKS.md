@@ -231,6 +231,7 @@
 
 ## IN PROGRESS
 
+* Task 71. Document generic instrument/effect specifications from REFERENCE_SOFTWARE.md
 * Organizing and prioritizing remaining TODO items in TASKS.md (Task 72-75)
 * Updating project documentation and tracking systems
 
