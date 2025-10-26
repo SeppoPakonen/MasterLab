@@ -17,6 +17,13 @@
 |-------|------------------------|----------|-----------|-------------------|--------------|--------------|------------|
 | Roland ZENOLOGY | ZENOLOGY, ZENOLOGY Pro | rompler/workstation | MIDI/MPE support; no audio sidechain. | Zen-Core based instrument delivering PCM, virtual analog, and modelled partials with deep modulation and multi-FX. | Four-partial structure with cross-mod, ring, and sync options<br>Scenes for layering/splitting up to four parts with macro morphing<br>Motion Designer step-LFOs plus matrix modulation sources<br>Integrated MFX/IFX/TFX racks mirroring modern Roland hardware | Synth::ZenPartial, Synth::VoiceManager, Synth::ModMatrix, Automation::MotionDesigner, Sample::StreamEngine, FX::ZenFXRack | Note on → VoiceManager assigns partial voices → Partial oscillators (PCM/VA) → Time-variant filter/amp → MFX/TFX racks → Output |
 
+### Model Expansions
+
+| Group | Referenced instruments | Category | Sidechain | Generic blueprint | Key features | Core classes | Voice graph |
+|-------|------------------------|----------|-----------|-------------------|--------------|--------------|------------|
+| Roland JX-8P Model Expansion | JX-8P Model, PG-800 | analog polysynth | MIDI/MPE support; no audio sidechain. | Two-partial Zen-Core layer emulating JX-8P oscillator/filter topology with PG-800 macro panels. | Dual partials with detune and cross-mod<br>Motion Designer drift lane plus vibrato lane mapped to PG-800 sliders<br>Macros for filter sweep, chorus depth, evolving scenes | Instruments::ZenModelJX8P, Synth::VoiceManager, Automation::MotionDesigner, FX::ZenCoreFxRack | Note on → VoiceManager → Partials A/B (VA/PCM) → IFX chorus → MFX delay → TFX plate → Output |
+| Roland JUNO-106 Model Expansion | JUNO-106 Model | analog polysynth | MIDI only; no audio sidechain. | Single-partial configuration mirroring JUNO DCO + VCF with PWM motion and chorus macros. | Partial A enabled with PWM motion<br>Macro routing for cutoff, env depth, chorus mix, noise level<br>Motion lanes preconfigured for PWM and envelope shimmer | Instruments::ZenModelJUNO106, Synth::VoiceManager, Automation::MotionDesigner, FX::ZenCoreFxRack | Note on → VoiceManager → Partial A (PWM) → IFX chorus → MFX (optional) → TFX reverb → Output |
+
 ## Big Fish Audio Momentum (Big Fish Audio)
 
 | Group | Referenced instruments | Category | Sidechain | Generic blueprint | Key features | Core classes | Voice graph |

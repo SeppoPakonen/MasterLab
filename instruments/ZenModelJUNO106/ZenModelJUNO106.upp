@@ -1,0 +1,8 @@
+uses
+	PluginSDK,
+	ZenCoreWorkstation;
+
+file
+	AGENTS.md,
+	ZenModelJUNO106.h,
+	ZenModelJUNO106.cpp;

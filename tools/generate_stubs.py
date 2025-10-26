@@ -54,6 +54,8 @@ EFFECTS_SECTIONS = {
 
 INSTRUMENT_SECTIONS = {
 	"Roland Zenology Workstation (Roland)": "ZenCoreWorkstation",
+	"Roland JX-8P Model Expansion (Roland)": "ZenModelJX8P",
+	"Roland JUNO-106 Model Expansion (Roland)": "ZenModelJUNO106",
 	"Big Fish Audio Momentum (Big Fish Audio)": "MomentumLoopStation",
 	"reFX Nexus Workstation (reFX)": "LayeredRompler",
 	"Toontrack Songwriting Instruments (Toontrack)": "SongwriterInstrumentPack",

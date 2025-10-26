@@ -288,6 +288,8 @@
 37. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
 38. Document MIDI insert stubs, extract Transformer presets into scripts directory, and update roadmap
 95. Re-analyze Roland ZENOLOGY reference material and update ZenCoreFxRack/ZenCoreWorkstation packages to match ZEN-Core architecture and shared repository code
+96. Integrate ZenCoreWorkstation/ZenCoreFxRack with shared Synth/FX infrastructure stubs for VoiceManager and MFX catalogue
+97. Create thin Zen-Core Model Expansion instrument packages reusing ZenCoreWorkstation engine (e.g., JX-8P, JUNO-106)
 
 ## References
 
