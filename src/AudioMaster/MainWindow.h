@@ -508,7 +508,12 @@ private:
 	Ptr<SubWindow> combinedWin;
 	Ptr<SubWindow> postWin;
 	Ptr<SubWindow> postGraphWin;
-	
+
+	One<am::PoolWindow> poolWindow;
+	One<am::ProjectWindowHost> projectWindowHost;
+	One<am::ExportAudioMixdownDialog> exportAudioMixdown;
+	One<am::ProjectSetupDialog> projectSetup;
+
 };
 
 #endif

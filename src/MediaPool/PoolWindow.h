@@ -1,24 +1,46 @@
 #ifndef _MediaPool_PoolWindow_h_
 #define _MediaPool_PoolWindow_h_
 
-#include <CtrlLib/CtrlLib.h>
-using namespace Upp;
-
 namespace am {
 
 class PoolWindow : public TopWindow {
 public:
 	typedef PoolWindow CLASSNAME;
 	PoolWindow();
-	
-	void Open();
-	void Close();
-	void Refresh();
-	
+
+	void OpenWindow();
+	void CloseWindow();
+	void RefreshList();
+	void ToggleStatusBar(bool show);
+
 private:
 	void Init();
-	
-	// UI elements would go here
+	void BuildToolbar();
+	void BuildList();
+	void UpdateStatusText();
+	void OnToggleStatusBar();
+	void OnPlaySelected();
+	void OnLoopSelected();
+	void OnImportMedia();
+	void OnSearchMedia();
+	void OnOpenAll();
+	void OnCloseAll();
+
+	ToolBar toolbar;
+	SliderCtrl toolbarVolume;
+	Button toggleStatusBarButton;
+	Button playButton;
+	Button loopButton;
+	Button openAllButton;
+	Button closeAllButton;
+	Button importButton;
+	Button searchButton;
+	DropList columnVisibility;
+	ArrayCtrl mediaList;
+	Label projectFolderLabel;
+	Label poolFolderLabel;
+	StatusBar statusBar;
+	bool statusVisible = true;
 };
 
 }

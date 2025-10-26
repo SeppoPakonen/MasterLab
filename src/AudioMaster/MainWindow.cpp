@@ -807,7 +807,13 @@ void MainWindow::OnPostGraphView() {
 }
 
 // File menu implementations
-void MainWindow::OnNewProject() {}
+void MainWindow::OnNewProject() {
+	if(!projectWindowHost)
+		projectWindowHost.Create();
+	projectWindowHost->SetProjectTitle("Untitled Project");
+	projectWindowHost->OpenProjectWindow();
+	status = "Opened Project Window";
+}
 void MainWindow::OnNewLibrary() {}
 void MainWindow::OnOpen() {}
 void MainWindow::OnOpenLibrary() {}
@@ -828,7 +834,81 @@ void MainWindow::OnImportMusicXML() {}
 void MainWindow::OnImportOMF() {}
 void MainWindow::OnExportMIDIFile() {}
 void MainWindow::OnExportMIDILoop() {}
-void MainWindow::OnExportAudioMixdown() {}
+void MainWindow::OnExportAudioMixdown() {
+	if(!exportAudioMixdown)
+		exportAudioMixdown.Create();
+
+	Vector<am::ExportChannel> channels;
+	am::ExportChannel outputs;
+	outputs.id = "outputs";
+	outputs.label = "Output Channels";
+	am::ExportChannel stereo;
+	stereo.id = "stereo_out";
+	stereo.label = "Stereo Out";
+	stereo.selected = true;
+	outputs.children.Add(stereo);
+	channels.Add(outputs);
+
+	am::ExportChannel groups;
+	groups.id = "groups";
+	groups.label = "Group Channels";
+	am::ExportChannel group1;
+	group1.id = "group_1";
+	group1.label = "Group 1";
+	groups.children.Add(group1);
+	channels.Add(groups);
+
+	am::ExportChannel fx;
+	fx.id = "fx";
+	fx.label = "FX Channels";
+	am::ExportChannel fx1;
+	fx1.id = "fx_reverb";
+	fx1.label = "Reverb Bus";
+	fx.children.Add(fx1);
+	channels.Add(fx);
+
+	am::ExportChannel instruments;
+	instruments.id = "instruments";
+	instruments.label = "Instrument Tracks";
+	am::ExportChannel inst1;
+	inst1.id = "inst_pad";
+	inst1.label = "Pad Layer";
+	instruments.children.Add(inst1);
+	channels.Add(instruments);
+
+	exportAudioMixdown->SetChannels(channels);
+	exportAudioMixdown->SetDefaultPath(GetHomeDirFile("AudioExports"));
+	exportAudioMixdown->SetDefaultFilename("Mixdown");
+
+	exportAudioMixdown->WhenExport = [this](const am::ExportRequest& request) {
+		status = Format("Export requested: %s (%s)", request.filename, request.fileType);
+	};
+
+	exportAudioMixdown->WhenBrowsePath = [this]() {
+		String dir = SelectDirectory();
+		if(!dir.IsEmpty())
+			exportAudioMixdown->SetDefaultPath(dir);
+	};
+
+	exportAudioMixdown->WhenBatchExport = [this]() {
+		status = "Channel batch export queued";
+	};
+
+	exportAudioMixdown->WhenDialogClose = [this]() {
+		status = "Closed Export Audio Mixdown";
+	};
+
+	exportAudioMixdown->WhenEditID3 = [](ValueMap& tags) {
+		tags("Title") = "New Mix";
+		tags("Artist") = "MasterLab";
+		tags("Album") = "Session";
+		tags("Year") = FormatInt(GetSysTime().year);
+		tags("Genre") = "Electronic";
+		tags("Comment") = "Rendered from MasterLab";
+	};
+
+	exportAudioMixdown->Open();
+}
 void MainWindow::OnExportSelectedTracks() {}
 void MainWindow::OnExportTempoTrack() {}
 void MainWindow::OnExportScores() {}
@@ -972,7 +1052,29 @@ void MainWindow::OnAutomationPanel() {}
 void MainWindow::OnBeatCalculator() {}
 void MainWindow::OnSetTimecodeAtCursor() {}
 void MainWindow::OnNotepad() {}
-void MainWindow::OnProjectSetup() {}
+void MainWindow::OnProjectSetup() {
+	if(!projectSetup)
+		projectSetup.Create();
+	am::ProjectSetupModel model;
+	model.start = "00:00:00:00";
+	model.length = "00:10:00:00";
+	model.frameRate = "24 fps";
+	model.displayFormat = "Bars+Beats";
+	model.displayOffset = "00:00:00:00";
+	model.barOffset = 0;
+	model.sampleRate = 44100;
+	model.recordBitDepth = 24;
+	model.recordFileType = "Wave";
+	model.stereoPanLaw = "Equal Power";
+	projectSetup->SetModel(model);
+
+	projectSetup->WhenHelp = [this]() { PromptOK("Open the Project Setup documentation."); };
+	projectSetup->WhenApply = [this](const am::ProjectSetupModel& m) {
+		status = Format("Project setup updated: %s, %d Hz", m.displayFormat, m.sampleRate);
+	};
+
+	projectSetup->Run();
+}
 void MainWindow::OnAutoFadesSettings() {}
 
 // Audio menu implementations
@@ -1142,7 +1244,12 @@ void MainWindow::OnAdvancedLayoutDisplayMarkers() {}
 void MainWindow::OnAdvancedLayoutMarkerTrackToForm() {}
 
 // Media menu implementations
-void MainWindow::OnOpenPoolWindow() {}
+void MainWindow::OnOpenPoolWindow() {
+	if(!poolWindow)
+		poolWindow.Create();
+	poolWindow->OpenWindow();
+	poolWindow->RefreshList();
+}
 void MainWindow::OnOpenMediaBay() {}
 void MainWindow::OnOpenLoopBrowser() {}
 void MainWindow::OnOpenSoundBrowser() {}

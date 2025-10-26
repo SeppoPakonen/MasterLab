@@ -1,0 +1,10 @@
+uses
+	CtrlLib,
+	FileIO,
+	AudioCore;
+
+file
+	AGENTS.md,
+	PLAN.md,
+	ExportAudioMixdown.h,
+	ExportAudioMixdown.cpp;

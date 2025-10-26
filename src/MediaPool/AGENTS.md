@@ -6,8 +6,10 @@ The MediaPool package handles the central asset pool functionality including med
 ## Key Components
 
 ### PoolWindow
-- Provides the UI for the media pool
-- Displays assets in the pool
+- Hosts the complete Media Pool UI scaffold: toolbar with status toggle/play/loop/import/search actions, vertical volume slider, and project/pool path labels
+- Renders the media list with the 15 metadata columns described in `cubase5_pool.md` (usage, musical mode, algorithm, waveform preview, etc.)
+- Maintains status bar text summarising asset counts and storage usage
+- Exposes hooks for search/import commands and for toggling status bar visibility
 
 ### Conform
 - Handles media conformity operations
@@ -19,6 +21,7 @@ The MediaPool package handles the central asset pool functionality including med
 
 ### Search
 - Provides search functionality across the media pool
+- `PoolSearchDialog` mirrors the Cubase two-pane search window with scope dropdown, transport controls, autoplay, and results table
 - Allows finding specific assets
 
 ### Integrity
@@ -37,7 +40,7 @@ The MediaPool package handles the central asset pool functionality including med
 - `AudioFX`: Accesses analysis metadata (transients, pitch) generated during ingestion for transient-aware processors.
 
 ## Package Classes Relations
-- PoolWindow displays content managed by other components
+- PoolWindow displays content managed by other components and raises callbacks for Conform/Convert/Search/Integrity services
 - Conform and Convert work with media files
-- Search provides discovery of media assets
+- Search provides discovery of media assets and feeds results back into PoolWindow and PoolSearchDialog
 - Integrity ensures media availability

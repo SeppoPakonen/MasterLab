@@ -288,6 +288,10 @@
 36. Generate effect/instrument stub packages and planning docs replacing commercial references in EFFECTS.md/INSTRUMENTS.md, including shared PluginSDK signal/data library
 37. Expand stub coverage with additional effect/instrument families, MIDI-only processors, and graph visualisation hooks in PluginSDK
 38. Document MIDI insert stubs, extract Transformer presets into scripts directory, and update roadmap
+99. Scaffold ProjectWindow package with Cubase-style layout shells, AGENTS briefing, and implementation plan.
+100. Create ExportAudioMixdown package with window skeleton, codec option stubs, AGENTS summary, and rollout plan.
+101. Extend MediaPool window scaffolding to match Cubase pool layout, update AGENTS, and capture implementation plan.
+102. Create ProjectSetup package with dialog scaffolding, AGENTS notes, and rollout plan.
 95. Re-analyze Roland ZENOLOGY reference material and update ZenCoreFxRack/ZenCoreWorkstation packages to match ZEN-Core architecture and shared repository code
 96. Integrate ZenCoreWorkstation/ZenCoreFxRack with shared Synth/FX infrastructure stubs for VoiceManager and MFX catalogue
 97. Create thin Zen-Core Model Expansion instrument packages reusing ZenCoreWorkstation engine (e.g., JX-8P, JUNO-106)

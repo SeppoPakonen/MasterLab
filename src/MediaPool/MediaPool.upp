@@ -5,6 +5,7 @@ uses
 
 file
 	AGENTS.md,
+	PLAN.md,
 	MediaPool.h,
 	MediaPool.cpp,
 	PoolWindow.h,

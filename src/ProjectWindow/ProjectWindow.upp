@@ -1,0 +1,10 @@
+uses
+	CtrlLib,
+	ProjectMgmt,
+	AudioCore;
+
+file
+	AGENTS.md,
+	PLAN.md,
+	ProjectWindow.h,
+	ProjectWindow.cpp;

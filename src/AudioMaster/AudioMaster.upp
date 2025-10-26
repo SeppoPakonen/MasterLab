@@ -1,5 +1,9 @@
 uses
-	ProjectMgmt;
+	ProjectMgmt,
+	MediaPool,
+	ExportAudioMixdown,
+	ProjectSetup,
+	ProjectWindow;
 
 file
 	AudioMaster.h,
@@ -8,4 +12,3 @@ file
 	MainWindow.cpp,
 	Views.h,
 	Views.cpp;
-
