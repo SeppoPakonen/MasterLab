@@ -3,6 +3,8 @@ uses
 	AudioCore;
 
 file
+	AGENTS.md,
+	PLAN.md,
 	TransportUI.h,
 	TransportUI.cpp,
 	Metronome.h,
@@ -10,4 +12,6 @@ file
 	CycleRange.h,
 	CycleRange.cpp,
 	PrePostRoll.h,
-	PrePostRoll.cpp;
+	PrePostRoll.cpp,
+	TransportWindow.h,
+	TransportWindow.cpp;

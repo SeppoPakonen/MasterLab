@@ -293,6 +293,9 @@
 101. Extend MediaPool window scaffolding to match Cubase pool layout, update AGENTS, and capture implementation plan.
 102. Create ProjectSetup package with dialog scaffolding, AGENTS notes, and rollout plan.
 103. Extend AK accelerator definitions for new UI windows and wire menu items to generated key bindings.
+104. Build TransportWindow package scaffolding mirroring Cubase 5 floating transport interface (meters, locators, dual time displays, transport buttons).
+105. Implement TransportWindow presenter wiring for recording modes, tempo/sync stack, and marker quick controls.
+106. Integrate virtual keyboard overlay and master output slider behaviour in TransportUI.
 95. Re-analyze Roland ZENOLOGY reference material and update ZenCoreFxRack/ZenCoreWorkstation packages to match ZEN-Core architecture and shared repository code
 96. Integrate ZenCoreWorkstation/ZenCoreFxRack with shared Synth/FX infrastructure stubs for VoiceManager and MFX catalogue
 97. Create thin Zen-Core Model Expansion instrument packages reusing ZenCoreWorkstation engine (e.g., JX-8P, JUNO-106)

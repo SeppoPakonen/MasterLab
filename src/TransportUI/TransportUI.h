@@ -8,5 +8,6 @@ using namespace Upp;
 #include "Metronome.h"
 #include "CycleRange.h"
 #include "PrePostRoll.h"
+#include "TransportWindow.h"
 
 #endif
