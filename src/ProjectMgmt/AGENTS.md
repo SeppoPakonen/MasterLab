@@ -19,6 +19,11 @@ The ProjectMgmt package handles global command routing, undo/redo functionality,
 - Handles selection models for various project elements
 - Manages selected items across the application
 
+## Upcoming Workflows
+- **Score Editor Integration:** add `ScoreSelectionContext` so `Editors::ScoreEditorPresenter` can push/pull selections (notes, symbols, clefs) and receive callbacks when global selection changes.
+- **Routing Presets:** expose `PresetRepository` with scoped namespaces (Global, Project) used by `Devices::IOMatrixService` to store VST Connections layouts.
+- **Command Extensions:** register score-specific command descriptors (Insert Note, Glue Notes, Flip, Auto Layout, Create Chord Symbols) so the command bus can produce undoable operations shared by Key/Score editors.
+
 ## Relations to Other Packages
 - `Core`: Basic U++ framework functionality
 - `CtrlCore`, `CtrlLib`: UI controls and framework

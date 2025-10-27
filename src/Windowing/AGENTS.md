@@ -13,6 +13,12 @@ The Windowing package handles window management including workspace layouts, win
 - Maintains registry of application windows
 - Provides centralized window management
 
+## Upcoming Integrations
+- Register Cubase-style utility windows (`VSTConnectionsHost`, future MediaBay/Pool variants) with unique IDs for quick show/hide commands.
+- Persist geometry/layout for floating windows through `Workspace::SaveState`/`LoadState`, keyed by window ID.
+- Provide helper `ShowOrActivate(String id)` so command handlers can open the VST Connections window without duplicating lookup logic.
+- Expose `WhenWindowRegistered` signal so subsystems (e.g., `TransportUI`, `VSTConnections`) can auto-bind accelerators after registration.
+
 ## Relations to Other Packages
 - `CtrlLib`: UI controls and framework for window management
 

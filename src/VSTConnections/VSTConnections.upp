@@ -1,0 +1,12 @@
+description "Cubase-style VST Connections window scaffolding";
+
+uses
+	CtrlLib,
+	Devices,
+	Windowing,
+	ProjectMgmt,
+	AudioCore,
+	Tooling;
+
+file
+	AGENTS.md;

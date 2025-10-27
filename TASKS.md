@@ -1,5 +1,9 @@
 # TASKS — Development Workflow
 
+## URGENT
+
+
+
 ## PHASE 1: CORE FOUNDATION (Months 1-3)
 *Milestone: Basic Project Management*
 
@@ -239,6 +243,8 @@
 89. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
 92. Integrate `PluginSDK::GraphVisualization` with AudioUI rack/macro surfaces to render node/edge diagrams and active-path overlays
 93. Build shared AI/groove/phrase services (`DSP::AIRecommender`, `Midi::GrooveExtractor`, `Midi::PhraseDatabase`) powering Bandmate-style suggestions across audio and MIDI stubs
+107. Scaffold `VSTConnections` UI (`VSTConnectionsCtrl`, per-tab panes, presenter) and implement `Devices::IOMatrixService`/`RoutingRepository` skeletons providing snapshots, change application, and preset hooks.
+108. Refactor `Editors::ScoreEditor` using the documented controller/toolstrip layout; introduce `ScoreEditorCtrl`, presenter wiring to `Scores::NotationDocument`, and connect to `ProjectMgmt::CommandManager`/`AudioCore::MidiPreview`.
 ### MEDIUM PRIORITY
 81. Create .upp files for new packages with proper uses declarations
 94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
@@ -256,6 +262,7 @@
 
 ## DONE
 
+0. read files "cubase5_vst_connections.md" and "cubase5_midi_score_editor.md" and plan it's implementation: create new packages if needed, add new files if needed, add new classes, functions, related core classes and functions, detailed implementation notes to packages AGENTS.md. See if existing classes and functions needs updating. Try to re-use classes.
 1. Create ProjectMgmt package with files: ProjectMgmt.h, ProjectMgmt.cpp, Commands.h, Commands.cpp, History.h, History.cpp, Selection.h, Selection.cpp
 2. Implement FileIO package with files: FileIO.h, FileIO.cpp, Import.h, Import.cpp, Export.h, Export.cpp, MediaFormatRegistry.h, MediaFormatRegistry.cpp, RecentFiles.h, RecentFiles.cpp, Backup.h, Backup.cpp, Templates.h, Templates.cpp
 3. Create TransportUI package with files: TransportUI.h, TransportUI.cpp, Metronome.h, Metronome.cpp, CycleRange.h, CycleRange.cpp, PrePostRoll.h, PrePostRoll.cpp

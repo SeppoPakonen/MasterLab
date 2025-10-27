@@ -32,3 +32,4 @@ AudioCore holds the low-level voice management, modulation, and synthesis primit
 - Requests sample playback via `MediaPool::Sample::StreamEngine`.
 - Sends insert send/return paths through `AudioFX::DSP::SignalBus`.
 - Publishes metering taps for `AudioAnalysis` (oscilloscope, tuner, loudness per voice).
+- Provides **`MidiPreview`** (planned) so editors (Key, Drum, Score) can audition notes when Acoustic Feedback or Step Input is active. Exposes `PreviewNoteOn`, `PreviewNoteOff`, and `SetPreviewChannel`. Integrates with `Devices::AudioDeviceManager` for routing and obeys VST Connections click routing updates.
