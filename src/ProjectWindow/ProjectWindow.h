@@ -75,10 +75,12 @@ public:
 
 	void SetTrackType(const String& type);
 	void RefreshPanels();
+	void SetPanels(const Vector<ValueMap>& panels);
 
 private:
 	ArrayCtrl panelList;
 	Label trackLabel;
+	Vector<ValueMap> panelState;
 };
 
 class TrackListPane : public ParentCtrl {
@@ -88,6 +90,8 @@ public:
 
 	void SetTracks(const Vector<String>& tracks);
 	void SetToolbarEnabled(bool enabled);
+	void Clear();
+	void AppendTrack(const String& name, const String& controls, const String& detail);
 
 private:
 	ToolBar trackToolbar;
@@ -127,6 +131,9 @@ public:
 	void BindTrackModel(Callback<> whenTrackModelChanged);
 	void BindInspectorSource(Callback<> whenInspectorChanged);
 	void SetProjectZoomState(int horizontal, int vertical);
+	void UpdateTrackList(const Vector<ValueMap>& entries);
+	void UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption);
+	void UpdateWorkAreaState(const ValueMap& state);
 
 private:
 	void ConfigureSplitters();
@@ -142,6 +149,9 @@ private:
 	Callback<> onTimelineChanged;
 	Callback<> onTrackModelChanged;
 	Callback<> onInspectorChanged;
+	Vector<ValueMap> cachedTrackEntries;
+	Vector<ValueMap> cachedInspectorPanels;
+	ValueMap cachedWorkArea;
 };
 
 class ProjectWindowHost : public TopWindow {

@@ -240,15 +240,7 @@ InspectorPane::InspectorPane() {
 	panelList.Enable(false);
 	panelList.SetFrame(InsetFrame());
 	Add(panelList.VSizePos(28, 4).HSizePos(4, 4));
-
-	panelList.Add("Track Controls");
-	panelList.Add("VST Expression");
-	panelList.Add("MIDI Inserts");
-	panelList.Add("Equalizer");
-	panelList.Add("Sends");
-	panelList.Add("Channel Settings");
-	panelList.Add("Notepad");
-	panelList.Add("Quick Controls");
+	RefreshPanels();
 }
 
 void InspectorPane::SetTrackType(const String& type) {
@@ -256,7 +248,28 @@ void InspectorPane::SetTrackType(const String& type) {
 }
 
 void InspectorPane::RefreshPanels() {
+	panelList.Clear();
+	if(panelState.IsEmpty()) {
+		panelList.Add("Track Controls");
+		panelList.Add("VST Expression");
+		panelList.Add("MIDI Inserts");
+		panelList.Add("Equalizer");
+		panelList.Add("Sends");
+		panelList.Add("Channel Settings");
+		panelList.Add("Notepad");
+		panelList.Add("Quick Controls");
+	}
+	else {
+		for(const ValueMap& panel : panelState) {
+			String name = panel.Get("title", "Panel");
+			panelList.Add(name);
+		}
+	}
 	panelList.Refresh();
+}
+
+void InspectorPane::SetPanels(const Vector<ValueMap>& panels) {
+	panelState = panels;
 }
 
 TrackListPane::TrackListPane() {
@@ -303,6 +316,14 @@ void TrackListPane::SetTracks(const Vector<String>& tracks) {
 
 void TrackListPane::SetToolbarEnabled(bool enabled) {
 	trackToolbar.Enable(enabled);
+}
+
+void TrackListPane::Clear() {
+	trackTable.Clear();
+}
+
+void TrackListPane::AppendTrack(const String& name, const String& controls, const String& detail) {
+	trackTable.Add(name, controls, detail);
 }
 
 ProjectAreaPane::ProjectAreaPane() {
@@ -368,9 +389,36 @@ void ProjectWindowCtrl::ConfigureSplitters() {
 void ProjectWindowCtrl::InitDemoData() {
 	toolbar.SetProjectTitle("Untitled Project");
 	infoLine.ShowMidiColumns();
-	inspector.SetTrackType("Instrument Track");
-	trackList.PopulateDemoRows();
-	projectArea.SetRulerFormat("Bars+Beats");
+	Vector<ValueMap> demoPanels;
+	ValueMap controls;
+	controls("title") = "Track Controls";
+	demoPanels.Add(controls);
+	ValueMap inserts;
+	inserts("title") = "MIDI Inserts";
+	demoPanels.Add(inserts);
+	ValueMap notes;
+	notes("title") = "Notepad";
+	demoPanels.Add(notes);
+	UpdateInspectorPanels(demoPanels, "Instrument Track");
+
+	Vector<ValueMap> demoTracks;
+	ValueMap trackA;
+	trackA("title") = "Instrument 01";
+	trackA("controls") = "M S R W";
+	trackA("detail") = "Preset: Studio Strings";
+	demoTracks.Add(trackA);
+	ValueMap trackB;
+	trackB("title") = "Audio 01";
+	trackB("controls") = "M S R W";
+	trackB("detail") = "Stereo";
+	demoTracks.Add(trackB);
+	UpdateTrackList(demoTracks);
+
+	ValueMap workState;
+	workState("rulerFormat") = String("Bars+Beats");
+	workState("zoomHorizontal") = 50;
+	workState("zoomVertical") = 50;
+	UpdateWorkAreaState(workState);
 }
 
 void ProjectWindowCtrl::SetProjectTitle(const String& title) {
@@ -391,6 +439,34 @@ void ProjectWindowCtrl::BindInspectorSource(Callback<> whenInspectorChanged) {
 
 void ProjectWindowCtrl::SetProjectZoomState(int horizontal, int vertical) {
 	projectArea.SetZoomState(horizontal, vertical);
+}
+
+void ProjectWindowCtrl::UpdateTrackList(const Vector<ValueMap>& entries) {
+	cachedTrackEntries = entries;
+	trackList.Clear();
+	for(const ValueMap& row : cachedTrackEntries) {
+		String title = row.Get("title", "Unnamed Track");
+		String controls = row.Get("controls", "M S R W");
+		String detail = row.Get("detail", "");
+		trackList.AppendTrack(title, controls, detail);
+	}
+	trackList.Refresh();
+}
+
+void ProjectWindowCtrl::UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption) {
+	cachedInspectorPanels = panels;
+	inspector.SetTrackType(caption);
+	inspector.SetPanels(cachedInspectorPanels);
+	inspector.RefreshPanels();
+}
+
+void ProjectWindowCtrl::UpdateWorkAreaState(const ValueMap& state) {
+	cachedWorkArea = state;
+	String format = cachedWorkArea.Get("rulerFormat", String("Bars+Beats"));
+	projectArea.SetRulerFormat(format);
+	if(cachedWorkArea.Find("zoomHorizontal") >= 0 && cachedWorkArea.Find("zoomVertical") >= 0)
+		projectArea.SetZoomState((int)cachedWorkArea.Get("zoomHorizontal"), (int)cachedWorkArea.Get("zoomVertical"));
+	projectArea.RefreshClips();
 }
 
 ProjectWindowHost::ProjectWindowHost() {
