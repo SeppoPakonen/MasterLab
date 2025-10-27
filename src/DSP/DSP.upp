@@ -1,0 +1,29 @@
+uses
+	Core,
+	Draw,
+	CtrlCore,
+	CtrlLib,
+	AudioCore,
+	AudioGraph,
+	PluginSDK,
+	Math;
+
+file
+	DSP.h,
+	DSP.cpp,
+	SignalBus.h,
+	SignalBus.cpp,
+	ParameterSet.h,
+	ParameterSet.cpp,
+	ModMatrix.h,
+	ModMatrix.cpp,
+	LatencyBuffer.h,
+	LatencyBuffer.cpp,
+	PresetManager.h,
+	PresetManager.cpp,
+	ZenCoreMFXCatalogue.h,
+	ZenCoreMFXCatalogue.cpp,
+	Analyzer.h,
+	Analyzer.cpp,
+	VocalProcessing.h,
+	VocalProcessing.cpp;

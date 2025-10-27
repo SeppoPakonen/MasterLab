@@ -278,11 +278,14 @@ void PreferencesDlg::OnTreeSel() {
 			current_panel = nullptr;
 		}
 		
-		current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
-		if(current_panel) {
-			view_holder.Add(current_panel->SizePos());
-			current_panel->Init(model);
-			current_panel->Load(model);
+		// Only try to create panel if it's a subcategory (has a parent)
+		if (node->Parent()) {
+			current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
+			if(current_panel) {
+				view_holder.Add(current_panel->SizePos());
+				current_panel->Init(model);
+				current_panel->Load(model);
+			}
 		}
 	}
 }
