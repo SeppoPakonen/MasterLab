@@ -17,7 +17,7 @@ void ZenCoreMFXCatalogue::RegisterAlgorithm(const MFXAlgorithm& algorithm) {
     alg.description = algorithm.description;
     alg.category = algorithm.category;
     alg.supports_combination = algorithm.supports_combination;
-    alg.parameters = pick(algorithm.parameters);
+    alg.parameters <<= algorithm.parameters;
 }
 
 const MFXAlgorithm* ZenCoreMFXCatalogue::GetAlgorithm(const String& id) const {

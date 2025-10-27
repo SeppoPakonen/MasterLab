@@ -10,10 +10,10 @@ MidiFilterConfig::MidiFilterConfig() {
 }
 
 void MidiFilterConfig::SetPrefs(const MidiFilterPrefs& newPrefs) {
-	prefs.record = pick(newPrefs.record);
-	prefs.thru = pick(newPrefs.thru);
-	prefs.channels = pick(newPrefs.channels);
-	prefs.controllerBlockList = pick(newPrefs.controllerBlockList);
+	prefs.record <<= newPrefs.record;
+	prefs.thru <<= newPrefs.thru;
+	prefs.channels <<= newPrefs.channels;
+	prefs.controllerBlockList <<= newPrefs.controllerBlockList;
 }
 
 bool MidiFilterConfig::ShouldFilter(int channel, int eventType) const {

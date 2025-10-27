@@ -37,7 +37,9 @@ void PoolSearchDialog::BuildLayout() {
 	scopeDrop.Add("[Hard Disks]");
 	scopeDrop.Add("Select Search Path...");
 	scopeDrop.SetIndex(0);
-	Add(Label("Scope:").TopPos(8, 20).LeftPos(8, 80));
+	Label scopeLabel;
+	scopeLabel.SetText("Scope:");
+	Add(scopeLabel.TopPos(8, 20).LeftPos(8, 80));
 	Add(scopeDrop.TopPos(8, 20).LeftPos(96, 200));
 
 	searchButton.SetLabel("Search");
@@ -45,7 +47,9 @@ void PoolSearchDialog::BuildLayout() {
 	Add(searchButton.TopPos(8, 24).RightPos(120, 100));
 	Add(selectButton.TopPos(8, 24).RightPos(12, 100));
 
-	Add(Label("Query:").TopPos(40, 20).LeftPos(8, 80));
+	Label queryLabel;
+	queryLabel.SetText("Query:");
+	Add(queryLabel.TopPos(40, 20).LeftPos(8, 80));
 	Add(queryField.TopPos(40, 20).LeftPos(96, 240));
 
 	playButton.SetLabel("Play");
@@ -57,12 +61,12 @@ void PoolSearchDialog::BuildLayout() {
 	Add(pauseButton.TopPos(72, 24).LeftPos(176, 80));
 	Add(repeatButton.TopPos(72, 24).LeftPos(260, 80));
 
-	volumeSlider.SetVert();
-	volumeSlider.Range(0, 100);
+	volumeSlider.Vertical();
+	volumeSlider.MinMax(0, 100);
 	volumeSlider.SetData(80);
 	Add(volumeSlider.TopPos(40, 112).LeftPos(320, 20));
 
-	positionSlider.Range(0, 1000);
+	positionSlider.MinMax(0, 1000);
 	positionSlider.SetData(0);
 	Add(positionSlider.TopPos(104, 20).HSizePos(360, 12));
 
@@ -118,8 +122,8 @@ void PoolWindow::BuildToolbar() {
 	loopButton.WhenAction = THISBACK(OnLoopSelected);
 	toolbar.Add(loopButton, 70);
 
-	toolbarVolume.SetVert();
-	toolbarVolume.Range(0, 100);
+	toolbarVolume.Vertical();
+	toolbarVolume.MinMax(0, 100);
 	toolbarVolume.SetData(80);
 	toolbar.Add(toolbarVolume, 36);
 

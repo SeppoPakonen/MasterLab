@@ -30,34 +30,54 @@ void ProjectSetupDialog::BuildLayout() {
 	int left = 16;
 	int labelWidth = 120;
 
-	Add(Label("Start:").TopPos(16, 20).LeftPos(left, labelWidth));
+	Label startLabel;
+	startLabel.SetText("Start:");
+	Add(startLabel.TopPos(16, 20).LeftPos(left, labelWidth));
 	Add(startField.TopPos(16, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Length:").TopPos(44, 20).LeftPos(left, labelWidth));
+	Label lengthLabel;
+	lengthLabel.SetText("Length:");
+	Add(lengthLabel.TopPos(44, 20).LeftPos(left, labelWidth));
 	Add(lengthField.TopPos(44, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Frame Rate:").TopPos(84, 20).LeftPos(left, labelWidth));
+	Label frameRateLabel;
+	frameRateLabel.SetText("Frame Rate:");
+	Add(frameRateLabel.TopPos(84, 20).LeftPos(left, labelWidth));
 	Add(frameRateDrop.TopPos(84, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Display Format:").TopPos(112, 20).LeftPos(left, labelWidth));
+	Label displayFormatLabel;
+	displayFormatLabel.SetText("Display Format:");
+	Add(displayFormatLabel.TopPos(112, 20).LeftPos(left, labelWidth));
 	Add(displayFormatDrop.TopPos(112, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Display Offset:").TopPos(140, 20).LeftPos(left, labelWidth));
+	Label displayOffsetLabel;
+	displayOffsetLabel.SetText("Display Offset:");
+	Add(displayOffsetLabel.TopPos(140, 20).LeftPos(left, labelWidth));
 	Add(displayOffsetField.TopPos(140, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Bar Offset:").TopPos(168, 20).LeftPos(left, labelWidth));
+	Label barOffsetLabel;
+	barOffsetLabel.SetText("Bar Offset:");
+	Add(barOffsetLabel.TopPos(168, 20).LeftPos(left, labelWidth));
 	Add(barOffsetField.TopPos(168, 20).LeftPos(left + labelWidth, 80));
 
-	Add(Label("Sample Rate:").TopPos(208, 20).LeftPos(left, labelWidth));
+	Label sampleRateLabel;
+	sampleRateLabel.SetText("Sample Rate:");
+	Add(sampleRateLabel.TopPos(208, 20).LeftPos(left, labelWidth));
 	Add(sampleRateDrop.TopPos(208, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Record Bit Depth:").TopPos(236, 20).LeftPos(left, labelWidth));
+	Label recordBitDepthLabel;
+	recordBitDepthLabel.SetText("Record Bit Depth:");
+	Add(recordBitDepthLabel.TopPos(236, 20).LeftPos(left, labelWidth));
 	Add(recordBitDepthDrop.TopPos(236, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Record File Type:").TopPos(264, 20).LeftPos(left, labelWidth));
+	Label recordFileTypeLabel;
+	recordFileTypeLabel.SetText("Record File Type:");
+	Add(recordFileTypeLabel.TopPos(264, 20).LeftPos(left, labelWidth));
 	Add(recordFileTypeDrop.TopPos(264, 20).LeftPos(left + labelWidth, 160));
 
-	Add(Label("Stereo Pan Law:").TopPos(292, 20).LeftPos(left, labelWidth));
+	Label stereoPanLawLabel;
+	stereoPanLawLabel.SetText("Stereo Pan Law:");
+	Add(stereoPanLawLabel.TopPos(292, 20).LeftPos(left, labelWidth));
 	Add(panLawDrop.TopPos(292, 20).LeftPos(left + labelWidth, 160));
 
 	helpButton.SetLabel("Help");
@@ -120,20 +140,20 @@ void ProjectSetupDialog::PopulateDefaults() {
 void ProjectSetupDialog::SetModel(const ProjectSetupModel& model) {
 	startField.SetData(model.start);
 	lengthField.SetData(model.length);
-	int frameIndex = frameRateDrop.FindText(model.frameRate);
+	int frameIndex = frameRateDrop.FindKey(model.frameRate);
 	if(frameIndex >= 0)
 		frameRateDrop.SetIndex(frameIndex);
-	int displayIndex = displayFormatDrop.FindText(model.displayFormat);
+	int displayIndex = displayFormatDrop.FindKey(model.displayFormat);
 	if(displayIndex >= 0)
 		displayFormatDrop.SetIndex(displayIndex);
 	displayOffsetField.SetData(model.displayOffset);
 	barOffsetField.SetData(model.barOffset);
 	sampleRateDrop.SetData(model.sampleRate);
 	recordBitDepthDrop.SetData(model.recordBitDepth);
-	int fileTypeIndex = recordFileTypeDrop.FindText(model.recordFileType);
+	int fileTypeIndex = recordFileTypeDrop.FindKey(model.recordFileType);
 	if(fileTypeIndex >= 0)
 		recordFileTypeDrop.SetIndex(fileTypeIndex);
-	int panIndex = panLawDrop.FindText(model.stereoPanLaw);
+	int panIndex = panLawDrop.FindKey(model.stereoPanLaw);
 	if(panIndex >= 0)
 		panLawDrop.SetIndex(panIndex);
 }
@@ -142,16 +162,16 @@ ProjectSetupModel ProjectSetupDialog::GetModel() const {
 	ProjectSetupModel model;
 	model.start = startField.GetData();
 	model.length = lengthField.GetData();
-	model.frameRate = frameRateDrop.GetText();
-	model.displayFormat = displayFormatDrop.GetText();
+	model.frameRate = frameRateDrop.GetKey(frameRateDrop.GetIndex());
+	model.displayFormat = displayFormatDrop.GetKey(displayFormatDrop.GetIndex());
 	model.displayOffset = displayOffsetField.GetData();
 	model.barOffset = (int)barOffsetField.GetData();
 	Value rate = sampleRateDrop.GetData();
 	model.sampleRate = IsNull(rate) ? 44100 : (int)rate;
 	Value bitDepth = recordBitDepthDrop.GetData();
 	model.recordBitDepth = IsNull(bitDepth) ? 24 : (int)bitDepth;
-	model.recordFileType = recordFileTypeDrop.GetText();
-	model.stereoPanLaw = panLawDrop.GetText();
+	model.recordFileType = recordFileTypeDrop.GetKey(recordFileTypeDrop.GetIndex());
+	model.stereoPanLaw = panLawDrop.GetKey(panLawDrop.GetIndex());
 	return model;
 }
 

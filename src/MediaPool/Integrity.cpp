@@ -3,7 +3,7 @@ namespace am {
 
 Integrity::Integrity() {
 	// Initialize with default pool path
-	pool_path = GetSystemFolder(SYS_DATA);
+	pool_path = ConfigFile("MediaPool");
 }
 
 Vector<IntegrityCheckResult> Integrity::CheckIntegrity() {

@@ -3,7 +3,7 @@ namespace am {
 
 Search::Search() {
 	// Initialize with default search path
-	search_path = GetSystemFolder(SYS_DATA);
+	search_path = ConfigFile("MediaSearch");
 }
 
 Vector<SearchResult> Search::SearchMedia(const String& query) {
