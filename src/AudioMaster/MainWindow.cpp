@@ -134,7 +134,10 @@ void MainWindow::OnFile(Bar& bar) {
 	bar.Sub("Export", [this](Bar& export_menu) {
 		export_menu.Add("MIDI File...", THISBACK(OnExportMIDIFile));
 		export_menu.Add("MIDI Loop...", THISBACK(OnExportMIDILoop));
-		export_menu.Add("Audio Mixdown...", THISBACK(OnExportAudioMixdown));
+		dword mixdown_key = AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN().key[0];
+		Bar::Item& mixdown = export_menu.Add("Audio Mixdown...", THISBACK(OnExportAudioMixdown));
+		if(mixdown_key)
+			mixdown.Key(mixdown_key);
 		export_menu.Add("Selected Tracks...", THISBACK(OnExportSelectedTracks));
 		export_menu.Add("Tempo Track...", THISBACK(OnExportTempoTrack));
 		export_menu.Add("Scores...", THISBACK(OnExportScores));
@@ -147,7 +150,10 @@ void MainWindow::OnFile(Bar& bar) {
 	bar.Add("Cleanup...", THISBACK(OnCleanup));
 	bar.Separator();
 	
-	bar.Add("Preferences...", THISBACK(OnPreferences));
+	Bar::Item& prefs = bar.Add("Preferences...", THISBACK(OnPreferences));
+	dword prefs_key = AKKeys::AK_PREFERENCES_OPEN().key[0];
+	if(prefs_key)
+		prefs.Key(prefs_key);
 	bar.Add("Key Commands...", THISBACK(OnKeyCommands));
 	bar.Separator();
 	
@@ -351,7 +357,10 @@ void MainWindow::OnProject(Bar& bar) {
 	bar.Add("Set Timecode at Cursor", THISBACK(OnSetTimecodeAtCursor));
 	bar.Add("Notepad", THISBACK(OnNotepad));
 	bar.Separator();
-	bar.Add("Project Setup...", THISBACK(OnProjectSetup));
+	Bar::Item& project_setup = bar.Add("Project Setup...", THISBACK(OnProjectSetup));
+	dword setup_key = AKKeys::AK_PROJECT_SETUP().key[0];
+	if(setup_key)
+		project_setup.Key(setup_key);
 	bar.Add("Auto Fades Settings...", THISBACK(OnAutoFadesSettings));
 }
 
@@ -615,7 +624,10 @@ void MainWindow::OnScores(Bar& bar) {
 }
 
 void MainWindow::OnMedia(Bar& bar) {
-	bar.Add("Open Pool Window", THISBACK(OnOpenPoolWindow));
+	Bar::Item& open_pool = bar.Add("Open Pool Window", THISBACK(OnOpenPoolWindow));
+	dword pool_key = AKKeys::AK_MEDIA_OPEN_POOL().key[0];
+	if(pool_key)
+		open_pool.Key(pool_key);
 	bar.Separator();
 	bar.Add("Open MediaBay", THISBACK(OnOpenMediaBay));
 	bar.Add("Open Loop Browser", THISBACK(OnOpenLoopBrowser));

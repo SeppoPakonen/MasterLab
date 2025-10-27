@@ -21,6 +21,7 @@ void KeyCommands::LoadCommands() {
 	AddCommand({AKKeys::FILE_SAVE, "Ctrl+S", "File/Save"});
 	AddCommand({AKKeys::FILE_SAVE_AS, "Ctrl+Shift+S", "File/Save As..."});
 	AddCommand({AKKeys::FILE_CLOSE, "Ctrl+W", "File/Close"});
+	AddCommand({AKKeys::FILE_EXPORT_AUDIO_MIXDOWN, "Ctrl+Shift+E", "File/Export Audio Mixdown..."});
 	
 	AddCommand({AKKeys::EDIT_UNDO, "Ctrl+Z", "Edit/Undo"});
 	AddCommand({AKKeys::EDIT_REDO, "Ctrl+Y", "Edit/Redo"});
@@ -34,6 +35,8 @@ void KeyCommands::LoadCommands() {
 	AddCommand({AKKeys::TRANSPORT_RECORD, "R", "Transport/Record"});
 	
 	AddCommand({AKKeys::PREFERENCES_OPEN, "Ctrl+,", "File/Preferences..."});
+	AddCommand({AKKeys::PROJECT_SETUP, "", "Project/Project Setup..."});
+	AddCommand({AKKeys::MEDIA_OPEN_POOL, "", "Media/Open Pool Window"});
 }
 
 void KeyCommands::SaveCommands() {
@@ -72,6 +75,7 @@ String KeyCommands::GetKeyName(int key_id) const {
 		case AKKeys::FILE_SAVE: return "File/Save";
 		case AKKeys::FILE_SAVE_AS: return "File/Save As...";
 		case AKKeys::FILE_CLOSE: return "File/Close";
+		case AKKeys::FILE_EXPORT_AUDIO_MIXDOWN: return "File/Export Audio Mixdown...";
 		case AKKeys::EDIT_UNDO: return "Edit/Undo";
 		case AKKeys::EDIT_REDO: return "Edit/Redo";
 		case AKKeys::EDIT_CUT: return "Edit/Cut";
@@ -82,6 +86,8 @@ String KeyCommands::GetKeyName(int key_id) const {
 		case AKKeys::TRANSPORT_STOP: return "Transport/Stop";
 		case AKKeys::TRANSPORT_RECORD: return "Transport/Record";
 		case AKKeys::PREFERENCES_OPEN: return "File/Preferences...";
+		case AKKeys::PROJECT_SETUP: return "Project/Project Setup...";
+		case AKKeys::MEDIA_OPEN_POOL: return "Media/Open Pool Window";
 		default: return "Unknown Command";
 	}
 }
@@ -94,6 +100,7 @@ int KeyCommands::GetKeyId(const String& key_name) const {
 	if(key_name == "File/Save") return AKKeys::FILE_SAVE;
 	if(key_name == "File/Save As...") return AKKeys::FILE_SAVE_AS;
 	if(key_name == "File/Close") return AKKeys::FILE_CLOSE;
+	if(key_name == "File/Export Audio Mixdown...") return AKKeys::FILE_EXPORT_AUDIO_MIXDOWN;
 	if(key_name == "Edit/Undo") return AKKeys::EDIT_UNDO;
 	if(key_name == "Edit/Redo") return AKKeys::EDIT_REDO;
 	if(key_name == "Edit/Cut") return AKKeys::EDIT_CUT;
@@ -104,6 +111,8 @@ int KeyCommands::GetKeyId(const String& key_name) const {
 	if(key_name == "Transport/Stop") return AKKeys::TRANSPORT_STOP;
 	if(key_name == "Transport/Record") return AKKeys::TRANSPORT_RECORD;
 	if(key_name == "File/Preferences...") return AKKeys::PREFERENCES_OPEN;
+	if(key_name == "Project/Project Setup...") return AKKeys::PROJECT_SETUP;
+	if(key_name == "Media/Open Pool Window") return AKKeys::MEDIA_OPEN_POOL;
 	
 	return -1; // Not found
 }

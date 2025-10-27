@@ -14,6 +14,7 @@ using namespace Upp;
 #include <AudioFX/AudioFX.h>
 #include <AudioGraph/AudioGraph.h>
 #include <AudioUI/AudioUI.h>
+#include <ProjectMgmt/AK.h>
 #include <MediaPool/MediaPool.h>
 #include <ExportAudioMixdown/ExportAudioMixdown.h>
 #include <ProjectSetup/ProjectSetup.h>

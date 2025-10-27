@@ -292,6 +292,7 @@
 100. Create ExportAudioMixdown package with window skeleton, codec option stubs, AGENTS summary, and rollout plan.
 101. Extend MediaPool window scaffolding to match Cubase pool layout, update AGENTS, and capture implementation plan.
 102. Create ProjectSetup package with dialog scaffolding, AGENTS notes, and rollout plan.
+103. Extend AK accelerator definitions for new UI windows and wire menu items to generated key bindings.
 95. Re-analyze Roland ZENOLOGY reference material and update ZenCoreFxRack/ZenCoreWorkstation packages to match ZEN-Core architecture and shared repository code
 96. Integrate ZenCoreWorkstation/ZenCoreFxRack with shared Synth/FX infrastructure stubs for VoiceManager and MFX catalogue
 97. Create thin Zen-Core Model Expansion instrument packages reusing ZenCoreWorkstation engine (e.g., JX-8P, JUNO-106)
