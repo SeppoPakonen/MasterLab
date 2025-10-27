@@ -19,7 +19,7 @@ public:
 	void ActivateWindow(const String& name);
 	
 private:
-	HashMap<String, TopWindow*> registered_windows;
+	VectorMap<String, TopWindow*> registered_windows;
 };
 
 }

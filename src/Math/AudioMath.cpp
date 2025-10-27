@@ -20,7 +20,7 @@ namespace Upp {
     }
     
     double lerp(double a, double b, double t) {
-        return a + (b - a) * clamp(t, 0.0, 1.0);
+        return a + (b - a) * Upp::max(0.0, Upp::min(1.0, t));
     }
     
     double MidiNoteToFreq(int note) {

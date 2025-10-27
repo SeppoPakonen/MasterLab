@@ -13,7 +13,7 @@ public:
 	void Disconnect();
 	bool IsConnected() const { return connected; }
 	void RefreshAvailableApps();
-	Vector<String> GetAvailableApps() const { return available_apps; }
+	const Vector<String>& GetAvailableApps() const { return available_apps; }
 	
 private:
 	bool connected = false;

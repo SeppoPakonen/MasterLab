@@ -14,12 +14,12 @@ void SoundBrowser::Init() {
 
 void SoundBrowser::Open() {
 	// Open the window
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void SoundBrowser::Close() {
 	// Close the window
-	CloseWindow();
+	Break();
 }
 
 void SoundBrowser::Refresh() {

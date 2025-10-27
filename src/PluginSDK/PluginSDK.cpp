@@ -29,7 +29,7 @@ bool ParameterSet::SetValue(int index, double value) {
 	if(index < 0 || index >= states.GetCount())
 		return false;
 	const ParameterDescriptor& desc = descriptors[index];
-	states[index].value = Upp::Clamp(value, desc.min, desc.max);
+	states[index].value = Upp::clamp(value, desc.min, desc.max);
 	return true;
 }
 

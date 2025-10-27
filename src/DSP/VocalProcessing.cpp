@@ -29,7 +29,7 @@ VoiceFeatures VoiceFeatureExtractor::AnalyzeBlock(const BufferView& input) {
     
     // Store for getter methods
     last_pitch = features.pitch;
-    last_formants = features.formants;
+    last_formants <<= features.formants;
     last_spectral_flux = features.spectral_flux;
     
     return features;
@@ -156,7 +156,7 @@ BufferView HarmonyGenerator::GenerateHarmonyVoice(const BufferView& input, int i
             for (int i = delay_samples; i < harmony.GetCount(); i++) {
                 delayed[i] = harmony[i - delay_samples];
             }
-            harmony = delayed;
+            harmony = pick(delayed);
         }
     }
     
@@ -182,11 +182,12 @@ bool StyleTransferNet::LoadModel(const String& model_path) {
 BufferView StyleTransferNet::ProcessFrame(const BufferView& input) {
     // In a real implementation, this would process audio through a neural network
     // For now, return a modified version of the input
-    BufferView output = input;
+    BufferView output;
+    output.SetCount(input.GetCount());
     
     // Apply some simple processing to simulate style transfer
     for (int i = 0; i < output.GetCount(); i++) {
-        output[i] *= 1.1;  // Slightly increase amplitude
+        output[i] = input[i] * 1.1;  // Slightly increase amplitude
     }
     
     return output;
@@ -201,8 +202,8 @@ FormantMorpher::~FormantMorpher() {
 
 void FormantMorpher::ConfigureTargets(const Vector<double>& src_formants, 
                                       const Vector<double>& tgt_formants) {
-    source_formants = src_formants;
-    target_formants = tgt_formants;
+    source_formants <<= src_formants;
+    target_formants <<= tgt_formants;
 }
 
 BufferView FormantMorpher::Process(const BufferView& input) {
@@ -213,7 +214,13 @@ BufferView FormantMorpher::Process(const BufferView& input) {
 BufferView FormantMorpher::ApplyFormantShift(const BufferView& input) {
     // In a real implementation, this would apply formant-preserving pitch shifting
     // or formant frequency mapping using filter banks or other techniques
-    BufferView output = input;
+    BufferView output;
+    output.SetCount(input.GetCount());
+    
+    // Copy input to output
+    for (int i = 0; i < input.GetCount(); i++) {
+        output[i] = input[i];
+    }
     
     // For simulation, just apply a simple morph between source and target formants
     for (int i = 0; i < output.GetCount(); i++) {
@@ -250,7 +257,7 @@ BufferView VoiceEncoder::Encode(const BufferView& input) {
         latent_representation[i] = avg / max(1.0, double(end - start));
     }
     
-    return latent_representation;
+    return pick(latent_representation);
 }
 
 // VoiceDecoder implementation

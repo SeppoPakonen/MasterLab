@@ -12,14 +12,14 @@ void UsageMetersPane::InitLayout() {
 	diskLabel.SetText("Disk");
 	asioOverloadLed.SetText(" ");
 	diskOverloadLed.SetText(" ");
-	asioOverloadLed.SetPaper(SLtRed);
-	diskOverloadLed.SetPaper(SLtRed);
+	asioOverloadLed.Ink(SLtRed);
+	diskOverloadLed.Ink(SLtRed);
 	asioOverloadLed.Hide();
 	diskOverloadLed.Hide();
-	asioMeter.SetVert();
-	diskMeter.SetVert();
-	asioMeter.SetTotal(100);
-	diskMeter.SetTotal(100);
+	asioMeter.Vertical();
+	diskMeter.Vertical();
+	asioMeter.SetLimits(0, 100);
+	diskMeter.SetLimits(0, 100);
 	Add(asioLabel);
 	Add(diskLabel);
 	Add(asioOverloadLed);
@@ -74,8 +74,8 @@ void RecordingModePane::SetCycleModeOptions(const Vector<String>& options) {
 }
 
 void RecordingModePane::SetState(const String& linear, const String& cycle, bool autoQuantizeOn) {
-	linearMode.SetText(linear);
-	cycleMode.SetText(cycle);
+	linearMode.SetData(linear);
+	cycleMode.SetData(cycle);
 	autoQuantize.Set(autoQuantizeOn);
 }
 
@@ -106,7 +106,7 @@ void LocatorPane::SetRollOffset(const String& rollText) {
 }
 
 void LocatorPane::SetPunchEnabled(bool enabled) {
-	punchButton.SetImage(enabled ? CtrlImg::record() : Null);
+	punchButton.SetImage(enabled ? CtrlImg::Record() : Null);
 }
 
 TimeDisplayPane::TimeDisplayPane() {
@@ -116,7 +116,7 @@ TimeDisplayPane::TimeDisplayPane() {
 	formatButton.SetLabel("Format");
 	primaryDisplay.SetText("1.01.00.000");
 	secondaryDisplay.SetText("00:00:00.000");
-	positionSlider.SetTotal(1000);
+	positionSlider.SetLimits(0, 1000);
 	Add(minusButton.TopPos(0, 22).LeftPos(0, 40));
 	Add(plusButton.TopPos(0, 22).LeftPos(44, 40));
 	Add(formatButton.TopPos(0, 22).LeftPos(88, 80));
@@ -139,8 +139,8 @@ void TimeDisplayPane::SetSecondaryTime(const String& value) {
 }
 
 void TimeDisplayPane::SetSliderPosition(int position, int total) {
-	positionSlider.SetTotal(max(total, 1));
-	positionSlider.Set(min(max(position, 0), positionSlider.GetTotal()));
+	positionSlider.SetLimits(0, max(total, 1));
+	positionSlider <<= min(max(position, 0), max(total, 1));
 }
 
 TransportButtonPane::TransportButtonPane() {
@@ -164,9 +164,9 @@ void TransportButtonPane::Layout() {
 
 void TransportButtonPane::SetState(bool cycle, bool playing, bool recording) {
 	if(buttons.GetCount() >= 8) {
-		buttons[4].SetCheck(cycle);
-		buttons[6].SetImage(playing ? CtrlImg::play() : Null);
-		buttons[7].SetImage(recording ? CtrlImg::record() : Null);
+		buttons[4].Set(cycle);
+		buttons[6].SetImage(playing ? CtrlImg::Play() : Null);
+		buttons[7].SetImage(recording ? CtrlImg::Record() : Null);
 	}
 }
 
@@ -187,8 +187,8 @@ TempoSyncPane::TempoSyncPane() {
 }
 
 void TempoSyncPane::SetMetronome(bool click, bool precount) {
-	metronomeButton.SetCheck(click);
-	precountButton.SetCheck(precount);
+	metronomeButton <<= click;
+	precountButton <<= precount;
 }
 
 void TempoSyncPane::SetTempoState(bool tempoTrack, const String& signature, const String& tempoValue) {
@@ -241,18 +241,18 @@ void MarkerQuickPane::SetMarkerCount(int count) {
 }
 
 ActivityMetersPane::ActivityMetersPane() {
-	midiIn.SetVert();
-	midiOut.SetVert();
-	midiIn.SetTotal(100);
-	midiOut.SetTotal(100);
+	midiIn.Vertical();
+	midiOut.Vertical();
+	midiIn.SetLimits(0, 100);
+	midiOut.SetLimits(0, 100);
 	Add(midiIn);
 	Add(midiOut);
 	for(int i = 0; i < 4; ++i) {
 		ProgressIndicator& meter = audioMeters.Add();
-		meter.SetVert();
-		meter.SetTotal(100);
+		meter.Vertical();
+		meter.SetLimits(0, 100);
 		Label& led = clipLeds.Add();
-		led.SetText(" ");
+		led.SetLabel(" ");
 		Add(led);
 		Add(meter);
 	}
@@ -278,15 +278,15 @@ void ActivityMetersPane::SetAudioActivity(const Vector<int>& channels, const Vec
 	int count = min(channels.GetCount(), audioMeters.GetCount());
 	for(int i = 0; i < count; ++i) {
 		audioMeters[i].Set(max(0, min(channels[i], 100)));
-		clipLeds[i].SetPaper(clipFlags.GetCount() > i && clipFlags[i] ? SLtRed : SColorPaper());
+		clipLeds[i].Ink(clipFlags.GetCount() > i && clipFlags[i] ? SLtRed : SColorPaper());
 	}
 }
 
 MasterOutputPane::MasterOutputPane() {
-	compactSlider.SetVert();
-	compactSlider.SetTotal(1000);
-	expandedSlider.SetVert();
-	expandedSlider.SetTotal(1000);
+	compactSlider.Vertical();
+	compactSlider.SetLimits(0, 1000);
+	expandedSlider.Vertical();
+	expandedSlider.SetLimits(0, 1000);
 	Add(compactSlider.SizePos());
 	Add(expandedSlider.RightPos(0, 24).VSizePos(0, 0));
 	expandedSlider.Hide();

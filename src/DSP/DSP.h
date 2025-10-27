@@ -4,6 +4,7 @@
 #include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
 #include <Math/Math.h>
+#include <PluginSDK/PluginSDK.h>  // For parameter integration
 using namespace Upp;
 
 namespace DSP {

@@ -102,36 +102,36 @@ void ZenCoreFxRack::Process(PluginSDK::ProcessContext& ctx) {
 				if(slot_index < motion_lanes.GetCount())
 					mix += motion_lanes[slot_index].last_value * 0.5;
 				mix += envelope_state * 0.04;
-				mix = Upp::Clamp(mix, 0.0, 1.0);
+				mix = Upp::clamp(mix, 0.0, 1.0);
 
 				double alg_colour = GetParameterValue(slot.algorithm_param) / 90.0;
-				double colour = Upp::Clamp(character * 0.6 + alg_colour * 0.4, 0.0, 1.0);
+				double colour = Upp::clamp(character * 0.6 + alg_colour * 0.4, 0.0, 1.0);
 				double drive = 1.0 + tone * 0.75 + feedback * 0.25;
-				double shaped = Upp::Clamp(processed * drive, -2.0, 2.0);
+				double shaped = Upp::clamp(processed * drive, -2.0, 2.0);
 				processed = processed * (1.0 - mix) + shaped * mix * (0.8 + colour * 0.4);
 			}
 
 			if(GetParameterValue(mfx_slot.enable_param) > 0.5) {
-				double mix = Upp::Clamp(GetParameterValue(mfx_slot.mix_param) + lane_mod * 0.2 + envelope_state * 0.05, 0.0, 1.0);
+				double mix = Upp::clamp(GetParameterValue(mfx_slot.mix_param) + lane_mod * 0.2 + envelope_state * 0.05, 0.0, 1.0);
 				double time = GetParameterValue(mfx_slot.tone_param);
 				double character = GetParameterValue(mfx_slot.character_param);
 				double bloom = processed * (0.6 + time * 0.4);
-				double shimmer = Upp::Clamp(bloom + processed * character * 0.3, -2.0, 2.0);
+				double shimmer = Upp::clamp(bloom + processed * character * 0.3, -2.0, 2.0);
 				processed = processed * (1.0 - mix) + shimmer * mix;
 			}
 
 			if(GetParameterValue(tfx_slot.enable_param) > 0.5) {
-				double mix = Upp::Clamp(GetParameterValue(tfx_slot.mix_param) + macro_sum * 0.2 + envelope_state * 0.1, 0.0, 1.0);
+				double mix = Upp::clamp(GetParameterValue(tfx_slot.mix_param) + macro_sum * 0.2 + envelope_state * 0.1, 0.0, 1.0);
 				double time = GetParameterValue(tfx_slot.tone_param);
 				double feedback = GetParameterValue(tfx_slot.feedback_param);
 				double tail = processed * (0.7 + time * 0.5);
-				double halo = Upp::Clamp(tail + feedback * 0.6, -2.0, 2.0);
+				double halo = Upp::clamp(tail + feedback * 0.6, -2.0, 2.0);
 				processed = processed * (1.0 - mix) + halo * mix;
 			}
 
-			double global_mix = Upp::Clamp(scene_balance * 0.5 + morph * 0.35 + macro_link * 0.15 + lane_mod * 0.05, 0.0, 1.0);
-			double envelope_mix = Upp::Clamp(envelope_state * 0.1, 0.0, 0.3);
-			global_mix = Upp::Clamp(global_mix + envelope_mix, 0.0, 1.0);
+			double global_mix = Upp::clamp(scene_balance * 0.5 + morph * 0.35 + macro_link * 0.15 + lane_mod * 0.05, 0.0, 1.0);
+			double envelope_mix = Upp::clamp(envelope_state * 0.1, 0.0, 0.3);
+			global_mix = Upp::clamp(global_mix + envelope_mix, 0.0, 1.0);
 
 			out[i] = (float)(sample * (1.0 - global_mix) + processed * global_mix);
 		}
@@ -458,14 +458,14 @@ void ZenCoreFxRack::AdvanceMotionLFO(double delta_seconds) {
 			continue;
 		}
 
-		double frequency = Upp::Clamp(rate, 0.0, 1.0) * 8.0;
+		double frequency = Upp::clamp(rate, 0.0, 1.0) * 8.0;
 		lane.phase += frequency * delta_seconds * kTwoPi;
 		if(lane.phase > kTwoPi)
 			lane.phase = std::fmod(lane.phase, kTwoPi);
 
 		double probability = GetParameterValue(lane.probability_param);
 		double raw = std::sin(lane.phase);
-		lane.last_value = raw * depth * Upp::Clamp(probability, 0.0, 1.0);
+		lane.last_value = raw * depth * Upp::clamp(probability, 0.0, 1.0);
 	}
 }
 
@@ -485,13 +485,13 @@ void ZenCoreFxRack::UpdateEnvelopeFollower(const PluginSDK::ProcessContext& ctx)
 
 	double average = total_samples > 0 ? sum / total_samples : 0.0;
 	double sensitivity = GetParameterValue(envelope_sensitivity_param);
-	double target = Upp::Clamp(average * (0.5 + sensitivity * 2.0), 0.0, 4.0);
+	double target = Upp::clamp(average * (0.5 + sensitivity * 2.0), 0.0, 4.0);
 
-	double attack = Upp::Clamp(GetParameterValue(envelope_attack_param), 0.0, 1.0);
-	double release = Upp::Clamp(GetParameterValue(envelope_release_param), 0.0, 1.0);
+	double attack = Upp::clamp(GetParameterValue(envelope_attack_param), 0.0, 1.0);
+	double release = Upp::clamp(GetParameterValue(envelope_release_param), 0.0, 1.0);
 	double coeff = target > envelope_state ? std::pow(0.1, 1.0 - attack) : std::pow(0.1, 1.0 - release);
 	envelope_state += (target - envelope_state) * (1.0 - coeff);
-	envelope_state = Upp::Clamp(envelope_state, 0.0, 4.0);
+	envelope_state = Upp::clamp(envelope_state, 0.0, 4.0);
 }
 
 void ZenCoreFxRack::RefreshAlgorithmMetadata() {
@@ -505,7 +505,7 @@ void ZenCoreFxRack::RefreshAlgorithmMetadata() {
 	auto update_slot = [&](RackSlot& slot) {
 		double selector = slot.algorithm_param >= 0 ? GetParameterValue(slot.algorithm_param) : 0.0;
 		if(!catalogue.IsEmpty()) {
-			int index = Upp::Clamp((int)std::round(selector), 0, catalogue.GetCount() - 1);
+			int index = Upp::clamp((int)std::round(selector), 0, catalogue.GetCount() - 1);
 			slot.algorithm_index = index;
 			const am::DSP::ZenCoreAlgorithm& algo = catalogue[index];
 			slot.algorithm_label = resolve_label(algo.combination, algo.name);

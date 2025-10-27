@@ -17,35 +17,38 @@ void WindowRegistry::UnregisterWindow(const String& name) {
 
 Vector<String> WindowRegistry::GetRegisteredWindows() const {
 	Vector<String> result;
-	for(const auto& kv : registered_windows) {
-		result.Add(kv.key);
+	for(int i = 0; i < registered_windows.GetCount(); ++i) {
+		result.Add(registered_windows.GetKey(i));
 	}
 	return result;
 }
 
 void WindowRegistry::CloseAllWindows() {
 	LOG("Closing all registered windows");
-	for(const auto& kv : registered_windows) {
-		if(kv.value) {
-			kv.value->Close();
+	for(int i = 0; i < registered_windows.GetCount(); ++i) {
+		TopWindow* window = registered_windows[i];
+		if(window) {
+			window->Close();
 		}
 	}
 }
 
 void WindowRegistry::MinimizeAllWindows() {
 	LOG("Minimizing all registered windows");
-	for(const auto& kv : registered_windows) {
-		if(kv.value) {
-			kv.value->Minimize();
+	for(int i = 0; i < registered_windows.GetCount(); ++i) {
+		TopWindow* window = registered_windows[i];
+		if(window) {
+			window->Minimize();
 		}
 	}
 }
 
 void WindowRegistry::RestoreAllWindows() {
 	LOG("Restoring all registered windows");
-	for(const auto& kv : registered_windows) {
-		if(kv.value && !kv.value->IsOpen()) {
-			kv.value->Open();
+	for(int i = 0; i < registered_windows.GetCount(); ++i) {
+		TopWindow* window = registered_windows[i];
+		if(window && !window->IsOpen()) {
+			window->Open();
 		}
 	}
 }

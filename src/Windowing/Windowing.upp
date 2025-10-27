@@ -1,4 +1,4 @@
-description "Windowing package\377240,230,140";
+description "Windowing package\377226,212,0";
 
 uses
 	CtrlLib;
@@ -10,3 +10,4 @@ file
 	Workspace.cpp,
 	WindowRegistry.h,
 	WindowRegistry.cpp;
+

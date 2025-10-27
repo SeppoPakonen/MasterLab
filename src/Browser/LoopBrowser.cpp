@@ -14,12 +14,12 @@ void LoopBrowser::Init() {
 
 void LoopBrowser::Open() {
 	// Open the window
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void LoopBrowser::Close() {
 	// Close the window
-	CloseWindow();
+	Break();
 }
 
 void LoopBrowser::Refresh() {

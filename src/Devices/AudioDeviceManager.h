@@ -17,7 +17,7 @@ struct AudioDevice {
 class AudioDeviceManager {
 public:
 	AudioDeviceManager();
-	Vector<AudioDevice> GetAvailableDevices() const { return available_devices; }
+	const Vector<AudioDevice>& GetAvailableDevices() const { return available_devices; }
 	AudioDevice GetDefaultInputDevice() const;
 	AudioDevice GetDefaultOutputDevice() const;
 	bool SetInputDevice(const String& deviceId);

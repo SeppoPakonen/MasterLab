@@ -25,7 +25,7 @@ public:
 	NotationModel();
 	void AddMeasure(const Measure& measure);
 	void RemoveMeasure(int index);
-	Vector<Measure> GetMeasures() const { return measures; }
+	const Vector<Measure>& GetMeasures() const { return measures; }
 	void Clear();
 	
 private:

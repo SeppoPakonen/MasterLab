@@ -18,7 +18,8 @@ String Credits::GetCreditsText() const {
 }
 
 void Credits::ShowCredits() {
-	PromptOK("Credits", credits);
+	String message = "Credits\n\n" + credits;
+	PromptOK(message);
 }
 
 }

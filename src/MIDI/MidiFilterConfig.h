@@ -6,10 +6,10 @@ using namespace Upp;
 
 namespace am {
 
-struct MidiFilterPrefs {
-	BitSet record;        // Record filter - 0-15 for MIDI channels
-	BitSet thru;          // Thru filter - 0-15 for MIDI channels
-	BitSet channels;      // Channels 1-16 (bit 0-15)
+struct MidiFilterPrefs : public Moveable<MidiFilterPrefs> {
+	Vector<bool> record;        // Record filter - 0-15 for MIDI channels
+	Vector<bool> thru;          // Thru filter - 0-15 for MIDI channels
+	Vector<bool> channels;      // Channels 1-16 (bit 0-15)
 	Vector<int> controllerBlockList;  // Blocked controller numbers
 };
 

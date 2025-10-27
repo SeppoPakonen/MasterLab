@@ -6,9 +6,13 @@ using namespace Upp;
 
 namespace am {
 
-struct Tag {
+struct Tag : public Moveable<Tag> {
 	String name;
 	String category;
+	
+	bool operator==(const Tag& other) const {
+		return name == other.name && category == other.category;
+	}
 };
 
 class Tagging {
@@ -16,12 +20,12 @@ public:
 	Tagging();
 	void AddTag(const String& filePath, const Tag& tag);
 	void RemoveTag(const String& filePath, const Tag& tag);
-	Vector<Tag> GetTags(const String& filePath) const;
+	const Vector<Tag>& GetTags(const String& filePath) const;
 	void SetTaggingEnabled(bool enabled);
 	bool IsTaggingEnabled() const { return tagging_enabled; }
 	
 private:
-	HashMap<String, Vector<Tag>> file_tags;
+	VectorMap<String, Vector<Tag>> file_tags;
 	bool tagging_enabled = true;
 };
 

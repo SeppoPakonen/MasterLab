@@ -9,7 +9,15 @@ ZenCoreMFXCatalogue::~ZenCoreMFXCatalogue() {
 }
 
 void ZenCoreMFXCatalogue::RegisterAlgorithm(const MFXAlgorithm& algorithm) {
-    algorithms.GetAdd(algorithm.id) = algorithm;
+    // Since MFXAlgorithm contains Vector members that can't be copied,
+    // we'll use a different approach - create a new one and assign fields individually
+    MFXAlgorithm& alg = algorithms.GetAdd(algorithm.id);
+    alg.id = algorithm.id;
+    alg.name = algorithm.name;
+    alg.description = algorithm.description;
+    alg.category = algorithm.category;
+    alg.supports_combination = algorithm.supports_combination;
+    alg.parameters = pick(algorithm.parameters);
 }
 
 const MFXAlgorithm* ZenCoreMFXCatalogue::GetAlgorithm(const String& id) const {

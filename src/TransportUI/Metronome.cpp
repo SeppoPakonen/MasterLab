@@ -6,7 +6,7 @@ void Metronome::Enable(bool enable) {
 }
 
 void Metronome::SetVolume(double volume) {
-	this->volume = Clamp(volume, 0.0, 1.0);
+	this->volume = Upp::clamp(volume, 0.0, 1.0);
 }
 
 void Metronome::SetSound(const String& soundPath) {

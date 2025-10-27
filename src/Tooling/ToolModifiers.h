@@ -45,7 +45,7 @@ public:
 	Event<> WhenChanged;
 	
 private:
-	HashMap<String, ModKeys> bindings; // Key format: "toolId:action"
+	VectorMap<String, ModKeys> bindings; // Key format: "toolId:action"
 	
 	// Helper to create key from tool and action
 	String CreateKey(ToolId tool, const String& action) const;

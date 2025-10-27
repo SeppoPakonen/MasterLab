@@ -6,13 +6,14 @@ using namespace Upp;
 
 namespace DSP {
 
-struct ParameterId {
+struct ParameterId : public Moveable<ParameterId> {
     String name;
     String description;
     double min_value;
     double max_value;
     double default_value;
     
+    ParameterId() : min_value(0.0), max_value(1.0), default_value(0.0) {}
     ParameterId(const String& n, const String& desc, double min, double max, double def)
         : name(n), description(desc), min_value(min), max_value(max), default_value(def) {}
 };

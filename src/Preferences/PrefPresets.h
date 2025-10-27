@@ -28,7 +28,7 @@ public:
 	bool IsMarkedOnly() const;
 	
 private:
-	HashMap<String, PreferencesModel> presets;
+	VectorMap<String, PreferencesModel> presets;
 	bool marked_only = false;
 };
 

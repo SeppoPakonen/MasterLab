@@ -4,11 +4,16 @@ namespace am {
 MidiFilterConfig::MidiFilterConfig() {
 	// Initialize with default filter settings
 	// Enable all channels by default (bits 0-15)
-	prefs.channels.SetAll();
+	prefs.channels.SetCount(16, true);  // 16 channels, all enabled by default
+	prefs.record.SetCount(16, true);    // 16 channels, all enabled by default
+	prefs.thru.SetCount(16, true);      // 16 channels, all enabled by default
 }
 
 void MidiFilterConfig::SetPrefs(const MidiFilterPrefs& newPrefs) {
-	prefs = newPrefs;
+	prefs.record = pick(newPrefs.record);
+	prefs.thru = pick(newPrefs.thru);
+	prefs.channels = pick(newPrefs.channels);
+	prefs.controllerBlockList = pick(newPrefs.controllerBlockList);
 }
 
 bool MidiFilterConfig::ShouldFilter(int channel, int eventType) const {

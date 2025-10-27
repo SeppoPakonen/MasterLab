@@ -15,7 +15,7 @@ public:
 	void LoadMapping();
 	
 private:
-	HashMap<String, String> mapping;
+	VectorMap<String, String> mapping;
 };
 
 }

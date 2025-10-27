@@ -20,7 +20,7 @@ public:
 	void LockLayout(bool lock);
 	bool IsLayoutLocked() const { return layout_locked; }
 	void OrganizeLayout();
-	Vector<String> GetAvailableLayouts() const { return available_layouts; }
+	const Vector<String>& GetAvailableLayouts() const { return available_layouts; }
 	
 private:
 	Vector<WindowLayout> current_layout;

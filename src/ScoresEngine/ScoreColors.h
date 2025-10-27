@@ -7,7 +7,7 @@ using namespace Upp;
 
 namespace am {
 
-struct ScoreColorRule {
+struct ScoreColorRule : public Moveable<ScoreColorRule> {
 	String event;      // Type of event to color
 	bool active;       // Whether this rule is active
 	Color color;       // Color to use
@@ -21,8 +21,8 @@ public:
 	void AddColorRule(const ScoreColorRule& rule);
 	void RemoveColorRule(int index);
 	void ClearColorRules();
-	Vector<ScoreColorRule> GetColorRules() const { return colorRules; }
-	void SetColorRules(const Vector<ScoreColorRule>& rules) { colorRules = rules; }
+	const Vector<ScoreColorRule>& GetColorRules() const { return colorRules; }
+	void SetColorRules(const Vector<ScoreColorRule>& rules) { colorRules <<= rules; }
 	
 	// Get color for an event
 	Color GetColorForEvent(const String& event) const;

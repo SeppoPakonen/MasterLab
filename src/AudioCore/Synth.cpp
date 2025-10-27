@@ -7,7 +7,7 @@ VoiceManager::VoiceManager() {
 }
 
 void VoiceManager::Configure(int max_voices_) {
-	max_voices = Upp::Clamp(max_voices_, 1, 256);
+	max_voices = Upp::clamp(max_voices_, 1, 256);
 	voices.SetCount(max_voices);
 	next_id = 1;
 	for(int i = 0; i < voices.GetCount(); ++i) {
@@ -31,7 +31,7 @@ VoiceHandle* VoiceManager::NoteOn(int note, double velocity) {
 
 	VoiceHandle& handle = voices[voice_index];
 	handle.note = note;
-	handle.velocity = Upp::Clamp(velocity, 0.0, 1.0);
+	handle.velocity = Upp::clamp(velocity, 0.0, 1.0);
 	if(!handle.active) {
 		handle.active = true;
 		handle.releasing = false;

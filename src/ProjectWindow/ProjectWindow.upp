@@ -1,4 +1,4 @@
-description "Project window package\377173,216,230";
+description "Project window package\377113,212,200";
 
 uses
 	CtrlLib,
@@ -11,3 +11,4 @@ file
 	PLAN.md,
 	ProjectWindow.h,
 	ProjectWindow.cpp;
+

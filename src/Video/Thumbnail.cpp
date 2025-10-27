@@ -23,7 +23,7 @@ bool Thumbnail::SaveThumbnail(const Image& thumbnail, const String& path) {
 }
 
 void Thumbnail::SetThumbnailQuality(int quality) {
-	thumbnail_quality = Clamp(quality, 1, 100);
+	thumbnail_quality = Upp::clamp(quality, 1, 100);
 }
 
 }

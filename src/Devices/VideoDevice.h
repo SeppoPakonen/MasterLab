@@ -6,7 +6,7 @@ using namespace Upp;
 
 namespace am {
 
-struct VideoDevice {
+struct VideoDeviceInfo {
 	String name;
 	String id;
 	int width;
@@ -17,7 +17,7 @@ struct VideoDevice {
 class VideoDevice {
 public:
 	VideoDevice();
-	Vector<VideoDevice> GetAvailableDevices() const { return available_devices; }
+	const Vector<VideoDeviceInfo>& GetAvailableDevices() const { return available_devices; }
 	bool OpenDevice(const String& deviceId);
 	void CloseDevice();
 	bool IsOpen() const { return open; }
@@ -25,7 +25,7 @@ public:
 	void SetFrameRate(double fps);
 	
 private:
-	Vector<VideoDevice> available_devices;
+	Vector<VideoDeviceInfo> available_devices;
 	bool open = false;
 	String current_device_id;
 	int resolution_width = 1920;

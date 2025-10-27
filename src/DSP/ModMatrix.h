@@ -6,29 +6,31 @@ using namespace Upp;
 
 namespace DSP {
 
-class ModSource {
+class ModSource : public Moveable<ModSource> {
 public:
     String name;
     double value;
     double min_value;
     double max_value;
     
+    ModSource() : value(0.0), min_value(0.0), max_value(1.0) {}
     ModSource(const String& n, double min = 0.0, double max = 1.0) 
         : name(n), value(0.0), min_value(min), max_value(max) {}
 };
 
-class ModDestination {
+class ModDestination : public Moveable<ModDestination> {
 public:
     String name;
     double* target;
     double min_value;
     double max_value;
     
+    ModDestination() : target(nullptr), min_value(0.0), max_value(1.0) {}
     ModDestination(const String& n, double* t, double min = 0.0, double max = 1.0)
         : name(n), target(t), min_value(min), max_value(max) {}
 };
 
-struct ModConnection {
+struct ModConnection : public Moveable<ModConnection> {
     String source;
     String destination;
     double depth;

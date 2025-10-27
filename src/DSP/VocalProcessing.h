@@ -30,7 +30,7 @@ public:
     double GetPitchTrack() const { return last_pitch; }
     
     // Get formant profile
-    Vector<double> GetFormantProfile() const { return last_formants; }
+    const Vector<double>& GetFormantProfile() const { return last_formants; }
     
     // Configure analysis parameters
     void Configure(int sample_rate, int fft_size);
@@ -123,7 +123,7 @@ public:
     BufferView Process(const BufferView& input);
     
     // Set morph amount (0.0 = no morph, 1.0 = full morph)
-    void SetMorphAmount(double amount) { morph_amount = clamp(amount, 0.0, 1.0); }
+    void SetMorphAmount(double amount) { morph_amount = Upp::max(0.0, Upp::min(1.0, amount)); }
     double GetMorphAmount() const { return morph_amount; }
     
 private:

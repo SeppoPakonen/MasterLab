@@ -2,12 +2,11 @@
 #define _DSP_PresetManager_h_
 
 #include "DSP.h"
-#include <pluginSDK/PluginSDK.h>  // For parameter integration
 using namespace Upp;
 
 namespace DSP {
 
-struct Preset {
+struct Preset : public Moveable<Preset> {
     String id;
     String name;
     String description;

@@ -15,8 +15,13 @@ public:
 	void Toggle(Value item);
 	
 	// Get selection
-	Vector<Value> GetSelected() const { return selected_items; }
-	bool IsSelected(Value item) const { return selected_items.Find(item) >= 0; }
+	const Vector<Value>& GetSelected() const { return selected_items; }
+	bool IsSelected(Value item) const { 
+		for(int i = 0; i < selected_items.GetCount(); i++) {
+			if(selected_items[i] == item) return true;
+		}
+		return false; 
+	}
 	bool IsEmpty() const { return selected_items.IsEmpty(); }
 	int GetCount() const { return selected_items.GetCount(); }
 	

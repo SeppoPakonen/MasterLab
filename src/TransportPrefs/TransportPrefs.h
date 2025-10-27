@@ -6,24 +6,10 @@ using namespace Upp;
 
 namespace am {
 
-struct ScrubPrefs {
-	int response = 50;    // 0-100
-	int volume = 50;      // 0-100
-	bool cpuSaving = false;
-};
-
-struct TimecodePrefs {
-	bool showSubframes = false;
-	int userFramerate = 30;
-	int cursorWidth = 3;
-};
-
-struct WindOptions {
-	enum Mode { AdjustToZoom, Fixed };
-	Mode mode = AdjustToZoom;
-	int speedFactor = 1;
-	int fastFactor = 10;
-};
+// Import the definitions from AudioCore to avoid redefinition
+using ::am::ScrubPrefs;
+using ::am::TimecodePrefs;
+using ::am::WindOptions;
 
 struct TransportBehavior {
 	bool playbackTogglePreview = false;

@@ -18,7 +18,7 @@ enum MFXCategory {
     SPATIAL
 };
 
-struct MFXAlgorithm {
+struct MFXAlgorithm : public Moveable<MFXAlgorithm> {
     String id;
     String name;
     String description;

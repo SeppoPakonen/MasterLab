@@ -16,7 +16,7 @@ struct MidiDevice {
 class MidiDeviceManager {
 public:
 	MidiDeviceManager();
-	Vector<MidiDevice> GetAvailableDevices() const { return available_devices; }
+	const Vector<MidiDevice>& GetAvailableDevices() const { return available_devices; }
 	Vector<MidiDevice> GetInputDevices() const;
 	Vector<MidiDevice> GetOutputDevices() const;
 	bool OpenInputDevice(const String& deviceId);

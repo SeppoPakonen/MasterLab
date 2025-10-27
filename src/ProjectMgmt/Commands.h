@@ -24,9 +24,9 @@ public:
 	bool IsCommandEnabled(int id) const;
 	bool IsCommandToggled(int id) const;
 private:
-	HashMap<int, std::function<void(const CommandContext&)>> command_map;
-	HashMap<int, bool> enabled_state;
-	HashMap<int, bool> toggle_state;
+	VectorMap<int, std::function<void(const CommandContext&)>> command_map;
+	VectorMap<int, bool> enabled_state;
+	VectorMap<int, bool> toggle_state;
 };
 
 }

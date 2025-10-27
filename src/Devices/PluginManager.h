@@ -26,7 +26,7 @@ class PluginManager {
 public:
 	PluginManager();
 	void ScanForPlugins();
-	Vector<PluginInfo> GetAvailablePlugins() const { return available_plugins; }
+	const Vector<PluginInfo>& GetAvailablePlugins() const { return available_plugins; }
 	Vector<PluginInfo> GetPluginsByType(PluginType type) const;
 	PluginInfo GetPlugin(const String& name) const;
 	void AddPluginPath(const String& path);

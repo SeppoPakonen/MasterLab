@@ -19,7 +19,7 @@ void LatencyBuffer::Configure(int lookahead_samples) {
 void LatencyBuffer::Process(const BufferView& input, BufferView& output) {
     if (latency_samples <= 0) {
         // No latency, pass through
-        output = input;
+        output <<= input;
         return;
     }
     

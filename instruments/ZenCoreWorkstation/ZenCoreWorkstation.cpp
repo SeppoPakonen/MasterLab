@@ -78,7 +78,7 @@ void ZenCoreWorkstation::Process(PluginSDK::ProcessContext& ctx) {
 
 void ZenCoreWorkstation::NoteOn(const PluginSDK::NoteEvent& evt) {
 	PluginSDK::InstrumentProcessor::NoteOn(evt);
-	double velocity = Upp::Clamp(evt.velocity / 127.0, 0.0, 1.0);
+	double velocity = Upp::clamp(evt.velocity / 127.0, 0.0, 1.0);
 	voice_manager.NoteOn(evt.note, velocity);
 	RefreshVoiceGains();
 }
@@ -336,13 +336,13 @@ void ZenCoreWorkstation::AdvanceMotionLanes(double delta_seconds) {
 		}
 
 		// Map rate control (0..1) to roughly 0..8 Hz
-		double frequency = Upp::Clamp(rate, 0.0, 1.0) * 8.0;
+		double frequency = Upp::clamp(rate, 0.0, 1.0) * 8.0;
 		lane.phase += frequency * delta_seconds * kTwoPi;
 		if(lane.phase > kTwoPi)
 			lane.phase = std::fmod(lane.phase, kTwoPi);
 		double probability = GetParameterValue(lane.probability_param);
 		double raw = std::sin(lane.phase);
-		lane.last_value = raw * depth * Upp::Clamp(probability, 0.0, 1.0);
+		lane.last_value = raw * depth * Upp::clamp(probability, 0.0, 1.0);
 	}
 }
 
@@ -381,7 +381,7 @@ void ZenCoreWorkstation::RefreshVoiceGains() {
 				if(!enabled)
 					continue;
 				double level = GetParameterValue(slot.level_param);
-				double gain = state.velocity * Upp::Clamp(level + motion_sum * 0.1, 0.0, 1.0) * (1.0 - morph * 0.1);
+				double gain = state.velocity * Upp::clamp(level + motion_sum * 0.1, 0.0, 1.0) * (1.0 - morph * 0.1);
 				state.partial_gains[i] = gain;
 			}
 		}

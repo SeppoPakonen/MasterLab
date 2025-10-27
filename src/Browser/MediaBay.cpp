@@ -14,12 +14,12 @@ void MediaBay::Init() {
 
 void MediaBay::Open() {
 	// Open the window
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void MediaBay::Close() {
 	// Close the window
-	CloseWindow();
+	Break();
 }
 
 void MediaBay::Refresh() {

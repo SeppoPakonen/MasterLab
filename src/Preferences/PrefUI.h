@@ -43,7 +43,7 @@ public:
 	
 private:
 	PanelRegistry() = default;
-	HashMap<String, VectorMap<String, std::function<PreferencesPane*()>>> registry;
+	VectorMap<String, VectorMap<String, std::function<PreferencesPane*()>>> registry;
 };
 
 // Registration helper macro
