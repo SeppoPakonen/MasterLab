@@ -16,11 +16,11 @@ void TimeStretchPrefsManager::SetPrefs(const TimeStretchPrefs& newPrefs) {
 
 void TimeStretchPrefsManager::ApplyToStretch(class AudioOps& ops) {
 	LOG("Applying time stretch preferences");
-	LOG("Algorithm: " + (prefs.algorithm == StretchAlgo::MPEX4 ? "MPEX4" : "Realtime"));
-	LOG("Treat muted as deleted: " + (prefs.treatMutedAsDeleted ? "yes" : "no"));
-	LOG("Wheel adjusts vol/fades: " + (prefs.wheelAdjustsVolAndFades ? "yes" : "no"));
-	LOG("Hitpoints have Q-points: " + (prefs.hitpointsHaveQPoints ? "yes" : "no"));
-	LOG("Snap to zero crossing: " + (prefs.snapZero ? "yes" : "no"));
+	LOG("Algorithm: " << (prefs.algorithm == StretchAlgo::MPEX4 ? "MPEX4" : "Realtime"));
+	LOG("Treat muted as deleted: " << (prefs.treatMutedAsDeleted ? "yes" : "no"));
+	LOG("Wheel adjusts vol/fades: " << (prefs.wheelAdjustsVolAndFades ? "yes" : "no"));
+	LOG("Hitpoints have Q-points: " << (prefs.hitpointsHaveQPoints ? "yes" : "no"));
+	LOG("Snap to zero crossing: " << (prefs.snapZero ? "yes" : "no"));
 }
 
 }

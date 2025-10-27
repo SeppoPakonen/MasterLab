@@ -1,3 +1,5 @@
+description "Browser package\3770,128,128";
+
 uses
 	CtrlLib,
 	MediaPool,

@@ -1,3 +1,5 @@
+description "Scores package\377127,255,0";
+
 uses
 	CtrlLib,
 	Draw,

@@ -1,3 +1,5 @@
+description "DSP package\37775,0,130";
+
 uses
 	Core,
 	Draw,
@@ -27,3 +29,4 @@ file
 	Analyzer.cpp,
 	VocalProcessing.h,
 	VocalProcessing.cpp;
+

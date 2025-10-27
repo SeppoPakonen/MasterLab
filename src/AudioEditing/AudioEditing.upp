@@ -1,6 +1,7 @@
+description "Audio editing package\3770,128,0";
+
 uses
-	AudioCore,
-	AudioOps;
+	AudioCore;
 
 file
 	AudioEditing.h,
@@ -13,3 +14,4 @@ file
 	SnapSettings.cpp,
 	FadeBehavior.h,
 	FadeBehavior.cpp;
+

@@ -1,9 +1,12 @@
+description "Audio master package\3770,0,128";
+
 uses
 	ProjectMgmt,
 	MediaPool,
 	ExportAudioMixdown,
 	ProjectSetup,
-	ProjectWindow;
+	ProjectWindow,
+	TransportUI;
 
 file
 	AudioMaster.h,

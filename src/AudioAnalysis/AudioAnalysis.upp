@@ -1,3 +1,5 @@
+description "Audio analysis package\377128,0,128";
+
 uses
 	AudioCore,
 	AudioFX,

@@ -15,7 +15,7 @@ void MixerPreview::LoadPreviewSettings() {
 	LOG("Loading mixer preview settings");
 	// In a real implementation, this would load the preview image from file
 	if (FileExists(previewImagePath)) {
-		previewImage = LoadImageFile(previewImagePath);
+		previewImage = StreamRaster::LoadFileAny(previewImagePath);
 	}
 }
 

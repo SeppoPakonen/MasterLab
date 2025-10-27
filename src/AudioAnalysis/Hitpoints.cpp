@@ -5,7 +5,7 @@ Hitpoints::Hitpoints() {
 	// Initialize hitpoints analysis
 }
 
-Vector<Hitpoint> Hitpoints::Calculate(const double* samples, int count, int sampleRate) {
+const Vector<Hitpoint>& Hitpoints::Calculate(const double* samples, int count, int sampleRate) {
 	LOG("Calculating hitpoints for " + IntStr(count) + " samples at " + IntStr(sampleRate) + " Hz");
 	// Stub - implement actual hitpoint calculation
 	return hitpoints;

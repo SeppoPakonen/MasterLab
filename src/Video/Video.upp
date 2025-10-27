@@ -1,3 +1,5 @@
+description "Video package\377255,165,0";
+
 uses
 	FileIO,
 	MediaPool;

@@ -1,9 +1,12 @@
+description "Project management package\377135,206,235";
+
 uses
 	Core,
 	CtrlCore,
 	CtrlLib,
 	Draw,
-	AudioCore;
+	AudioCore,
+	Video;
 
 file
 	ProjectMgmt.h,

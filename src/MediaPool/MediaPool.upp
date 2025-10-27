@@ -1,3 +1,5 @@
+description "Media pool package\377255,127,80";
+
 uses
 	CtrlLib,
 	FileIO,

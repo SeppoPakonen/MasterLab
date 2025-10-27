@@ -1,3 +1,5 @@
+description "Appearance package\377255,165,0";
+
 uses
 	Theme;
 
@@ -8,3 +10,4 @@ file
 	InterfaceAdjust.cpp,
 	MixerPreview.h,
 	MixerPreview.cpp;
+

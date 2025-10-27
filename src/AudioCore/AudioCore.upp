@@ -1,3 +1,5 @@
+description "Audio core package\3770,0,139";
+
 uses
 	Core;
 

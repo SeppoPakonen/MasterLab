@@ -1,3 +1,5 @@
+description "VST host package\377255,140,0";
+
 uses
 	Devices,
 	AudioFX,

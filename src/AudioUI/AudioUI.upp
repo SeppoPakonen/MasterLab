@@ -1,3 +1,5 @@
+description "Audio UI package\3770,255,0";
+
 uses
 	AudioCore,
 	AudioFX,

@@ -1,3 +1,5 @@
+description "Scores engine package\37734,139,34";
+
 uses
 	Scores,
 	Editors;

@@ -1,3 +1,5 @@
+description "Theme package\3770,100,0";
+
 uses
 	Draw,
 	CtrlLib;
@@ -9,3 +11,4 @@ file
 	WorkAreaTheme.cpp,
 	MeterTheme.h,
 	MeterTheme.cpp;
+

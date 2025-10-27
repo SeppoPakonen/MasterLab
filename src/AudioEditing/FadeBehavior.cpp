@@ -15,9 +15,9 @@ void FadeBehaviorManager::SetBehavior(const FadeBehavior& newBehavior) {
 
 void FadeBehaviorManager::ApplyToEvents() {
 	LOG("Applying fade behavior");
-	LOG("Handles always on top: " + (behavior.handlesAlwaysOnTop ? "yes" : "no"));
-	LOG("Thick fade lines: " + (behavior.thickFadeLines ? "yes" : "no"));
-	LOG("Show fade curves: " + (behavior.showFadeCurves ? "yes" : "no"));
+	LOG("Handles always on top: " << (behavior.handlesAlwaysOnTop ? "yes" : "no"));
+	LOG("Thick fade lines: " << (behavior.thickFadeLines ? "yes" : "no"));
+	LOG("Show fade curves: " << (behavior.showFadeCurves ? "yes" : "no"));
 	
 	String shapeStr;
 	switch (behavior.defaultShape) {

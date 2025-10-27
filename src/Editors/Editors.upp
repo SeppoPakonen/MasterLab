@@ -1,3 +1,5 @@
+description "Editors package\377128,128,0";
+
 uses
 	CtrlLib,
 	Draw,

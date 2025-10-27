@@ -1,3 +1,5 @@
+description "Tooling package\377250,128,114";
+
 uses
 	ProjectMgmt,
 	Editors;
@@ -7,3 +9,4 @@ file
 	Tooling.cpp,
 	ToolModifiers.h,
 	ToolModifiers.cpp;
+

@@ -1,3 +1,5 @@
+description "Export audio mixdown package\377165,42,42";
+
 uses
 	CtrlLib,
 	FileIO,

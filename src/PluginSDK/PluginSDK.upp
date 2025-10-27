@@ -1,3 +1,5 @@
+description "Plugin SDK package\377192,192,192";
+
 uses
 	Core;
 

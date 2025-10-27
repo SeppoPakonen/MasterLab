@@ -14,8 +14,8 @@ struct Hitpoint {
 class Hitpoints {
 public:
 	Hitpoints();
-	Vector<Hitpoint> Calculate(const double* samples, int count, int sampleRate);
-	Vector<Hitpoint> GetHitpoints() const { return hitpoints; }
+	const Vector<Hitpoint>& Calculate(const double* samples, int count, int sampleRate);
+	const Vector<Hitpoint>& GetHitpoints() const { return hitpoints; }
 	void CreateSlices();
 	void CreateGroove();
 	void CreateMarkers();

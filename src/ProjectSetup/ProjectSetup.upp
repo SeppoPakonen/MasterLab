@@ -1,3 +1,5 @@
+description "Project setup package\377255,69,0";
+
 uses
 	CtrlLib,
 	ProjectMgmt,

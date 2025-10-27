@@ -1,3 +1,5 @@
+description "Preferences package\377238,130,238";
+
 uses
 	CtrlLib,
 	ProjectMgmt,
@@ -7,7 +9,8 @@ uses
 	MediaPool,
 	Devices,
 	Editors,
-	Scores;
+	Scores,
+	TransportPrefs;
 
 file
 	Preferences.h,

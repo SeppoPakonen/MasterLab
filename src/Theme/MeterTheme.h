@@ -6,9 +6,13 @@ using namespace Upp;
 
 namespace am {
 
-struct MeterMarker {
+struct MeterMarker : Moveable<MeterMarker> {
 	double db;      // Decibel level (0.0 = 0dB, 1.0 = full scale)
 	Color color;    // Color for this marker level
+	
+	MeterMarker() {}
+	MeterMarker(const MeterMarker& a) : db(a.db), color(a.color) {}
+	void operator=(const MeterMarker& a) {db = a.db; color = a.color;}
 };
 
 class MeterTheme {
@@ -19,8 +23,8 @@ public:
 	void AddMarker(const MeterMarker& marker);
 	void RemoveMarker(int index);
 	void ClearMarkers();
-	Vector<MeterMarker> GetMarkers() const { return markers; }
-	void SetMarkers(const Vector<MeterMarker>& new_markers) { markers = new_markers; }
+	const Vector<MeterMarker>& GetMarkers() const { return markers; }
+	void SetMarkers(const Vector<MeterMarker>& new_markers) { markers <<= new_markers; }
 	
 	// Default markers setup
 	void SetupDefaultMarkers();

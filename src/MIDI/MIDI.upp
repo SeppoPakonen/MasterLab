@@ -1,3 +1,5 @@
+description "MIDI package\377255,215,0";
+
 uses
 	AudioCore,
 	Editors;

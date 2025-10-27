@@ -10,7 +10,7 @@ class Spectrum {
 public:
 	Spectrum();
 	void Analyze(const double* samples, int count, int sampleRate);
-	Vector<double> GetSpectrum() const { return spectrum_data; }
+	const Vector<double>& GetSpectrum() const { return spectrum_data; }
 	void SetWindowSize(int size);
 	int GetWindowSize() const { return window_size; }
 	

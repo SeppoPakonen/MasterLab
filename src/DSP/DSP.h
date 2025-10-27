@@ -3,7 +3,7 @@
 
 #include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
-#include <Math/Complex.h>
+#include <Math/Math.h>
 using namespace Upp;
 
 namespace DSP {
@@ -38,9 +38,5 @@ struct BusLayout {
 };
 
 }
-
-#endif
-
-#endif
 
 #endif

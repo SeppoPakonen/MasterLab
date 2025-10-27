@@ -1,3 +1,5 @@
+description "Help and about package\377255,192,203";
+
 uses
 	CtrlLib;
 

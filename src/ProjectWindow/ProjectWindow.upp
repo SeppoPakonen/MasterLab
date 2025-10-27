@@ -1,7 +1,10 @@
+description "Project window package\377173,216,230";
+
 uses
 	CtrlLib,
 	ProjectMgmt,
-	AudioCore;
+	AudioCore,
+	Windowing;
 
 file
 	AGENTS.md,

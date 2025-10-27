@@ -35,20 +35,20 @@ void TransportPrefsManager::SetTransportBehavior(const TransportBehavior& newBeh
 
 void TransportPrefsManager::ApplyToTransport(class Transport& transport) {
 	LOG("Applying transport preferences");
-	LOG("Return to start on stop: " + (behavior.returnToStartOnStop ? "yes" : "no"));
-	LOG("Deactivate punch in on stop: " + (behavior.deactivatePunchInOnStop ? "yes" : "no"));
-	LOG("Stop after auto punch out: " + (behavior.stopAfterAutoPunchOut ? "yes" : "no"));
-	LOG("Stop while winding: " + (behavior.stopWhileWinding ? "yes" : "no"));
-	LOG("Stationary cursor: " + (behavior.stationaryCursor ? "yes" : "no"));
-	LOG("Locate on empty click: " + (behavior.locateOnEmptyClick ? "yes" : "no"));
-	LOG("Zoom while locating: " + (behavior.zoomWhileLocating ? "yes" : "no"));
-	LOG("Playback toggle preview: " + (behavior.playbackTogglePreview ? "yes" : "no"));
+	LOG("Return to start on stop: " << (behavior.returnToStartOnStop ? "yes" : "no"));
+	LOG("Deactivate punch in on stop: " << (behavior.deactivatePunchInOnStop ? "yes" : "no"));
+	LOG("Stop after auto punch out: " << (behavior.stopAfterAutoPunchOut ? "yes" : "no"));
+	LOG("Stop while winding: " << (behavior.stopWhileWinding ? "yes" : "no"));
+	LOG("Stationary cursor: " << (behavior.stationaryCursor ? "yes" : "no"));
+	LOG("Locate on empty click: " << (behavior.locateOnEmptyClick ? "yes" : "no"));
+	LOG("Zoom while locating: " << (behavior.zoomWhileLocating ? "yes" : "no"));
+	LOG("Playback toggle preview: " << (behavior.playbackTogglePreview ? "yes" : "no"));
 	LOG("User framerate: " + IntStr(behavior.timecodePrefs.userFramerate));
 	LOG("Cursor width: " + IntStr(behavior.cursorWidth));
 	LOG("Scrub response: " + IntStr(behavior.scrubPrefs.response));
 	LOG("Scrub volume: " + IntStr(behavior.scrubPrefs.volume));
-	LOG("Scrub CPU saving: " + (behavior.scrubPrefs.cpuSaving ? "yes" : "no"));
-	LOG("Show subframes: " + (behavior.timecodePrefs.showSubframes ? "yes" : "no"));
+	LOG("Scrub CPU saving: " << (behavior.scrubPrefs.cpuSaving ? "yes" : "no"));
+	LOG("Show subframes: " << (behavior.timecodePrefs.showSubframes ? "yes" : "no"));
 }
 
 }

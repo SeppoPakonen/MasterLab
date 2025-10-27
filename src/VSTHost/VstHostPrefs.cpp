@@ -54,16 +54,16 @@ void VstHostPrefsManager::SetControlRoomPrefs(const ControlRoomPrefs& prefs) {
 
 void VstHostPrefsManager::ApplyToVstHost(class PluginManager& pluginManager) {
 	LOG("Applying VST host preferences");
-	LOG("Auto connect sends: " + (globalPrefs.autoConnectSends ? "yes" : "no"));
-	LOG("VSTi create MIDI track: " + (globalPrefs.vstiCreateMidiTrack ? "yes" : "no"));
-	LOG("Suspend when silent: " + (globalPrefs.suspendWhenSilent ? "yes" : "no"));
-	LOG("Sort by vendor: " + (globalPrefs.sortByVendor ? "yes" : "no"));
-	LOG("Warn remove modified: " + (globalPrefs.warnRemoveModified ? "yes" : "no"));
-	LOG("Open editor after load: " + (globalPrefs.openEditorAfterLoad ? "yes" : "no"));
-	LOG("Always on top: " + (globalPrefs.alwaysOnTop ? "yes" : "no"));
-	LOG("Warn overloads: " + (globalPrefs.warnOverloads ? "yes" : "no"));
+	LOG("Auto connect sends: " << (globalPrefs.autoConnectSends ? "yes" : "no"));
+	LOG("VSTi create MIDI track: " << (globalPrefs.vstiCreateMidiTrack ? "yes" : "no"));
+	LOG("Suspend when silent: " << (globalPrefs.suspendWhenSilent ? "yes" : "no"));
+	LOG("Sort by vendor: " << (globalPrefs.sortByVendor ? "yes" : "no"));
+	LOG("Warn remove modified: " << (globalPrefs.warnRemoveModified ? "yes" : "no"));
+	LOG("Open editor after load: " << (globalPrefs.openEditorAfterLoad ? "yes" : "no"));
+	LOG("Always on top: " << (globalPrefs.alwaysOnTop ? "yes" : "no"));
+	LOG("Warn overloads: " << (globalPrefs.warnOverloads ? "yes" : "no"));
 	LOG("Delay comp threshold: " + DblStr(globalPrefs.delayCompThresholdMs) + " ms");
-	LOG("Export warnings as text: " + (globalPrefs.exportWarningsAsText ? "yes" : "no"));
+	LOG("Export warnings as text: " << (globalPrefs.exportWarningsAsText ? "yes" : "no"));
 	
 	String pannerStr;
 	switch (globalPrefs.defaultPanner) {
@@ -72,7 +72,7 @@ void VstHostPrefsManager::ApplyToVstHost(class PluginManager& pluginManager) {
 		case StereoPannerType::Balance: pannerStr = "Balance"; break;
 	}
 	LOG("Default panner: " + pannerStr);
-	LOG("Link send routing panners: " + (globalPrefs.linkSendRoutingPanners ? "yes" : "no"));
+	LOG("Link send routing panners: " << (globalPrefs.linkSendRoutingPanners ? "yes" : "no"));
 	
 	String autoMonStr;
 	switch (globalPrefs.autoMon) {
@@ -86,10 +86,10 @@ void VstHostPrefsManager::ApplyToVstHost(class PluginManager& pluginManager) {
 	LOG("Peak hold: " + IntStr(meteringPrefs.peakHoldMs) + " ms");
 	LOG("Slow fallback: " + IntStr(meteringPrefs.slowFallbackDbps) + " dB/s");
 	LOG("Fast fallback: " + IntStr(meteringPrefs.fastFallbackDbps) + " dB/s");
-	LOG("Map input bus to track: " + (meteringPrefs.mapInputBusToTrackInDirectMon ? "yes" : "no"));
-	LOG("Show volume in transport: " + (controlRoomPrefs.showVolumeInTransport ? "yes" : "no"));
-	LOG("Disable talkback during record: " + (controlRoomPrefs.disableTalkbackDuringRecord ? "yes" : "no"));
-	LOG("Phones as preview: " + (controlRoomPrefs.phonesAsPreview ? "yes" : "no"));
+	LOG("Map input bus to track: " << (meteringPrefs.mapInputBusToTrackInDirectMon ? "yes" : "no"));
+	LOG("Show volume in transport: " << (controlRoomPrefs.showVolumeInTransport ? "yes" : "no"));
+	LOG("Disable talkback during record: " << (controlRoomPrefs.disableTalkbackDuringRecord ? "yes" : "no"));
+	LOG("Phones as preview: " << (controlRoomPrefs.phonesAsPreview ? "yes" : "no"));
 }
 
 }

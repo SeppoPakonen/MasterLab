@@ -1,3 +1,5 @@
+description "Windowing package\377240,230,140";
+
 uses
 	CtrlLib;
 

@@ -1,5 +1,23 @@
+description "Daw application\377255,0,0";
+
 uses
-	AudioUI;
+	AudioUI,
+	Appearance,
+	AudioAnalysis,
+	AudioEditing,
+	Browser,
+	DSP,
+	HelpAbout,
+	Math,
+	MIDI,
+	Preferences,
+	ScoresEngine,
+	Tooling,
+	TransportPrefs,
+	TransportUI,
+	Video,
+	VSTHost,
+	Windowing;
 
 file
 	daw.h,

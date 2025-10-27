@@ -11,7 +11,7 @@ struct WorkAreaTheme {
 	Color gridH = LtGray();      // Horizontal grid
 	Color gridV1 = LtGray();     // Vertical grid level 1
 	Color gridV2 = Gray();       // Vertical grid level 2
-	Color gridV3 = DkGray();     // Vertical grid level 3
+	Color gridV3 = LtGray();     // Vertical grid level 3
 	double cycleIntensity = 0.5; // Intensity of cycle region
 	
 	// Project window specific

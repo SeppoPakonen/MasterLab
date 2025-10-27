@@ -1,3 +1,5 @@
+description "Audio graph package\377255,0,255";
+
 file
 	AudioGraph.h,
 	BusWithInternalGraph.h,

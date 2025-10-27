@@ -15,10 +15,10 @@ void VideoPrefsManager::SetPrefs(const VideoPrefs& newPrefs) {
 
 void VideoPrefsManager::ApplyToVideoProcessing() {
 	LOG("Applying video preferences");
-	LOG("Extract audio on import: " + (prefs.extractAudioOnImport ? "yes" : "no"));
-	LOG("Generate thumbnails on import: " + (prefs.generateThumbnailsOnImport ? "yes" : "no"));
+	LOG("Extract audio on import: " << (prefs.extractAudioOnImport ? "yes" : "no"));
+	LOG("Generate thumbnails on import: " << (prefs.generateThumbnailsOnImport ? "yes" : "no"));
 	LOG("Thumbnail cache size: " + IntStr(prefs.thumbnailCacheSizeMB) + " MB");
-	LOG("Show thumbnails in events: " + (prefs.showThumbnailsInEvents ? "yes" : "no"));
+	LOG("Show thumbnails in events: " << (prefs.showThumbnailsInEvents ? "yes" : "no"));
 }
 
 }
