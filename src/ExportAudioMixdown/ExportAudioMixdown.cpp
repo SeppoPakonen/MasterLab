@@ -1,4 +1,5 @@
 #include "ExportAudioMixdown.h"
+#include <Core/App.h>
 
 namespace am {
 
@@ -33,7 +34,7 @@ ChannelTreePane::ChannelTreePane() {
 void ChannelTreePane::Clear() {
 	for(auto& rowSlot : rows) {
 		if(rowSlot)
-			Remove(*rowSlot);
+			Remove();
 	}
 	rows.Clear();
 	Refresh();
@@ -136,9 +137,13 @@ void CodecOptionsPane::ConfigureMp3Panel() {
 		WhenEditID3();
 	};
 
-	mp3Panel.Add(Label("Bit rate:").TopPos(6, 20).LeftPos(8, 90));
+	Label bitrateLabel;
+	bitrateLabel.SetLabel("Bit rate:");
+	mp3Panel.Add(bitrateLabel.TopPos(6, 20).LeftPos(8, 90));
 	mp3Panel.Add(mp3BitRate.TopPos(6, 20).LeftPos(106, 120));
-	mp3Panel.Add(Label("Sample rate:").TopPos(34, 20).LeftPos(8, 90));
+	Label samplerateLabel;
+	samplerateLabel.SetLabel("Sample rate:");
+	mp3Panel.Add(samplerateLabel.TopPos(34, 20).LeftPos(8, 90));
 	mp3Panel.Add(mp3SampleRate.TopPos(34, 20).LeftPos(106, 120));
 	mp3Panel.Add(mp3HighQuality.TopPos(62, 24).LeftPos(8, 200));
 	mp3Panel.Add(mp3InsertID3.TopPos(90, 24).LeftPos(8, 200));
@@ -181,20 +186,20 @@ void CodecOptionsPane::GetCodecSettings(ValueMap& settings) const {
 }
 
 void CodecOptionsPane::SetCodecSettings(const ValueMap& settings) {
-	if(settings.Has("wavInsertBroadcast"))
-		wavInsertBroadcast.Set(settings.Get("wavInsertBroadcast"));
-	if(settings.Has("wavDisableExtensible"))
-		wavDisableExtensible.Set(settings.Get("wavDisableExtensible"));
-	if(settings.Has("wavInsertIXML"))
-		wavInsertIXML.Set(settings.Get("wavInsertIXML"));
-	if(settings.Has("mp3BitRate"))
-		mp3BitRate.SetData(settings.Get("mp3BitRate"));
-	if(settings.Has("mp3SampleRate"))
-		mp3SampleRate.SetData(settings.Get("mp3SampleRate"));
-	if(settings.Has("mp3HighQuality"))
-		mp3HighQuality.Set(settings.Get("mp3HighQuality"));
-	if(settings.Has("mp3InsertID3"))
-		mp3InsertID3.Set(settings.Get("mp3InsertID3"));
+	if(settings.Find("wavInsertBroadcast") >= 0)
+		wavInsertBroadcast.Set(settings.Get("wavInsertBroadcast", false));
+	if(settings.Find("wavDisableExtensible") >= 0)
+		wavDisableExtensible.Set(settings.Get("wavDisableExtensible", false));
+	if(settings.Find("wavInsertIXML") >= 0)
+		wavInsertIXML.Set(settings.Get("wavInsertIXML", false));
+	if(settings.Find("mp3BitRate") >= 0)
+		mp3BitRate.SetData(settings.Get("mp3BitRate", 128));
+	if(settings.Find("mp3SampleRate") >= 0)
+		mp3SampleRate.SetData(settings.Get("mp3SampleRate", 44100));
+	if(settings.Find("mp3HighQuality") >= 0)
+		mp3HighQuality.Set(settings.Get("mp3HighQuality", false));
+	if(settings.Find("mp3InsertID3") >= 0)
+		mp3InsertID3.Set(settings.Get("mp3InsertID3", false));
 }
 
 // --- ID3TagDialog ---------------------------------------------------------
@@ -208,22 +213,34 @@ ID3TagDialog::ID3TagDialog() {
 }
 
 void ID3TagDialog::SetupLayout() {
-	Add(Label("Title:").TopPos(8, 20).LeftPos(8, 80));
+	Label titleLabel;
+	titleLabel.SetLabel("Title:");
+	Add(titleLabel.TopPos(8, 20).LeftPos(8, 80));
 	Add(title.TopPos(8, 20).LeftPos(96, 200));
 
-	Add(Label("Artist:").TopPos(36, 20).LeftPos(8, 80));
+	Label artistLabel;
+	artistLabel.SetLabel("Artist:");
+	Add(artistLabel.TopPos(36, 20).LeftPos(8, 80));
 	Add(artist.TopPos(36, 20).LeftPos(96, 200));
 
-	Add(Label("Album:").TopPos(64, 20).LeftPos(8, 80));
+	Label albumLabel;
+	albumLabel.SetLabel("Album:");
+	Add(albumLabel.TopPos(64, 20).LeftPos(8, 80));
 	Add(album.TopPos(64, 20).LeftPos(96, 200));
 
-	Add(Label("Year:").TopPos(92, 20).LeftPos(8, 80));
+	Label yearLabel;
+	yearLabel.SetLabel("Year:");
+	Add(yearLabel.TopPos(92, 20).LeftPos(8, 80));
 	Add(year.TopPos(92, 20).LeftPos(96, 80));
 
-	Add(Label("Genre:").TopPos(120, 20).LeftPos(8, 80));
+	Label genreLabel;
+	genreLabel.SetLabel("Genre:");
+	Add(genreLabel.TopPos(120, 20).LeftPos(8, 80));
 	Add(genre.TopPos(120, 20).LeftPos(96, 200));
 
-	Add(Label("Comment:").TopPos(148, 20).LeftPos(8, 80));
+	Label commentLabel;
+	commentLabel.SetLabel("Comment:");
+	Add(commentLabel.TopPos(148, 20).LeftPos(8, 80));
 	Add(comment.TopPos(148, 60).LeftPos(96, 200));
 
 	okButton.SetLabel("OK");
@@ -310,7 +327,7 @@ ExportAudioMixdownDialog::ExportAudioMixdownDialog() {
 	SetFileTypes({"Wave File", "AIFF File", "MPEG1 Layer 3 File", "Ogg Vorbis File", "Windows Media Audio File", "Wave64 File"});
 	SetSampleRates({32000, 44100, 48000, 88200, 96000});
 	SetBitDepths({16, 24, 32});
-	SetDefaultPath(Nvl(GetHomeDir(), ""));
+	SetDefaultPath(Upp::ConfigFile("Home"));
 	SetDefaultFilename("Mixdown");
 
 	monoExport.SetLabel("Mono Export");
@@ -333,23 +350,33 @@ void ExportAudioMixdownDialog::BuildLayout() {
 	batchExportButton.SetLabel("Channel Batch Export");
 	leftPane.Add(channelPane.VSizePos(28, 0).HSizePos());
 
-	configPane.Add(Label("Filename:").TopPos(0, 20).LeftPos(0, 100));
+	Label filenameLabel;
+	filenameLabel.SetText("Filename:");
+	configPane.Add(filenameLabel.TopPos(0, 20).LeftPos(0, 100));
 	configPane.Add(filenameEdit.TopPos(0, 20).LeftPos(104, 220));
 
-	configPane.Add(Label("Path:").TopPos(28, 20).LeftPos(0, 100));
+	Label pathLabel;
+	pathLabel.SetText("Path:");
+	configPane.Add(pathLabel.TopPos(28, 20).LeftPos(0, 100));
 	configPane.Add(pathEdit.TopPos(28, 20).LeftPos(104, 220));
 	browseButton.SetLabel("Browse...");
 	configPane.Add(browseButton.TopPos(28, 20).RightPos(0, 100));
 
-	configPane.Add(Label("File Type:").TopPos(56, 20).LeftPos(0, 100));
+	Label fileTypeLabel;
+	fileTypeLabel.SetText("File Type:");
+	configPane.Add(fileTypeLabel.TopPos(56, 20).LeftPos(0, 100));
 	configPane.Add(fileType.TopPos(56, 20).LeftPos(104, 220));
 
 	configPane.Add(codecPane.TopPos(84, 150).HSizePos());
 
-	configPane.Add(Label("Sample Rate:").TopPos(242, 20).LeftPos(0, 100));
+	Label sampleRateLabel;
+	sampleRateLabel.SetText("Sample Rate:");
+	configPane.Add(sampleRateLabel.TopPos(242, 20).LeftPos(0, 100));
 	configPane.Add(sampleRate.TopPos(242, 20).LeftPos(104, 140));
 
-	configPane.Add(Label("Bit Depth:").TopPos(270, 20).LeftPos(0, 100));
+	Label bitDepthLabel;
+	bitDepthLabel.SetText("Bit Depth:");
+	configPane.Add(bitDepthLabel.TopPos(270, 20).LeftPos(0, 100));
 	configPane.Add(bitDepth.TopPos(270, 20).LeftPos(104, 140));
 
 	configPane.Add(monoExport.TopPos(302, 20).LeftPos(0, 180));
@@ -418,7 +445,7 @@ ExportRequest ExportAudioMixdownDialog::CollectRequest() const {
 	ExportRequest req;
 	req.filename = filenameEdit.GetData();
 	req.directory = pathEdit.GetData();
-	req.fileType = fileType.GetText();
+	req.fileType = ~fileType;
 	req.channels = channelPane.GatherSelection();
 	codecPane.GetCodecSettings(req.codecSettings);
 	Value sr = sampleRate.GetData();
@@ -450,7 +477,7 @@ void ExportAudioMixdownDialog::OnBrowsePath() {
 }
 
 void ExportAudioMixdownDialog::OnFileTypeChanged() {
-	codecPane.SetCodec(fileType.GetText());
+	codecPane.SetCodec(~fileType);
 }
 
 void ExportAudioMixdownDialog::OnEditID3() {

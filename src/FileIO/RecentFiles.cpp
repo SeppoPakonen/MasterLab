@@ -13,7 +13,7 @@ void RecentFiles::AddRecent(const String& path) {
 	
 	// Keep only the most recent files up to max count
 	while (recent_files.GetCount() > max_recent_files) {
-		recent_files.RemoveLast();
+		recent_files.Drop();
 	}
 }
 

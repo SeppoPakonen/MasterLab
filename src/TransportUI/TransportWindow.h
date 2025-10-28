@@ -20,8 +20,8 @@ private:
 	ProgressIndicator diskMeter;
 	Label asioLabel;
 	Label diskLabel;
-	Label asioOverloadLed;
-	Label diskOverloadLed;
+	StaticText asioOverloadLed;
+	StaticText diskOverloadLed;
 };
 
 class RecordingModePane : public ParentCtrl {

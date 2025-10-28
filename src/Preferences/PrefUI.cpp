@@ -266,8 +266,8 @@ void PreferencesDlg::RefreshTree() {
 void PreferencesDlg::OnTreeSel() {
 	TreeCtrl::Node* node = tree.Any();
 	if(node) {
-		String subcategory = node->GetText();
-		String category = node->Parent() ? node->Parent()->GetText() : subcategory;
+		String subcategory = node->GetLabel();
+		String category = node->Parent() ? node->Parent()->GetLabel() : subcategory;
 		
 		if(current_panel) {
 			// Store current panel's data before switching

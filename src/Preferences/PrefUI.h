@@ -17,17 +17,17 @@ public:
 	// Panel lifecycle methods
 	virtual void Init(PreferencesModel& model) = 0;
 	virtual void Load(const PreferencesModel& model) = 0;
-	virtual void Store(PreferencesModel& model, BitSet& changed) = 0;
+	virtual void Store(PreferencesModel& model, Vector<bool>& changed) = 0;
 	
 protected:
 	// Helper methods for creating common controls
 	StaticRect CreateColorRect(const Color& color);
-	Row* CreateLabeledSlider(const String& label, int min, int max, int default_value);
-	Row* CreateLabeledOption(const String& label, bool default_value);
-	Row* CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index);
-	Row* CreateIntSpinMs(const String& label, int default_value);
-	Row* CreateIntSpinTicks(const String& label, int default_value);
-	Row* CreateDoubleSpin(const String& label, double default_value);
+	Ctrl& CreateLabeledSlider(const String& label, int min, int max, int default_value);
+	Ctrl& CreateLabeledOption(const String& label, bool default_value);
+	Ctrl& CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index);
+	Ctrl& CreateIntSpinMs(const String& label, int default_value);
+	Ctrl& CreateIntSpinTicks(const String& label, int default_value);
+	Ctrl& CreateDoubleSpin(const String& label, double default_value);
 	Row* CreateKeyAssignRow(const String& label);
 };
 
@@ -55,7 +55,7 @@ private:
 	} panel_class##_registrar;
 
 // Preference dialog implementation
-class PreferencesDlg : public WithPreferencesLayout<TopWindow> {
+class PreferencesDlg : public WithLayout<TopWindow> {
 public:
 	typedef PreferencesDlg CLASSNAME;
 	PreferencesDlg();

@@ -22,7 +22,7 @@ void History::Redo() {
 void History::Push(const Operation& op) {
 	// Remove any redo operations if we're not at the end
 	while (stack.GetCount() > pos) {
-		stack.RemoveLast();
+		stack.Drop();
 	}
 	
 	stack.Add(op);

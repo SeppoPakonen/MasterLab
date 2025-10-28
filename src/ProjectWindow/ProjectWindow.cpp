@@ -18,7 +18,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	constrainDelayComp.WhenAction = THISBACK(DummyAction);
 	Add(constrainDelayComp, 150);
 
-	AddSeparator();
+	Separator();
 	toggleInspector.SetLabel("Inspector");
 	toggleInspector = true;
 	toggleInspector.WhenAction = THISBACK(DummyAction);
@@ -41,7 +41,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	toggleMixer.WhenAction = THISBACK(DummyAction);
 	Add(toggleMixer, 80);
 
-	AddSeparator();
+	Separator();
 	automationPanel.SetLabel("Automation Panel");
 	automationPanel.WhenAction = THISBACK(DummyAction);
 	Add(automationPanel, 150);
@@ -52,7 +52,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	automationMode.SetIndex(0);
 	Add(automationMode, 130);
 
-	AddSeparator();
+	Separator();
 	AddToolButton("Prev", prevMarker, 70);
 	AddToolButton("Next", nextMarker, 70);
 	AddToolButton("Loop", loopToggle, 70);
@@ -60,7 +60,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	AddToolButton("Play", playTransport, 70);
 	AddToolButton("Record", recordTransport, 80);
 
-	AddSeparator();
+	Separator();
 	static const char* toolNames[] = {
 		"Select", "Range", "Split", "Glue", "Erase", "Zoom",
 		"Mute", "Time Warp", "Draw", "Line", "Play Tool", "Colorize"
@@ -77,7 +77,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	pitchSelector.SetIndex(0);
 	Add(pitchSelector, 90);
 
-	AddSeparator();
+	Separator();
 	autoScroll.SetLabel("Auto-Scroll");
 	autoScroll.WhenAction = THISBACK(DummyAction);
 	Add(autoScroll, 110);
@@ -102,7 +102,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	snapType.SetIndex(0);
 	Add(snapType, 150);
 
-	AddSeparator();
+	Separator();
 	quantizeBase.Add("Bar");
 	quantizeBase.Add("Beat");
 	quantizeBase.Add("Use Quantize");
@@ -121,7 +121,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	quantizeValue.SetIndex(2);
 	Add(quantizeValue, 120);
 
-	AddSeparator();
+	Separator();
 	snapZeroCrossing.SetLabel("Snap Zero");
 	snapZeroCrossing.WhenAction = THISBACK(DummyAction);
 	Add(snapZeroCrossing, 110);
@@ -130,7 +130,7 @@ void ProjectToolbarPane::BuildToolbar() {
 	colorPicker.WhenAction = THISBACK(DummyAction);
 	Add(colorPicker, 130);
 
-	AddSeparator();
+	Separator();
 	projectName.SetLabel("Untitled Project");
 	projectName.SetFrame(NullFrame());
 	Add(projectName, 200);
@@ -236,7 +236,7 @@ InspectorPane::InspectorPane() {
 	trackLabel.SetText("Instrument Track Inspector");
 
 	panelList.AddColumn("Panel").HeaderTab().AlignLeft();
-	panelList.NoHeaderCtrl();
+	panelList.NoHeader();
 	panelList.Enable(false);
 	panelList.SetFrame(InsetFrame());
 	Add(panelList.VSizePos(28, 4).HSizePos(4, 4));
@@ -261,7 +261,7 @@ void InspectorPane::RefreshPanels() {
 	}
 	else {
 		for(const ValueMap& panel : panelState) {
-			String name = panel.Get("title", "Panel");
+			String name = const_cast<ValueMap&>(panel).Get("title", "Panel");
 			panelList.Add(name);
 		}
 	}
@@ -269,7 +269,7 @@ void InspectorPane::RefreshPanels() {
 }
 
 void InspectorPane::SetPanels(const Vector<ValueMap>& panels) {
-	panelState = panels;
+	panelState <<= panels;
 }
 
 TrackListPane::TrackListPane() {
@@ -281,8 +281,8 @@ TrackListPane::TrackListPane() {
 	trackTable.AddColumn("Track");
 	trackTable.AddColumn("Controls");
 	trackTable.AddColumn("Details");
-	trackTable.ColumnWidths(140, 220, 160);
-	trackTable.NoHeaderCtrl();
+	trackTable.ColumnWidths("140 220 160");
+	trackTable.NoHeader();
 	trackTable.Enable(false);
 	trackTable.SetFrame(InsetFrame());
 	Add(trackTable.VSizePos(24, 0).HSizePos());
@@ -336,13 +336,12 @@ ProjectAreaPane::ProjectAreaPane() {
 	formatLabel.SetText("Format: Bars+Beats");
 	Add(formatLabel.TopPos(24, 20).HSizePos(4, 4));
 
-	horizontalZoom.Range(1, 200);
+	horizontalZoom.MinMax(1, 200);
 	horizontalZoom.SetData(50);
 	Add(horizontalZoom.BottomPos(4, 20).RightPos(40, 120));
 
-	verticalZoom.Range(1, 200);
+	verticalZoom.MinMax(1, 200);
 	verticalZoom.SetData(50);
-	verticalZoom.SetVert();
 	Add(verticalZoom.TopPos(48, 200).RightPos(4, 20));
 
 	clipCanvas.SetFrame(ThinInsetFrame());
@@ -425,16 +424,16 @@ void ProjectWindowCtrl::SetProjectTitle(const String& title) {
 	toolbar.SetProjectTitle(title);
 }
 
-void ProjectWindowCtrl::BindTimelineModel(Callback<> whenTimelineChanged) {
-	onTimelineChanged = whenTimelineChanged;
+void ProjectWindowCtrl::BindTimelineModel(Callback whenTimelineChanged) {
+	onTimelineChanged = pick(whenTimelineChanged);
 }
 
-void ProjectWindowCtrl::BindTrackModel(Callback<> whenTrackModelChanged) {
-	onTrackModelChanged = whenTrackModelChanged;
+void ProjectWindowCtrl::BindTrackModel(Callback whenTrackModelChanged) {
+	onTrackModelChanged = pick(whenTrackModelChanged);
 }
 
-void ProjectWindowCtrl::BindInspectorSource(Callback<> whenInspectorChanged) {
-	onInspectorChanged = whenInspectorChanged;
+void ProjectWindowCtrl::BindInspectorSource(Callback whenInspectorChanged) {
+	onInspectorChanged = pick(whenInspectorChanged);
 }
 
 void ProjectWindowCtrl::SetProjectZoomState(int horizontal, int vertical) {
@@ -442,19 +441,19 @@ void ProjectWindowCtrl::SetProjectZoomState(int horizontal, int vertical) {
 }
 
 void ProjectWindowCtrl::UpdateTrackList(const Vector<ValueMap>& entries) {
-	cachedTrackEntries = entries;
+	cachedTrackEntries <<= entries;
 	trackList.Clear();
 	for(const ValueMap& row : cachedTrackEntries) {
-		String title = row.Get("title", "Unnamed Track");
-		String controls = row.Get("controls", "M S R W");
-		String detail = row.Get("detail", "");
+		String title = const_cast<ValueMap&>(row).Get("title", "Unnamed Track");
+		String controls = const_cast<ValueMap&>(row).Get("controls", "M S R W");
+		String detail = const_cast<ValueMap&>(row).Get("detail", "");
 		trackList.AppendTrack(title, controls, detail);
 	}
 	trackList.Refresh();
 }
 
 void ProjectWindowCtrl::UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption) {
-	cachedInspectorPanels = panels;
+	cachedInspectorPanels <<= panels;
 	inspector.SetTrackType(caption);
 	inspector.SetPanels(cachedInspectorPanels);
 	inspector.RefreshPanels();
@@ -462,10 +461,10 @@ void ProjectWindowCtrl::UpdateInspectorPanels(const Vector<ValueMap>& panels, co
 
 void ProjectWindowCtrl::UpdateWorkAreaState(const ValueMap& state) {
 	cachedWorkArea = state;
-	String format = cachedWorkArea.Get("rulerFormat", String("Bars+Beats"));
+	String format = const_cast<ValueMap&>(cachedWorkArea).Get("rulerFormat", String("Bars+Beats"));
 	projectArea.SetRulerFormat(format);
 	if(cachedWorkArea.Find("zoomHorizontal") >= 0 && cachedWorkArea.Find("zoomVertical") >= 0)
-		projectArea.SetZoomState((int)cachedWorkArea.Get("zoomHorizontal"), (int)cachedWorkArea.Get("zoomVertical"));
+		projectArea.SetZoomState((int)const_cast<ValueMap&>(cachedWorkArea).Get("zoomHorizontal", 0), (int)const_cast<ValueMap&>(cachedWorkArea).Get("zoomVertical", 0));
 	projectArea.RefreshClips();
 }
 

@@ -127,9 +127,9 @@ public:
 
 	void InitDefaultLayout();
 	void SetProjectTitle(const String& title);
-	void BindTimelineModel(Callback<> whenTimelineChanged);
-	void BindTrackModel(Callback<> whenTrackModelChanged);
-	void BindInspectorSource(Callback<> whenInspectorChanged);
+	void BindTimelineModel(Callback whenTimelineChanged);
+	void BindTrackModel(Callback whenTrackModelChanged);
+	void BindInspectorSource(Callback whenInspectorChanged);
 	void SetProjectZoomState(int horizontal, int vertical);
 	void UpdateTrackList(const Vector<ValueMap>& entries);
 	void UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption);
@@ -141,14 +141,14 @@ private:
 
 	ProjectToolbarPane toolbar;
 	ProjectInfoLinePane infoLine;
-	HSplitter horizontalSplit;
-	HSplitter middleSplit;
+	Splitter horizontalSplit;
+	Splitter middleSplit;
 	InspectorPane inspector;
 	TrackListPane trackList;
 	ProjectAreaPane projectArea;
-	Callback<> onTimelineChanged;
-	Callback<> onTrackModelChanged;
-	Callback<> onInspectorChanged;
+	Callback onTimelineChanged;
+	Callback onTrackModelChanged;
+	Callback onInspectorChanged;
 	Vector<ValueMap> cachedTrackEntries;
 	Vector<ValueMap> cachedInspectorPanels;
 	ValueMap cachedWorkArea;

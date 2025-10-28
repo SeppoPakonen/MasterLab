@@ -21,7 +21,6 @@ public:
 	void CreatePreset(const String& name, const PreferencesModel& model);
 	void UpdatePreset(const String& name, const PreferencesModel& model);
 	void ReadPreset(const String& name, PreferencesModel& model);
-	void DeletePreset(const String& name);
 	
 	// Functionality for "store marked only"
 	void SetMarkedOnly(bool marked_only);

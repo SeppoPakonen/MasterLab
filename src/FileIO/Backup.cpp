@@ -23,12 +23,12 @@ String Backup::GenerateBackupPath(const String& originalPath) {
 	// Generate a backup path with timestamp
 	String dir = GetFileDirectory(originalPath);
 	String name = GetFileName(originalPath);
-	String ext = GetFileExtension(originalPath);
+	String ext = GetFileExt(originalPath);
 	
 	Time now = GetSysTime();
 	String timestamp = String().Cat() 
-		<< now.year << FormatIntWidth(now.month, 2) << FormatIntWidth(now.day, 2) 
-		<< "_" << FormatIntWidth(now.hour, 2) << FormatIntWidth(now.minute, 2) << FormatIntWidth(now.second, 2);
+		<< now.year << FormatIntOct(now.month, 2) << FormatIntOct(now.day, 2) 
+		<< "_" << FormatIntOct(now.hour, 2) << FormatIntOct(now.minute, 2) << FormatIntOct(now.second, 2);
 	
 	String baseName = name.Mid(0, name.GetLength() - ext.GetLength() - 1); // Remove extension
 	return AppendFileName(dir, baseName + "_backup_" + timestamp + "." + ext);

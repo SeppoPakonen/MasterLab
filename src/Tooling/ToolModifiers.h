@@ -25,7 +25,7 @@ enum ToolId {
 struct ModifierBinding {
 	ToolId tool;
 	String action;
-	ModKeys keys;
+	dword keys;
 };
 
 class ToolModifierMap {
@@ -33,8 +33,8 @@ public:
 	ToolModifierMap();
 	
 	// Binding management
-	void Set(ToolId tool, const String& action, const ModKeys& keys);
-	Optional<ModKeys> Get(ToolId tool, const String& action) const;
+	void Set(ToolId tool, const String& action, dword keys);
+	Optional<dword> Get(ToolId tool, const String& action) const;
 	void Remove(ToolId tool, const String& action);
 	void Clear();
 	
@@ -45,7 +45,7 @@ public:
 	Event<> WhenChanged;
 	
 private:
-	VectorMap<String, ModKeys> bindings; // Key format: "toolId:action"
+	VectorMap<String, dword> bindings; // Key format: "toolId:action"
 	
 	// Helper to create key from tool and action
 	String CreateKey(ToolId tool, const String& action) const;

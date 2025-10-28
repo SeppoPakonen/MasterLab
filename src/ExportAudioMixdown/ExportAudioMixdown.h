@@ -38,6 +38,7 @@ public:
 	void SetChannels(const Vector<ExportChannel>& roots);
 	Vector<String> GatherSelection() const;
 	void Clear();
+	void Layout() override;
 
 private:
 	struct Row : public ParentCtrl {
@@ -158,7 +159,7 @@ private:
 	void OnEditID3();
 	void OnBatchExport();
 
-	HSplitter contentSplit;
+	Splitter contentSplit;
 	ParentCtrl leftPane;
 	ChannelTreePane channelPane;
 	ParentCtrl configPane;

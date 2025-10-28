@@ -263,6 +263,7 @@
 ## DONE
 
 0. read files "cubase5_vst_connections.md" and "cubase5_midi_score_editor.md" and plan it's implementation: create new packages if needed, add new files if needed, add new classes, functions, related core classes and functions, detailed implementation notes to packages AGENTS.md. See if existing classes and functions needs updating. Try to re-use classes.
+109. read file "cubase5_key_editor.md" and plan it's implementation: create new packages if needed, add new files if needed, add new classes, functions, related core classes and functions, detailed implementation notes to packages AGENTS.md. See if existing classes and functions needs updating. Try to re-use classes.
 1. Create ProjectMgmt package with files: ProjectMgmt.h, ProjectMgmt.cpp, Commands.h, Commands.cpp, History.h, History.cpp, Selection.h, Selection.cpp
 2. Implement FileIO package with files: FileIO.h, FileIO.cpp, Import.h, Import.cpp, Export.h, Export.cpp, MediaFormatRegistry.h, MediaFormatRegistry.cpp, RecentFiles.h, RecentFiles.cpp, Backup.h, Backup.cpp, Templates.h, Templates.cpp
 3. Create TransportUI package with files: TransportUI.h, TransportUI.cpp, Metronome.h, Metronome.cpp, CycleRange.h, CycleRange.cpp, PrePostRoll.h, PrePostRoll.cpp

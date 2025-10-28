@@ -24,6 +24,14 @@ The ProjectMgmt package handles global command routing, undo/redo functionality,
 - **Routing Presets:** expose `PresetRepository` with scoped namespaces (Global, Project) used by `Devices::IOMatrixService` to store VST Connections layouts.
 - **Command Extensions:** register score-specific command descriptors (Insert Note, Glue Notes, Flip, Auto Layout, Create Chord Symbols) so the command bus can produce undoable operations shared by Key/Score editors.
 
+## Key Editor Support Plan
+- **`MidiPartFollower` service:** listens to project selection changes, resolves the latest MIDI part, and notifies subscribed editors. Handles stacked takes vs. lane selections and emits `WhenPartRemoved` so `KeyEditorPresenter` can close when its source disappears.
+- **Command IDs:** expand `Commands.h` to enumerate toolbar toggles/actions (Solo Editor, Acoustic Feedback, Show Info Bar, Auto-Scroll, Independent Track Loop, Snap toggles, Quantize Setup, Line Tool submodes, Time Warp modes, Input Mode, Capture toggles, Color Mode changes, controller lane presets). Task 78 will register these IDs and associate them with menu/shortcut bindings.
+- **`EditorCommandContext`:** lightweight execution context that stores active editor state (`KeyEditorState`, `ScoreEditorState`, etc.) and injects it into undoable commands for precise redo/undo.
+- **History Hooks:** extend `History::BeginGroup` helpers to batch note edits originating from scrub-to-edit, draw/erase, or controller painting so a single drag produces a single undo step.
+- **Loop Coordination:** provide API for editor-specific loop requests (`RegisterScopedLoop(EditorId, LoopRegion)`, `UnregisterLoop(EditorId)`) that the transport system can honour in parallel with the global cycle flag.
+- **Selection Mirror:** create `MidiSelectionSnapshot` type representing note/controller selections. `KeyEditorPresenter` uses it to update the info bar and to translate multi-selection edits back into undoable commands.
+
 ## Relations to Other Packages
 - `Core`: Basic U++ framework functionality
 - `CtrlCore`, `CtrlLib`: UI controls and framework

@@ -19,3 +19,8 @@ The Tooling package handles tool modifier mappings - the system that defines how
 - ToolModifierMap provides mappings that Editors query during user interaction
 - When modifier keys are pressed, editors check ToolModifierMap to determine behavior
 - Changes to mappings are broadcast via WhenChanged signal to update UI
+
+## Upcoming Enhancements for Editors Integration
+- **ToolPaletteModel**: central description of editor tools (icon id, tooltip, command id, default modifier bindings). Enables reuse across Key, Drum, and List editors.
+- **ToggleGroup**: helper managing exclusive toggle sets (e.g., the 10-way Key Editor tool palette) with `SetActive(id)` / `WhenChange`.
+- **ToolControllerBridge**: provides hooks so editors can register custom gesture handlers (draw lines, parabola/sine shapes) while still honouring global modifier overrides defined in the preferences UI.

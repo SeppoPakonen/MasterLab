@@ -23,6 +23,7 @@ void Registration::ShowRegistrationDialog() {
 	Button okBtn;
 	
 	dlg.Add(regKey.HSizePos(10, 10).TopPos(10, 20));
+	CtrlLayoutOKCancel(dlg, "Registration");
 	dlg.Add(okBtn.RightPos(10, 60).VSizePos(40, 25));
 	dlg.SetRect(0, 0, 400, 120);
 	dlg.Title("Registration");
@@ -31,7 +32,7 @@ void Registration::ShowRegistrationDialog() {
 	okBtn.WhenAction = [&] {
 		if(Register(regKey.GetData())) {
 			PromptOK("Registration successful!");
-			dlg.Break();
+			dlg.Close();
 		} else {
 			PromptOK("Invalid registration key!");
 		}

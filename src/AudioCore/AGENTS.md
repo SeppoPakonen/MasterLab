@@ -33,3 +33,9 @@ AudioCore holds the low-level voice management, modulation, and synthesis primit
 - Sends insert send/return paths through `AudioFX::DSP::SignalBus`.
 - Publishes metering taps for `AudioAnalysis` (oscilloscope, tuner, loudness per voice).
 - Provides **`MidiPreview`** (planned) so editors (Key, Drum, Score) can audition notes when Acoustic Feedback or Step Input is active. Exposes `PreviewNoteOn`, `PreviewNoteOff`, and `SetPreviewChannel`. Integrates with `Devices::AudioDeviceManager` for routing and obeys VST Connections click routing updates.
+
+## Key Editor Data Services Plan
+- **`MidiPartDocument`**: cached representation of the active MIDI part containing notes, controller lanes, articulation tags, and transpose offsets. Supports `LoadPart(partId)`, `GetNotes()`, `GetControllerLane(ctrlId)`, and `GetTransposeDelta()`. Emits change notifications consumed by Key/Drum/List editors.
+- **`MidiAutomation` accessors**: unify per-lane CC/velocity/aftertouch data with helper methods (`BeginLaneEdit`, `CommitLaneEdit`, `CancelLaneEdit`) so controller painting can be grouped for undo.
+- **`HarmonyAnalyzer`**: lightweight chord detector returning chord names and note spellings for the toolbar HUD. Reuses existing pitch-class math from `Math::PitchClass`.
+- **`IndependentLoopBridge`**: cooperates with `TransportUI::LoopCoordinator` to limit playback to the active part when the editor loop is enabled, while still streaming other tracks through the main timeline.

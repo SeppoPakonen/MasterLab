@@ -38,7 +38,7 @@ void PoolSearchDialog::BuildLayout() {
 	scopeDrop.Add("Select Search Path...");
 	scopeDrop.SetIndex(0);
 	Label scopeLabel;
-	scopeLabel.SetText("Scope:");
+	scopeLabel.SetLabel("Scope:");
 	Add(scopeLabel.TopPos(8, 20).LeftPos(8, 80));
 	Add(scopeDrop.TopPos(8, 20).LeftPos(96, 200));
 
@@ -48,7 +48,7 @@ void PoolSearchDialog::BuildLayout() {
 	Add(selectButton.TopPos(8, 24).RightPos(12, 100));
 
 	Label queryLabel;
-	queryLabel.SetText("Query:");
+	queryLabel.SetLabel("Query:");
 	Add(queryLabel.TopPos(40, 20).LeftPos(8, 80));
 	Add(queryField.TopPos(40, 20).LeftPos(96, 240));
 
@@ -61,7 +61,6 @@ void PoolSearchDialog::BuildLayout() {
 	Add(pauseButton.TopPos(72, 24).LeftPos(176, 80));
 	Add(repeatButton.TopPos(72, 24).LeftPos(260, 80));
 
-	volumeSlider.Vertical();
 	volumeSlider.MinMax(0, 100);
 	volumeSlider.SetData(80);
 	Add(volumeSlider.TopPos(40, 112).LeftPos(320, 20));
@@ -122,7 +121,6 @@ void PoolWindow::BuildToolbar() {
 	loopButton.WhenAction = THISBACK(OnLoopSelected);
 	toolbar.Add(loopButton, 70);
 
-	toolbarVolume.Vertical();
 	toolbarVolume.MinMax(0, 100);
 	toolbarVolume.SetData(80);
 	toolbar.Add(toolbarVolume, 36);
