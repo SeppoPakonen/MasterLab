@@ -14,12 +14,12 @@ void ListEditor::Init() {
 
 void ListEditor::Open() {
 	// Open the editor
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void ListEditor::Close() {
 	// Close the editor
-	CloseWindow();
+	Close();
 }
 
 void ListEditor::SetData(void* data) {

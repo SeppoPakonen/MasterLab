@@ -3,7 +3,7 @@ namespace am {
 
 void RecentFiles::AddRecent(const String& path) {
 	// Remove the path if it's already in the list
-	int pos = recent_files.Find(path);
+	int pos = recent_files.FindIndex(path);
 	if (pos >= 0) {
 		recent_files.Remove(pos);
 	}
@@ -18,7 +18,7 @@ void RecentFiles::AddRecent(const String& path) {
 }
 
 void RecentFiles::RemoveRecent(const String& path) {
-	int pos = recent_files.Find(path);
+	int pos = recent_files.FindIndex(path);
 	if (pos >= 0) {
 		recent_files.Remove(pos);
 	}

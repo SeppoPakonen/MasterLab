@@ -36,8 +36,6 @@ file
 	panels/PrefMIDI.h,
 	panels/PrefMIDI.cpp,
 	WithPreferencesLayout.h,
-	WithPreferencesLayout.lay,
 	KeyCommandsDlg.h,
 	KeyCommandsDlg.cpp,
-	WithPresetsLayout.h,
-	WithPresetsLayout.lay;
+	WithPresetsLayout.h;

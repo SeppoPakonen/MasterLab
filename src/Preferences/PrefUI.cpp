@@ -8,51 +8,51 @@ PreferencesPane::PreferencesPane() {
 
 StaticRect PreferencesPane::CreateColorRect(const Color& color) {
 	StaticRect rect;
-	rect.SetFrame(1);
-	rect.SetRect(0, 0, 20, 20);
-	rect.SetInk(color);
-	return rect;
+	rect.Frame(Single(1));
+	rect.Rect(0, 0, 20, 20);
+	rect.Ink(color);
+	return pick(rect);
 }
 
-Row* PreferencesPane::CreateLabeledSlider(const String& label, int min, int max, int default_value) {
+Ctrl& PreferencesPane::CreateLabeledSlider(const String& label, int min, int max, int default_value) {
 	auto* row = new LabeledSlider(label, min, max, default_value);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateLabeledOption(const String& label, bool default_value) {
+Ctrl& PreferencesPane::CreateLabeledOption(const String& label, bool default_value) {
 	auto* row = new LabeledOption(label, default_value);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index) {
+Ctrl& PreferencesPane::CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index) {
 	auto* row = new LabeledDropList(label, options, default_index);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateIntSpinMs(const String& label, int default_value) {
+Ctrl& PreferencesPane::CreateIntSpinMs(const String& label, int default_value) {
 	auto* row = new IntSpinMs(label, default_value);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateIntSpinTicks(const String& label, int default_value) {
+Ctrl& PreferencesPane::CreateIntSpinTicks(const String& label, int default_value) {
 	auto* row = new IntSpinTicks(label, default_value);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateDoubleSpin(const String& label, double default_value) {
+Ctrl& PreferencesPane::CreateDoubleSpin(const String& label, double default_value) {
 	auto* row = new DoubleSpin(label, default_value);
-	return row;
+	return *row;
 }
 
-Row* PreferencesPane::CreateKeyAssignRow(const String& label) {
+Ctrl& PreferencesPane::CreateKeyAssignRow(const String& label) {
 	auto* row = new KeyAssignRow(label);
-	return row;
+	return *row;
 }
 
 // Row implementation
 Row::Row() {
-	AddFrame(bg);
-	layout.SetHorizontal();
+	Add(bg);
+	layout.Mode(HorzLayout);
 	Add(layout.SizePos());
 }
 
@@ -61,7 +61,7 @@ void Row::Add(Ctrl& ctrl, int proportion) {
 }
 
 // LabelBox implementation
-LabelBox::LabelBox(const String& text) {
+LabelBox::LabelBox(const String& text) : border(Single(1)) {
 	label.SetLabel(text);
 	Add(label.TopPos(0, 20).LeftPos(0, 10));
 	Add(content.VSizePos(25).HSizePos());
@@ -90,8 +90,8 @@ void ColorRect::Paint(Draw& draw) {
 // LabeledSlider implementation
 LabeledSlider::LabeledSlider(const String& label_text, int min, int max, int default_value) {
 	label.SetLabel(label_text);
-	slider.SetRange(min, max);
-	slider.SetData(default_value);
+	slider.MinMax(min, max);
+	slider.Set(default_value);
 	
 	Add(label.VSizePos().LeftPos(0, 120));
 	Add(slider.VSizePos().RightPos(0, 200));
@@ -157,26 +157,19 @@ KeyAssignRow::KeyAssignRow(const String& label_text) {
 
 // WithPreferencesLayout implementation
 template <class TBase>
-WithPreferencesLayout<TBase>::WithPreferencesLayout() {
+WithProgressLayout<TBase>::WithProgressLayout() {
 	InitLayout();
 }
 
 template <class TBase>
-void WithPreferencesLayout<TBase>::InitLayout() {
+void WithProgressLayout<TBase>::InitLayout() {
 	// Create the main split layout
 	Splitter main_split;
-	main_split.Horz();
-	main_split << tree_area << view_area;
-	
-	// Set proportions: 33% for tree, 66% for view
-	main_split.SetPos(1, 1, 3);  // Set proportional sizes
+	main_split.Vert();
 	
 	// Main area: 80% of total height
-	main_area.Add(main_split.SizePos());
-	
-	// Add all controls to the main window
-	Add(main_area.TopPos(0, 80 * GetDataHeight()));
-	Add(preset_area.HSizePos().VSizePos(80 * GetDataHeight(), 16 * GetDataHeight()));
+	Add(main_split.TopPos(0, 80 * 20)); // Standard height
+	Add(preset_area.HSizePos().VSizePos(80 * 20, 16 * 20)); // Above bottom buttons
 	Add(button_area.HSizePos().BottomPos(0, 20));
 }
 

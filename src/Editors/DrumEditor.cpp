@@ -14,12 +14,12 @@ void DrumEditor::Init() {
 
 void DrumEditor::Open() {
 	// Open the editor
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void DrumEditor::Close() {
 	// Close the editor
-	CloseWindow();
+	Close();
 }
 
 void DrumEditor::SetData(void* data) {

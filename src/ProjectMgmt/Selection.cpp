@@ -12,7 +12,13 @@ void Selection::Select(Value item) {
 }
 
 void Selection::Deselect(Value item) {
-	int pos = selected_items.Find(item);
+	int pos = -1;
+	for(int i = 0; i < selected_items.GetCount(); i++) {
+		if(selected_items[i] == item) {
+			pos = i;
+			break;
+		}
+	}
 	if (pos >= 0) {
 		selected_items.Remove(pos);
 	}

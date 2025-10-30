@@ -140,12 +140,12 @@ void ProjectSetupDialog::PopulateDefaults() {
 void ProjectSetupDialog::SetModel(const ProjectSetupModel& model) {
 	startField.SetData(model.start);
 	lengthField.SetData(model.length);
-	int frameIndex = frameRateDrop.FindKey(model.frameRate);
+	int frameIndex = frameRateDrop.Find(model.frameRate);
 	if(frameIndex >= 0)
-		frameRateDrop.SetIndex(frameIndex);
-	int displayIndex = displayFormatDrop.FindKey(model.displayFormat);
+		frameRateDrop.SetData(frameIndex);
+	int displayIndex = displayFormatDrop.Find(model.displayFormat);
 	if(displayIndex >= 0)
-		displayFormatDrop.SetIndex(displayIndex);
+		displayFormatDrop.SetData(displayIndex);
 	displayOffsetField.SetData(model.displayOffset);
 	barOffsetField.SetData(model.barOffset);
 	sampleRateDrop.SetData(model.sampleRate);
@@ -162,16 +162,16 @@ ProjectSetupModel ProjectSetupDialog::GetModel() const {
 	ProjectSetupModel model;
 	model.start = startField.GetData();
 	model.length = lengthField.GetData();
-	model.frameRate = frameRateDrop.GetKey(frameRateDrop.GetIndex());
-	model.displayFormat = displayFormatDrop.GetKey(displayFormatDrop.GetIndex());
+	model.frameRate = frameRateDrop.GetKey(frameRateDrop.GetData());
+	model.displayFormat = displayFormatDrop.GetKey(displayFormatDrop.GetData());
 	model.displayOffset = displayOffsetField.GetData();
 	model.barOffset = (int)barOffsetField.GetData();
 	Value rate = sampleRateDrop.GetData();
 	model.sampleRate = IsNull(rate) ? 44100 : (int)rate;
 	Value bitDepth = recordBitDepthDrop.GetData();
 	model.recordBitDepth = IsNull(bitDepth) ? 24 : (int)bitDepth;
-	model.recordFileType = recordFileTypeDrop.GetKey(recordFileTypeDrop.GetIndex());
-	model.stereoPanLaw = panLawDrop.GetKey(panLawDrop.GetIndex());
+	model.recordFileType = recordFileTypeDrop.GetKey(recordFileTypeDrop.GetData());
+	model.stereoPanLaw = panLawDrop.GetKey(panLawDrop.GetData());
 	return model;
 }
 

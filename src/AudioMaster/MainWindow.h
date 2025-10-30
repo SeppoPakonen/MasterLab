@@ -1,17 +1,40 @@
 #ifndef _AudioMaster_MainWindow_h_
 #define _AudioMaster_MainWindow_h_
 
+#include <Core/Core.h>
+#include <CtrlLib/CtrlLib.h>
+#include <AudioCore/AudioCore.h>
+#include <AudioFX/AudioFX.h>
+#include <AudioGraph/AudioGraph.h>
+#include <Browser/Browser.h>
+#include <HelpAbout/HelpAbout.h>
+#include <Math/Math.h>
+#include <MIDI/MIDI.h>
+#include <ProjectMgmt/ProjectMgmt.h>
+#include <ProjectWindow/ProjectWindow.h>
+#include <ProjectSetup/ProjectSetup.h>
+#include <ScoresEngine/ScoresEngine.h>
+#include <Tooling/Tooling.h>
+#include <TransportPrefs/TransportPrefs.h>
+#include <TransportUI/TransportUI.h>
+#include <Video/Video.h>
+#include <VSTHost/VstHostPrefs.h>
+#include <Windowing/Windowing.h>
+#include <MediaPool/MediaPool.h>
+#include <ExportAudioMixdown/ExportAudioMixdown.h>
+#include <FileIO/FileIO.h>
+#include <Devices/Devices.h>
+#include <Editors/Editors.h>
+#include <AudioMaster/AudioMaster.h>
+#include <PluginSDK/PluginSDK.h>
+#include <SubWindowCtrl/SubWindowCtrl.h>
+// #include <ProjectWindow/ProjectWindowHost.h>
+// #include <MediaPool/PoolWindow.h>
 using namespace Upp;
 
-enum ViewType { 
-	MULTI_CHANNEL = 1,
-	MIXER = 2,
-	MASTERING = 0,
-	ANALYSIS = 3,
-	COMBINED = 4,
-	POST = 5,
-	POST_GRAPH = 6
-};
+// Forward declarations
+class MainView;
+class SubWindow;
 
 class MainWindow : public TopWindow {
 	

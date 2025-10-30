@@ -1,73 +1,35 @@
-#include "../Preferences.h"
+#include "PrefAppearance.h"
+
 namespace am {
 
 PrefAppearance::PrefAppearance() {
-	Title("Appearance");
-	
-	// Create a simple layout for the appearance panel
-	StaticRect bg;
-	bg.SetFrame(1);
-	bg.SetInk(LtGray());
-	Add(bg.SizePos());
-	
-	// Initialize sections
-	InitGeneralSection();
-	InitMetersSection();
-	InitWorkAreaSection();
+	// Constructor implementation
 }
 
 void PrefAppearance::Init(PreferencesModel& model) {
-	// Initialize the panel with the model
-	Load(model);
+	// Initialize the panel with model data
 }
 
 void PrefAppearance::Load(const PreferencesModel& model) {
-	// Load values from the appearance preferences in the model
-	const AppearancePrefs& appearance = model.GetAppearance();
-	
-	// For now, just log - in a full implementation we would load the values
-	// into the appropriate controls
-	LOG("Loading Appearance preferences");
-	LOG("Saturation: " + IntStr(appearance.saturation));
-	LOG("Brightness: " + IntStr(appearance.brightness));
-	LOG("Button Brightness: " + IntStr(appearance.button_brightness));
+	// Load data from model to UI
 }
 
-void PrefAppearance::Store(PreferencesModel& model, BitSet& changed) {
-	// Store values from the controls to the model
-	AppearancePrefs& appearance = model.GetAppearance();
-	
-	// In a full implementation we would store the control values
-	// to the appropriate model fields
-	LOG("Storing Appearance preferences");
-	
-	// For now, just update the model with some values
-	// appearance.saturation = ...; // value from control
-	// appearance.brightness = ...; // value from control
-	// appearance.button_brightness = ...; // value from control
+void PrefAppearance::Store(PreferencesModel& model, Vector<bool>& changed) {
+	// Store UI data to model
 }
 
 void PrefAppearance::InitGeneralSection() {
-	// Initialize controls for Appearance/General
-	LOG("Initializing Appearance General section");
+	// Initialize general appearance settings
 }
 
 void PrefAppearance::InitMetersSection() {
-	// Initialize controls for Appearance/Meters
-	LOG("Initializing Appearance Meters section");
-	
-	// Create preview VU meter
-	preview_vu_rect.SetFrame(1);
-	preview_vu_rect.SetInk(LtBlue());
-	// Add more sophisticated meter preview as needed
+	// Initialize meter settings
 }
 
 void PrefAppearance::InitWorkAreaSection() {
-	// Initialize controls for Appearance/Work Area
-	LOG("Initializing Appearance Work Area section");
+	// Initialize work area settings
 }
 
-// Register this panel with the registry
 REGISTER_PREF_PANEL("Appearance", "General", PrefAppearance)
 
 }

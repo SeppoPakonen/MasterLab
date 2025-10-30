@@ -14,12 +14,12 @@ void KeyEditor::Init() {
 
 void KeyEditor::Open() {
 	// Open the editor
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void KeyEditor::Close() {
 	// Close the editor
-	CloseWindow();
+	Close();
 }
 
 void KeyEditor::SetData(void* data) {

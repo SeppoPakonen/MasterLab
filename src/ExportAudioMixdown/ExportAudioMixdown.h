@@ -6,11 +6,37 @@ using namespace Upp;
 
 namespace am {
 
-struct ExportChannel {
+struct ExportChannel : public Moveable<ExportChannel> {
 	String id;
 	String label;
 	Vector<ExportChannel> children;
 	bool selected = false;
+	
+	// Add explicit copy constructor and assignment operator
+	ExportChannel() = default;
+	ExportChannel(const ExportChannel& other) 
+		: id(other.id), label(other.label), children(), selected(other.selected) {
+		// Deep copy children vector
+		children.Reserve(other.children.GetCount());
+		for(int i = 0; i < other.children.GetCount(); i++) {
+			children.Add() = other.children[i];
+		}
+	}
+	
+	ExportChannel& operator=(const ExportChannel& other) {
+		if(this != &other) {
+			id = other.id;
+			label = other.label;
+			selected = other.selected;
+			// Deep copy children vector
+			children.Clear();
+			children.Reserve(other.children.GetCount());
+			for(int i = 0; i < other.children.GetCount(); i++) {
+				children.Add() = other.children[i];
+			}
+		}
+		return *this;
+	}
 };
 
 struct ExportRequest {

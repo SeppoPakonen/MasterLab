@@ -24,15 +24,24 @@ void PreferencesModel::LoadDefaults() {
 	editing.drag_delay_ms = 200;
 	
 	// Event display defaults
-	event_display.show_names = true;
-	event_display.transparent = false;
-	event_display.show_on_small_heights = false;
-	event_display.colorize_bg = true;
-	
-	// General defaults
-	general.language = "English";
-	general.autosave = true;
-	general.autosave_minutes = 15.0;
+	event_display.display_density = 50;
+	event_display.zoom_to_selection = true;
+	event_display.zoom_preserves_position = false;
+	event_display.default_track_height = 24;
+	event_display.minimum_track_height = 16;
+	event_display.maximum_track_height = 64;
+	event_display.show_track_lanes = true;
+	event_display.show_midi_lanes = true;
+	event_display.show_audio_lanes = true;
+	event_display.show_video_lanes = true;
+	event_display.show_marker_lanes = true;
+	event_display.show_tempo_lanes = true;
+	general.auto_load_last_project = true;
+	general.show_splash_screen = true;
+	general.check_for_updates = true;
+	general.auto_install_updates = false;
+	general.undo_levels = 50;
+	general.language = "en-US";
 	general.max_backup_files = 10;
 	general.show_tips = true;
 	general.max_undo = -1; // Infinite
@@ -41,6 +50,14 @@ void PreferencesModel::LoadDefaults() {
 	general.usage_profile = false;
 	
 	// MIDI defaults
+	midi.default_velocity = 64;
+	midi.default_note_overlap_protection = true;
+	midi.auto_quantize_on_record = false;
+	midi.auto_quantize_on_paste = false;
+	midi.auto_quantize_on_import = false;
+	midi.show_velocity_colors = true;
+	midi.show_note_names = true;
+	midi.snap_to_grid = true;
 	midi.thru_active = true;
 	midi.reset_on_stop = false;
 	midi.length_adjust_ticks = -2;

@@ -9,23 +9,23 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	Sizeable().Zoomable();
 	
 	// Top row controls
-	TopMargin(25);
+	TopPos(25);
 	
 	// Initialize top row
-	open_all.SetImage(AwpImg::plus()).SetToolTip("Open All");
-	close_all.SetImage(AwpImg::minus()).SetToolTip("Close All");
+	open_all.Image(AK_PLUS).ToolTip("Open All");
+	close_all.Image(AK_MINUS).ToolTip("Close All");
 	
 	// Top row layout
 	ToolBar top_toolbar;
 	top_toolbar.Add(open_all);
 	top_toolbar.Add(close_all);
 	top_toolbar.Add(search_filter.HSizePos());
-	top_toolbar.Add(search_btn.SetLabel("Search").SetImage(AwpImg::magnifying_glass()));
+	top_toolbar.Add(search_btn.SetLabel("Search").Image(AK_MAGNIFYING_GLASS));
 	
-	AddTop(top_toolbar);
+	Add(top_toolbar);
 	
 	// Main content
-	main_splitter.Horz(3300, 6700); // 33% for tree, 66% for right panel
+	main_splitter.Vert(); // 33% for tree, 66% for right panel
 	
 	// Initialize functions tree
 	functions_tree.NoWantFocus();
@@ -36,7 +36,7 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	keys_array.AddColumn("Description", 200);
 	
 	// Initialize macro section (hidden initially)
-	macro_splitter.Horz(5000, 5000); // Initially right section is hidden (macro section)
+	macro_splitter.Vert(); // Initially right section is hidden (macro section)
 	
 	macros_tree.NoWantFocus();
 	
@@ -47,11 +47,11 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	// Setup right panel controls
 	right_panel.Add(keys_array.VSizePos(0, 20).HSizePos());
 	right_panel.Add(delete_key_btn.VSizePos(25, 45).HSizePos());
-	delete_key_btn.SetLabel("Delete").SetImage(AwpImg::trashbin());
+	delete_key_btn.SetLabel("Delete").Image(AK_TRASHBIN);
 	right_panel.Add(assign_btn.VSizePos(50, 70).HSizePos());
 	assign_btn.SetLabel("Assign");
 	right_panel.Add(key_input.VSizePos(75, 95).HSizePos());
-	key_input.SetPrompt("Press keys to assign...");
+	key_input.Prompt("Press keys to assign...");
 	right_panel.Add(assigned_to_label.VSizePos(100, 115).HSizePos());
 	assigned_to_label.SetLabel("Assigned to:");
 	right_panel.Add(colliding_function.VSizePos(120, 135).HSizePos());
@@ -59,11 +59,11 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	right_panel.Add(select_btn.VSizePos(140, 160).HSizePos());
 	
 	// Presets section - using layout
-	CtrlLayoutOKCancel(presets_layout, "Presets");
-	presets_layout.preset_list = presets_list;
-	presets_layout.preset_save = preset_save_btn;
-	presets_layout.preset_delete = preset_delete_btn;
-	presets_layout.preset_open = preset_open_btn;
+	CtrlLayoutOKCancel(*this, "Presets");
+	presets_list = presets_list_ctrl;
+	preset_save_btn = preset_save_ctrl;
+	preset_delete_btn = preset_delete_ctrl;
+	preset_open_btn = preset_open_ctrl;
 	
 	// Add presets controls to bottom area
 	BottomPos(25, 25).HSizePos(); // Position presets in bottom area
@@ -77,7 +77,7 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	
 	// Button layout - align left and right
 	StaticRect button_bg;
-	button_bg.SetFrame(1);
+	button_bg.Frame(Single(1));
 	
 	// Create a layout for bottom buttons
 	ToolBar button_bar;
@@ -87,7 +87,7 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	button_bar.Right().Add(ok_btn);
 	button_bar.Right().Add(cancel_btn);
 	
-	AddBottom(button_bar);
+	Add(button_bar);
 	
 	// Add the main splitter to the window
 	Add(main_splitter.SizePos(25, 50, 0, 25)); // Below top row, above preset buttons, above bottom buttons

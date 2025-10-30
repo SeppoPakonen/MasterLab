@@ -78,7 +78,7 @@ Optional<dword> ToolModifierMap::Get(ToolId tool, const String& action) const {
 
 void ToolModifierMap::Remove(ToolId tool, const String& action) {
 	String key = CreateKey(tool, action);
-	bindings.Remove(key);
+	bindings.RemoveKey(key);
 	WhenChanged();
 }
 

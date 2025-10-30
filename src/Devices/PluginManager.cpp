@@ -3,8 +3,8 @@ namespace am {
 
 PluginManager::PluginManager() {
 	// Initialize with common plugin paths
-	AddPluginPath(GetSystemFolder(SYS_PROGRAMS) + "/VST");
-	AddPluginPath(GetUserFolder() + "/VST");
+	AddPluginPath(GetExeFolder() + "/VST");
+	AddPluginPath(GetHomeDirFile() + "/VST");
 }
 
 void PluginManager::ScanForPlugins() {

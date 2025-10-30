@@ -1,22 +1,22 @@
-#ifndef _Preferences_PrefAppearance_h_
-#define _Preferences_PrefAppearance_h_
+#ifndef _Preferences_PrefScores_h_
+#define _Preferences_PrefScores_h_
 
 #include "../Preferences.h"
 
 namespace am {
 
-class PrefAppearance : public PreferencesPane {
+class PrefScores : public PreferencesPane {
 public:
-	typedef PrefAppearance CLASSNAME;
-	PrefAppearance();
+	typedef PrefScores CLASSNAME;
+	PrefScores();
 	virtual void Init(PreferencesModel& model) override;
 	virtual void Load(const PreferencesModel& model) override;
 	virtual void Store(PreferencesModel& model, Vector<bool>& changed) override;
 	
 private:
-	void InitGeneralSection();
-	void InitMetersSection();
-	void InitWorkAreaSection();
+	void InitDisplaySection();
+	void InitNotationSection();
+	void InitPlaybackSection();
 };
 
 }

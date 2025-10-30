@@ -14,12 +14,12 @@ void ScoreEditor::Init() {
 
 void ScoreEditor::Open() {
 	// Open the editor
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void ScoreEditor::Close() {
 	// Close the editor
-	CloseWindow();
+	Close();
 }
 
 void ScoreEditor::SetData(void* data) {

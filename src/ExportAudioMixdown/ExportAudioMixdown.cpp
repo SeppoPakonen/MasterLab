@@ -187,19 +187,19 @@ void CodecOptionsPane::GetCodecSettings(ValueMap& settings) const {
 
 void CodecOptionsPane::SetCodecSettings(const ValueMap& settings) {
 	if(settings.Find("wavInsertBroadcast") >= 0)
-		wavInsertBroadcast.Set(settings.Get("wavInsertBroadcast", false));
+		wavInsertBroadcast.Set(const_cast<ValueMap&>(settings).Get("wavInsertBroadcast", false));
 	if(settings.Find("wavDisableExtensible") >= 0)
-		wavDisableExtensible.Set(settings.Get("wavDisableExtensible", false));
+		wavDisableExtensible.Set(const_cast<ValueMap&>(settings).Get("wavDisableExtensible", false));
 	if(settings.Find("wavInsertIXML") >= 0)
-		wavInsertIXML.Set(settings.Get("wavInsertIXML", false));
+		wavInsertIXML.Set(const_cast<ValueMap&>(settings).Get("wavInsertIXML", false));
 	if(settings.Find("mp3BitRate") >= 0)
-		mp3BitRate.SetData(settings.Get("mp3BitRate", 128));
+		mp3BitRate.SetData(const_cast<ValueMap&>(settings).Get("mp3BitRate", 128));
 	if(settings.Find("mp3SampleRate") >= 0)
-		mp3SampleRate.SetData(settings.Get("mp3SampleRate", 44100));
+		mp3SampleRate.SetData(const_cast<ValueMap&>(settings).Get("mp3SampleRate", 44100));
 	if(settings.Find("mp3HighQuality") >= 0)
-		mp3HighQuality.Set(settings.Get("mp3HighQuality", false));
+		mp3HighQuality.Set(const_cast<ValueMap&>(settings).Get("mp3HighQuality", false));
 	if(settings.Find("mp3InsertID3") >= 0)
-		mp3InsertID3.Set(settings.Get("mp3InsertID3", false));
+		mp3InsertID3.Set(const_cast<ValueMap&>(settings).Get("mp3InsertID3", false));
 }
 
 // --- ID3TagDialog ---------------------------------------------------------
@@ -269,12 +269,12 @@ void ID3TagDialog::OnCancel() {
 }
 
 void ID3TagDialog::SetTags(const ValueMap& tags) {
-	title.SetData(tags.Get("Title", String()));
-	artist.SetData(tags.Get("Artist", String()));
-	album.SetData(tags.Get("Album", String()));
-	year.SetData(tags.Get("Year", String()));
-	genre.SetData(tags.Get("Genre", String()));
-	comment.SetData(tags.Get("Comment", String()));
+	title.SetData(const_cast<ValueMap&>(tags).Get("Title", String()));
+	artist.SetData(const_cast<ValueMap&>(tags).Get("Artist", String()));
+	album.SetData(const_cast<ValueMap&>(tags).Get("Album", String()));
+	year.SetData(const_cast<ValueMap&>(tags).Get("Year", String()));
+	genre.SetData(const_cast<ValueMap&>(tags).Get("Genre", String()));
+	comment.SetData(const_cast<ValueMap&>(tags).Get("Comment", String()));
 }
 
 ValueMap ID3TagDialog::GetTags() const {

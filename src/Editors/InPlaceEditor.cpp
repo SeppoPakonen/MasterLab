@@ -14,12 +14,12 @@ void InPlaceEditor::Init() {
 
 void InPlaceEditor::Open() {
 	// Open the editor
-	ActiveFocus();
+	ActiveFocus(*this);
 }
 
 void InPlaceEditor::Close() {
 	// Close the editor
-	CloseWindow();
+	Close();
 }
 
 void InPlaceEditor::SetData(void* data) {

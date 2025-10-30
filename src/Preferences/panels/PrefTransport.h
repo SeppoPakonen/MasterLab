@@ -1,25 +1,23 @@
-#ifndef _Preferences_PrefMIDI_h_
-#define _Preferences_PrefMIDI_h_
+#ifndef _Preferences_PrefTransport_h_
+#define _Preferences_PrefTransport_h_
 
 #include "../Preferences.h"
 
 namespace am {
 
-class PrefMIDI : public PreferencesPane {
+class PrefTransport : public PreferencesPane {
 public:
-	typedef PrefMIDI CLASSNAME;
-	PrefMIDI();
+	typedef PrefTransport CLASSNAME;
+	PrefTransport();
 	virtual void Init(PreferencesModel& model) override;
 	virtual void Load(const PreferencesModel& model) override;
 	virtual void Store(PreferencesModel& model, Vector<bool>& changed) override;
 	
 private:
-	void InitDefaultsSection();
+	void InitDisplaySection();
 	void InitBehaviorSection();
-	void InitEditorSection();
-	void InitRealtimeSection();
-	void InitChaseSection();
-	void InitTimingSection();
+	void InitAdvancedBehaviorSection();
+	void InitScrubbingSection();
 };
 
 }

@@ -1,15 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<lay version="1" x="280" y="80">
-    <tree type="TreeCtrl" frame="Border(1)" text="Tree"/>
-    <view_holder type="Ctrl" frame="Border(1)" text="View"/>
-    <preset_list type="DropList" frame="Border(1)" text="Preset List"/>
-    <preset_store type="Button" frame="Border(1)" text="Store"/>
-    <preset_rename type="Button" frame="Border(1)" text="Rename"/>
-    <preset_delete type="Button" frame="Border(1)" text="Delete"/>
-    <preset_marked_only type="Option" frame="Border(1)" text="Store marked only"/>
-    <help type="Button" frame="Border(1)" text="Help"/>
-    <defaults type="Button" frame="Border(1)" text="Defaults"/>
-    <apply type="Button" frame="Border(1)" text="Apply"/>
-    <ok type="Button" frame="Border(1)" text="OK"/>
-    <cancel type="Button" frame="Border(1)" text="Cancel"/>
-</lay>
+

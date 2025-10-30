@@ -28,7 +28,7 @@ protected:
 	Ctrl& CreateIntSpinMs(const String& label, int default_value);
 	Ctrl& CreateIntSpinTicks(const String& label, int default_value);
 	Ctrl& CreateDoubleSpin(const String& label, double default_value);
-	Row* CreateKeyAssignRow(const String& label);
+	Ctrl& CreateKeyAssignRow(const String& label);
 };
 
 // Preference panel registry
@@ -55,7 +55,7 @@ private:
 	} panel_class##_registrar;
 
 // Preference dialog implementation
-class PreferencesDlg : public WithLayout<TopWindow> {
+class PreferencesDlg : public WithProgressLayout<TopWindow> {
 public:
 	typedef PreferencesDlg CLASSNAME;
 	PreferencesDlg();
@@ -77,7 +77,7 @@ private:
 	void OnPresetDelete();
 	
 	TreeCtrl tree;
-	CtrlHolder view_holder;
+	Ctrl& view_holder;
 	PreferencesPane* current_panel = nullptr;
 	PreferencesModel model;
 	Button help, defaults, apply, ok, cancel;
@@ -110,7 +110,7 @@ public:
 private:
 	Label label;
 	ParentCtrl content;
-	Border border;
+	CtrlFrame& border;
 };
 
 class ColorRect : public Ctrl {
@@ -130,7 +130,7 @@ class LabeledSlider : public Row {
 public:
 	typedef LabeledSlider CLASSNAME;
 	LabeledSlider(const String& label, int min, int max, int default_value);
-	int GetData() const { return slider.GetData(); }
+	Value GetData() const { return slider.GetData(); }
 	void SetData(int value) { slider.SetData(value); }
 	
 private:
@@ -142,7 +142,7 @@ class LabeledOption : public Row {
 public:
 	typedef LabeledOption CLASSNAME;
 	LabeledOption(const String& label, bool default_value);
-	bool GetData() const { return option.GetData(); }
+	Value GetData() const { return option.GetData(); }
 	void SetData(bool value) { option.SetData(value); }
 	
 private:
@@ -154,7 +154,7 @@ class LabeledDropList : public Row {
 public:
 	typedef LabeledDropList CLASSNAME;
 	LabeledDropList(const String& label, const Vector<String>& options, int default_index);
-	int GetData() const { return droplist.GetData(); }
+	Value GetData() const { return droplist.GetData(); }
 	void SetData(int value) { droplist.SetData(value); }
 	
 private:
@@ -166,7 +166,7 @@ class IntSpinMs : public Row {
 public:
 	typedef IntSpinMs CLASSNAME;
 	IntSpinMs(const String& label, int default_value);
-	int GetData() const { return spin.GetData(); }
+	Value GetData() const { return spin.GetData(); }
 	void SetData(int value) { spin.SetData(value); }
 	
 private:
@@ -178,7 +178,7 @@ class IntSpinTicks : public Row {
 public:
 	typedef IntSpinTicks CLASSNAME;
 	IntSpinTicks(const String& label, int default_value);
-	int GetData() const { return spin.GetData(); }
+	Value GetData() const { return spin.GetData(); }
 	void SetData(int value) { spin.SetData(value); }
 	
 private:
@@ -190,7 +190,7 @@ class DoubleSpin : public Row {
 public:
 	typedef DoubleSpin CLASSNAME;
 	DoubleSpin(const String& label, double default_value);
-	double GetData() const { return spin.GetData(); }
+	Value GetData() const { return spin.GetData(); }
 	void SetData(double value) { spin.SetData(value); }
 	
 private:
@@ -202,7 +202,7 @@ class KeyAssignRow : public Row {
 public:
 	typedef KeyAssignRow CLASSNAME;
 	KeyAssignRow(const String& label);
-	String GetData() const { return edit.GetData(); }
+	Value GetData() const { return edit.GetData(); }
 	void SetData(const String& value) { edit.SetData(value); }
 	
 private:
@@ -214,7 +214,7 @@ private:
 #include "WithPreferencesLayout.h"
 
 // Use the layout defined in the .lay file
-typedef WithPreferencesLayoutCls<TopWindow> WithPreferencesLayout;
+typedef WithProgressLayout<TopWindow> WithPreferencesLayout;
 
 // PrefKey template for typed key bindings
 template<typename T>
