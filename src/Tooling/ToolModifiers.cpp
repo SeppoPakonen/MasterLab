@@ -62,22 +62,22 @@ ToolModifierMap::ToolModifierMap() {
 	Set(TRIM_TOOL, "trim_start", K_ALT|K_LEFT);
 }
 
-void ToolModifierMap::Set(ToolId tool, const String& action, dword keys) {
-	String key = CreateKey(tool, action);
+void ToolModifierMap::Set(ToolId tool, const Upp::String& action, dword keys) {
+	Upp::String key = CreateKey(tool, action);
 	bindings.GetAdd(key) = keys;
 	WhenChanged();
 }
 
-Optional<dword> ToolModifierMap::Get(ToolId tool, const String& action) const {
-	String key = CreateKey(tool, action);
+Optional<dword> ToolModifierMap::Get(ToolId tool, const Upp::String& action) const {
+	Upp::String key = CreateKey(tool, action);
 	if (bindings.Find(key) >= 0) {
 		return bindings.Get(key);
 	}
 	return Optional<dword>(); // Return null optional if not found
 }
 
-void ToolModifierMap::Remove(ToolId tool, const String& action) {
-	String key = CreateKey(tool, action);
+void ToolModifierMap::Remove(ToolId tool, const Upp::String& action) {
+	Upp::String key = CreateKey(tool, action);
 	bindings.RemoveKey(key);
 	WhenChanged();
 }
@@ -87,15 +87,15 @@ void ToolModifierMap::Clear() {
 	WhenChanged();
 }
 
-Vector<ModifierBinding> ToolModifierMap::GetBindingsForTool(ToolId tool) const {
-	Vector<ModifierBinding> result;
+Upp::Vector<ModifierBinding> ToolModifierMap::GetBindingsForTool(ToolId tool) const {
+	Upp::Vector<ModifierBinding> result;
 	
 	for(int i = 0; i < bindings.GetCount(); i++) {
-		String key = bindings.GetKey(i);
+		Upp::String key = bindings.GetKey(i);
 		// Parse the key "toolId:action" to extract tool and action
 		int pos = key.Find(':');
 		if (pos > 0) {
-			String toolStr = key.Mid(0, pos);
+			Upp::String toolStr = key.Mid(0, pos);
 			ToolId parsedTool = (ToolId)ScanInt(toolStr);
 			if (parsedTool == tool) {
 				ModifierBinding binding;
@@ -110,8 +110,8 @@ Vector<ModifierBinding> ToolModifierMap::GetBindingsForTool(ToolId tool) const {
 	return result;
 }
 
-String ToolModifierMap::CreateKey(ToolId tool, const String& action) const {
-	return AsString((int)tool) + ":" + action;
+Upp::String ToolModifierMap::CreateKey(ToolId tool, const Upp::String& action) const {
+	return Upp::AsString((int)tool) + ":" + action;
 }
 
 }

@@ -36,7 +36,7 @@ void ScoreColors::ClearColorRules() {
 	colorRules.Clear();
 }
 
-Color ScoreColors::GetColorForEvent(const String& event) const {
+Color ScoreColors::GetColorForEvent(const Upp::String& event) const {
 	for (const auto& rule : colorRules) {
 		if (rule.event == event && rule.active) {
 			return rule.color;
@@ -49,7 +49,7 @@ Color ScoreColors::GetColorForEvent(const String& event) const {
 void ScoreColors::ApplyToScoreDisplay() {
 	LOG("Applying score colors to display");
 	for (const auto& rule : colorRules) {
-		LOG("Event: " + rule.event + ", Color: " + AsString(rule.color) + ", Active: " << (rule.active ? "yes" : "no"));
+		LOG("Event: " + rule.event + ", Color: " + Upp::AsString(rule.color) + ", Active: " << (rule.active ? "yes" : "no"));
 	}
 }
 

@@ -33,7 +33,7 @@ private:
 	
 	// Top row controls
 	Button open_all, close_all;
-	EditString search_filter;
+	Upp::EditString search_filter;
 	Button search_btn;
 	
 	// Main area - horizontal splitter
@@ -45,7 +45,7 @@ private:
 	ArrayCtrl keys_array;        // ArrayCtrl(Columns=Keys) - Shortcut keyboard keys for selected TreeCtrl item
 	Button delete_key_btn;
 	Button assign_btn;
-	EditString key_input;        // EditString that listens to keyboard events
+	Upp::EditString key_input;        // Upp::EditString that listens to keyboard events
 	Label assigned_to_label;     // "Assigned to:" label
 	Label colliding_function;    // Label showing function that already has the shortcut
 	Button select_btn;           // Button to set TreeCtrl cursor to colliding function
@@ -74,7 +74,7 @@ private:
 	
 	// Internal state
 	KeyCommands key_commands;
-	Vector<String> preset_names;
+	Upp::Vector<Upp::String> preset_names;
 };
 
 }

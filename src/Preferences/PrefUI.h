@@ -17,18 +17,18 @@ public:
 	// Panel lifecycle methods
 	virtual void Init(PreferencesModel& model) = 0;
 	virtual void Load(const PreferencesModel& model) = 0;
-	virtual void Store(PreferencesModel& model, Vector<bool>& changed) = 0;
+	virtual void Store(PreferencesModel& model, Upp::Vector<bool>& changed) = 0;
 	
 protected:
 	// Helper methods for creating common controls
 	StaticRect CreateColorRect(const Color& color);
-	Ctrl& CreateLabeledSlider(const String& label, int min, int max, int default_value);
-	Ctrl& CreateLabeledOption(const String& label, bool default_value);
-	Ctrl& CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index);
-	Ctrl& CreateIntSpinMs(const String& label, int default_value);
-	Ctrl& CreateIntSpinTicks(const String& label, int default_value);
-	Ctrl& CreateDoubleSpin(const String& label, double default_value);
-	Ctrl& CreateKeyAssignRow(const String& label);
+	Ctrl& CreateLabeledSlider(const Upp::String& label, int min, int max, int default_value);
+	Ctrl& CreateLabeledOption(const Upp::String& label, bool default_value);
+	Ctrl& CreateLabeledDropList(const Upp::String& label, const Upp::Vector<Upp::String>& options, int default_index);
+	Ctrl& CreateIntSpinMs(const Upp::String& label, int default_value);
+	Ctrl& CreateIntSpinTicks(const Upp::String& label, int default_value);
+	Ctrl& CreateDoubleSpin(const Upp::String& label, double default_value);
+	Ctrl& CreateKeyAssignRow(const Upp::String& label);
 };
 
 // Preference panel registry
@@ -36,14 +36,14 @@ class PanelRegistry {
 public:
 	static PanelRegistry& Instance();
 	
-	void RegisterPanel(const String& category, const String& subcategory, std::function<PreferencesPane*()> factory);
-	Vector<String> GetCategories() const;
-	Vector<String> GetSubcategories(const String& category) const;
-	PreferencesPane* CreatePanel(const String& category, const String& subcategory) const;
+	void RegisterPanel(const Upp::String& category, const Upp::String& subcategory, std::function<PreferencesPane*()> factory);
+	Upp::Vector<Upp::String> GetCategories() const;
+	Upp::Vector<Upp::String> GetSubcategories(const Upp::String& category) const;
+	PreferencesPane* CreatePanel(const Upp::String& category, const Upp::String& subcategory) const;
 	
 private:
 	PanelRegistry() = default;
-	VectorMap<String, VectorMap<String, std::function<PreferencesPane*()>>> registry;
+	VectorMap<Upp::String, VectorMap<Upp::String, std::function<PreferencesPane*()>>> registry;
 };
 
 // Registration helper macro
@@ -64,7 +64,7 @@ private:
 	void DataIn();
 	void DataOut();
 	void RefreshTree();
-	void SelectTree(const String& category, const String& subcategory);
+	void SelectTree(const Upp::String& category, const Upp::String& subcategory);
 	void OnTreeSel();
 	void OnApply();
 	void OnOK();
@@ -104,7 +104,7 @@ private:
 class LabelBox : public ParentCtrl {
 public:
 	typedef LabelBox CLASSNAME;
-	LabelBox(const String& text);
+	LabelBox(const Upp::String& text);
 	void Add(Ctrl& ctrl);
 	
 private:
@@ -129,7 +129,7 @@ private:
 class LabeledSlider : public Row {
 public:
 	typedef LabeledSlider CLASSNAME;
-	LabeledSlider(const String& label, int min, int max, int default_value);
+	LabeledSlider(const Upp::String& label, int min, int max, int default_value);
 	Value GetData() const { return slider.GetData(); }
 	void SetData(int value) { slider.SetData(value); }
 	
@@ -141,7 +141,7 @@ private:
 class LabeledOption : public Row {
 public:
 	typedef LabeledOption CLASSNAME;
-	LabeledOption(const String& label, bool default_value);
+	LabeledOption(const Upp::String& label, bool default_value);
 	Value GetData() const { return option.GetData(); }
 	void SetData(bool value) { option.SetData(value); }
 	
@@ -153,7 +153,7 @@ private:
 class LabeledDropList : public Row {
 public:
 	typedef LabeledDropList CLASSNAME;
-	LabeledDropList(const String& label, const Vector<String>& options, int default_index);
+	LabeledDropList(const Upp::String& label, const Upp::Vector<Upp::String>& options, int default_index);
 	Value GetData() const { return droplist.GetData(); }
 	void SetData(int value) { droplist.SetData(value); }
 	
@@ -165,7 +165,7 @@ private:
 class IntSpinMs : public Row {
 public:
 	typedef IntSpinMs CLASSNAME;
-	IntSpinMs(const String& label, int default_value);
+	IntSpinMs(const Upp::String& label, int default_value);
 	Value GetData() const { return spin.GetData(); }
 	void SetData(int value) { spin.SetData(value); }
 	
@@ -177,7 +177,7 @@ private:
 class IntSpinTicks : public Row {
 public:
 	typedef IntSpinTicks CLASSNAME;
-	IntSpinTicks(const String& label, int default_value);
+	IntSpinTicks(const Upp::String& label, int default_value);
 	Value GetData() const { return spin.GetData(); }
 	void SetData(int value) { spin.SetData(value); }
 	
@@ -189,7 +189,7 @@ private:
 class DoubleSpin : public Row {
 public:
 	typedef DoubleSpin CLASSNAME;
-	DoubleSpin(const String& label, double default_value);
+	DoubleSpin(const Upp::String& label, double default_value);
 	Value GetData() const { return spin.GetData(); }
 	void SetData(double value) { spin.SetData(value); }
 	
@@ -201,13 +201,13 @@ private:
 class KeyAssignRow : public Row {
 public:
 	typedef KeyAssignRow CLASSNAME;
-	KeyAssignRow(const String& label);
+	KeyAssignRow(const Upp::String& label);
 	Value GetData() const { return edit.GetData(); }
-	void SetData(const String& value) { edit.SetData(value); }
+	void SetData(const Upp::String& value) { edit.SetData(value); }
 	
 private:
 	Label label;
-	EditString edit;
+	Upp::EditString edit;
 	Button assign;
 };
 
@@ -219,10 +219,10 @@ typedef WithProgressLayout<TopWindow> WithPreferencesLayout;
 // PrefKey template for typed key bindings
 template<typename T>
 struct PrefKey {
-	String key;
+	Upp::String key;
 	T default_value;
 	
-	PrefKey(const String& k, const T& def) : key(k), default_value(def) {}
+	PrefKey(const Upp::String& k, const T& def) : key(k), default_value(def) {}
 };
 
 }
