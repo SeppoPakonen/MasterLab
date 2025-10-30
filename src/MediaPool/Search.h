@@ -7,9 +7,9 @@ using namespace Upp;
 namespace am {
 
 struct SearchResult {
-	String path;
-	String name;
-	String type;
+	Upp::String path;
+	Upp::String name;
+	Upp::String type;
 	int64 size;
 	Time modification_time;
 };
@@ -17,12 +17,12 @@ struct SearchResult {
 class Search {
 public:
 	Search();
-	Vector<SearchResult> SearchMedia(const String& query);
-	void SetSearchPath(const String& path);
-	String GetSearchPath() const { return search_path; }
+	Upp::Vector<SearchResult> SearchMedia(const Upp::String& query);
+	void SetSearchPath(const Upp::String& path);
+	Upp::String GetSearchPath() const { return search_path; }
 	
 private:
-	String search_path;
+	Upp::String search_path;
 };
 
 }

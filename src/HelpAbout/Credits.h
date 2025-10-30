@@ -9,11 +9,11 @@ namespace am {
 class Credits {
 public:
 	Credits();
-	String GetCreditsText() const;
+	Upp::String GetCreditsText() const;
 	void ShowCredits();
 	
 private:
-	String credits;
+	Upp::String credits;
 };
 
 }

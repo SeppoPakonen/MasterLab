@@ -2,7 +2,7 @@
 
 namespace am {
 
-bool ProjectSetupValidator::Validate(const ProjectSetupModel& model, String& error) {
+bool ProjectSetupValidator::Validate(const ProjectSetupModel& model, Upp::String& error) {
 	if(IsNull(model.start) || IsNull(model.length)) {
 		error = "Start and Length must be specified.";
 		return false;
@@ -181,7 +181,7 @@ void ProjectSetupDialog::OnHelp() {
 
 void ProjectSetupDialog::OnOK() {
 	ProjectSetupModel model = GetModel();
-	String error;
+	Upp::String error;
 	if(!ProjectSetupValidator::Validate(model, error)) {
 		PromptOK(error);
 		return;

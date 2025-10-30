@@ -10,8 +10,8 @@ namespace am {
 class Thumbnail {
 public:
 	Thumbnail();
-	Image GenerateThumbnail(const String& videoPath, int width = 128, int height = 96);
-	bool SaveThumbnail(const Image& thumbnail, const String& path);
+	Image GenerateThumbnail(const Upp::String& videoPath, int width = 128, int height = 96);
+	bool SaveThumbnail(const Image& thumbnail, const Upp::String& path);
 	void SetThumbnailQuality(int quality);
 	int GetThumbnailQuality() const { return thumbnail_quality; }
 	

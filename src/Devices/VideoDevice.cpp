@@ -5,11 +5,11 @@ VideoDevice::VideoDevice() {
 	// Initialize with default values
 }
 
-Vector<VideoDevice> VideoDevice::GetAvailableDevices() const {
+Upp::Vector<VideoDevice> VideoDevice::GetAvailableDevices() const {
 	return available_devices;
 }
 
-bool VideoDevice::OpenDevice(const String& deviceId) {
+bool VideoDevice::OpenDevice(const Upp::String& deviceId) {
 	LOG("Opening video device: " + deviceId);
 	// Stub - implement actual device opening
 	open = true;

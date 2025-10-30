@@ -8,7 +8,7 @@ struct Effect : Pte<Effect> {
     virtual ~Effect() {}
     virtual void Prepare(SampleRate sr, int maxBlock) {}
     virtual void Process(AudioBuffer& io) = 0;
-    virtual String Name() const = 0;
+    virtual Upp::String Name() const = 0;
 };
 }
 

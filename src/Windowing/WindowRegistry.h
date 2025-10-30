@@ -9,17 +9,17 @@ namespace am {
 class WindowRegistry {
 public:
 	WindowRegistry();
-	void RegisterWindow(const String& name, TopWindow* window);
-	void UnregisterWindow(const String& name);
-	Vector<String> GetRegisteredWindows() const;
+	void RegisterWindow(const Upp::String& name, TopWindow* window);
+	void UnregisterWindow(const Upp::String& name);
+	Upp::Vector<Upp::String> GetRegisteredWindows() const;
 	void CloseAllWindows();
 	void MinimizeAllWindows();
 	void RestoreAllWindows();
-	void CloseWindow(const String& name);
-	void ActivateWindow(const String& name);
+	void CloseWindow(const Upp::String& name);
+	void ActivateWindow(const Upp::String& name);
 	
 private:
-	VectorMap<String, TopWindow*> registered_windows;
+	VectorMap<Upp::String, TopWindow*> registered_windows;
 };
 
 }

@@ -136,11 +136,11 @@ void ProjectToolbarPane::BuildToolbar() {
 	Add(projectName, 200);
 }
 
-void ProjectToolbarPane::AddToolButton(const String& label, Button& button) {
+void ProjectToolbarPane::AddToolButton(const Upp::String& label, Button& button) {
 	AddToolButton(label, button, 90);
 }
 
-void ProjectToolbarPane::AddToolButton(const String& label, Button& button, int width) {
+void ProjectToolbarPane::AddToolButton(const Upp::String& label, Button& button, int width) {
 	button.SetLabel(label);
 	button.WhenAction = THISBACK(DummyAction);
 	Add(button, width);
@@ -167,7 +167,7 @@ void ProjectToolbarPane::SetSnapEnabled(bool enabled) {
 	snapZeroCrossing.Enable(enabled);
 }
 
-void ProjectToolbarPane::SetProjectTitle(const String& title) {
+void ProjectToolbarPane::SetProjectTitle(const Upp::String& title) {
 	projectName.SetLabel(title);
 }
 
@@ -243,7 +243,7 @@ InspectorPane::InspectorPane() {
 	RefreshPanels();
 }
 
-void InspectorPane::SetTrackType(const String& type) {
+void InspectorPane::SetTrackType(const Upp::String& type) {
 	trackLabel.SetText(type + " Inspector");
 }
 
@@ -261,14 +261,14 @@ void InspectorPane::RefreshPanels() {
 	}
 	else {
 		for(const ValueMap& panel : panelState) {
-			String name = const_cast<ValueMap&>(panel).Get("title", "Panel");
+			Upp::String name = const_cast<ValueMap&>(panel).Get("title", "Panel");
 			panelList.Add(name);
 		}
 	}
 	panelList.Refresh();
 }
 
-void InspectorPane::SetPanels(const Vector<ValueMap>& panels) {
+void InspectorPane::SetPanels(const Upp::Vector<ValueMap>& panels) {
 	panelState <<= panels;
 }
 
@@ -303,14 +303,14 @@ void TrackListPane::BuildToolbar() {
 
 void TrackListPane::PopulateDemoRows() {
 	trackTable.Clear();
-	trackTable.Add("Instrument 01", "M S R W", "Preset: Studio Strings");
+	trackTable.Add("Instrument 01", "M S R W", "Preset: Studio Upp::Strings");
 	trackTable.Add("Audio 01", "M S R W", "Stereo");
 	trackTable.Add("MIDI 01", "M S R W", "Drum Map: GM");
 }
 
-void TrackListPane::SetTracks(const Vector<String>& tracks) {
+void TrackListPane::SetTracks(const Upp::Vector<Upp::String>& tracks) {
 	trackTable.Clear();
-	for(const String& track : tracks)
+	for(const Upp::String& track : tracks)
 		trackTable.Add(track, "M S R W", "");
 }
 
@@ -322,7 +322,7 @@ void TrackListPane::Clear() {
 	trackTable.Clear();
 }
 
-void TrackListPane::AppendTrack(const String& name, const String& controls, const String& detail) {
+void TrackListPane::AppendTrack(const Upp::String& name, const Upp::String& controls, const Upp::String& detail) {
 	trackTable.Add(name, controls, detail);
 }
 
@@ -349,7 +349,7 @@ ProjectAreaPane::ProjectAreaPane() {
 	Add(clipCanvas.VSizePos(48, 28).HSizePos(4, 28));
 }
 
-void ProjectAreaPane::SetRulerFormat(const String& format) {
+void ProjectAreaPane::SetRulerFormat(const Upp::String& format) {
 	ruler.SetText(format);
 	formatLabel.SetText("Format: " + format);
 }
@@ -388,7 +388,7 @@ void ProjectWindowCtrl::ConfigureSplitters() {
 void ProjectWindowCtrl::InitDemoData() {
 	toolbar.SetProjectTitle("Untitled Project");
 	infoLine.ShowMidiColumns();
-	Vector<ValueMap> demoPanels;
+	Upp::Vector<ValueMap> demoPanels;
 	ValueMap controls;
 	controls("title") = "Track Controls";
 	demoPanels.Add(controls);
@@ -400,11 +400,11 @@ void ProjectWindowCtrl::InitDemoData() {
 	demoPanels.Add(notes);
 	UpdateInspectorPanels(demoPanels, "Instrument Track");
 
-	Vector<ValueMap> demoTracks;
+	Upp::Vector<ValueMap> demoTracks;
 	ValueMap trackA;
 	trackA("title") = "Instrument 01";
 	trackA("controls") = "M S R W";
-	trackA("detail") = "Preset: Studio Strings";
+	trackA("detail") = "Preset: Studio Upp::Strings";
 	demoTracks.Add(trackA);
 	ValueMap trackB;
 	trackB("title") = "Audio 01";
@@ -414,13 +414,13 @@ void ProjectWindowCtrl::InitDemoData() {
 	UpdateTrackList(demoTracks);
 
 	ValueMap workState;
-	workState("rulerFormat") = String("Bars+Beats");
+	workState("rulerFormat") = Upp::String("Bars+Beats");
 	workState("zoomHorizontal") = 50;
 	workState("zoomVertical") = 50;
 	UpdateWorkAreaState(workState);
 }
 
-void ProjectWindowCtrl::SetProjectTitle(const String& title) {
+void ProjectWindowCtrl::SetProjectTitle(const Upp::String& title) {
 	toolbar.SetProjectTitle(title);
 }
 
@@ -440,19 +440,19 @@ void ProjectWindowCtrl::SetProjectZoomState(int horizontal, int vertical) {
 	projectArea.SetZoomState(horizontal, vertical);
 }
 
-void ProjectWindowCtrl::UpdateTrackList(const Vector<ValueMap>& entries) {
+void ProjectWindowCtrl::UpdateTrackList(const Upp::Vector<ValueMap>& entries) {
 	cachedTrackEntries <<= entries;
 	trackList.Clear();
 	for(const ValueMap& row : cachedTrackEntries) {
-		String title = const_cast<ValueMap&>(row).Get("title", "Unnamed Track");
-		String controls = const_cast<ValueMap&>(row).Get("controls", "M S R W");
-		String detail = const_cast<ValueMap&>(row).Get("detail", "");
+		Upp::String title = const_cast<ValueMap&>(row).Get("title", "Unnamed Track");
+		Upp::String controls = const_cast<ValueMap&>(row).Get("controls", "M S R W");
+		Upp::String detail = const_cast<ValueMap&>(row).Get("detail", "");
 		trackList.AppendTrack(title, controls, detail);
 	}
 	trackList.Refresh();
 }
 
-void ProjectWindowCtrl::UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption) {
+void ProjectWindowCtrl::UpdateInspectorPanels(const Upp::Vector<ValueMap>& panels, const Upp::String& caption) {
 	cachedInspectorPanels <<= panels;
 	inspector.SetTrackType(caption);
 	inspector.SetPanels(cachedInspectorPanels);
@@ -461,7 +461,7 @@ void ProjectWindowCtrl::UpdateInspectorPanels(const Vector<ValueMap>& panels, co
 
 void ProjectWindowCtrl::UpdateWorkAreaState(const ValueMap& state) {
 	cachedWorkArea = state;
-	String format = const_cast<ValueMap&>(cachedWorkArea).Get("rulerFormat", String("Bars+Beats"));
+	Upp::String format = const_cast<ValueMap&>(cachedWorkArea).Get("rulerFormat", Upp::String("Bars+Beats"));
 	projectArea.SetRulerFormat(format);
 	if(cachedWorkArea.Find("zoomHorizontal") >= 0 && cachedWorkArea.Find("zoomVertical") >= 0)
 		projectArea.SetZoomState((int)const_cast<ValueMap&>(cachedWorkArea).Get("zoomHorizontal", 0), (int)const_cast<ValueMap&>(cachedWorkArea).Get("zoomVertical", 0));
@@ -487,7 +487,7 @@ void ProjectWindowHost::CloseProjectWindow() {
 	Close();
 }
 
-void ProjectWindowHost::SetProjectTitle(const String& title) {
+void ProjectWindowHost::SetProjectTitle(const Upp::String& title) {
 	view.SetProjectTitle(title);
 	Title(title);
 }

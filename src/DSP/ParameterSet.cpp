@@ -13,7 +13,7 @@ void ParameterSet::RegisterParameter(const ParameterId& param) {
     values.GetAdd(param.name) = param.default_value;
 }
 
-void ParameterSet::SetValue(const String& name, double value) {
+void ParameterSet::SetValue(const Upp::String& name, double value) {
     if (values.Find(name) >= 0) {
         double min_val = parameters.Get(name).min_value;
         double max_val = parameters.Get(name).max_value;
@@ -21,7 +21,7 @@ void ParameterSet::SetValue(const String& name, double value) {
     }
 }
 
-double ParameterSet::GetValue(const String& name) const {
+double ParameterSet::GetValue(const Upp::String& name) const {
     int idx = values.Find(name);
     if (idx >= 0) {
         return values[idx];
@@ -35,7 +35,7 @@ void ParameterSet::ApplySmoothing(double milliseconds) {
     // using various interpolation techniques
 }
 
-const ParameterId* ParameterSet::GetParameter(const String& name) const {
+const ParameterId* ParameterSet::GetParameter(const Upp::String& name) const {
     int idx = parameters.Find(name);
     if (idx >= 0) {
         return &parameters[idx];

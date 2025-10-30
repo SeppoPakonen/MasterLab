@@ -14,7 +14,7 @@ void PrefEventDisplay::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefEventDisplay::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefEventDisplay::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

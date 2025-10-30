@@ -42,7 +42,7 @@ public:
     virtual ValueMap GetResults() const override;
     
 private:
-    Vector<Complex> fft_buffer;
+    Upp::Vector<Complex> fft_buffer;
     int fft_size;
 };
 

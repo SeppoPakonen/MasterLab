@@ -1,9 +1,15 @@
 #include "FileIO.h"
 namespace am {
 
-void RecentFiles::AddRecent(const String& path) {
+void RecentFiles::AddRecent(const Upp::String& path) {
 	// Remove the path if it's already in the list
-	int pos = recent_files.FindIndex(path);
+	int pos = -1;
+	for(int i = 0; i < recent_files.GetCount(); i++) {
+		if(recent_files[i] == path) {
+			pos = i;
+			break;
+		}
+	}
 	if (pos >= 0) {
 		recent_files.Remove(pos);
 	}
@@ -17,8 +23,14 @@ void RecentFiles::AddRecent(const String& path) {
 	}
 }
 
-void RecentFiles::RemoveRecent(const String& path) {
-	int pos = recent_files.FindIndex(path);
+void RecentFiles::RemoveRecent(const Upp::String& path) {
+	int pos = -1;
+	for(int i = 0; i < recent_files.GetCount(); i++) {
+		if(recent_files[i] == path) {
+			pos = i;
+			break;
+		}
+	}
 	if (pos >= 0) {
 		recent_files.Remove(pos);
 	}
@@ -28,8 +40,11 @@ void RecentFiles::Clear() {
 	recent_files.Clear();
 }
 
-Vector<String> RecentFiles::ListRecent() const {
-	return recent_files;
+Upp::Vector<Upp::String> RecentFiles::ListRecent() const {
+	// Use operator<<= for deep copy of the vector
+	Upp::Vector<Upp::String> result;
+	result <<= recent_files;
+	return result;
 }
 
 }

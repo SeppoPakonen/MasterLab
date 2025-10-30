@@ -13,12 +13,12 @@ Credits::Credits() {
 		"- users\n";
 }
 
-String Credits::GetCreditsText() const {
+Upp::String Credits::GetCreditsText() const {
 	return credits;
 }
 
 void Credits::ShowCredits() {
-	String message = "Credits\n\n" + credits;
+	Upp::String message = "Credits\n\n" + credits;
 	PromptOK(message);
 }
 

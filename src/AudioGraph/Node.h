@@ -10,10 +10,10 @@ struct Effect; // Forward declaration
 struct Port; // Forward declaration for same package
 
 struct Node : Pte<Node> {
-    String label;
+    Upp::String label;
     Ptr<Effect> effect;     // optional: effect processor hosted by node
-    Vector<Port> inputs;
-    Vector<Port> outputs;
+    Upp::Vector<Port> inputs;
+    Upp::Vector<Port> outputs;
     virtual ~Node(){}
     virtual bool IsContainer() const { return false; }
 };

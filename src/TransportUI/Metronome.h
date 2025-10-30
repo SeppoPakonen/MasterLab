@@ -12,13 +12,13 @@ public:
 	bool IsEnabled() const { return enabled; }
 	void SetVolume(double volume);
 	double GetVolume() const { return volume; }
-	void SetSound(const String& soundPath);
-	String GetSound() const { return sound_path; }
+	void SetSound(const Upp::String& soundPath);
+	Upp::String GetSound() const { return sound_path; }
 	
 private:
 	bool enabled = false;
 	double volume = 0.5;
-	String sound_path;
+	Upp::String sound_path;
 };
 
 }

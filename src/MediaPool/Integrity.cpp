@@ -6,13 +6,13 @@ Integrity::Integrity() {
 	pool_path = ConfigFile("MediaPool");
 }
 
-Vector<IntegrityCheckResult> Integrity::CheckIntegrity() {
+Upp::Vector<IntegrityCheckResult> Integrity::CheckIntegrity() {
 	LOG("Checking integrity of media pool at: " + pool_path);
 	// Stub - implement actual integrity check logic
-	return Vector<IntegrityCheckResult>();
+	return Upp::Vector<IntegrityCheckResult>();
 }
 
-void Integrity::SetPoolPath(const String& path) {
+void Integrity::SetPoolPath(const Upp::String& path) {
 	pool_path = path;
 }
 

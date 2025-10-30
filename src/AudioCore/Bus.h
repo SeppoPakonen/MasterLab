@@ -5,7 +5,7 @@ namespace am {
 	
 struct EffectChain; // fwd (in AudioFX)
 struct Bus : Pte<Bus> {
-    String name = "Master";
+    Upp::String name = "Master";
     EffectChain* fx = nullptr; // master/bus effect chain
 };
 // Forward decl for specialized bus with internal routing graph (see AudioGraph)

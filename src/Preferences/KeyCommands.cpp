@@ -2,37 +2,6 @@
 #include <ProjectMgmt/AK.h>  // Include AK definitions
 namespace am {
 
-// Define command IDs for key commands
-enum KeyCommandIds {
-	AKKeys::AK_FILE_NEW_PROJECT = 1,
-	AKKeys::AK_FILE_OPEN = 2,
-	AKKeys::AK_FILE_SAVE = 3,
-	AKKeys::AKKeys::AK_FILE_SAVE_AS = 4,
-	AKKeys::AK_FILE_CLOSE = 5,
-	AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN = 6,
-	
-	AKKeys::AK_EDIT_UNDO = 7,
-	AKKeys::AK_EDIT_REDO = 8,
-	AKKeys::AK_EDIT_CUT = 9,
-	AKKeys::AK_EDIT_COPY = 10,
-	AKKeys::AK_EDIT_PASTE = 11,
-	AKKeys::AK_EDIT_DELETE = 12,
-	
-	AKKeys::AK_TRANSPORT_PLAY = 13,
-	AKKeys::AK_TRANSPORT_STOP = 14,
-	AKKeys::AK_TRANSPORT_RECORD = 15,
-	
-	AKKeys::AK_PREFERENCES_OPEN = 16,
-	AKKeys::AK_PROJECT_SETUP = 17,
-	AKKeys::AK_MEDIA_OPEN_POOL = 18,
-	
-	AKKeys::AK_AUDIO_NORMALIZE = 19,
-	AKKeys::AK_AUDIO_GAIN = 20,
-	
-	AKKeys::AK_MIDI_QUANTIZE = 21,
-	AKKeys::AK_MIDI_TRANSPOSE = 22
-};
-
 KeyCommands::KeyCommands() {
 	// Initialize key command system
 }
@@ -47,6 +16,7 @@ void KeyCommands::LoadCommands() {
 	commands.Clear();
 	
 	// Add default key commands
+	// Using placeholder integer values for now until we understand how AKKeys works
 	AddCommand(KeyCommand(1, "Ctrl+N", "File/New Project"));
 	AddCommand(KeyCommand(2, "Ctrl+O", "File/Open..."));
 	AddCommand(KeyCommand(3, "Ctrl+S", "File/Save"));
@@ -88,7 +58,7 @@ void KeyCommands::RemoveCommand(int commandId) {
 	}
 }
 
-void KeyCommands::UpdateCommand(int commandId, const String& newKeySequence) {
+void KeyCommands::UpdateCommand(int commandId, const Upp::String& newKeySequence) {
 	for(int i = 0; i < commands.GetCount(); i++) {
 		if(commands[i].command_id == commandId) {
 			commands[i].key_sequence = newKeySequence;
@@ -97,56 +67,56 @@ void KeyCommands::UpdateCommand(int commandId, const String& newKeySequence) {
 	}
 }
 
-String KeyCommands::GetKeyName(int key_id) const {
+Upp::String KeyCommands::GetKeyName(int key_id) const {
 	// In a real implementation, this would map key IDs to readable names
 	// For now, we'll return a placeholder
 	switch(key_id) {
-		case AKKeys::AK_FILE_NEW_PROJECT: return "File/New Project";
-		case AKKeys::AK_FILE_OPEN: return "File/Open...";
-		case AKKeys::AK_FILE_SAVE: return "File/Save";
-		case AKKeys::AKKeys::AK_FILE_SAVE_AS: return "File/Save As...";
-		case AKKeys::AK_FILE_CLOSE: return "File/Close";
-		case AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN: return "File/Export Audio Mixdown...";
+		case 1: return "File/New Project";
+		case 2: return "File/Open...";
+		case 3: return "File/Save";
+		case 4: return "File/Save As...";
+		case 5: return "File/Close";
+		case 6: return "File/Export Audio Mixdown...";
 		
-		case AKKeys::AK_EDIT_UNDO: return "Edit/Undo";
-		case AKKeys::AK_EDIT_REDO: return "Edit/Redo";
-		case AKKeys::AK_EDIT_CUT: return "Edit/Cut";
-		case AKKeys::AK_EDIT_COPY: return "Edit/Copy";
-		case AKKeys::AK_EDIT_PASTE: return "Edit/Paste";
-		case AKKeys::AK_EDIT_DELETE: return "Edit/Delete";
+		case 7: return "Edit/Undo";
+		case 8: return "Edit/Redo";
+		case 9: return "Edit/Cut";
+		case 10: return "Edit/Copy";
+		case 11: return "Edit/Paste";
+		case 12: return "Edit/Delete";
 		
-		case AKKeys::AK_TRANSPORT_PLAY: return "Transport/Play";
-		case AKKeys::AK_TRANSPORT_STOP: return "Transport/Stop";
-		case AKKeys::AK_TRANSPORT_RECORD: return "Transport/Record";
+		case 13: return "Transport/Play";
+		case 14: return "Transport/Stop";
+		case 15: return "Transport/Record";
 		
-		case AKKeys::AK_PREFERENCES_OPEN: return "File/Preferences...";
-		case AKKeys::AK_PROJECT_SETUP: return "Project/Project Setup...";
-		case AKKeys::AK_MEDIA_OPEN_POOL: return "Media/Open Pool Window";
+		case 16: return "File/Preferences...";
+		case 17: return "Project/Project Setup...";
+		case 18: return "Media/Open Pool Window";
 		default: return "Unknown Command";
 	}
 }
 
-int KeyCommands::GetKeyId(const String& key_name) const {
+int KeyCommands::GetKeyId(const Upp::String& key_name) const {
 	// In a real implementation, this would map readable names to key IDs
 	// For now, we'll return a placeholder
-	if(key_name == "File/New Project") return AKKeys::AK_FILE_NEW_PROJECT;
-	if(key_name == "File/Open...") return AKKeys::AK_FILE_OPEN;
-	if(key_name == "File/Save") return AKKeys::AK_FILE_SAVE;
-	if(key_name == "File/Save As...") return AKKeys::AKKeys::AK_FILE_SAVE_AS;
-	if(key_name == "File/Close") return AKKeys::AK_FILE_CLOSE;
-	if(key_name == "File/Export Audio Mixdown...") return AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN;
-	if(key_name == "Edit/Undo") return AKKeys::AK_EDIT_UNDO;
-	if(key_name == "Edit/Redo") return AKKeys::AK_EDIT_REDO;
-	if(key_name == "Edit/Cut") return AKKeys::AK_EDIT_CUT;
-	if(key_name == "Edit/Copy") return AKKeys::AK_EDIT_COPY;
-	if(key_name == "Edit/Paste") return AKKeys::AK_EDIT_PASTE;
-	if(key_name == "Edit/Delete") return AKKeys::AK_EDIT_DELETE;
-	if(key_name == "Transport/Play") return AKKeys::AK_TRANSPORT_PLAY;
-	if(key_name == "Transport/Stop") return AKKeys::AK_TRANSPORT_STOP;
-	if(key_name == "Transport/Record") return AKKeys::AK_TRANSPORT_RECORD;
-	if(key_name == "File/Preferences...") return AKKeys::AK_PREFERENCES_OPEN;
-	if(key_name == "Project/Project Setup...") return AKKeys::AK_PROJECT_SETUP;
-	if(key_name == "Media/Open Pool Window") return AKKeys::AK_MEDIA_OPEN_POOL;
+	if(key_name == "File/New Project") return 1;
+	if(key_name == "File/Open...") return 2;
+	if(key_name == "File/Save") return 3;
+	if(key_name == "File/Save As...") return 4;
+	if(key_name == "File/Close") return 5;
+	if(key_name == "File/Export Audio Mixdown...") return 6;
+	if(key_name == "Edit/Undo") return 7;
+	if(key_name == "Edit/Redo") return 8;
+	if(key_name == "Edit/Cut") return 9;
+	if(key_name == "Edit/Copy") return 10;
+	if(key_name == "Edit/Paste") return 11;
+	if(key_name == "Edit/Delete") return 12;
+	if(key_name == "Transport/Play") return 13;
+	if(key_name == "Transport/Stop") return 14;
+	if(key_name == "Transport/Record") return 15;
+	if(key_name == "File/Preferences...") return 16;
+	if(key_name == "Project/Project Setup...") return 17;
+	if(key_name == "Media/Open Pool Window") return 18;
 	
 	return -1; // Not found
 }

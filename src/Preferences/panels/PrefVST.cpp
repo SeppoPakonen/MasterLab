@@ -21,7 +21,7 @@ void PrefVST::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefVST::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefVST::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

@@ -5,7 +5,7 @@ AudioDeviceManager::AudioDeviceManager() {
 	RefreshDeviceList();
 }
 
-Vector<AudioDevice> AudioDeviceManager::GetAvailableDevices() const {
+Upp::Vector<AudioDevice> AudioDeviceManager::GetAvailableDevices() const {
 	return available_devices;
 }
 
@@ -25,14 +25,14 @@ AudioDevice AudioDeviceManager::GetDefaultOutputDevice() const {
 	return AudioDevice();
 }
 
-bool AudioDeviceManager::SetInputDevice(const String& deviceId) {
+bool AudioDeviceManager::SetInputDevice(const Upp::String& deviceId) {
 	LOG("Setting input device to: " + deviceId);
 	// Stub - implement actual device setting
 	current_input_device = deviceId;
 	return true;
 }
 
-bool AudioDeviceManager::SetOutputDevice(const String& deviceId) {
+bool AudioDeviceManager::SetOutputDevice(const Upp::String& deviceId) {
 	LOG("Setting output device to: " + deviceId);
 	// Stub - implement actual device setting
 	current_output_device = deviceId;

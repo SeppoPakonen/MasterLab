@@ -9,14 +9,14 @@ PresetManager::PresetManager() {
 PresetManager::~PresetManager() {
 }
 
-bool PresetManager::LoadPreset(const String& id, ParameterSet& params) {
+bool PresetManager::LoadPreset(const Upp::String& id, ParameterSet& params) {
     int idx = presets.Find(id);
     if (idx >= 0) {
         const Preset& preset = presets[idx];
         
         // Load parameter values from preset
         for (int i = 0; i < preset.parameters.GetCount(); i++) {
-            String param_name = preset.parameters.GetKey(i);
+            Upp::String param_name = preset.parameters.GetKey(i);
             double value = preset.parameters[i];
             params.SetValue(param_name, value);
         }
@@ -30,15 +30,15 @@ bool PresetManager::StorePreset(const Preset& preset) {
     return true;
 }
 
-Vector<String> PresetManager::EnumerateLibrary() const {
-    Vector<String> ids;
+Upp::Vector<Upp::String> PresetManager::EnumerateLibrary() const {
+    Upp::Vector<Upp::String> ids;
     for (int i = 0; i < presets.GetCount(); i++) {
         ids.Add(presets.GetKey(i));
     }
     return ids;
 }
 
-bool PresetManager::DeletePreset(const String& id) {
+bool PresetManager::DeletePreset(const Upp::String& id) {
     int idx = presets.Find(id);
     if (idx >= 0) {
         presets.Remove(idx);
@@ -47,7 +47,7 @@ bool PresetManager::DeletePreset(const String& id) {
     return false; // Preset not found
 }
 
-const Preset* PresetManager::GetPreset(const String& id) const {
+const Preset* PresetManager::GetPreset(const Upp::String& id) const {
     int idx = presets.Find(id);
     if (idx >= 0) {
         return &presets[idx];

@@ -7,7 +7,7 @@ void CommandManager::Execute(int id, const CommandContext& ctx) {
 	}
 }
 
-void CommandManager::RegisterCommand(int id, std::function<void(const CommandContext&)> func) {
+void CommandManager::RegisterCommand(int id, CommandFunction func) {
 	command_map.GetAdd(id) = func;
 	enabled_state.GetAdd(id) = true;  // Default to enabled
 	toggle_state.GetAdd(id) = false;  // Default to not toggled

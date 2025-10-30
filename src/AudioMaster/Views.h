@@ -17,7 +17,7 @@ class MainWindow;
 class MainView : public SubWindowCtrl {
 public:
 	virtual void InitLayout() = 0;
-	void SetLabel(String s);
+	void SetLabel(Upp::String s);
 	
 	MainWindow* win = 0;
 	

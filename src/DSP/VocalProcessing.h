@@ -9,7 +9,7 @@ namespace DSP {
 // Voice feature extraction (pitch, formants, spectral flux)
 struct VoiceFeatures {
     double pitch;                    // Fundamental frequency in Hz
-    Vector<double> formants;         // Formant frequencies in Hz
+    Upp::Vector<double> formants;         // Formant frequencies in Hz
     double spectral_flux;           // Measure of spectral change
     double voicing;                 // Voiced/unvoiced probability
     
@@ -30,7 +30,7 @@ public:
     double GetPitchTrack() const { return last_pitch; }
     
     // Get formant profile
-    const Vector<double>& GetFormantProfile() const { return last_formants; }
+    const Upp::Vector<double>& GetFormantProfile() const { return last_formants; }
     
     // Configure analysis parameters
     void Configure(int sample_rate, int fft_size);
@@ -39,21 +39,21 @@ private:
     int sample_rate;
     int fft_size;
     double last_pitch;
-    Vector<double> last_formants;
+    Upp::Vector<double> last_formants;
     double last_spectral_flux;
     
     // Helper methods for feature extraction
     double ExtractPitch(const BufferView& input);
-    Vector<double> ExtractFormants(const BufferView& input);
+    Upp::Vector<double> ExtractFormants(const BufferView& input);
     double CalculateSpectralFlux(const BufferView& input);
 };
 
 // Harmony generation (generates detuned/delayed harmonies)
 struct HarmonySetup {
-    Vector<int> intervals;      // Harmonic intervals in semitones
-    Vector<double> volumes;     // Volume levels for each harmony
-    Vector<double> detunes;     // Detune amounts in cents
-    Vector<double> delays;      // Delay amounts in milliseconds
+    Upp::Vector<int> intervals;      // Harmonic intervals in semitones
+    Upp::Vector<double> volumes;     // Volume levels for each harmony
+    Upp::Vector<double> detunes;     // Detune amounts in cents
+    Upp::Vector<double> delays;      // Delay amounts in milliseconds
     
     HarmonySetup() {}
 };
@@ -73,7 +73,7 @@ public:
     
 private:
     int sample_rate;
-    Vector<BufferView> harmony_buffers;  // Buffers for each harmony voice
+    Upp::Vector<BufferView> harmony_buffers;  // Buffers for each harmony voice
     
     // Helper methods
     BufferView GenerateHarmonyVoice(const BufferView& input, int interval, double volume, 
@@ -89,7 +89,7 @@ public:
     virtual ~StyleTransferNet();
     
     // Load a neural model for style transfer
-    bool LoadModel(const String& model_path);
+    bool LoadModel(const Upp::String& model_path);
     
     // Process a frame of audio through the style transfer network
     BufferView ProcessFrame(const BufferView& input);
@@ -98,10 +98,10 @@ public:
     bool IsModelLoaded() const { return !model_path.IsEmpty(); }
     
     // Get model information
-    String GetModelInfo() const { return model_path; }
+    Upp::String GetModelInfo() const { return model_path; }
     
 private:
-    String model_path;
+    Upp::String model_path;
     bool model_loaded;
     
     // In a real implementation, this would contain neural network runtime objects
@@ -116,8 +116,8 @@ public:
     virtual ~FormantMorpher();
     
     // Configure morph targets
-    void ConfigureTargets(const Vector<double>& source_formants, 
-                         const Vector<double>& target_formants);
+    void ConfigureTargets(const Upp::Vector<double>& source_formants, 
+                         const Upp::Vector<double>& target_formants);
     
     // Process audio with formant morphing
     BufferView Process(const BufferView& input);
@@ -127,8 +127,8 @@ public:
     double GetMorphAmount() const { return morph_amount; }
     
 private:
-    Vector<double> source_formants;
-    Vector<double> target_formants;
+    Upp::Vector<double> source_formants;
+    Upp::Vector<double> target_formants;
     double morph_amount;
     
     // Helper methods

@@ -5,8 +5,8 @@ namespace DSP {
 
 namespace {
 
-Vector<ZenCoreAlgorithm>& AlgorithmStore() {
-	static Vector<ZenCoreAlgorithm> algorithms;
+Upp::Vector<ZenCoreAlgorithm>& AlgorithmStore() {
+	static Upp::Vector<ZenCoreAlgorithm> algorithms;
 	if(algorithms.IsEmpty()) {
 		algorithms.Add({ "chorus_juno", "JUNO Chorus", "Modulation", false });
 		algorithms.Add({ "chorus_dimension", "Dimension D", "Modulation", false });
@@ -66,14 +66,14 @@ Vector<ZenCoreAlgorithm>& AlgorithmStore() {
 
 } // namespace
 
-const Vector<ZenCoreAlgorithm>& ZenCoreMFXCatalogue::List() {
+const Upp::Vector<ZenCoreAlgorithm>& ZenCoreMFXCatalogue::List() {
 	return AlgorithmStore();
 }
 
-const ZenCoreAlgorithm* ZenCoreMFXCatalogue::FindById(const String& id) {
+const ZenCoreAlgorithm* ZenCoreMFXCatalogue::FindById(const Upp::String& id) {
 	if(id.IsEmpty())
 		return nullptr;
-	const Vector<ZenCoreAlgorithm>& list = AlgorithmStore();
+	const Upp::Vector<ZenCoreAlgorithm>& list = AlgorithmStore();
 	for(const ZenCoreAlgorithm& algo : list) {
 		if(algo.id == id)
 			return &algo;
@@ -82,7 +82,7 @@ const ZenCoreAlgorithm* ZenCoreMFXCatalogue::FindById(const String& id) {
 }
 
 const ZenCoreAlgorithm* ZenCoreMFXCatalogue::FindByIndex(int index) {
-	const Vector<ZenCoreAlgorithm>& list = AlgorithmStore();
+	const Upp::Vector<ZenCoreAlgorithm>& list = AlgorithmStore();
 	if(index < 0 || index >= list.GetCount())
 		return nullptr;
 	return &list[index];

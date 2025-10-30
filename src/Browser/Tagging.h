@@ -7,8 +7,8 @@ using namespace Upp;
 namespace am {
 
 struct Tag : public Moveable<Tag> {
-	String name;
-	String category;
+	Upp::String name;
+	Upp::String category;
 	
 	bool operator==(const Tag& other) const {
 		return name == other.name && category == other.category;
@@ -18,14 +18,14 @@ struct Tag : public Moveable<Tag> {
 class Tagging {
 public:
 	Tagging();
-	void AddTag(const String& filePath, const Tag& tag);
-	void RemoveTag(const String& filePath, const Tag& tag);
-	const Vector<Tag>& GetTags(const String& filePath) const;
+	void AddTag(const Upp::String& filePath, const Tag& tag);
+	void RemoveTag(const Upp::String& filePath, const Tag& tag);
+	const Upp::Vector<Tag>& GetTags(const Upp::String& filePath) const;
 	void SetTaggingEnabled(bool enabled);
 	bool IsTaggingEnabled() const { return tagging_enabled; }
 	
 private:
-	VectorMap<String, Vector<Tag>> file_tags;
+	VectorMap<Upp::String, Upp::Vector<Tag>> file_tags;
 	bool tagging_enabled = true;
 };
 

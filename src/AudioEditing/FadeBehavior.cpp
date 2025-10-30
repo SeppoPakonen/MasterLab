@@ -19,7 +19,7 @@ void FadeBehaviorManager::ApplyToEvents() {
 	LOG("Thick fade lines: " << (behavior.thickFadeLines ? "yes" : "no"));
 	LOG("Show fade curves: " << (behavior.showFadeCurves ? "yes" : "no"));
 	
-	String shapeStr;
+	Upp::String shapeStr;
 	switch (behavior.defaultShape) {
 		case FadeBehavior::FadeShape::Crossfade: shapeStr = "Crossfade"; break;
 		case FadeBehavior::FadeShape::Linear: shapeStr = "Linear"; break;

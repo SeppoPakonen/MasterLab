@@ -5,12 +5,14 @@ void MediaFormatRegistry::RegisterFormat(const MediaFormatInfo& format) {
 	formats.Add(format);
 }
 
-Vector<MediaFormatInfo> MediaFormatRegistry::GetSupportedFormats() const {
-	return formats;
+Upp::Vector<MediaFormatInfo> MediaFormatRegistry::GetSupportedFormats() const {
+	Upp::Vector<MediaFormatInfo> result;
+	result <<= formats;
+	return result;
 }
 
-Vector<MediaFormatInfo> MediaFormatRegistry::GetImportableFormats() const {
-	Vector<MediaFormatInfo> result;
+Upp::Vector<MediaFormatInfo> MediaFormatRegistry::GetImportableFormats() const {
+	Upp::Vector<MediaFormatInfo> result;
 	for (const auto& format : formats) {
 		if (format.can_import) {
 			result.Add(format);
@@ -19,8 +21,8 @@ Vector<MediaFormatInfo> MediaFormatRegistry::GetImportableFormats() const {
 	return result;
 }
 
-Vector<MediaFormatInfo> MediaFormatRegistry::GetExportableFormats() const {
-	Vector<MediaFormatInfo> result;
+Upp::Vector<MediaFormatInfo> MediaFormatRegistry::GetExportableFormats() const {
+	Upp::Vector<MediaFormatInfo> result;
 	for (const auto& format : formats) {
 		if (format.can_export) {
 			result.Add(format);

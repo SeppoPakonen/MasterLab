@@ -21,7 +21,7 @@ void PrefScores::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefScores::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefScores::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

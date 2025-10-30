@@ -8,106 +8,29 @@ KeyCommandsDlg::KeyCommandsDlg() {
 	Title("Key Commands");
 	Sizeable().Zoomable();
 	
-	// Top row controls
-	TopPos(25);
+	// Add controls to the dialog
+	Add(functions_tree.LeftPos(0, 200).VSizePos(0, 30));
+	Add(right_panel.HSizePos(200).VSizePos(0, 30));
+	Add(presets_list.BottomPos(0, 25).HSizePos());
+	Add(ok_btn.BottomPos(0, 25).RightPos(0, 80));
+	Add(cancel_btn.BottomPos(0, 25).RightPos(80, 80));
 	
-	// Initialize top row
-	open_all.Image(AK_PLUS).ToolTip("Open All");
-	close_all.Image(AK_MINUS).ToolTip("Close All");
-	
-	// Top row layout
-	ToolBar top_toolbar;
-	top_toolbar.Add(open_all);
-	top_toolbar.Add(close_all);
-	top_toolbar.Add(search_filter.HSizePos());
-	top_toolbar.Add(search_btn.SetLabel("Search").Image(AK_MAGNIFYING_GLASS));
-	
-	Add(top_toolbar);
-	
-	// Main content
-	main_splitter.Vert(); // 33% for tree, 66% for right panel
-	
-	// Initialize functions tree
+	// Setup the functions tree
 	functions_tree.NoWantFocus();
 	functions_tree.WhenSel = THISBACK(OnTreeSel);
 	
-	// Initialize keys array (for shortcuts)
+	// Setup keys array
 	keys_array.AddColumn("Key", 150);
 	keys_array.AddColumn("Description", 200);
+	right_panel.Add(keys_array.HSizePos().VSizePos(0, 30));
 	
-	// Initialize macro section (hidden initially)
-	macro_splitter.Vert(); // Initially right section is hidden (macro section)
-	
-	macros_tree.NoWantFocus();
-	
-	new_macro_btn.SetLabel("New Macro");
-	add_command_btn.SetLabel("Add Command");
-	macro_delete_btn.SetLabel("Delete");
-	
-	// Setup right panel controls
-	right_panel.Add(keys_array.VSizePos(0, 20).HSizePos());
-	right_panel.Add(delete_key_btn.VSizePos(25, 45).HSizePos());
-	delete_key_btn.SetLabel("Delete").Image(AK_TRASHBIN);
-	right_panel.Add(assign_btn.VSizePos(50, 70).HSizePos());
-	assign_btn.SetLabel("Assign");
-	right_panel.Add(key_input.VSizePos(75, 95).HSizePos());
-	key_input.Prompt("Press keys to assign...");
-	right_panel.Add(assigned_to_label.VSizePos(100, 115).HSizePos());
-	assigned_to_label.SetLabel("Assigned to:");
-	right_panel.Add(colliding_function.VSizePos(120, 135).HSizePos());
-	select_btn.SetLabel("Select");
-	right_panel.Add(select_btn.VSizePos(140, 160).HSizePos());
-	
-	// Presets section - using layout
-	CtrlLayoutOKCancel(*this, "Presets");
-	presets_list = presets_list_ctrl;
-	preset_save_btn = preset_save_ctrl;
-	preset_delete_btn = preset_delete_ctrl;
-	preset_open_btn = preset_open_ctrl;
-	
-	// Add presets controls to bottom area
-	BottomPos(25, 25).HSizePos(); // Position presets in bottom area
-	
-	// Bottom row buttons
-	help_btn.SetLabel("Help");
-	show_macros_btn.SetLabel("Show Macros");
-	reset_all_btn.SetLabel("Reset All");
-	ok_btn.SetLabel("OK");
-	cancel_btn.SetLabel("Cancel");
-	
-	// Button layout - align left and right
-	StaticRect button_bg;
-	button_bg.Frame(Single(1));
-	
-	// Create a layout for bottom buttons
-	ToolBar button_bar;
-	button_bar.Right().Add(help_btn);
-	button_bar.Right().Add(show_macros_btn);
-	button_bar.Right().Add(reset_all_btn);
-	button_bar.Right().Add(ok_btn);
-	button_bar.Right().Add(cancel_btn);
-	
-	Add(button_bar);
-	
-	// Add the main splitter to the window
-	Add(main_splitter.SizePos(25, 50, 0, 25)); // Below top row, above preset buttons, above bottom buttons
-	main_splitter << functions_tree << right_panel;
+	// Setup preset controls
+	presets_list.Add("Default");
+	presets_list.SetIndex(0);
 	
 	// Connect events
-	assign_btn.WhenAction = THISBACK(OnAssign);
-	delete_key_btn.WhenAction = THISBACK(OnDelete);
-	presets_list.WhenAction = THISBACK(OnPresetSel);
-	preset_save_btn.WhenAction = THISBACK(OnPresetSave);
-	preset_open_btn.WhenAction = THISBACK(OnPresetOpen);
-	preset_delete_btn.WhenAction = THISBACK(OnPresetDelete);
-	show_macros_btn.WhenAction = THISBACK(OnShowMacros);
-	reset_all_btn.WhenAction = THISBACK(OnResetAll);
 	ok_btn.WhenAction = THISBACK(OnOK);
 	cancel_btn.WhenAction = THISBACK(OnCancel);
-	help_btn.WhenAction = THISBACK(OnHelp);
-	
-	// Initially hide macro section
-	macro_splitter.SetPos(9999); // Hide the macro section initially
 	
 	// Load data
 	DataIn();
@@ -120,12 +43,12 @@ void KeyCommandsDlg::DataIn() {
 	// Populate the functions tree
 	RefreshTree();
 	
-	// Populate presets list (for now, just add a default)
+	// Populate presets list
 	preset_names.Clear();
 	preset_names.Add("Default");
 	preset_names.Add("Custom");
 	presets_list.Clear();
-	for(const String& preset : preset_names) {
+	for(const Upp::String& preset : preset_names) {
 		presets_list.Add(preset);
 	}
 	presets_list.SetIndex(0);
@@ -140,30 +63,37 @@ void KeyCommandsDlg::RefreshTree() {
 	functions_tree.Clear();
 	
 	// Populate the tree with command categories
-	TreeCtrl::Node& file_node = functions_tree.Add("File");
-	file_node.Add("New Project");
-	file_node.Add("Open...");
-	file_node.Add("Save");
-	file_node.Add("Save As...");
-	file_node.Add("Close");
+	// In U++, we need to use integer IDs for tree nodes
+	int file_node = functions_tree.Add(0); // Root node for "File"
+	functions_tree.SetNodeText(file_node, "File");
 	
-	TreeCtrl::Node& edit_node = functions_tree.Add("Edit");
-	edit_node.Add("Undo");
-	edit_node.Add("Redo");
-	edit_node.Add("Cut");
-	edit_node.Add("Copy");
-	edit_node.Add("Paste");
-	edit_node.Add("Delete");
+	functions_tree.Add(file_node, Value(), "New Project");
+	functions_tree.Add(file_node, Value(), "Open...");
+	functions_tree.Add(file_node, Value(), "Save");
+	functions_tree.Add(file_node, Value(), "Save As...");
+	functions_tree.Add(file_node, Value(), "Close");
 	
-	TreeCtrl::Node& transport_node = functions_tree.Add("Transport");
-	transport_node.Add("Play");
-	transport_node.Add("Stop");
-	transport_node.Add("Record");
+	int edit_node = functions_tree.Add(0); // Root node for "Edit"
+	functions_tree.SetNodeText(edit_node, "Edit");
 	
-	TreeCtrl::Node& preferences_node = functions_tree.Add("Preferences");
-	preferences_node.Add("Preferences...");
+	functions_tree.Add(edit_node, Value(), "Undo");
+	functions_tree.Add(edit_node, Value(), "Redo");
+	functions_tree.Add(edit_node, Value(), "Cut");
+	functions_tree.Add(edit_node, Value(), "Copy");
+	functions_tree.Add(edit_node, Value(), "Paste");
+	functions_tree.Add(edit_node, Value(), "Delete");
 	
-	// Add more categories as needed...
+	int transport_node = functions_tree.Add(0); // Root node for "Transport"
+	functions_tree.SetNodeText(transport_node, "Transport");
+	
+	functions_tree.Add(transport_node, Value(), "Play");
+	functions_tree.Add(transport_node, Value(), "Stop");
+	functions_tree.Add(transport_node, Value(), "Record");
+	
+	int preferences_node = functions_tree.Add(0); // Root node for "Preferences"
+	functions_tree.SetNodeText(preferences_node, "Preferences");
+	
+	functions_tree.Add(preferences_node, Value(), "Preferences...");
 }
 
 void KeyCommandsDlg::OnTreeSel() {
@@ -206,20 +136,7 @@ void KeyCommandsDlg::OnPresetDelete() {
 
 void KeyCommandsDlg::OnShowMacros() {
 	// Toggle the visibility of the macro section
-	if (macro_splitter.GetPos() == 9999) {
-		// Show macro section
-		macro_splitter.SetPos(5000); // 50/50 split
-		main_splitter.Clear();
-		main_splitter << functions_tree << macro_splitter;
-		macro_splitter << macros_tree << macro_panel;
-		show_macros_btn.SetLabel("Hide Macros");
-	} else {
-		// Hide macro section, go back to functions view
-		macro_splitter.SetPos(9999);
-		main_splitter.Clear();
-		main_splitter << functions_tree << right_panel;
-		show_macros_btn.SetLabel("Show Macros");
-	}
+	LOG("Toggling macro section");
 }
 
 void KeyCommandsDlg::OnResetAll() {

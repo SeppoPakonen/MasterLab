@@ -7,8 +7,8 @@ using namespace Upp;
 namespace am {
 
 struct VideoDeviceInfo {
-	String name;
-	String id;
+	Upp::String name;
+	Upp::String id;
 	int width;
 	int height;
 	double frame_rate;
@@ -17,17 +17,17 @@ struct VideoDeviceInfo {
 class VideoDevice {
 public:
 	VideoDevice();
-	const Vector<VideoDeviceInfo>& GetAvailableDevices() const { return available_devices; }
-	bool OpenDevice(const String& deviceId);
+	const Upp::Vector<VideoDeviceInfo>& GetAvailableDevices() const { return available_devices; }
+	bool OpenDevice(const Upp::String& deviceId);
 	void CloseDevice();
 	bool IsOpen() const { return open; }
 	void SetResolution(int width, int height);
 	void SetFrameRate(double fps);
 	
 private:
-	Vector<VideoDeviceInfo> available_devices;
+	Upp::Vector<VideoDeviceInfo> available_devices;
 	bool open = false;
-	String current_device_id;
+	Upp::String current_device_id;
 	int resolution_width = 1920;
 	int resolution_height = 1080;
 	double frame_rate = 30.0;

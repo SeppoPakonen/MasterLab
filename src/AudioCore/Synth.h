@@ -39,7 +39,7 @@ private:
 	int FindVoiceByNote(int note) const;
 	int FindFreeVoice() const;
 
-	Vector<VoiceHandle> voices;
+	Upp::Vector<VoiceHandle> voices;
 	int max_voices = 0;
 	int active_voice_count = 0;
 	int next_id = 1;

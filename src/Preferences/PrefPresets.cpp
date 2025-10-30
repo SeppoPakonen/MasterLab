@@ -15,40 +15,40 @@ void PreferencePresetManager::LoadPresets() {
 	presets.Add("Default", default_model);
 }
 
-void PreferencePresetManager::SavePreset(const String& name, const PreferencesModel& model) {
+void PreferencePresetManager::SavePreset(const Upp::String& name, const PreferencesModel& model) {
 	LOG("Saving preset: " + name);
 	presets.GetAdd(name) = model;
 }
 
-void PreferencePresetManager::LoadPreset(const String& name, PreferencesModel& model) {
+void PreferencePresetManager::LoadPreset(const Upp::String& name, PreferencesModel& model) {
 	LOG("Loading preset: " + name);
 	if (presets.Find(name) >= 0) {
 		model = presets.Get(name);
 	}
 }
 
-void PreferencePresetManager::DeletePreset(const String& name) {
+void PreferencePresetManager::DeletePreset(const Upp::String& name) {
 	LOG("Deleting preset: " + name);
 	presets.RemoveKey(name);
 }
 
-Vector<String> PreferencePresetManager::GetPresetNames() const {
-	Vector<String> names;
+Upp::Vector<Upp::String> PreferencePresetManager::GetPresetNames() const {
+	Upp::Vector<Upp::String> names;
 	for(int i = 0; i < presets.GetCount(); i++) {
 		names.Add(presets.GetKey(i));
 	}
 	return names;
 }
 
-void PreferencePresetManager::CreatePreset(const String& name, const PreferencesModel& model) {
+void PreferencePresetManager::CreatePreset(const Upp::String& name, const PreferencesModel& model) {
 	SavePreset(name, model);
 }
 
-void PreferencePresetManager::UpdatePreset(const String& name, const PreferencesModel& model) {
+void PreferencePresetManager::UpdatePreset(const Upp::String& name, const PreferencesModel& model) {
 	SavePreset(name, model);
 }
 
-void PreferencePresetManager::ReadPreset(const String& name, PreferencesModel& model) {
+void PreferencePresetManager::ReadPreset(const Upp::String& name, PreferencesModel& model) {
 	LoadPreset(name, model);
 }
 

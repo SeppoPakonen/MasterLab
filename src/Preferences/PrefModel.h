@@ -169,123 +169,6 @@ struct EventDisplayPrefs : public Moveable<EventDisplayPrefs> {
 	}
 };
 
-// Struct definitions for preference types
-		}
-
-struct EditingPrefs : public Moveable<EditingPrefs> {
-	// Defaults
-	String default_track_time_type = "musical"; // { musical | time_linear | follow_transport }
-	
-	// Behavior
-	bool auto_select_under_cursor = false;
-	bool cycle_follows_range = false;
-	bool delete_overlaps = false;
-	bool link_editors = true;
-	bool parts_get_track_names = false;
-	bool quick_zoom = false;
-	
-	// Lock attributes
-	int lock_event_attributes = 0; // bitmask(Position | Size | Other)
-	
-	// Drag delay
-	int drag_delay_ms = 200;
-	
-	// Event colors
-	bool color_events_by_track = true;
-	bool color_events_by_type = false;
-	bool color_events_by_velocity = false;
-	
-	// Add explicit copy constructor and assignment operator
-	EditingPrefs() = default;
-	EditingPrefs(const EditingPrefs& other) 
-		: default_track_time_type(other.default_track_time_type),
-		  auto_select_under_cursor(other.auto_select_under_cursor),
-		  cycle_follows_range(other.cycle_follows_range),
-		  delete_overlaps(other.delete_overlaps),
-		  link_editors(other.link_editors),
-		  parts_get_track_names(other.parts_get_track_names),
-		  quick_zoom(other.quick_zoom),
-		  lock_event_attributes(other.lock_event_attributes),
-		  drag_delay_ms(other.drag_delay_ms),
-		  color_events_by_track(other.color_events_by_track),
-		  color_events_by_type(other.color_events_by_type),
-		  color_events_by_velocity(other.color_events_by_velocity) {}
-	
-	EditingPrefs& operator=(const EditingPrefs& other) {
-		if(this != &other) {
-			default_track_time_type = other.default_track_time_type;
-			auto_select_under_cursor = other.auto_select_under_cursor;
-			cycle_follows_range = other.cycle_follows_range;
-			delete_overlaps = other.delete_overlaps;
-			link_editors = other.link_editors;
-			parts_get_track_names = other.parts_get_track_names;
-			quick_zoom = other.quick_zoom;
-			lock_event_attributes = other.lock_event_attributes;
-			drag_delay_ms = other.drag_delay_ms;
-			color_events_by_track = other.color_events_by_track;
-			color_events_by_type = other.color_events_by_type;
-			color_events_by_velocity = other.color_events_by_velocity;
-		}
-		return *this;
-	}
-};
-
-struct EventDisplayPrefs : public Moveable<EventDisplayPrefs> {
-	// Display density
-	int display_density = 50; // 0-100
-	
-	// Zoom behavior
-	bool zoom_to_selection = true;
-	bool zoom_preserves_position = false;
-	
-	// Track height
-	int default_track_height = 24; // pixels
-	int minimum_track_height = 16; // pixels
-	int maximum_track_height = 64; // pixels
-	
-	// Lane display
-	bool show_track_lanes = true;
-	bool show_midi_lanes = true;
-	bool show_audio_lanes = true;
-	bool show_video_lanes = true;
-	bool show_marker_lanes = true;
-	bool show_tempo_lanes = true;
-	
-	// Add explicit copy constructor and assignment operator
-	EventDisplayPrefs() = default;
-	EventDisplayPrefs(const EventDisplayPrefs& other) 
-		: display_density(other.display_density),
-		  zoom_to_selection(other.zoom_to_selection),
-		  zoom_preserves_position(other.zoom_preserves_position),
-		  default_track_height(other.default_track_height),
-		  minimum_track_height(other.minimum_track_height),
-		  maximum_track_height(other.maximum_track_height),
-		  show_track_lanes(other.show_track_lanes),
-		  show_midi_lanes(other.show_midi_lanes),
-		  show_audio_lanes(other.show_audio_lanes),
-		  show_video_lanes(other.show_video_lanes),
-		  show_marker_lanes(other.show_marker_lanes),
-		  show_tempo_lanes(other.show_tempo_lanes) {}
-	
-	EventDisplayPrefs& operator=(const EventDisplayPrefs& other) {
-		if(this != &other) {
-			display_density = other.display_density;
-			zoom_to_selection = other.zoom_to_selection;
-			zoom_preserves_position = other.zoom_preserves_position;
-			default_track_height = other.default_track_height;
-			minimum_track_height = other.minimum_track_height;
-			maximum_track_height = other.maximum_track_height;
-			show_track_lanes = other.show_track_lanes;
-			show_midi_lanes = other.show_midi_lanes;
-			show_audio_lanes = other.show_audio_lanes;
-			show_video_lanes = other.show_video_lanes;
-			show_marker_lanes = other.show_marker_lanes;
-			show_tempo_lanes = other.show_tempo_lanes;
-		}
-		return *this;
-	}
-};
-
 struct GeneralPrefs : public Moveable<GeneralPrefs> {
 	// Startup
 	bool auto_load_last_project = true;
@@ -883,7 +766,7 @@ public:
 	PreferencesModel();
 	
 	// Model access
-	am::AppearancePrefs& GetAppearance() { return appearance; }
+	AppearancePrefs& GetAppearance() { return appearance; }
 	EditingPrefs& GetEditing() { return editing; }
 	EventDisplayPrefs& GetEventDisplay() { return event_display; }
 	GeneralPrefs& GetGeneral() { return general; }
@@ -905,7 +788,7 @@ public:
 private:
 	int version = 1;  // Schema version
 	
-	am::AppearancePrefs appearance;
+	AppearancePrefs appearance;
 	EditingPrefs editing;
 	EventDisplayPrefs event_display;
 	GeneralPrefs general;
@@ -918,5 +801,6 @@ private:
 	VariAudioPrefs variaudio;
 };
 
+}
 
 #endif

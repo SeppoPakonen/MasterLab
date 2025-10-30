@@ -11,6 +11,7 @@ struct MeterMarker : Moveable<MeterMarker> {
 	Color color;    // Color for this marker level
 	
 	MeterMarker() {}
+	MeterMarker(double d, Color c) : db(d), color(c) {}
 	MeterMarker(const MeterMarker& a) : db(a.db), color(a.color) {}
 	void operator=(const MeterMarker& a) {db = a.db; color = a.color;}
 };
@@ -23,8 +24,8 @@ public:
 	void AddMarker(const MeterMarker& marker);
 	void RemoveMarker(int index);
 	void ClearMarkers();
-	const Vector<MeterMarker>& GetMarkers() const { return markers; }
-	void SetMarkers(const Vector<MeterMarker>& new_markers) { markers <<= new_markers; }
+	const Upp::Vector<MeterMarker>& GetMarkers() const { return markers; }
+	void SetMarkers(const Upp::Vector<MeterMarker>& new_markers) { markers <<= new_markers; }
 	
 	// Default markers setup
 	void SetupDefaultMarkers();
@@ -33,7 +34,7 @@ public:
 	Color GetColorForLevel(double level) const;  // level is 0.0 to 1.0
 	
 private:
-	Vector<MeterMarker> markers;
+	Upp::Vector<MeterMarker> markers;
 };
 
 }

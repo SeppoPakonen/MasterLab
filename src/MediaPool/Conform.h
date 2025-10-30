@@ -9,12 +9,12 @@ namespace am {
 class Conform {
 public:
 	Conform();
-	bool ConformMedia(const String& sourcePath, const String& destPath);
-	void SetTargetFormat(const String& format);
-	String GetTargetFormat() const { return target_format; }
+	bool ConformMedia(const Upp::String& sourcePath, const Upp::String& destPath);
+	void SetTargetFormat(const Upp::String& format);
+	Upp::String GetTargetFormat() const { return target_format; }
 	
 private:
-	String target_format;
+	Upp::String target_format;
 };
 
 }

@@ -12,22 +12,22 @@ public:
 	PreferencePresetManager();
 	
 	void LoadPresets();
-	void SavePreset(const String& name, const PreferencesModel& model);
-	void LoadPreset(const String& name, PreferencesModel& model);
-	void DeletePreset(const String& name);
-	Vector<String> GetPresetNames() const;
+	void SavePreset(const Upp::String& name, const PreferencesModel& model);
+	void LoadPreset(const Upp::String& name, PreferencesModel& model);
+	void DeletePreset(const Upp::String& name);
+	Upp::Vector<Upp::String> GetPresetNames() const;
 	
 	// CRUD operations for presets
-	void CreatePreset(const String& name, const PreferencesModel& model);
-	void UpdatePreset(const String& name, const PreferencesModel& model);
-	void ReadPreset(const String& name, PreferencesModel& model);
+	void CreatePreset(const Upp::String& name, const PreferencesModel& model);
+	void UpdatePreset(const Upp::String& name, const PreferencesModel& model);
+	void ReadPreset(const Upp::String& name, PreferencesModel& model);
 	
 	// Functionality for "store marked only"
 	void SetMarkedOnly(bool marked_only);
 	bool IsMarkedOnly() const;
 	
 private:
-	VectorMap<String, PreferencesModel> presets;
+	VectorMap<Upp::String, PreferencesModel> presets;
 	bool marked_only = false;
 };
 

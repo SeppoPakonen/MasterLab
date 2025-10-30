@@ -17,10 +17,10 @@ void AudioImportPrefsManager::SetPrefs(const AudioImportPrefs& newPrefs) {
 
 void AudioImportPrefsManager::ApplyToImport(class Importer& importer) {
 	LOG("Applying audio import preferences");
-	LOG("Mode: " + String(prefs.mode == AudioImportMode::OpenOptions ? "Open Options" : "Use Settings"));
-	LOG("Copy to working: " + String(prefs.copyToWorking ? "yes" : "no"));
-	LOG("Convert if needed: " + String(prefs.convertIfNeeded ? "yes" : "no"));
-	LOG("Split multichannel: " + String(prefs.splitMultichannel ? "yes" : "no"));
+	LOG("Mode: " + Upp::String(prefs.mode == AudioImportMode::OpenOptions ? "Open Options" : "Use Settings"));
+	LOG("Copy to working: " + Upp::String(prefs.copyToWorking ? "yes" : "no"));
+	LOG("Convert if needed: " + Upp::String(prefs.convertIfNeeded ? "yes" : "no"));
+	LOG("Split multichannel: " + Upp::String(prefs.splitMultichannel ? "yes" : "no"));
 	LOG("Version handling: ask");
 }
 

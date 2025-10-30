@@ -14,28 +14,28 @@ enum PluginType {
 };
 
 struct PluginInfo {
-	String name;
-	String vendor;
-	String path;
+	Upp::String name;
+	Upp::String vendor;
+	Upp::String path;
 	PluginType type;
 	int version;
-	Vector<String> parameters;  // Names of parameters
+	Upp::Vector<Upp::String> parameters;  // Names of parameters
 };
 
 class PluginManager {
 public:
 	PluginManager();
 	void ScanForPlugins();
-	const Vector<PluginInfo>& GetAvailablePlugins() const { return available_plugins; }
-	Vector<PluginInfo> GetPluginsByType(PluginType type) const;
-	PluginInfo GetPlugin(const String& name) const;
-	void AddPluginPath(const String& path);
-	void RemovePluginPath(const String& path);
+	const Upp::Vector<PluginInfo>& GetAvailablePlugins() const { return available_plugins; }
+	Upp::Vector<PluginInfo> GetPluginsByType(PluginType type) const;
+	PluginInfo GetPlugin(const Upp::String& name) const;
+	void AddPluginPath(const Upp::String& path);
+	void RemovePluginPath(const Upp::String& path);
 	void RefreshPluginCache();  // Cache of discovered plugins
 	
 private:
-	Vector<PluginInfo> available_plugins;
-	Vector<String> plugin_paths;
+	Upp::Vector<PluginInfo> available_plugins;
+	Upp::Vector<Upp::String> plugin_paths;
 };
 
 }

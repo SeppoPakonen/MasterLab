@@ -13,12 +13,12 @@ public:
 
 	void SetTransportEnabled(bool enabled);
 	void SetSnapEnabled(bool enabled);
-	void SetProjectTitle(const String& title);
+	void SetProjectTitle(const Upp::String& title);
 
 private:
 	void BuildToolbar();
-	void AddToolButton(const String& label, Button& button);
-	void AddToolButton(const String& label, Button& button, int width);
+	void AddToolButton(const Upp::String& label, Button& button);
+	void AddToolButton(const Upp::String& label, Button& button, int width);
 	void DummyAction();
 
 	Option activateProject;
@@ -73,14 +73,14 @@ public:
 	typedef InspectorPane CLASSNAME;
 	InspectorPane();
 
-	void SetTrackType(const String& type);
+	void SetTrackType(const Upp::String& type);
 	void RefreshPanels();
-	void SetPanels(const Vector<ValueMap>& panels);
+	void SetPanels(const Upp::Vector<ValueMap>& panels);
 
 private:
 	ArrayCtrl panelList;
 	Label trackLabel;
-	Vector<ValueMap> panelState;
+	Upp::Vector<ValueMap> panelState;
 };
 
 class TrackListPane : public ParentCtrl {
@@ -88,10 +88,10 @@ public:
 	typedef TrackListPane CLASSNAME;
 	TrackListPane();
 
-	void SetTracks(const Vector<String>& tracks);
+	void SetTracks(const Upp::Vector<Upp::String>& tracks);
 	void SetToolbarEnabled(bool enabled);
 	void Clear();
-	void AppendTrack(const String& name, const String& controls, const String& detail);
+	void AppendTrack(const Upp::String& name, const Upp::String& controls, const Upp::String& detail);
 
 private:
 	ToolBar trackToolbar;
@@ -105,7 +105,7 @@ public:
 	typedef ProjectAreaPane CLASSNAME;
 	ProjectAreaPane();
 
-	void SetRulerFormat(const String& format);
+	void SetRulerFormat(const Upp::String& format);
 	void SetZoomState(int horizontal, int vertical);
 	void RefreshClips();
 
@@ -126,13 +126,13 @@ public:
 	ProjectWindowCtrl();
 
 	void InitDefaultLayout();
-	void SetProjectTitle(const String& title);
+	void SetProjectTitle(const Upp::String& title);
 	void BindTimelineModel(Callback whenTimelineChanged);
 	void BindTrackModel(Callback whenTrackModelChanged);
 	void BindInspectorSource(Callback whenInspectorChanged);
 	void SetProjectZoomState(int horizontal, int vertical);
-	void UpdateTrackList(const Vector<ValueMap>& entries);
-	void UpdateInspectorPanels(const Vector<ValueMap>& panels, const String& caption);
+	void UpdateTrackList(const Upp::Vector<ValueMap>& entries);
+	void UpdateInspectorPanels(const Upp::Vector<ValueMap>& panels, const Upp::String& caption);
 	void UpdateWorkAreaState(const ValueMap& state);
 
 private:
@@ -149,8 +149,8 @@ private:
 	Callback onTimelineChanged;
 	Callback onTrackModelChanged;
 	Callback onInspectorChanged;
-	Vector<ValueMap> cachedTrackEntries;
-	Vector<ValueMap> cachedInspectorPanels;
+	Upp::Vector<ValueMap> cachedTrackEntries;
+	Upp::Vector<ValueMap> cachedInspectorPanels;
 	ValueMap cachedWorkArea;
 };
 
@@ -162,7 +162,7 @@ public:
 	ProjectWindowCtrl& GetView();
 	void OpenProjectWindow();
 	void CloseProjectWindow();
-	void SetProjectTitle(const String& title);
+	void SetProjectTitle(const Upp::String& title);
 
 private:
 	ProjectWindowCtrl view;

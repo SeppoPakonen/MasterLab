@@ -30,7 +30,7 @@ public:
 private:
     BusLayout layout;
     int latency;
-    Vector<BufferView> channels;
+    Upp::Vector<BufferView> channels;
 };
 
 }

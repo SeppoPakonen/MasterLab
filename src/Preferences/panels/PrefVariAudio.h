@@ -11,7 +11,7 @@ public:
 	PrefVariAudio();
 	virtual void Init(PreferencesModel& model) override;
 	virtual void Load(const PreferencesModel& model) override;
-	virtual void Store(PreferencesModel& model, Vector<bool>& changed) override;
+	virtual void Store(PreferencesModel& model, Upp::Vector<bool>& changed) override;
 	
 private:
 	void InitAnalysisSection();

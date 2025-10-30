@@ -27,13 +27,13 @@ public:
 	void SetPrefs(const MidiDisplayPrefs& newPrefs);
 	
 	// Get note name based on current style
-	String GetNoteName(int noteNum) const;
+	Upp::String GetNoteName(int noteNum) const;
 	
 private:
 	MidiDisplayPrefs prefs;
 	
 	// Helper to format note name based on style
-	String FormatNoteName(int noteNum, NoteNameStyle style) const;
+	Upp::String FormatNoteName(int noteNum, NoteNameStyle style) const;
 };
 
 }

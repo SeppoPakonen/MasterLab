@@ -14,8 +14,8 @@ struct Hitpoint {
 class Hitpoints {
 public:
 	Hitpoints();
-	const Vector<Hitpoint>& Calculate(const double* samples, int count, int sampleRate);
-	const Vector<Hitpoint>& GetHitpoints() const { return hitpoints; }
+	const Upp::Vector<Hitpoint>& Calculate(const double* samples, int count, int sampleRate);
+	const Upp::Vector<Hitpoint>& GetHitpoints() const { return hitpoints; }
 	void CreateSlices();
 	void CreateGroove();
 	void CreateMarkers();
@@ -23,7 +23,7 @@ public:
 	void Remove();
 	
 private:
-	Vector<Hitpoint> hitpoints;
+	Upp::Vector<Hitpoint> hitpoints;
 };
 
 }

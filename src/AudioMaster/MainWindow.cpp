@@ -83,7 +83,7 @@ void MainWindow::SetView(int type) {
 }
 
 void MainWindow::RefreshTitle() {
-	String s;
+	Upp::String s;
 	s << "MasterLab";
 	SetTitle(s);
 }
@@ -850,7 +850,7 @@ void MainWindow::OnExportAudioMixdown() {
 	if(!exportAudioMixdown)
 		exportAudioMixdown.Create();
 
-	Vector<am::ExportChannel> channels;
+	Upp::Vector<am::ExportChannel> channels;
 	am::ExportChannel outputs;
 	outputs.id = "outputs";
 	outputs.label = "Output Channels";
@@ -897,7 +897,7 @@ void MainWindow::OnExportAudioMixdown() {
 	};
 
 	exportAudioMixdown->WhenBrowsePath = [this]() {
-		String dir = SelectDirectory();
+		Upp::String dir = SelectDirectory();
 		if(!dir.IsEmpty())
 			exportAudioMixdown->SetDefaultPath(dir);
 	};

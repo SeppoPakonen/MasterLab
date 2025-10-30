@@ -7,9 +7,9 @@ using namespace Upp;
 namespace am {
 
 struct ExportChannel : public Moveable<ExportChannel> {
-	String id;
-	String label;
-	Vector<ExportChannel> children;
+	Upp::String id;
+	Upp::String label;
+	Upp::Vector<ExportChannel> children;
 	bool selected = false;
 	
 	// Add explicit copy constructor and assignment operator
@@ -40,10 +40,10 @@ struct ExportChannel : public Moveable<ExportChannel> {
 };
 
 struct ExportRequest {
-	String filename;
-	String directory;
-	String fileType;
-	Vector<String> channels;
+	Upp::String filename;
+	Upp::String directory;
+	Upp::String fileType;
+	Upp::Vector<Upp::String> channels;
 	ValueMap codecSettings;
 	int sampleRate = 44100;
 	int bitDepth = 24;
@@ -61,8 +61,8 @@ public:
 	typedef ChannelTreePane CLASSNAME;
 	ChannelTreePane();
 
-	void SetChannels(const Vector<ExportChannel>& roots);
-	Vector<String> GatherSelection() const;
+	void SetChannels(const Upp::Vector<ExportChannel>& roots);
+	Upp::Vector<Upp::String> GatherSelection() const;
 	void Clear();
 	void Layout() override;
 
@@ -73,13 +73,13 @@ private:
 		void Configure(const ExportChannel& channel, int depth);
 		bool IsSelected() const { return select.Get(); }
 		void SetSelected(bool sel) { select.Set(sel); }
-		const String& Id() const { return channelId; }
+		const Upp::String& Id() const { return channelId; }
 		void Layout() override;
 
 	private:
 		Option select;
 		Label text;
-		String channelId;
+		Upp::String channelId;
 		int indent = 0;
 	};
 
@@ -94,7 +94,7 @@ public:
 	typedef CodecOptionsPane CLASSNAME;
 	CodecOptionsPane();
 
-	void SetCodec(const String& codecId);
+	void SetCodec(const Upp::String& codecId);
 	void GetCodecSettings(ValueMap& settings) const;
 	void SetCodecSettings(const ValueMap& settings);
 	Event<> WhenEditID3;
@@ -105,7 +105,7 @@ private:
 	void ConfigureWavePanel();
 	void ConfigureMp3Panel();
 
-	String activeCodec;
+	Upp::String activeCodec;
 	ParentCtrl wavPanel;
 	ParentCtrl mp3Panel;
 	ParentCtrl placeholderPanel;
@@ -161,12 +161,12 @@ public:
 	typedef ExportAudioMixdownDialog CLASSNAME;
 	ExportAudioMixdownDialog();
 
-	void SetChannels(const Vector<ExportChannel>& channels);
-	void SetFileTypes(const Vector<String>& types);
-	void SetSampleRates(const Vector<int>& rates);
-	void SetBitDepths(const Vector<int>& depths);
-	void SetDefaultPath(const String& path);
-	void SetDefaultFilename(const String& name);
+	void SetChannels(const Upp::Vector<ExportChannel>& channels);
+	void SetFileTypes(const Upp::Vector<Upp::String>& types);
+	void SetSampleRates(const Upp::Vector<int>& rates);
+	void SetBitDepths(const Upp::Vector<int>& depths);
+	void SetDefaultPath(const Upp::String& path);
+	void SetDefaultFilename(const Upp::String& name);
 	void SetCodecSettings(const ValueMap& settings);
 	ExportRequest CollectRequest() const;
 

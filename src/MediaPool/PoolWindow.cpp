@@ -199,7 +199,7 @@ void PoolWindow::ToggleStatusBar(bool show) {
 }
 
 void PoolWindow::UpdateStatusText() {
-	String text;
+	Upp::String text;
 	text << mediaList.GetCount() << " media files in Pool; "
 		 << mediaList.GetCount() << " used in Project; total size 62.19 MB; external files: 0";
 	statusBar = text;

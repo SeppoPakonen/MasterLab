@@ -1,4 +1,5 @@
 #include "Preferences.h"
+
 namespace am {
 
 PreferencesModel::PreferencesModel() {
@@ -36,6 +37,8 @@ void PreferencesModel::LoadDefaults() {
 	event_display.show_video_lanes = true;
 	event_display.show_marker_lanes = true;
 	event_display.show_tempo_lanes = true;
+	
+	// General defaults
 	general.auto_load_last_project = true;
 	general.show_splash_screen = true;
 	general.check_for_updates = true;

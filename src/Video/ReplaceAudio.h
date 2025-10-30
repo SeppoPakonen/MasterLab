@@ -9,7 +9,7 @@ namespace am {
 class ReplaceAudio {
 public:
 	ReplaceAudio();
-	bool Replace(const String& videoPath, const String& audioPath, const String& outputPath);
+	bool Replace(const Upp::String& videoPath, const Upp::String& audioPath, const Upp::String& outputPath);
 	void SetSyncMode(int mode);
 	int GetSyncMode() const { return sync_mode; }
 	

@@ -9,7 +9,7 @@ void Metronome::SetVolume(double volume) {
 	this->volume = Upp::clamp(volume, 0.0, 1.0);
 }
 
-void Metronome::SetSound(const String& soundPath) {
+void Metronome::SetSound(const Upp::String& soundPath) {
 	sound_path = soundPath;
 }
 

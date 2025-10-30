@@ -4,9 +4,9 @@
 namespace am::ui {
 using namespace Upp;
 struct Breadcrumb : Ctrl {
-    Vector<String> path;
+    Upp::Vector<Upp::String> path;
     Event<int> WhenNavigate; // index in path
-    void SetPath(const Vector<String>& p) { path <<= p; Refresh(); }
+    void SetPath(const Upp::Vector<Upp::String>& p) { path <<= p; Refresh(); }
 };
 }
 

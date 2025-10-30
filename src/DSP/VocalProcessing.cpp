@@ -62,9 +62,9 @@ double VoiceFeatureExtractor::ExtractPitch(const BufferView& input) {
     return 0.0;
 }
 
-Vector<double> VoiceFeatureExtractor::ExtractFormants(const BufferView& input) {
+Upp::Vector<double> VoiceFeatureExtractor::ExtractFormants(const BufferView& input) {
     // Simplified formant extraction - in reality would use LPC analysis
-    Vector<double> formants;
+    Upp::Vector<double> formants;
     
     // For simplicity, return fixed formant values
     // In a real implementation, this would use LPC analysis to find formant frequencies
@@ -170,7 +170,7 @@ StyleTransferNet::StyleTransferNet() : model_loaded(false) {
 StyleTransferNet::~StyleTransferNet() {
 }
 
-bool StyleTransferNet::LoadModel(const String& model_path) {
+bool StyleTransferNet::LoadModel(const Upp::String& model_path) {
     // In a real implementation, this would load a neural model
     // For now, we'll just simulate loading
     this->model_path = model_path;
@@ -200,8 +200,8 @@ FormantMorpher::FormantMorpher() : morph_amount(0.0) {
 FormantMorpher::~FormantMorpher() {
 }
 
-void FormantMorpher::ConfigureTargets(const Vector<double>& src_formants, 
-                                      const Vector<double>& tgt_formants) {
+void FormantMorpher::ConfigureTargets(const Upp::Vector<double>& src_formants, 
+                                      const Upp::Vector<double>& tgt_formants) {
     source_formants <<= src_formants;
     target_formants <<= tgt_formants;
 }

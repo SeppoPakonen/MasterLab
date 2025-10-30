@@ -15,7 +15,7 @@ public:
 	void LoadMapping();
 	
 private:
-	VectorMap<String, String> mapping;
+	VectorMap<Upp::String, Upp::String> mapping;
 };
 
 }

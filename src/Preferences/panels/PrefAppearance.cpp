@@ -14,7 +14,7 @@ void PrefAppearance::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefAppearance::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefAppearance::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

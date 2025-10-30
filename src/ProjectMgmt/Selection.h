@@ -15,7 +15,7 @@ public:
 	void Toggle(Value item);
 	
 	// Get selection
-	const Vector<Value>& GetSelected() const { return selected_items; }
+	const Upp::Vector<Value>& GetSelected() const { return selected_items; }
 	bool IsSelected(Value item) const { 
 		for(int i = 0; i < selected_items.GetCount(); i++) {
 			if(selected_items[i] == item) return true;
@@ -32,7 +32,7 @@ public:
 	void PasteFromClipboard();
 	
 private:
-	Vector<Value> selected_items;
+	Upp::Vector<Value> selected_items;
 };
 
 }

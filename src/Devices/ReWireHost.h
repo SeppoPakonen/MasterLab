@@ -9,16 +9,16 @@ namespace am {
 class ReWireHost {
 public:
 	ReWireHost();
-	bool ConnectTo(const String& appName);
+	bool ConnectTo(const Upp::String& appName);
 	void Disconnect();
 	bool IsConnected() const { return connected; }
 	void RefreshAvailableApps();
-	const Vector<String>& GetAvailableApps() const { return available_apps; }
+	const Upp::Vector<Upp::String>& GetAvailableApps() const { return available_apps; }
 	
 private:
 	bool connected = false;
-	String connected_app;
-	Vector<String> available_apps;
+	Upp::String connected_app;
+	Upp::Vector<Upp::String> available_apps;
 };
 
 }

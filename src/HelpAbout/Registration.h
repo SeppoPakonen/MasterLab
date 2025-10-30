@@ -10,13 +10,13 @@ class Registration {
 public:
 	Registration();
 	bool IsRegistered() const { return registered; }
-	bool Register(const String& key);
-	String GetRegistrationKey() const { return registration_key; }
+	bool Register(const Upp::String& key);
+	Upp::String GetRegistrationKey() const { return registration_key; }
 	void ShowRegistrationDialog();
 	
 private:
 	bool registered = false;
-	String registration_key;
+	Upp::String registration_key;
 };
 
 }

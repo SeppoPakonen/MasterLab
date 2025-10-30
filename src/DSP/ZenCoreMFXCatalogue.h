@@ -19,15 +19,15 @@ enum MFXCategory {
 };
 
 struct MFXAlgorithm : public Moveable<MFXAlgorithm> {
-    String id;
-    String name;
-    String description;
+    Upp::String id;
+    Upp::String name;
+    Upp::String description;
     MFXCategory category;
     bool supports_combination;
-    Vector<String> parameters;
+    Upp::Vector<Upp::String> parameters;
     
     MFXAlgorithm() : category(FILTER), supports_combination(false) {}
-    MFXAlgorithm(const String& alg_id, const String& alg_name, MFXCategory cat)
+    MFXAlgorithm(const Upp::String& alg_id, const Upp::String& alg_name, MFXCategory cat)
         : id(alg_id), name(alg_name), category(cat), supports_combination(true) {}
 };
 
@@ -42,22 +42,22 @@ public:
     void RegisterAlgorithm(const MFXAlgorithm& algorithm);
     
     // Get algorithm by ID
-    const MFXAlgorithm* GetAlgorithm(const String& id) const;
+    const MFXAlgorithm* GetAlgorithm(const Upp::String& id) const;
     
     // Enumerate algorithms by category
-    Vector<String> GetAlgorithmsByCategory(MFXCategory category) const;
+    Upp::Vector<Upp::String> GetAlgorithmsByCategory(MFXCategory category) const;
     
     // Check if algorithm supports combination
-    bool SupportsCombination(const String& id) const;
+    bool SupportsCombination(const Upp::String& id) const;
     
     // Get all available categories
-    Vector<MFXCategory> GetCategories() const;
+    Upp::Vector<MFXCategory> GetCategories() const;
     
     // Get algorithm metadata
-    ValueMap GetMetadata(const String& id) const;
+    ValueMap GetMetadata(const Upp::String& id) const;
     
 private:
-    VectorMap<String, MFXAlgorithm> algorithms;
+    VectorMap<Upp::String, MFXAlgorithm> algorithms;
 };
 
 }

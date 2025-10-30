@@ -9,20 +9,20 @@ namespace am {
 class Exporter {
 public:
 	// Export various file types
-	bool ExportMIDI(const String& path);
-	bool ExportAudioMixdown(const String& path);
-	bool ExportSelections(const String& path);
-	bool ExportMusicXML(const String& path);
-	bool ExportOMF(const String& path);
-	bool ExportTempoTrack(const String& path);
-	bool ExportScores(const String& path);
+	bool ExportMIDI(const Upp::String& path);
+	bool ExportAudioMixdown(const Upp::String& path);
+	bool ExportSelections(const Upp::String& path);
+	bool ExportMusicXML(const Upp::String& path);
+	bool ExportOMF(const Upp::String& path);
+	bool ExportTempoTrack(const Upp::String& path);
+	bool ExportScores(const Upp::String& path);
 	
 	// Generic export method
-	bool Export(const String& path);
+	bool Export(const Upp::String& path);
 	
 private:
 	// Helper methods
-	bool ValidateExportPath(const String& path);
+	bool ValidateExportPath(const Upp::String& path);
 };
 
 }

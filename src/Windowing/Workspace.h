@@ -7,7 +7,7 @@ using namespace Upp;
 namespace am {
 
 struct WindowLayout {
-	String window_name;
+	Upp::String window_name;
 	Rect position;
 	bool visible;
 };
@@ -20,11 +20,11 @@ public:
 	void LockLayout(bool lock);
 	bool IsLayoutLocked() const { return layout_locked; }
 	void OrganizeLayout();
-	const Vector<String>& GetAvailableLayouts() const { return available_layouts; }
+	const Upp::Vector<Upp::String>& GetAvailableLayouts() const { return available_layouts; }
 	
 private:
-	Vector<WindowLayout> current_layout;
-	Vector<String> available_layouts;
+	Upp::Vector<WindowLayout> current_layout;
+	Upp::Vector<Upp::String> available_layouts;
 	bool layout_locked = false;
 };
 

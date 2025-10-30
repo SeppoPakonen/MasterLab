@@ -11,7 +11,7 @@ using namespace Upp;
 class SubWindows;
 
 class SubWindowDecoration : public Ctrl {
-	String label;
+	Upp::String label;
 	bool left_down;
 	Point left_down_pt;
 	
@@ -21,9 +21,9 @@ public:
 	
 	virtual void Paint(Draw& draw);
 	
-	void SetLabel(String str) {label = str;}
+	void SetLabel(Upp::String str) {label = str;}
 	
-	String GetLabel() const {return label;}
+	Upp::String GetLabel() const {return label;}
 	
 	virtual void LeftDown(Point p, dword keyflags);
 	virtual void LeftDouble(Point p, dword keyflags);
@@ -51,11 +51,11 @@ public:
 	
 	virtual void Start() {}
 	virtual void CloseWindow() {}
-	virtual String GetTitle() {return "";}
+	virtual Upp::String GetTitle() {return "";}
 	virtual void RefreshData() {};
 	virtual void FocusEvent() {}
 	
-	void Title(const String& title);
+	void Title(const Upp::String& title);
 	
 };
 
@@ -75,13 +75,13 @@ public:
 	typedef SubWindow CLASSNAME;
 	SubWindow();
 	
-	void Title(String label) {decor.SetLabel(label);}
+	void Title(Upp::String label) {decor.SetLabel(label);}
 	void StoreRect() {stored_rect = GetRect();}
 	void LoadRect() {ASSERT(stored_rect.bottom && stored_rect.right); SetRect(stored_rect);}
 	void SetStoredRect(Rect r) {stored_rect = r;}
 	
 	Rect GetStoredRect() const {return stored_rect;}
-	String GetTitle() const {return decor.GetLabel();}
+	Upp::String GetTitle() const {return decor.GetLabel();}
 	SubWindowCtrl* GetSubWindowCtrl() {return ctrl;}
 	bool IsMaximized() const {return maximized;}
 	bool IsActive() const {bool b = false; WhenIsActive(&b); return b;}
@@ -110,7 +110,7 @@ class SubMenuFrame : public Ctrl {
 	bool left_arrow, right_arrow;
 	SubWindows* wins;
 	Color clr_bg, clr_tr;
-	Vector<int> id_pos;
+	Upp::Vector<int> id_pos;
 	int clicked_id;
 	
 protected:
@@ -139,7 +139,7 @@ class SubWindows : public ParentCtrl {
 	ArrayMap<int, SubWindow> wins;
 	SubMenuFrame menu;
 	ParentCtrl sub_area;
-	Vector<SubWindowCtrl*> owned_wins;
+	Upp::Vector<SubWindowCtrl*> owned_wins;
 	int win_counter;
 	bool maximize_all;
 	int active_pos, active_id;
@@ -159,7 +159,7 @@ protected:
 	void IsActiveWindow(bool* result, int win_id) {*result = win_id == active_id;}
 	
 	void FocusPrevious();
-	void SetTitle(int win_id, const String& title);
+	void SetTitle(int win_id, const Upp::String& title);
 	void CloseOthers(int win_id);
 	
 	void LoadRectAll();

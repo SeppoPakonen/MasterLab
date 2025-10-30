@@ -7,21 +7,21 @@ using namespace Upp;
 namespace am {
 
 struct ProjectSetupModel {
-	String start;
-	String length;
-	String frameRate;
-	String displayFormat;
-	String displayOffset;
+	Upp::String start;
+	Upp::String length;
+	Upp::String frameRate;
+	Upp::String displayFormat;
+	Upp::String displayOffset;
 	int barOffset = 0;
 	int sampleRate = 44100;
 	int recordBitDepth = 24;
-	String recordFileType = "Wave";
-	String stereoPanLaw = "Equal Power";
+	Upp::String recordFileType = "Wave";
+	Upp::String stereoPanLaw = "Equal Power";
 };
 
 class ProjectSetupValidator {
 public:
-	static bool Validate(const ProjectSetupModel& model, String& error);
+	static bool Validate(const ProjectSetupModel& model, Upp::String& error);
 };
 
 class ProjectSetupDialog : public TopWindow {

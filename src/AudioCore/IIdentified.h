@@ -4,7 +4,7 @@
 namespace am {
 	
 struct IIdentified {
-    String id;
+    Upp::String id;
     IIdentified();
 };
 

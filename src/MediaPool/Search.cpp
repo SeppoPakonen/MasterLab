@@ -6,13 +6,13 @@ Search::Search() {
 	search_path = ConfigFile("MediaSearch");
 }
 
-Vector<SearchResult> Search::SearchMedia(const String& query) {
+Upp::Vector<SearchResult> Search::SearchMedia(const Upp::String& query) {
 	LOG("Searching for media: " + query + " in: " + search_path);
 	// Stub - implement actual search logic
-	return Vector<SearchResult>();
+	return Upp::Vector<SearchResult>();
 }
 
-void Search::SetSearchPath(const String& path) {
+void Search::SetSearchPath(const Upp::String& path) {
 	search_path = path;
 }
 

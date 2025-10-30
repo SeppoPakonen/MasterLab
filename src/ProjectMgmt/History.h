@@ -6,10 +6,24 @@ using namespace Upp;
 
 namespace am {
 
-struct Operation {
-	String description;
+struct Operation : public Upp::Moveable<Operation> {
+	Upp::String description;
 	std::function<void()> undo_action;
 	std::function<void()> redo_action;
+	
+	Operation() {}
+	Operation(const Upp::String& desc, std::function<void()> undo_func, std::function<void()> redo_func)
+		: description(desc), undo_action(undo_func), redo_action(redo_func) {}
+	
+	// Copy constructor
+	Operation(const Operation& other) = default;
+	
+	// Move constructor
+	Operation(Operation&& other) = default;
+	
+	// Assignment operators
+	Operation& operator=(const Operation& other) = default;
+	Operation& operator=(Operation&& other) = default;
 };
 
 class History {
@@ -19,11 +33,11 @@ public:
 	void Push(const Operation& op);
 	bool CanUndo() const { return pos > 0; }
 	bool CanRedo() const { return pos < (int)stack.GetCount(); }
-	Vector<String> GetStack() const;
+	Upp::Vector<Upp::String> GetStack() const;
 	int GetPosition() const { return pos; }
 	void Clear();
 private:
-	Vector<Operation> stack;
+	Upp::Vector<Operation> stack;
 	int pos = 0;  // Points to next operation to redo
 };
 

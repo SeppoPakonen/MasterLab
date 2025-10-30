@@ -24,7 +24,7 @@ public:
 	
 private:
 	Image previewImage;
-	String previewImagePath;
+	Upp::String previewImagePath;
 };
 
 }

@@ -14,7 +14,7 @@ void PrefEditingAudio::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefEditingAudio::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefEditingAudio::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

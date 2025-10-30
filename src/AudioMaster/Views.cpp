@@ -1,6 +1,6 @@
 #include "AudioMaster.h"  // This includes all necessary headers including AudioUI/AudioUI.h
 
-void MainView::SetLabel(String s) {
+void MainView::SetLabel(Upp::String s) {
 	SubWindowCtrl::Title(s);
 }
 

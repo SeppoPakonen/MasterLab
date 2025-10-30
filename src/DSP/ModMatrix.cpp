@@ -16,7 +16,7 @@ void ModMatrix::AddDestination(const ModDestination& destination) {
     destinations.GetAdd(destination.name) = destination;
 }
 
-void ModMatrix::Connect(const String& source, const String& destination, double depth, double offset) {
+void ModMatrix::Connect(const Upp::String& source, const Upp::String& destination, double depth, double offset) {
     connections.Add(ModConnection(source, destination, depth, offset));
 }
 
@@ -42,14 +42,14 @@ void ModMatrix::ComputeConnections() {
     }
 }
 
-void ModMatrix::SetSourceValue(const String& source, double value) {
+void ModMatrix::SetSourceValue(const Upp::String& source, double value) {
     int idx = sources.Find(source);
     if (idx >= 0) {
         sources[idx].value = max(sources[idx].min_value, min(sources[idx].max_value, value));
     }
 }
 
-double ModMatrix::GetSourceValue(const String& source) const {
+double ModMatrix::GetSourceValue(const Upp::String& source) const {
     int idx = sources.Find(source);
     if (idx >= 0) {
         return sources[idx].value;

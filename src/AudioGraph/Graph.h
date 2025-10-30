@@ -6,7 +6,7 @@
 namespace am {
 struct Graph {
     Array<Node> nodes;
-    Vector<Edge> edges;
+    Upp::Vector<Edge> edges;
     // navigation helpers
     int AddNode(Node* n);
     void Connect(int fromNode, int fromPort, int toNode, int toPort, const MultiChannelLayout& mcl);

@@ -5,53 +5,59 @@ MidiDeviceManager::MidiDeviceManager() {
 	RefreshDeviceList();
 }
 
-Vector<MidiDevice> MidiDeviceManager::GetInputDevices() const {
-	Vector<MidiDevice> result;
+Upp::Vector<MidiDevice> MidiDeviceManager::GetInputDevices() const {
+	Upp::Vector<MidiDevice> result;
 	for(const auto& device : available_devices) {
 		if(device.is_input) result.Add(device);
 	}
 	return result;
 }
 
-Vector<MidiDevice> MidiDeviceManager::GetOutputDevices() const {
-	Vector<MidiDevice> result;
+Upp::Vector<MidiDevice> MidiDeviceManager::GetOutputDevices() const {
+	Upp::Vector<MidiDevice> result;
 	for(const auto& device : available_devices) {
 		if(device.is_output) result.Add(device);
 	}
 	return result;
 }
 
-bool MidiDeviceManager::OpenInputDevice(const String& deviceId) {
+bool MidiDeviceManager::OpenInputDevice(const Upp::String& deviceId) {
 	LOG("Opening MIDI input device: " + deviceId);
 	// Stub - implement actual device opening
-	if(open_input_devices.Find(deviceId) < 0) {
+	// Use FindIndex instead of Find
+	int index = open_input_devices.FindIndex(deviceId);
+	if(index < 0) {
 		open_input_devices.Add(deviceId);
 	}
 	return true;
 }
 
-bool MidiDeviceManager::OpenOutputDevice(const String& deviceId) {
+bool MidiDeviceManager::OpenOutputDevice(const Upp::String& deviceId) {
 	LOG("Opening MIDI output device: " + deviceId);
 	// Stub - implement actual device opening
-	if(open_output_devices.Find(deviceId) < 0) {
+	// Use FindIndex instead of Find
+	int index = open_output_devices.FindIndex(deviceId);
+	if(index < 0) {
 		open_output_devices.Add(deviceId);
 	}
 	return true;
 }
 
-void MidiDeviceManager::CloseInputDevice(const String& deviceId) {
+void MidiDeviceManager::CloseInputDevice(const Upp::String& deviceId) {
 	LOG("Closing MIDI input device: " + deviceId);
 	// Stub - implement actual device closing
-	int pos = open_input_devices.Find(deviceId);
+	// Use FindIndex instead of Find
+	int pos = open_input_devices.FindIndex(deviceId);
 	if(pos >= 0) {
 		open_input_devices.Remove(pos);
 	}
 }
 
-void MidiDeviceManager::CloseOutputDevice(const String& deviceId) {
+void MidiDeviceManager::CloseOutputDevice(const Upp::String& deviceId) {
 	LOG("Closing MIDI output device: " + deviceId);
 	// Stub - implement actual device closing
-	int pos = open_output_devices.Find(deviceId);
+	// Use FindIndex instead of Find
+	int pos = open_output_devices.FindIndex(deviceId);
 	if(pos >= 0) {
 		open_output_devices.Remove(pos);
 	}

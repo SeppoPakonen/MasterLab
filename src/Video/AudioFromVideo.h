@@ -9,7 +9,7 @@ namespace am {
 class AudioFromVideo {
 public:
 	AudioFromVideo();
-	bool ExtractAudio(const String& videoPath, const String& audioPath);
+	bool ExtractAudio(const Upp::String& videoPath, const Upp::String& audioPath);
 	void SetExtractQuality(int quality);
 	int GetExtractQuality() const { return extract_quality; }
 	

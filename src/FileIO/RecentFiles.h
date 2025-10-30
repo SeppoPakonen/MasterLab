@@ -8,15 +8,15 @@ namespace am {
 
 class RecentFiles {
 public:
-	void AddRecent(const String& path);
-	void RemoveRecent(const String& path);
+	void AddRecent(const Upp::String& path);
+	void RemoveRecent(const Upp::String& path);
 	void Clear();
-	Vector<String> ListRecent() const;
+	Upp::Vector<Upp::String> ListRecent() const;
 	int GetMaxRecentFiles() const { return max_recent_files; }
 	void SetMaxRecentFiles(int count) { max_recent_files = count; }
 	
 private:
-	Vector<String> recent_files;
+	Upp::Vector<Upp::String> recent_files;
 	int max_recent_files = 10;  // Default to 10 recent files
 };
 

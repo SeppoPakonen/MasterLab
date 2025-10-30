@@ -5,7 +5,7 @@ Registration::Registration() {
 	// Initialize registration
 }
 
-bool Registration::Register(const String& key) {
+bool Registration::Register(const Upp::String& key) {
 	LOG("Registering with key: " + key);
 	// Stub - implement actual registration validation
 	if(key.GetCount() > 0) {

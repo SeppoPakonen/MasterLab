@@ -12,11 +12,11 @@ void MidiDisplay::SetPrefs(const MidiDisplayPrefs& newPrefs) {
 	prefs = newPrefs;
 }
 
-String MidiDisplay::GetNoteName(int noteNum) const {
+Upp::String MidiDisplay::GetNoteName(int noteNum) const {
 	return FormatNoteName(noteNum, prefs.names);
 }
 
-String MidiDisplay::FormatNoteName(int noteNum, NoteNameStyle style) const {
+Upp::String MidiDisplay::FormatNoteName(int noteNum, NoteNameStyle style) const {
 	// Calculate note and octave
 	int octave = noteNum / 12 - 1;  // MIDI standard: C4 is 60
 	int noteInOctave = noteNum % 12;
@@ -25,7 +25,7 @@ String MidiDisplay::FormatNoteName(int noteNum, NoteNameStyle style) const {
 	static const char* notesClassic[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 	static const char* notesClassicGerman[] = {"C", "C#", "D", "D#", "D", "F", "F#", "G", "G#", "A", "A#", "H"}; // B is H in German
 	
-	String noteStr;
+	Upp::String noteStr;
 	switch (style) {
 		case NoteNameStyle::MIDI:
 		case NoteNameStyle::MIDIValue:
@@ -39,7 +39,7 @@ String MidiDisplay::FormatNoteName(int noteNum, NoteNameStyle style) const {
 			break;
 	}
 	
-	return noteStr + AsString(octave);
+	return noteStr + Upp::AsString(octave);
 }
 
 }

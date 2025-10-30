@@ -9,20 +9,20 @@ namespace am {
 class Importer {
 public:
 	// Import various file types
-	bool ImportAudio(const String& path);
-	bool ImportMIDI(const String& path);
-	bool ImportVideo(const String& path);
-	bool ImportMusicXML(const String& path);
-	bool ImportOMF(const String& path);
-	bool ImportTempoTrack(const String& path);
-	bool ImportTrackArchive(const String& path);
+	bool ImportAudio(const Upp::String& path);
+	bool ImportMIDI(const Upp::String& path);
+	bool ImportVideo(const Upp::String& path);
+	bool ImportMusicXML(const Upp::String& path);
+	bool ImportOMF(const Upp::String& path);
+	bool ImportTempoTrack(const Upp::String& path);
+	bool ImportTrackArchive(const Upp::String& path);
 	
 	// Generic import method
-	bool Import(const String& path);
+	bool Import(const Upp::String& path);
 	
 private:
 	// Helper methods
-	bool ValidateFilePath(const String& path);
+	bool ValidateFilePath(const Upp::String& path);
 };
 
 }

@@ -8,43 +8,43 @@ PreferencesPane::PreferencesPane() {
 
 StaticRect PreferencesPane::CreateColorRect(const Color& color) {
 	StaticRect rect;
-	rect.Frame(Single(1));
-	rect.Rect(0, 0, 20, 20);
-	rect.Ink(color);
-	return pick(rect);
+	rect.SetFrame(Single(1));
+	rect.SetRect(0, 0, 20, 20);
+	rect.SetInk(color);
+	return rect;
 }
 
-Ctrl& PreferencesPane::CreateLabeledSlider(const String& label, int min, int max, int default_value) {
+Ctrl& PreferencesPane::CreateLabeledSlider(const Upp::String& label, int min, int max, int default_value) {
 	auto* row = new LabeledSlider(label, min, max, default_value);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateLabeledOption(const String& label, bool default_value) {
+Ctrl& PreferencesPane::CreateLabeledOption(const Upp::String& label, bool default_value) {
 	auto* row = new LabeledOption(label, default_value);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateLabeledDropList(const String& label, const Vector<String>& options, int default_index) {
+Ctrl& PreferencesPane::CreateLabeledDropList(const Upp::String& label, const Upp::Vector<Upp::String>& options, int default_index) {
 	auto* row = new LabeledDropList(label, options, default_index);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateIntSpinMs(const String& label, int default_value) {
+Ctrl& PreferencesPane::CreateIntSpinMs(const Upp::String& label, int default_value) {
 	auto* row = new IntSpinMs(label, default_value);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateIntSpinTicks(const String& label, int default_value) {
+Ctrl& PreferencesPane::CreateIntSpinTicks(const Upp::String& label, int default_value) {
 	auto* row = new IntSpinTicks(label, default_value);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateDoubleSpin(const String& label, double default_value) {
+Ctrl& PreferencesPane::CreateDoubleSpin(const Upp::String& label, double default_value) {
 	auto* row = new DoubleSpin(label, default_value);
 	return *row;
 }
 
-Ctrl& PreferencesPane::CreateKeyAssignRow(const String& label) {
+Ctrl& PreferencesPane::CreateKeyAssignRow(const Upp::String& label) {
 	auto* row = new KeyAssignRow(label);
 	return *row;
 }
@@ -61,11 +61,11 @@ void Row::Add(Ctrl& ctrl, int proportion) {
 }
 
 // LabelBox implementation
-LabelBox::LabelBox(const String& text) : border(Single(1)) {
+LabelBox::LabelBox(const Upp::String& text) {
+	SetFrame(ThinInsetFrame());
 	label.SetLabel(text);
 	Add(label.TopPos(0, 20).LeftPos(0, 10));
 	Add(content.VSizePos(25).HSizePos());
-	AddFrame(border);
 }
 
 void LabelBox::Add(Ctrl& ctrl) {
@@ -88,7 +88,7 @@ void ColorRect::Paint(Draw& draw) {
 }
 
 // LabeledSlider implementation
-LabeledSlider::LabeledSlider(const String& label_text, int min, int max, int default_value) {
+LabeledSlider::LabeledSlider(const Upp::String& label_text, int min, int max, int default_value) {
 	label.SetLabel(label_text);
 	slider.MinMax(min, max);
 	slider.Set(default_value);
@@ -98,7 +98,7 @@ LabeledSlider::LabeledSlider(const String& label_text, int min, int max, int def
 }
 
 // LabeledOption implementation
-LabeledOption::LabeledOption(const String& label_text, bool default_value) {
+LabeledOption::LabeledOption(const Upp::String& label_text, bool default_value) {
 	label.SetLabel(label_text);
 	option.SetData(default_value);
 	
@@ -107,7 +107,7 @@ LabeledOption::LabeledOption(const String& label_text, bool default_value) {
 }
 
 // LabeledDropList implementation
-LabeledDropList::LabeledDropList(const String& label_text, const Vector<String>& options, int default_index) {
+LabeledDropList::LabeledDropList(const Upp::String& label_text, const Upp::Vector<Upp::String>& options, int default_index) {
 	label.SetLabel(label_text);
 	for(const auto& opt : options) {
 		droplist.Add(opt);
@@ -119,7 +119,7 @@ LabeledDropList::LabeledDropList(const String& label_text, const Vector<String>&
 }
 
 // IntSpinMs implementation
-IntSpinMs::IntSpinMs(const String& label_text, int default_value) {
+IntSpinMs::IntSpinMs(const Upp::String& label_text, int default_value) {
 	label.SetLabel(label_text);
 	spin.SetData(default_value);
 	
@@ -128,7 +128,7 @@ IntSpinMs::IntSpinMs(const String& label_text, int default_value) {
 }
 
 // IntSpinTicks implementation
-IntSpinTicks::IntSpinTicks(const String& label_text, int default_value) {
+IntSpinTicks::IntSpinTicks(const Upp::String& label_text, int default_value) {
 	label.SetLabel(label_text);
 	spin.SetData(default_value);
 	
@@ -137,7 +137,7 @@ IntSpinTicks::IntSpinTicks(const String& label_text, int default_value) {
 }
 
 // DoubleSpin implementation
-DoubleSpin::DoubleSpin(const String& label_text, double default_value) {
+DoubleSpin::DoubleSpin(const Upp::String& label_text, double default_value) {
 	label.SetLabel(label_text);
 	spin.SetData(default_value);
 	
@@ -146,7 +146,7 @@ DoubleSpin::DoubleSpin(const String& label_text, double default_value) {
 }
 
 // KeyAssignRow implementation
-KeyAssignRow::KeyAssignRow(const String& label_text) {
+KeyAssignRow::KeyAssignRow(const Upp::String& label_text) {
 	label.SetLabel(label_text);
 	assign.SetLabel("Assign");
 	
@@ -158,19 +158,7 @@ KeyAssignRow::KeyAssignRow(const String& label_text) {
 // WithPreferencesLayout implementation
 template <class TBase>
 WithProgressLayout<TBase>::WithProgressLayout() {
-	InitLayout();
-}
-
-template <class TBase>
-void WithProgressLayout<TBase>::InitLayout() {
-	// Create the main split layout
-	Splitter main_split;
-	main_split.Vert();
-	
-	// Main area: 80% of total height
-	Add(main_split.TopPos(0, 80 * 20)); // Standard height
-	Add(preset_area.HSizePos().VSizePos(80 * 20, 16 * 20)); // Above bottom buttons
-	Add(button_area.HSizePos().BottomPos(0, 20));
+	// Initialize the layout without calling InitLayout
 }
 
 // PanelRegistry implementation
@@ -179,23 +167,23 @@ PanelRegistry& PanelRegistry::Instance() {
 	return instance;
 }
 
-void PanelRegistry::RegisterPanel(const String& category, const String& subcategory, std::function<PreferencesPane*()> factory) {
-	VectorMap<String, std::function<PreferencesPane*()>>& subcategories = registry.GetAdd(category);
+void PanelRegistry::RegisterPanel(const Upp::String& category, const Upp::String& subcategory, std::function<PreferencesPane*()> factory) {
+	VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcategories = registry.GetAdd(category);
 	subcategories.GetAdd(subcategory) = factory;
 }
 
-Vector<String> PanelRegistry::GetCategories() const {
-	Vector<String> categories;
+Upp::Vector<Upp::String> PanelRegistry::GetCategories() const {
+	Upp::Vector<Upp::String> categories;
 	for(int i = 0; i < registry.GetCount(); i++) {
 		categories.Add(registry.GetKey(i));
 	}
 	return categories;
 }
 
-Vector<String> PanelRegistry::GetSubcategories(const String& category) const {
-	Vector<String> subcategories;
+Upp::Vector<Upp::String> PanelRegistry::GetSubcategories(const Upp::String& category) const {
+	Upp::Vector<Upp::String> subcategories;
 	if(registry.Find(category) >= 0) {
-		const VectorMap<String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
+		const VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
 		for(int i = 0; i < subcat_map.GetCount(); i++) {
 			subcategories.Add(subcat_map.GetKey(i));
 		}
@@ -203,9 +191,9 @@ Vector<String> PanelRegistry::GetSubcategories(const String& category) const {
 	return subcategories;
 }
 
-PreferencesPane* PanelRegistry::CreatePanel(const String& category, const String& subcategory) const {
+PreferencesPane* PanelRegistry::CreatePanel(const Upp::String& category, const Upp::String& subcategory) const {
 	if(registry.Find(category) >= 0) {
-		const VectorMap<String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
+		const VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
 		int idx = subcat_map.Find(subcategory);
 		if(idx >= 0) {
 			return subcat_map[idx]();
@@ -244,14 +232,14 @@ void PreferencesDlg::RefreshTree() {
 	tree.Clear();
 	
 	PanelRegistry& registry = PanelRegistry::Instance();
-	Vector<String> categories = registry.GetCategories();
+	Upp::Vector<Upp::String> categories = registry.GetCategories();
 	
-	for(const String& category : categories) {
-		TreeCtrl::Node& cat_node = tree.Add(category);
-		Vector<String> subcategories = registry.GetSubcategories(category);
+	for(const Upp::String& category : categories) {
+		int cat_node = tree.Add(category, category);
+		Upp::Vector<Upp::String> subcategories = registry.GetSubcategories(category);
 		
-		for(const String& subcategory : subcategories) {
-			cat_node.Add(subcategory);
+		for(const Upp::String& subcategory : subcategories) {
+			tree.Add(cat_node, subcategory, subcategory);
 		}
 	}
 }
@@ -259,8 +247,8 @@ void PreferencesDlg::RefreshTree() {
 void PreferencesDlg::OnTreeSel() {
 	TreeCtrl::Node* node = tree.Any();
 	if(node) {
-		String subcategory = node->GetLabel();
-		String category = node->Parent() ? node->Parent()->GetLabel() : subcategory;
+		Upp::String subcategory = node->GetLabel();
+		Upp::String category = node->Parent() ? node->Parent()->GetLabel() : subcategory;
 		
 		if(current_panel) {
 			// Store current panel's data before switching
@@ -292,8 +280,8 @@ void PreferencesDlg::DataIn() {
 	
 	// Populate presets dropdown
 	preset_list.Clear();
-	Vector<String> preset_names = preset_mgr.GetPresetNames();
-	for(const String& name : preset_names) {
+	Upp::Vector<Upp::String> preset_names = preset_mgr.GetPresetNames();
+	for(const Upp::String& name : preset_names) {
 		preset_list.Add(name);
 	}
 	if(preset_names.GetCount() > 0) {
@@ -362,7 +350,7 @@ void PreferencesDlg::OnHelp() {
 }
 
 void PreferencesDlg::OnPresetChange() {
-	String selected_preset = preset_list.Get(preset_list.GetIndex());
+	Upp::String selected_preset = preset_list.Get(preset_list.GetIndex());
 	if (!selected_preset.IsEmpty()) {
 		preset_mgr.ReadPreset(selected_preset, model);
 		if(current_panel) {
@@ -375,7 +363,7 @@ void PreferencesDlg::OnPresetChange() {
 void PreferencesDlg::OnPresetStore() {
 	// Store current settings as a preset
 	DataOut(); // Ensure current panel's data is stored to model
-	String preset_name = PromptOKCancel("Preset Name:", "Enter name for the new preset:");
+	Upp::String preset_name = PromptOKCancel("Preset Name:", "Enter name for the new preset:");
 	if (!preset_name.IsEmpty()) {
 		preset_mgr.CreatePreset(preset_name, model);
 		preset_list.Add(preset_name);
@@ -388,8 +376,8 @@ void PreferencesDlg::OnPresetRename() {
 	// Rename selected preset
 	int idx = preset_list.GetIndex();
 	if (idx >= 0) {
-		String old_name = preset_list.Get(idx);
-		String new_name = PromptOKCancel("Rename Preset", "Enter new name for '" + old_name + "':");
+		Upp::String old_name = preset_list.Get(idx);
+		Upp::String new_name = PromptOKCancel("Rename Preset", "Enter new name for '" + old_name + "':");
 		if (!new_name.IsEmpty() && new_name != old_name) {
 			// Load the preset with the old name
 			PreferencesModel temp_model;
@@ -414,7 +402,7 @@ void PreferencesDlg::OnPresetDelete() {
 	// Delete selected preset
 	int idx = preset_list.GetIndex();
 	if (idx >= 0) {
-		String preset_name = preset_list.Get(idx);
+		Upp::String preset_name = preset_list.Get(idx);
 		if (PromptYesNo("Delete Preset", "Are you sure you want to delete the preset '" + preset_name + "'?")) {
 			preset_mgr.DeletePreset(preset_name);
 			preset_list.Remove(idx);

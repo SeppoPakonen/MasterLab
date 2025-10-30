@@ -39,7 +39,7 @@ double ParameterSet::GetValue(int index) const {
 	return states[index].value;
 }
 
-bool ParameterSet::SetValueById(const String& id, double value) {
+bool ParameterSet::SetValueById(const Upp::String& id, double value) {
 	for(int i = 0; i < descriptors.GetCount(); ++i) {
 		if(descriptors[i].id == id)
 			return SetValue(i, value);
@@ -47,7 +47,7 @@ bool ParameterSet::SetValueById(const String& id, double value) {
 	return false;
 }
 
-double ParameterSet::GetValueById(const String& id) const {
+double ParameterSet::GetValueById(const Upp::String& id) const {
 	for(int i = 0; i < descriptors.GetCount(); ++i) {
 		if(descriptors[i].id == id)
 			return states[i].value;
@@ -55,7 +55,7 @@ double ParameterSet::GetValueById(const String& id) const {
 	return 0.0;
 }
 
-const ParameterDescriptor* ParameterSet::Find(const String& id) const {
+const ParameterDescriptor* ParameterSet::Find(const Upp::String& id) const {
 	for(int i = 0; i < descriptors.GetCount(); ++i) {
 		if(descriptors[i].id == id)
 			return &descriptors[i];
@@ -63,18 +63,18 @@ const ParameterDescriptor* ParameterSet::Find(const String& id) const {
 	return nullptr;
 }
 
-const Vector<ParameterDescriptor>& ParameterSet::Descriptors() const {
+const Upp::Vector<ParameterDescriptor>& ParameterSet::Descriptors() const {
 	return descriptors;
 }
 
-void RoutingMap::Add(const String& source, const String& destination) {
+void RoutingMap::Add(const Upp::String& source, const Upp::String& destination) {
 	Edge& e = edges.Add();
 	e.source = source;
 	e.destination = destination;
 	e.active = true;
 }
 
-const Vector<RoutingMap::Edge>& RoutingMap::GetEdges() const {
+const Upp::Vector<RoutingMap::Edge>& RoutingMap::GetEdges() const {
 	return edges;
 }
 
@@ -90,11 +90,11 @@ void PluginProcessor::Prepare(const AudioConfig& config) {
 void PluginProcessor::Reset() {
 }
 
-void PluginProcessor::SetParameter(const String& id, double value) {
+void PluginProcessor::SetParameter(const Upp::String& id, double value) {
 	parameter_set.SetValueById(id, value);
 }
 
-double PluginProcessor::GetParameter(const String& id) const {
+double PluginProcessor::GetParameter(const Upp::String& id) const {
 	return parameter_set.GetValueById(id);
 }
 
@@ -133,11 +133,11 @@ void MidiEffectProcessor::Prepare(const AudioConfig& cfg) {
 void MidiEffectProcessor::Reset() {
 }
 
-void MidiEffectProcessor::SetParameter(const String& id, double value) {
+void MidiEffectProcessor::SetParameter(const Upp::String& id, double value) {
 	parameter_set.SetValueById(id, value);
 }
 
-double MidiEffectProcessor::GetParameter(const String& id) const {
+double MidiEffectProcessor::GetParameter(const Upp::String& id) const {
 	return parameter_set.GetValueById(id);
 }
 
@@ -165,8 +165,8 @@ void MidiInstrumentProcessor::Reset() {
 	MidiEffectProcessor::Reset();
 }
 
-void MidiInstrumentProcessor::Process(ProcessContext& ctx, Vector<NoteEvent>& in_notes, Vector<NoteEvent>& out_notes,
-	Vector<ControlEvent>& in_controls, Vector<ControlEvent>& out_controls) {
+void MidiInstrumentProcessor::Process(ProcessContext& ctx, Upp::Vector<NoteEvent>& in_notes, Upp::Vector<NoteEvent>& out_notes,
+	Upp::Vector<ControlEvent>& in_controls, Upp::Vector<ControlEvent>& out_controls) {
 	(void)in_notes;
 	(void)in_controls;
 	GeneratePattern(ctx, out_notes, out_controls);

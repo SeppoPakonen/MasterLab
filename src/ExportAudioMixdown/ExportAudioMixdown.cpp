@@ -13,7 +13,7 @@ ChannelTreePane::Row::Row() {
 
 void ChannelTreePane::Row::Configure(const ExportChannel& channel, int depth) {
 	indent = depth * 18;
-	select.SetLabel(String());
+	select.SetLabel(Upp::String());
 	select.Set(channel.selected);
 	channelId = channel.id;
 	text.SetText(channel.label);
@@ -40,7 +40,7 @@ void ChannelTreePane::Clear() {
 	Refresh();
 }
 
-void ChannelTreePane::SetChannels(const Vector<ExportChannel>& roots) {
+void ChannelTreePane::SetChannels(const Upp::Vector<ExportChannel>& roots) {
 	Clear();
 	for(const ExportChannel& channel : roots)
 		AppendChannel(channel, 0);
@@ -66,8 +66,8 @@ void ChannelTreePane::LayoutRows() {
 	}
 }
 
-Vector<String> ChannelTreePane::GatherSelection() const {
-	Vector<String> result;
+Upp::Vector<Upp::String> ChannelTreePane::GatherSelection() const {
+	Upp::Vector<Upp::String> result;
 	for(const One<Row>& rowSlot : rows) {
 		const Row& row = *rowSlot;
 		if(row.IsSelected())
@@ -159,8 +159,8 @@ void CodecOptionsPane::ShowPanel(ParentCtrl& panel) {
 	panel.Show();
 }
 
-void CodecOptionsPane::SetCodec(const String& codecId) {
-	String id = ToLower(codecId);
+void CodecOptionsPane::SetCodec(const Upp::String& codecId) {
+	Upp::String id = ToLower(codecId);
 	activeCodec = codecId;
 	if(id.Find("mp3") >= 0) {
 		ShowPanel(mp3Panel);
@@ -269,12 +269,12 @@ void ID3TagDialog::OnCancel() {
 }
 
 void ID3TagDialog::SetTags(const ValueMap& tags) {
-	title.SetData(const_cast<ValueMap&>(tags).Get("Title", String()));
-	artist.SetData(const_cast<ValueMap&>(tags).Get("Artist", String()));
-	album.SetData(const_cast<ValueMap&>(tags).Get("Album", String()));
-	year.SetData(const_cast<ValueMap&>(tags).Get("Year", String()));
-	genre.SetData(const_cast<ValueMap&>(tags).Get("Genre", String()));
-	comment.SetData(const_cast<ValueMap&>(tags).Get("Comment", String()));
+	title.SetData(const_cast<ValueMap&>(tags).Get("Title", Upp::String()));
+	artist.SetData(const_cast<ValueMap&>(tags).Get("Artist", Upp::String()));
+	album.SetData(const_cast<ValueMap&>(tags).Get("Album", Upp::String()));
+	year.SetData(const_cast<ValueMap&>(tags).Get("Year", Upp::String()));
+	genre.SetData(const_cast<ValueMap&>(tags).Get("Genre", Upp::String()));
+	comment.SetData(const_cast<ValueMap&>(tags).Get("Comment", Upp::String()));
 }
 
 ValueMap ID3TagDialog::GetTags() const {
@@ -395,19 +395,19 @@ void ExportAudioMixdownDialog::BuildLayout() {
 	configPane.Add(closeButton.BottomPos(0, 28).RightPos(108, 100));
 }
 
-void ExportAudioMixdownDialog::SetChannels(const Vector<ExportChannel>& channels) {
+void ExportAudioMixdownDialog::SetChannels(const Upp::Vector<ExportChannel>& channels) {
 	channelPane.SetChannels(channels);
 }
 
-void ExportAudioMixdownDialog::SetFileTypes(const Vector<String>& types) {
+void ExportAudioMixdownDialog::SetFileTypes(const Upp::Vector<Upp::String>& types) {
 	fileType.Clear();
-	for(const String& type : types)
+	for(const Upp::String& type : types)
 		fileType.Add(type);
 	if(!types.IsEmpty())
 		fileType.SetIndex(0);
 }
 
-void ExportAudioMixdownDialog::SetSampleRates(const Vector<int>& rates) {
+void ExportAudioMixdownDialog::SetSampleRates(const Upp::Vector<int>& rates) {
 	sampleRate.Clear();
 	for(int rate : rates) {
 		double khz = rate / 1000.0;
@@ -419,7 +419,7 @@ void ExportAudioMixdownDialog::SetSampleRates(const Vector<int>& rates) {
 	}
 }
 
-void ExportAudioMixdownDialog::SetBitDepths(const Vector<int>& depths) {
+void ExportAudioMixdownDialog::SetBitDepths(const Upp::Vector<int>& depths) {
 	bitDepth.Clear();
 	for(int depth : depths)
 		bitDepth.Add(depth, Format("%d-bit", depth));
@@ -429,11 +429,11 @@ void ExportAudioMixdownDialog::SetBitDepths(const Vector<int>& depths) {
 	}
 }
 
-void ExportAudioMixdownDialog::SetDefaultPath(const String& path) {
+void ExportAudioMixdownDialog::SetDefaultPath(const Upp::String& path) {
 	pathEdit.SetData(path);
 }
 
-void ExportAudioMixdownDialog::SetDefaultFilename(const String& name) {
+void ExportAudioMixdownDialog::SetDefaultFilename(const Upp::String& name) {
 	filenameEdit.SetData(name);
 }
 

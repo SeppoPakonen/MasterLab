@@ -60,19 +60,19 @@ RecordingModePane::RecordingModePane() {
 	Add(autoQuantize.TopPos(56, 22).HSizePos(4, 4));
 }
 
-void RecordingModePane::SetLinearModeOptions(const Vector<String>& options) {
+void RecordingModePane::SetLinearModeOptions(const Upp::Vector<Upp::String>& options) {
 	linearMode.Clear();
-	for(const String& opt : options)
+	for(const Upp::String& opt : options)
 		linearMode.Add(opt);
 }
 
-void RecordingModePane::SetCycleModeOptions(const Vector<String>& options) {
+void RecordingModePane::SetCycleModeOptions(const Upp::Vector<Upp::String>& options) {
 	cycleMode.Clear();
-	for(const String& opt : options)
+	for(const Upp::String& opt : options)
 		cycleMode.Add(opt);
 }
 
-void RecordingModePane::SetState(const String& linear, const String& cycle, bool autoQuantizeOn) {
+void RecordingModePane::SetState(const Upp::String& linear, const Upp::String& cycle, bool autoQuantizeOn) {
 	linearMode.SetData(linear);
 	cycleMode.SetData(cycle);
 	autoQuantize.SetData(autoQuantizeOn);
@@ -92,15 +92,15 @@ LocatorPane::LocatorPane() {
 	Add(rollField.TopPos(72, 22).HSizePos(4, 4));
 }
 
-void LocatorPane::SetCaption(const String& caption) {
+void LocatorPane::SetCaption(const Upp::String& caption) {
 	captionLabel.SetText(caption);
 }
 
-void LocatorPane::SetLocatorTime(const String& time) {
+void LocatorPane::SetLocatorTime(const Upp::String& time) {
 	timeField.SetText(time);
 }
 
-void LocatorPane::SetRollOffset(const String& rollText) {
+void LocatorPane::SetRollOffset(const Upp::String& rollText) {
 	rollField.SetText(rollText);
 }
 
@@ -125,15 +125,15 @@ TimeDisplayPane::TimeDisplayPane() {
 	Add(positionSlider.BottomPos(0, 20).HSizePos(0, 0));
 }
 
-void TimeDisplayPane::SetPrimaryFormat(const String& format) {
+void TimeDisplayPane::SetPrimaryFormat(const Upp::String& format) {
 	formatButton.SetLabel(format);
 }
 
-void TimeDisplayPane::SetPrimaryTime(const String& value) {
+void TimeDisplayPane::SetPrimaryTime(const Upp::String& value) {
 	primaryDisplay.SetText(value);
 }
 
-void TimeDisplayPane::SetSecondaryTime(const String& value) {
+void TimeDisplayPane::SetSecondaryTime(const Upp::String& value) {
 	secondaryDisplay.SetText(value);
 }
 
@@ -190,7 +190,7 @@ void TempoSyncPane::SetMetronome(bool click, bool precount) {
 	precountButton <<= precount;
 }
 
-void TempoSyncPane::SetTempoState(bool tempoTrack, const String& signature, const String& tempoValue) {
+void TempoSyncPane::SetTempoState(bool tempoTrack, const Upp::String& signature, const Upp::String& tempoValue) {
 	tempoTrackOption.SetData(tempoTrack);
 	signatureField.SetText(signature);
 	tempoField.SetText(tempoValue);
@@ -272,7 +272,7 @@ void ActivityMetersPane::SetMidiActivity(int inLevel, int outLevel) {
 	midiOut.SetData(max(0, min(outLevel, 100)));
 }
 
-void ActivityMetersPane::SetAudioActivity(const Vector<int>& channels, const Vector<bool>& clipFlags) {
+void ActivityMetersPane::SetAudioActivity(const Upp::Vector<int>& channels, const Upp::Vector<bool>& clipFlags) {
 	int count = min(channels.GetCount(), audioMeters.GetCount());
 	for(int i = 0; i < count; ++i) {
 		audioMeters[i].SetData(max(0, min(channels[i], 100)));
@@ -415,29 +415,29 @@ void TransportWindow::SetUsageMeters(double asioLoad, double diskLoad, bool asio
 	usageMeters.SetUsage(asioLoad, diskLoad, asioOverload, diskOverload);
 }
 
-void TransportWindow::SetRecordingModes(const String& linear, const Vector<String>& linearOptions,
-	                                     const String& cycle, const Vector<String>& cycleOptions,
+void TransportWindow::SetRecordingModes(const Upp::String& linear, const Upp::Vector<Upp::String>& linearOptions,
+	                                     const Upp::String& cycle, const Upp::Vector<Upp::String>& cycleOptions,
 	                                     bool autoQuantize) {
 	recordingModes.SetLinearModeOptions(linearOptions);
 	recordingModes.SetCycleModeOptions(cycleOptions);
 	recordingModes.SetState(linear, cycle, autoQuantize);
 }
 
-void TransportWindow::SetLeftLocator(const String& time, const String& preRoll, bool punchIn) {
+void TransportWindow::SetLeftLocator(const Upp::String& time, const Upp::String& preRoll, bool punchIn) {
 	leftLocator.SetCaption("Left Locator");
 	leftLocator.SetLocatorTime(time);
 	leftLocator.SetRollOffset(preRoll);
 	leftLocator.SetPunchEnabled(punchIn);
 }
 
-void TransportWindow::SetRightLocator(const String& time, const String& postRoll, bool punchOut) {
+void TransportWindow::SetRightLocator(const Upp::String& time, const Upp::String& postRoll, bool punchOut) {
 	rightLocator.SetCaption("Right Locator");
 	rightLocator.SetLocatorTime(time);
 	rightLocator.SetRollOffset(postRoll);
 	rightLocator.SetPunchEnabled(punchOut);
 }
 
-void TransportWindow::SetPrimaryTime(const String& primary, const String& format, const String& secondary) {
+void TransportWindow::SetPrimaryTime(const Upp::String& primary, const Upp::String& format, const Upp::String& secondary) {
 	timeDisplay.SetPrimaryTime(primary);
 	timeDisplay.SetPrimaryFormat(format);
 	timeDisplay.SetSecondaryTime(secondary);
@@ -451,7 +451,7 @@ void TransportWindow::SetTransportState(bool cycle, bool playing, bool recording
 	transportButtons.SetState(cycle, playing, recording);
 }
 
-void TransportWindow::SetTempoState(bool tempoTrack, const String& signature, const String& tempoValue) {
+void TransportWindow::SetTempoState(bool tempoTrack, const Upp::String& signature, const Upp::String& tempoValue) {
 	tempoSync.SetTempoState(tempoTrack, signature, tempoValue);
 }
 
@@ -459,7 +459,7 @@ void TransportWindow::SetSyncState(bool externalSync) {
 	tempoSync.SetSyncState(externalSync);
 }
 
-void TransportWindow::SetMarkers(int count, const Vector<bool>& active) {
+void TransportWindow::SetMarkers(int count, const Upp::Vector<bool>& active) {
 	markerQuick.SetMarkerCount(count);
 	for(int i = 0; i < active.GetCount(); ++i)
 		markerQuick.SetMarkerActive(i, active[i]);
@@ -469,7 +469,7 @@ void TransportWindow::SetMidiActivity(int inLevel, int outLevel) {
 	activityMeters.SetMidiActivity(inLevel, outLevel);
 }
 
-void TransportWindow::SetAudioActivity(const Vector<int>& channels, const Vector<bool>& clipFlags) {
+void TransportWindow::SetAudioActivity(const Upp::Vector<int>& channels, const Upp::Vector<bool>& clipFlags) {
 	activityMeters.SetAudioActivity(channels, clipFlags);
 }
 

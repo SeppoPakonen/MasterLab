@@ -5,52 +5,94 @@
 
 namespace PluginSDK {
 
-struct AudioConfig {
+struct AudioConfig : public Upp::Moveable<AudioConfig> {
 	int sample_rate = 44100;
 	int block_size = 0;
 	int input_channels = 0;
 	int output_channels = 0;
 	int sidechain_channels = 0;
+	
+	// Add explicit constructors for U++ compatibility
+	AudioConfig() = default;
+	AudioConfig(const AudioConfig& other) = default;
+	AudioConfig(AudioConfig&& other) = default;
+	AudioConfig& operator=(const AudioConfig& other) = default;
+	AudioConfig& operator=(AudioConfig&& other) = default;
 };
 
-struct AudioBus {
+struct AudioBus : public Upp::Moveable<AudioBus> {
 	float** channels = nullptr;
 	int channel_count = 0;
 	int frame_count = 0;
+	
+	// Add explicit constructors for U++ compatibility
+	AudioBus() = default;
+	AudioBus(const AudioBus& other) = default;
+	AudioBus(AudioBus&& other) = default;
+	AudioBus& operator=(const AudioBus& other) = default;
+	AudioBus& operator=(AudioBus&& other) = default;
 
 	bool IsValid() const;
 	float* GetChannel(int index) const;
 };
 
-struct TransportInfo {
+struct TransportInfo : public Upp::Moveable<TransportInfo> {
 	double tempo = 120.0;
 	double position_beats = 0.0;
 	bool playing = false;
 	bool recording = false;
+	
+	// Add explicit constructors for U++ compatibility
+	TransportInfo() = default;
+	TransportInfo(const TransportInfo& other) = default;
+	TransportInfo(TransportInfo&& other) = default;
+	TransportInfo& operator=(const TransportInfo& other) = default;
+	TransportInfo& operator=(TransportInfo&& other) = default;
 };
 
-struct ModulationBus {
+struct ModulationBus : public Upp::Moveable<ModulationBus> {
 	Upp::Vector<float*> lanes;
 	int lane_length = 0;
+	
+	// Add explicit constructors for U++ compatibility
+	ModulationBus() = default;
+	ModulationBus(const ModulationBus& other) = default;
+	ModulationBus(ModulationBus&& other) = default;
+	ModulationBus& operator=(const ModulationBus& other) = default;
+	ModulationBus& operator=(ModulationBus&& other) = default;
 
 	void Clear();
 };
 
-struct NoteEvent {
+struct NoteEvent : public Upp::Moveable<NoteEvent> {
 	int note = 0;
 	int velocity = 0;
 	int channel = 0;
 	double time = 0.0;
+	
+	// Add explicit constructors for U++ compatibility
+	NoteEvent() = default;
+	NoteEvent(const NoteEvent& other) = default;
+	NoteEvent(NoteEvent&& other) = default;
+	NoteEvent& operator=(const NoteEvent& other) = default;
+	NoteEvent& operator=(NoteEvent&& other) = default;
 };
 
-struct ControlEvent {
+struct ControlEvent : public Upp::Moveable<ControlEvent> {
 	int controller = 0;
 	int value = 0;
 	int channel = 0;
 	double time = 0.0;
+	
+	// Add explicit constructors for U++ compatibility
+	ControlEvent() = default;
+	ControlEvent(const ControlEvent& other) = default;
+	ControlEvent(ControlEvent&& other) = default;
+	ControlEvent& operator=(const ControlEvent& other) = default;
+	ControlEvent& operator=(ControlEvent&& other) = default;
 };
 
-struct ProcessContext {
+struct ProcessContext : public Upp::Moveable<ProcessContext> {
 	AudioBus input;
 	AudioBus output;
 	AudioBus sidechain;
@@ -61,20 +103,41 @@ struct ProcessContext {
 	Upp::Vector<NoteEvent>* midi_output = nullptr;
 	Upp::Vector<ControlEvent>* control_input = nullptr;
 	Upp::Vector<ControlEvent>* control_output = nullptr;
+	
+	// Add explicit constructors for U++ compatibility
+	ProcessContext() = default;
+	ProcessContext(const ProcessContext& other) = default;
+	ProcessContext(ProcessContext&& other) = default;
+	ProcessContext& operator=(const ProcessContext& other) = default;
+	ProcessContext& operator=(ProcessContext&& other) = default;
 };
 
-struct ParameterDescriptor {
+struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
 	Upp::String id;
 	Upp::String name;
 	double min = 0.0;
 	double max = 1.0;
 	double default_value = 0.0;
 	bool automatable = true;
+	
+	// Add explicit constructors for U++ compatibility
+	ParameterDescriptor() = default;
+	ParameterDescriptor(const ParameterDescriptor& other) = default;
+	ParameterDescriptor(ParameterDescriptor&& other) = default;
+	ParameterDescriptor& operator=(const ParameterDescriptor& other) = default;
+	ParameterDescriptor& operator=(ParameterDescriptor&& other) = default;
 };
 
-struct ParameterState {
+struct ParameterState : public Upp::Moveable<ParameterState> {
 	double value = 0.0;
 	double smoothing_ms = 0.0;
+	
+	// Add explicit constructors for U++ compatibility
+	ParameterState() = default;
+	ParameterState(const ParameterState& other) = default;
+	ParameterState(ParameterState&& other) = default;
+	ParameterState& operator=(const ParameterState& other) = default;
+	ParameterState& operator=(ParameterState&& other) = default;
 };
 
 class ParameterSet {
@@ -94,10 +157,17 @@ private:
 
 class RoutingMap {
 public:
-	struct Edge {
+	struct Edge : public Upp::Moveable<Edge> {
 		Upp::String source;
 		Upp::String destination;
 		bool active = true;
+		
+		// Add explicit constructors for U++ compatibility
+		Edge() = default;
+		Edge(const Edge& other) = default;
+		Edge(Edge&& other) = default;
+		Edge& operator=(const Edge& other) = default;
+		Edge& operator=(Edge&& other) = default;
 	};
 
 	void Add(const Upp::String& source, const Upp::String& destination);
@@ -107,23 +177,44 @@ private:
 	Upp::Vector<Edge> edges;
 };
 
-struct GraphNode {
+struct GraphNode : public Upp::Moveable<GraphNode> {
 	Upp::String id;
 	Upp::String label;
 	Upp::String group;
+	
+	// Add explicit constructors for U++ compatibility
+	GraphNode() = default;
+	GraphNode(const GraphNode& other) = default;
+	GraphNode(GraphNode&& other) = default;
+	GraphNode& operator=(const GraphNode& other) = default;
+	GraphNode& operator=(GraphNode&& other) = default;
 };
 
-struct GraphEdge {
+struct GraphEdge : public Upp::Moveable<GraphEdge> {
 	Upp::String from;
 	Upp::String to;
 	bool audio = false;
 	bool control = false;
 	bool active = true;
+	
+	// Add explicit constructors for U++ compatibility
+	GraphEdge() = default;
+	GraphEdge(const GraphEdge& other) = default;
+	GraphEdge(GraphEdge&& other) = default;
+	GraphEdge& operator=(const GraphEdge& other) = default;
+	GraphEdge& operator=(GraphEdge&& other) = default;
 };
 
-struct GraphVisualization {
+struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
 	Upp::Vector<GraphNode> nodes;
 	Upp::Vector<GraphEdge> edges;
+	
+	// Add explicit constructors for U++ compatibility
+	GraphVisualization() = default;
+	GraphVisualization(const GraphVisualization& other) = default;
+	GraphVisualization(GraphVisualization&& other) = default;
+	GraphVisualization& operator=(const GraphVisualization& other) = default;
+	GraphVisualization& operator=(GraphVisualization&& other) = default;
 	void Clear();
 };
 

@@ -21,7 +21,7 @@ void PrefVariAudio::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefVariAudio::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefVariAudio::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

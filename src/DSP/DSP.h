@@ -28,11 +28,11 @@ class VoiceEncoder;
 class VoiceDecoder;
 
 // Basic types
-typedef Vector<double> BufferView;
+typedef Upp::Vector<double> BufferView;
 struct BusLayout {
     int channels;
     int sample_rate;
-    String format; // "mono", "stereo", "surround", etc.
+    Upp::String format; // "mono", "stereo", "surround", etc.
     
     BusLayout() : channels(2), sample_rate(44100) {}
     BusLayout(int ch, int sr) : channels(ch), sample_rate(sr) {}

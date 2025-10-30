@@ -14,7 +14,7 @@ struct Note {
 };
 
 struct Measure {
-	Vector<Note> notes;
+	Upp::Vector<Note> notes;
 	int time_signature_top = 4;
 	int time_signature_bottom = 4;
 	double tempo = 120.0;
@@ -25,11 +25,11 @@ public:
 	NotationModel();
 	void AddMeasure(const Measure& measure);
 	void RemoveMeasure(int index);
-	const Vector<Measure>& GetMeasures() const { return measures; }
+	const Upp::Vector<Measure>& GetMeasures() const { return measures; }
 	void Clear();
 	
 private:
-	Vector<Measure> measures;
+	Upp::Vector<Measure> measures;
 };
 
 }

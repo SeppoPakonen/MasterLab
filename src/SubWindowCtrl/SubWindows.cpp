@@ -212,7 +212,7 @@ void SubWindows::FocusPrevious() {
 	active_pos = -1;
 }
 
-void SubWindows::SetTitle(int win_id, const String& title) {
+void SubWindows::SetTitle(int win_id, const Upp::String& title) {
 	int win_pos = wins.Find(win_id);
 	if (win_pos == -1) return;
 	SubWindow& sw = wins[win_pos];

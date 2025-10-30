@@ -29,8 +29,8 @@ void History::Push(const Operation& op) {
 	pos++;
 }
 
-Vector<String> History::GetStack() const {
-	Vector<String> result;
+Upp::Vector<Upp::String> History::GetStack() const {
+	Upp::Vector<Upp::String> result;
 	for (const auto& op : stack) {
 		result.Add(op.description);
 	}

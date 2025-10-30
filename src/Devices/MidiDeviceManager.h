@@ -7,8 +7,8 @@ using namespace Upp;
 namespace am {
 
 struct MidiDevice {
-	String name;
-	String id;
+	Upp::String name;
+	Upp::String id;
 	bool is_input;
 	bool is_output;
 };
@@ -16,19 +16,19 @@ struct MidiDevice {
 class MidiDeviceManager {
 public:
 	MidiDeviceManager();
-	const Vector<MidiDevice>& GetAvailableDevices() const { return available_devices; }
-	Vector<MidiDevice> GetInputDevices() const;
-	Vector<MidiDevice> GetOutputDevices() const;
-	bool OpenInputDevice(const String& deviceId);
-	bool OpenOutputDevice(const String& deviceId);
-	void CloseInputDevice(const String& deviceId);
-	void CloseOutputDevice(const String& deviceId);
+	const Upp::Vector<MidiDevice>& GetAvailableDevices() const { return available_devices; }
+	Upp::Vector<MidiDevice> GetInputDevices() const;
+	Upp::Vector<MidiDevice> GetOutputDevices() const;
+	bool OpenInputDevice(const Upp::String& deviceId);
+	bool OpenOutputDevice(const Upp::String& deviceId);
+	void CloseInputDevice(const Upp::String& deviceId);
+	void CloseOutputDevice(const Upp::String& deviceId);
 	void RefreshDeviceList();
 	
 private:
-	Vector<MidiDevice> available_devices;
-	Vector<String> open_input_devices;
-	Vector<String> open_output_devices;
+	Upp::Vector<MidiDevice> available_devices;
+	Upp::Vector<Upp::String> open_input_devices;
+	Upp::Vector<Upp::String> open_output_devices;
 };
 
 }

@@ -7,10 +7,10 @@ using namespace Upp;
 namespace am {
 
 struct MidiFilterPrefs : public Moveable<MidiFilterPrefs> {
-	Vector<bool> record;        // Record filter - 0-15 for MIDI channels
-	Vector<bool> thru;          // Thru filter - 0-15 for MIDI channels
-	Vector<bool> channels;      // Channels 1-16 (bit 0-15)
-	Vector<int> controllerBlockList;  // Blocked controller numbers
+	Upp::Vector<bool> record;        // Record filter - 0-15 for MIDI channels
+	Upp::Vector<bool> thru;          // Thru filter - 0-15 for MIDI channels
+	Upp::Vector<bool> channels;      // Channels 1-16 (bit 0-15)
+	Upp::Vector<int> controllerBlockList;  // Blocked controller numbers
 };
 
 class MidiFilterConfig {

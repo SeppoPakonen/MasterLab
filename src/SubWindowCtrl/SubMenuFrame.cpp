@@ -44,7 +44,7 @@ void SubMenuFrame::Paint(Draw& w) {
 		}
 		SubWindow& sub = (*wins)[i];
 		
-		String title = sub.GetTitle();
+		Upp::String title = sub.GetTitle();
 		bool active = active_pos == i;
 		Size sz = GetTextSize(title, fnt);
 		

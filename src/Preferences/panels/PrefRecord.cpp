@@ -21,7 +21,7 @@ void PrefRecord::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefRecord::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefRecord::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

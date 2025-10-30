@@ -10,7 +10,7 @@ void SubWindowCtrl::Init(SubWindows* wm, int id) {
 	this->id = id;
 }
 
-void SubWindowCtrl::Title(const String& title) {
+void SubWindowCtrl::Title(const Upp::String& title) {
 	if (wm)
 		wm->SetTitle(id, title);
 }

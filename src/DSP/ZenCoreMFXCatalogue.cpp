@@ -20,7 +20,7 @@ void ZenCoreMFXCatalogue::RegisterAlgorithm(const MFXAlgorithm& algorithm) {
     alg.parameters <<= algorithm.parameters;
 }
 
-const MFXAlgorithm* ZenCoreMFXCatalogue::GetAlgorithm(const String& id) const {
+const MFXAlgorithm* ZenCoreMFXCatalogue::GetAlgorithm(const Upp::String& id) const {
     int idx = algorithms.Find(id);
     if (idx >= 0) {
         return &algorithms[idx];
@@ -28,8 +28,8 @@ const MFXAlgorithm* ZenCoreMFXCatalogue::GetAlgorithm(const String& id) const {
     return nullptr;
 }
 
-Vector<String> ZenCoreMFXCatalogue::GetAlgorithmsByCategory(MFXCategory category) const {
-    Vector<String> result;
+Upp::Vector<Upp::String> ZenCoreMFXCatalogue::GetAlgorithmsByCategory(MFXCategory category) const {
+    Upp::Vector<Upp::String> result;
     for (int i = 0; i < algorithms.GetCount(); i++) {
         if (algorithms[i].category == category) {
             result.Add(algorithms.GetKey(i));
@@ -38,7 +38,7 @@ Vector<String> ZenCoreMFXCatalogue::GetAlgorithmsByCategory(MFXCategory category
     return result;
 }
 
-bool ZenCoreMFXCatalogue::SupportsCombination(const String& id) const {
+bool ZenCoreMFXCatalogue::SupportsCombination(const Upp::String& id) const {
     int idx = algorithms.Find(id);
     if (idx >= 0) {
         return algorithms[idx].supports_combination;
@@ -46,9 +46,9 @@ bool ZenCoreMFXCatalogue::SupportsCombination(const String& id) const {
     return false;
 }
 
-Vector<MFXCategory> ZenCoreMFXCatalogue::GetCategories() const {
-    Vector<MFXCategory> categories;
-    Vector<bool> seen_category(9, false); // Assuming 9 categories based on enum
+Upp::Vector<MFXCategory> ZenCoreMFXCatalogue::GetCategories() const {
+    Upp::Vector<MFXCategory> categories;
+    Upp::Vector<bool> seen_category(9, false); // Assuming 9 categories based on enum
     
     for (int i = 0; i < algorithms.GetCount(); i++) {
         MFXCategory cat = algorithms[i].category;
@@ -60,7 +60,7 @@ Vector<MFXCategory> ZenCoreMFXCatalogue::GetCategories() const {
     return categories;
 }
 
-ValueMap ZenCoreMFXCatalogue::GetMetadata(const String& id) const {
+ValueMap ZenCoreMFXCatalogue::GetMetadata(const Upp::String& id) const {
     ValueMap metadata;
     int idx = algorithms.Find(id);
     if (idx >= 0) {
@@ -72,7 +72,7 @@ ValueMap ZenCoreMFXCatalogue::GetMetadata(const String& id) const {
         metadata.Set("supports_combination", alg.supports_combination);
         
         ValueArray params;
-        for (const String& param : alg.parameters) {
+        for (const Upp::String& param : alg.parameters) {
             params.Add(param);
         }
         metadata.Set("parameters", params);

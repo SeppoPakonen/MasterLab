@@ -14,7 +14,7 @@ void PrefMIDI::Load(const PreferencesModel& model) {
 	// Load data from model to UI
 }
 
-void PrefMIDI::Store(PreferencesModel& model, Vector<bool>& changed) {
+void PrefMIDI::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// Store UI data to model
 }
 

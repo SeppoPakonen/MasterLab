@@ -9,11 +9,11 @@ namespace am {
 class Backup {
 public:
 	bool CreateProjectBackup();
-	bool CreateBackup(const String& projectPath, const String& backupPath);
+	bool CreateBackup(const Upp::String& projectPath, const Upp::String& backupPath);
 	void Rotate(int limit);  // Remove old backups to keep only 'limit' number
 	
 private:
-	String GenerateBackupPath(const String& originalPath);
+	Upp::String GenerateBackupPath(const Upp::String& originalPath);
 };
 
 }

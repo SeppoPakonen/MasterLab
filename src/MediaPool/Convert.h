@@ -9,12 +9,12 @@ namespace am {
 class Convert {
 public:
 	Convert();
-	bool ConvertMedia(const String& sourcePath, const String& destPath);
-	void SetTargetFormat(const String& format);
-	String GetTargetFormat() const { return target_format; }
+	bool ConvertMedia(const Upp::String& sourcePath, const Upp::String& destPath);
+	void SetTargetFormat(const Upp::String& format);
+	Upp::String GetTargetFormat() const { return target_format; }
 	
 private:
-	String target_format;
+	Upp::String target_format;
 };
 
 }

@@ -65,7 +65,7 @@ void VstHostPrefsManager::ApplyToVstHost(class PluginManager& pluginManager) {
 	LOG("Delay comp threshold: " + DblStr(globalPrefs.delayCompThresholdMs) + " ms");
 	LOG("Export warnings as text: " << (globalPrefs.exportWarningsAsText ? "yes" : "no"));
 	
-	String pannerStr;
+	Upp::String pannerStr;
 	switch (globalPrefs.defaultPanner) {
 		case StereoPannerType::Dual: pannerStr = "Dual"; break;
 		case StereoPannerType::Combined: pannerStr = "Combined"; break;
@@ -74,7 +74,7 @@ void VstHostPrefsManager::ApplyToVstHost(class PluginManager& pluginManager) {
 	LOG("Default panner: " + pannerStr);
 	LOG("Link send routing panners: " << (globalPrefs.linkSendRoutingPanners ? "yes" : "no"));
 	
-	String autoMonStr;
+	Upp::String autoMonStr;
 	switch (globalPrefs.autoMon) {
 		case AutoMonType::Manual: autoMonStr = "Manual"; break;
 		case AutoMonType::WhileRecordEnabled: autoMonStr = "While Record Enabled"; break;

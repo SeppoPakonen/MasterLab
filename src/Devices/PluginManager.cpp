@@ -4,7 +4,7 @@ namespace am {
 PluginManager::PluginManager() {
 	// Initialize with common plugin paths
 	AddPluginPath(GetExeFolder() + "/VST");
-	AddPluginPath(GetHomeDirFile() + "/VST");
+	AddPluginPath(GetHomeDirFile("") + "/VST");
 }
 
 void PluginManager::ScanForPlugins() {
@@ -13,29 +13,32 @@ void PluginManager::ScanForPlugins() {
 	// This would scan plugin_paths for VST, LV2, etc. plugins
 }
 
-Vector<PluginInfo> PluginManager::GetPluginsByType(PluginType type) const {
-	Vector<PluginInfo> result;
+Upp::Vector<PluginInfo> PluginManager::GetPluginsByType(PluginType type) const {
+	Upp::Vector<PluginInfo> result;
 	for(const auto& plugin : available_plugins) {
 		if(plugin.type == type) result.Add(plugin);
 	}
 	return result;
 }
 
-PluginInfo PluginManager::GetPlugin(const String& name) const {
+PluginInfo PluginManager::GetPlugin(const Upp::String& name) const {
 	for(const auto& plugin : available_plugins) {
 		if(plugin.name == name) return plugin;
 	}
 	return PluginInfo();
 }
 
-void PluginManager::AddPluginPath(const String& path) {
-	if(plugin_paths.Find(path) < 0) {
+void PluginManager::AddPluginPath(const Upp::String& path) {
+	// Use FindIndex instead of Find
+	int index = plugin_paths.FindIndex(path);
+	if(index < 0) {
 		plugin_paths.Add(path);
 	}
 }
 
-void PluginManager::RemovePluginPath(const String& path) {
-	int pos = plugin_paths.Find(path);
+void PluginManager::RemovePluginPath(const Upp::String& path) {
+	// Use FindIndex instead of Find
+	int pos = plugin_paths.FindIndex(path);
 	if(pos >= 0) {
 		plugin_paths.Remove(pos);
 	}

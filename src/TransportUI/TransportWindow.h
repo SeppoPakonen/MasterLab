@@ -29,9 +29,9 @@ public:
 	typedef RecordingModePane CLASSNAME;
 	RecordingModePane();
 
-	void SetLinearModeOptions(const Vector<String>& options);
-	void SetCycleModeOptions(const Vector<String>& options);
-	void SetState(const String& linear, const String& cycle, bool autoQuantize);
+	void SetLinearModeOptions(const Upp::Vector<Upp::String>& options);
+	void SetCycleModeOptions(const Upp::Vector<Upp::String>& options);
+	void SetState(const Upp::String& linear, const Upp::String& cycle, bool autoQuantize);
 
 private:
 	DropList linearMode;
@@ -44,9 +44,9 @@ public:
 	typedef LocatorPane CLASSNAME;
 	LocatorPane();
 
-	void SetCaption(const String& caption);
-	void SetLocatorTime(const String& time);
-	void SetRollOffset(const String& rollText);
+	void SetCaption(const Upp::String& caption);
+	void SetLocatorTime(const Upp::String& time);
+	void SetRollOffset(const Upp::String& rollText);
 	void SetPunchEnabled(bool enabled);
 
 private:
@@ -62,9 +62,9 @@ public:
 	typedef TimeDisplayPane CLASSNAME;
 	TimeDisplayPane();
 
-	void SetPrimaryFormat(const String& format);
-	void SetPrimaryTime(const String& value);
-	void SetSecondaryTime(const String& value);
+	void SetPrimaryFormat(const Upp::String& format);
+	void SetPrimaryTime(const Upp::String& value);
+	void SetSecondaryTime(const Upp::String& value);
 	void SetSliderPosition(int position, int total);
 
 private:
@@ -95,7 +95,7 @@ public:
 	TempoSyncPane();
 
 	void SetMetronome(bool click, bool precount);
-	void SetTempoState(bool tempoTrack, const String& signature, const String& tempoValue);
+	void SetTempoState(bool tempoTrack, const Upp::String& signature, const Upp::String& tempoValue);
 	void SetSyncState(bool externalSync);
 
 private:
@@ -128,7 +128,7 @@ public:
 	ActivityMetersPane();
 
 	void SetMidiActivity(int inLevel, int outLevel);
-	void SetAudioActivity(const Vector<int>& channels, const Vector<bool>& clipFlags);
+	void SetAudioActivity(const Upp::Vector<int>& channels, const Upp::Vector<bool>& clipFlags);
 	void Layout() override;
 
 private:
@@ -180,19 +180,19 @@ public:
 
 	void SetAlwaysOnTop(bool topmost);
 	void SetUsageMeters(double asioLoad, double diskLoad, bool asioOverload, bool diskOverload);
-	void SetRecordingModes(const String& linear, const Vector<String>& linearOptions,
-	                      const String& cycle, const Vector<String>& cycleOptions,
+	void SetRecordingModes(const Upp::String& linear, const Upp::Vector<Upp::String>& linearOptions,
+	                      const Upp::String& cycle, const Upp::Vector<Upp::String>& cycleOptions,
 	                      bool autoQuantize);
-	void SetLeftLocator(const String& time, const String& preRoll, bool punchIn);
-	void SetRightLocator(const String& time, const String& postRoll, bool punchOut);
-	void SetPrimaryTime(const String& primary, const String& format, const String& secondary);
+	void SetLeftLocator(const Upp::String& time, const Upp::String& preRoll, bool punchIn);
+	void SetRightLocator(const Upp::String& time, const Upp::String& postRoll, bool punchOut);
+	void SetPrimaryTime(const Upp::String& primary, const Upp::String& format, const Upp::String& secondary);
 	void SetSlider(int position, int total);
 	void SetTransportState(bool cycle, bool playing, bool recording);
-	void SetTempoState(bool tempoTrack, const String& signature, const String& tempoValue);
+	void SetTempoState(bool tempoTrack, const Upp::String& signature, const Upp::String& tempoValue);
 	void SetSyncState(bool externalSync);
-	void SetMarkers(int count, const Vector<bool>& active);
+	void SetMarkers(int count, const Upp::Vector<bool>& active);
 	void SetMidiActivity(int inLevel, int outLevel);
-	void SetAudioActivity(const Vector<int>& channels, const Vector<bool>& clipFlags);
+	void SetAudioActivity(const Upp::Vector<int>& channels, const Upp::Vector<bool>& clipFlags);
 	void SetMasterGain(double gain, bool expanded);
 	void ToggleVirtualKeyboard(bool showPianoMode);
 	void Layout() override;

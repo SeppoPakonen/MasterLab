@@ -15,10 +15,10 @@ public:
 	void OpenForumSite();
 	
 private:
-	String help_url = "https://masterlab.example.com/help";
-	String support_url = "https://masterlab.example.com/support";
-	String updates_url = "https://masterlab.example.com/updates";
-	String forum_url = "https://masterlab.example.com/forum";
+	Upp::String help_url = "https://masterlab.example.com/help";
+	Upp::String support_url = "https://masterlab.example.com/support";
+	Upp::String updates_url = "https://masterlab.example.com/updates";
+	Upp::String forum_url = "https://masterlab.example.com/forum";
 };
 
 }

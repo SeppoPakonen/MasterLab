@@ -7,13 +7,13 @@ using namespace Upp;
 namespace DSP {
 
 struct Preset : public Moveable<Preset> {
-    String id;
-    String name;
-    String description;
+    Upp::String id;
+    Upp::String name;
+    Upp::String description;
     ValueMap parameters;  // Map of parameter names to values
     
     Preset() {}
-    Preset(const String& preset_id, const String& preset_name) 
+    Preset(const Upp::String& preset_id, const Upp::String& preset_name) 
         : id(preset_id), name(preset_name) {}
 };
 
@@ -25,25 +25,25 @@ public:
     virtual ~PresetManager();
     
     // Load a preset by ID
-    bool LoadPreset(const String& id, ParameterSet& params);
+    bool LoadPreset(const Upp::String& id, ParameterSet& params);
     
     // Store a preset
     bool StorePreset(const Preset& preset);
     
     // Enumerate all available presets in the library
-    Vector<String> EnumerateLibrary() const;
+    Upp::Vector<Upp::String> EnumerateLibrary() const;
     
     // Delete a preset
-    bool DeletePreset(const String& id);
+    bool DeletePreset(const Upp::String& id);
     
     // Get preset by ID
-    const Preset* GetPreset(const String& id) const;
+    const Preset* GetPreset(const Upp::String& id) const;
     
     // Bridge to automation system
     void ConnectToAutomation(ParameterSet& params);
     
 private:
-    VectorMap<String, Preset> presets;
+    VectorMap<Upp::String, Preset> presets;
 };
 
 }

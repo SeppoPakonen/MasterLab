@@ -21,10 +21,10 @@ void MeterTheme::ClearMarkers() {
 
 void MeterTheme::SetupDefaultMarkers() {
 	// Set up default markers: 100% red, 75% yellow, 30% green, 0% blue
-	MeterMarker m1 = { 1.0, Color(200, 50, 50) };      // 100% - Wine red
-	MeterMarker m2 = { 0.75, Color(255, 255, 100) };   // 75% - Light yellow
-	MeterMarker m3 = { 0.3, Color(100, 255, 100) };    // 30% - Light green
-	MeterMarker m4 = { 0.0, Color(100, 150, 255) };    // 0% - Light blue
+	MeterMarker m1(1.0, Color(200, 50, 50));      // 100% - Wine red
+	MeterMarker m2(0.75, Color(255, 255, 100));   // 75% - Light yellow
+	MeterMarker m3(0.3, Color(100, 255, 100));    // 30% - Light green
+	MeterMarker m4(0.0, Color(100, 150, 255));    // 0% - Light blue
 
 	markers.Clear();
 	markers.Add(m1);

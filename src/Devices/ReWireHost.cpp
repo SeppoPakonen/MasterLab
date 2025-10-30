@@ -5,10 +5,12 @@ ReWireHost::ReWireHost() {
 	RefreshAvailableApps();
 }
 
-bool ReWireHost::ConnectTo(const String& appName) {
+bool ReWireHost::ConnectTo(const Upp::String& appName) {
 	LOG("Connecting to ReWire app: " + appName);
 	// Stub - implement actual ReWire connection
-	if(available_apps.Find(appName) >= 0) {
+	// Use FindIndex instead of Find
+	int index = available_apps.FindIndex(appName);
+	if(index >= 0) {
 		connected = true;
 		connected_app = appName;
 		return true;
