@@ -20,3 +20,6 @@ You either:
 - BitSet is implemented as Bits in U++
 - There's no Row or ModKeys type in U++
 - ArrayCtrl rows are edited directly with functions
+
+### Image Placeholders
+For TreeCtrl items and other UI elements requiring images, use `CtrlImg::smallright()` which provides a proper U++ Image object as a placeholder.
