@@ -1,6 +1,8 @@
 #include "Preferences.h"
 #include "KeyCommandsDlg.h"
 #include "WithPresetsLayout.h"
+#include <CtrlLib/CtrlLib.h>
+// using namespace Upp;  // Removed to avoid namespace conflicts
 
 namespace am {
 
@@ -65,83 +67,98 @@ void KeyCommandsDlg::RefreshTree() {
 	// Populate the tree with command categories
 	// In U++, we need to use integer IDs for tree nodes
 	int file_node = functions_tree.Add(0); // Root node for "File"
-	functions_tree.SetNodeText(file_node, "File");
+	functions_tree.SetLabel(file_node, "File");
 	
-	functions_tree.Add(file_node, Value(), "New Project");
-	functions_tree.Add(file_node, Value(), "Open...");
-	functions_tree.Add(file_node, Value(), "Save");
-	functions_tree.Add(file_node, Value(), "Save As...");
-	functions_tree.Add(file_node, Value(), "Close");
+	int new_project_node = functions_tree.Add(file_node);
+	functions_tree.SetLabel(new_project_node, "New Project");
+	int open_node = functions_tree.Add(file_node);
+	functions_tree.SetLabel(open_node, "Open...");
+	int save_node = functions_tree.Add(file_node);
+	functions_tree.SetLabel(save_node, "Save");
+	int save_as_node = functions_tree.Add(file_node);
+	functions_tree.SetLabel(save_as_node, "Save As...");
+	int close_node = functions_tree.Add(file_node);
+	functions_tree.SetLabel(close_node, "Close");
 	
 	int edit_node = functions_tree.Add(0); // Root node for "Edit"
-	functions_tree.SetNodeText(edit_node, "Edit");
+	functions_tree.SetLabel(edit_node, "Edit");
 	
-	functions_tree.Add(edit_node, Value(), "Undo");
-	functions_tree.Add(edit_node, Value(), "Redo");
-	functions_tree.Add(edit_node, Value(), "Cut");
-	functions_tree.Add(edit_node, Value(), "Copy");
-	functions_tree.Add(edit_node, Value(), "Paste");
-	functions_tree.Add(edit_node, Value(), "Delete");
+	int undo_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(undo_node, "Undo");
+	int redo_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(redo_node, "Redo");
+	int cut_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(cut_node, "Cut");
+	int copy_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(copy_node, "Copy");
+	int paste_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(paste_node, "Paste");
+	int delete_node = functions_tree.Add(edit_node);
+	functions_tree.SetLabel(delete_node, "Delete");
 	
 	int transport_node = functions_tree.Add(0); // Root node for "Transport"
-	functions_tree.SetNodeText(transport_node, "Transport");
+	functions_tree.SetLabel(transport_node, "Transport");
 	
-	functions_tree.Add(transport_node, Value(), "Play");
-	functions_tree.Add(transport_node, Value(), "Stop");
-	functions_tree.Add(transport_node, Value(), "Record");
+	int play_node = functions_tree.Add(transport_node);
+	functions_tree.SetLabel(play_node, "Play");
+	int stop_node = functions_tree.Add(transport_node);
+	functions_tree.SetLabel(stop_node, "Stop");
+	int record_node = functions_tree.Add(transport_node);
+	functions_tree.SetLabel(record_node, "Record");
 	
 	int preferences_node = functions_tree.Add(0); // Root node for "Preferences"
-	functions_tree.SetNodeText(preferences_node, "Preferences");
+	functions_tree.SetLabel(preferences_node, "Preferences");
 	
-	functions_tree.Add(preferences_node, Value(), "Preferences...");
+	int prefs_node = functions_tree.Add(preferences_node);
+	functions_tree.SetLabel(prefs_node, "Preferences...");
 }
 
 void KeyCommandsDlg::OnTreeSel() {
 	// When a function is selected in the tree, update the right panel
-	LOG("Tree selection changed");
+	Upp::LOG("Tree selection changed");
 	// Implementation would update the keys array with shortcuts for the selected function
 }
 
 void KeyCommandsDlg::OnAssign() {
 	// Assign the key in key_input to the currently selected function
-	LOG("Assigning key: " + key_input.GetData());
+	Upp::LOG("Assigning key: " + key_input.GetData());
 	// Implementation would assign the key to the function and update the UI
 }
 
 void KeyCommandsDlg::OnDelete() {
 	// Delete the selected shortcut
-	LOG("Deleting selected key");
+	Upp::LOG("Deleting selected key");
 	// Implementation would remove the selected key from the array
 }
 
 void KeyCommandsDlg::OnPresetSel() {
 	// Load the selected preset
-	LOG("Loading preset");
+	Upp::LOG("Loading preset");
 }
 
 void KeyCommandsDlg::OnPresetSave() {
 	// Save the current key configuration as a preset
-	LOG("Saving preset");
+	Upp::LOG("Saving preset");
 }
 
 void KeyCommandsDlg::OnPresetOpen() {
 	// Open the selected preset
-	LOG("Opening preset");
+	Upp::LOG("Opening preset");
 }
 
 void KeyCommandsDlg::OnPresetDelete() {
 	// Delete the selected preset
-	LOG("Deleting preset");
+	Upp::LOG("Deleting preset");
 }
 
 void KeyCommandsDlg::OnShowMacros() {
 	// Toggle the visibility of the macro section
-	LOG("Toggling macro section");
+	Upp::LOG("Toggling macro section");
 }
 
 void KeyCommandsDlg::OnResetAll() {
 	// Reset all key bindings to defaults
-	LOG("Resetting all key bindings to defaults");
+	Upp::LOG("Resetting all key bindings to defaults");
 	key_commands.LoadCommands(); // Reload defaults
 	RefreshTree();
 }
@@ -149,17 +166,17 @@ void KeyCommandsDlg::OnResetAll() {
 void KeyCommandsDlg::OnOK() {
 	// Save current configuration and close
 	DataOut();
-	OK();
+	Upp::OK();
 }
 
 void KeyCommandsDlg::OnCancel() {
 	// Close without saving
-	Cancel();
+	Upp::Cancel();
 }
 
 void KeyCommandsDlg::OnHelp() {
 	// Show help
-	LOG("Showing help");
+	Upp::LOG("Showing help");
 }
 
 }

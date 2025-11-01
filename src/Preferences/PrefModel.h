@@ -761,7 +761,7 @@ struct VariAudioPrefs : public Moveable<VariAudioPrefs> {
 	}
 };
 
-class PreferencesModel {
+class PreferencesModel : public Moveable<PreferencesModel> {
 public:
 	PreferencesModel();
 	

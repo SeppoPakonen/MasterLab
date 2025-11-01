@@ -3,7 +3,7 @@
 
 #include <CtrlLib/CtrlLib.h>
 #include "PrefModel.h"
-using namespace Upp;
+// using namespace Upp;  // Removed to avoid namespace conflicts
 
 namespace am {
 
@@ -21,7 +21,7 @@ public:
 	
 protected:
 	// Helper methods for creating common controls
-	StaticRect CreateColorRect(const Color& color);
+	StaticRect* CreateColorRect(const Color& color);
 	Ctrl& CreateLabeledSlider(const Upp::String& label, int min, int max, int default_value);
 	Ctrl& CreateLabeledOption(const Upp::String& label, bool default_value);
 	Ctrl& CreateLabeledDropList(const Upp::String& label, const Upp::Vector<Upp::String>& options, int default_index);
@@ -55,7 +55,7 @@ private:
 	} panel_class##_registrar;
 
 // Preference dialog implementation
-class PreferencesDlg : public WithProgressLayout<TopWindow> {
+class PreferencesDlg : public TopWindow {
 public:
 	typedef PreferencesDlg CLASSNAME;
 	PreferencesDlg();
@@ -76,16 +76,30 @@ private:
 	void OnPresetRename();
 	void OnPresetDelete();
 	
-	TreeCtrl tree;
-	Ctrl& view_holder;
+	// UI elements
+	Upp::TreeCtrl tree;
+	Upp::Splitter main_splitter;
+	Upp::ParentCtrl right_panel;
+	Upp::DropList presets_list;
+	Upp::Button preset_save_btn;
+	Upp::Button preset_rename_btn;
+	Upp::Button preset_delete_btn;
+	Upp::Button preset_open_btn;
+	Upp::Option preset_marked_only;
+	Upp::Button apply;
+	Upp::Button ok;
+	Upp::Button cancel;
+	Upp::Button defaults;
+	Upp::Button help;
+	
+	// View holder for preference panels
+	Upp::ParentCtrl view_holder;
+	
 	PreferencesPane* current_panel = nullptr;
 	PreferencesModel model;
-	Button help, defaults, apply, ok, cancel;
+	Upp::Button preset_store;
 	
-	// Preset functionality
-	DropList preset_list;
-	Button preset_store, preset_rename, preset_delete;
-	Option preset_marked_only;
+	// Preset manager
 	PreferencePresetManager preset_mgr;
 };
 
@@ -110,7 +124,8 @@ public:
 private:
 	Label label;
 	ParentCtrl content;
-	CtrlFrame& border;
+	// Removed reference member that was causing issues
+	// CtrlFrame& border;
 };
 
 class ColorRect : public Ctrl {

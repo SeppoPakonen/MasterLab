@@ -4,7 +4,7 @@
 #include <CtrlLib/CtrlLib.h>
 #include "KeyCommands.h"
 #include <ProjectMgmt/AK.h>
-using namespace Upp;
+// using namespace Upp;  // Removed to avoid namespace conflicts
 
 namespace am {
 
@@ -38,7 +38,7 @@ private:
 	
 	// Main area - horizontal splitter
 	Splitter main_splitter;
-	TreeCtrl functions_tree;     // Left side - functions
+	Upp::TreeCtrl functions_tree;     // Left side - functions
 	ParentCtrl right_panel;      // Right side - controls for shortcuts
 	
 	// Right panel controls
@@ -59,7 +59,7 @@ private:
 	
 	// Macro section - initially hidden
 	Splitter macro_splitter;
-	TreeCtrl macros_tree;        // TreeCtrl for macros
+	Upp::TreeCtrl macros_tree;        // TreeCtrl for macros
 	ParentCtrl macro_panel;      // ParentCtrl for macro controls
 	Button new_macro_btn;
 	Button add_command_btn;
