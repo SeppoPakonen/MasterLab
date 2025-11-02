@@ -9,5 +9,6 @@ using namespace Upp;
 #include "LayoutEngine.h"
 #include "NotationModel.h"
 #include "Functions.h"
+#include "ScoreProject.h"
 
 #endif

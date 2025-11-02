@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "MIDI/MIDI.h"
+#include "AudioCore/AudioCore.h"
+
+// Main application code for MIDI

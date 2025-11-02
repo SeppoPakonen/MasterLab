@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Preferences/Preferences.h"
+#include "Theme/Theme.h"
+
+// Main application code for Preferences

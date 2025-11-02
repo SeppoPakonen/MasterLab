@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "ProjectMgmt/ProjectMgmt.h"
+#include "FileIO/FileIO.h"
+
+// Main application code for Project Management

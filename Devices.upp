@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Devices/Devices.h"
+#include "AudioCore/AudioCore.h"
+
+// Main application code for Devices

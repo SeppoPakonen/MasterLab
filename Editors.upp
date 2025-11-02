@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Editors/Editors.h"
+#include "UIEngine/UIEngine.h"
+
+// Main application code for Editors

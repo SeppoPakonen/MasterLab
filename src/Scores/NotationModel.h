@@ -18,6 +18,15 @@ struct Note : public Upp::Moveable<Note> {
 	Note& operator=(const Note& other) = delete;
 	Note(Note&& other) = default;
 	Note& operator=(Note&& other) = default;
+	
+	// Serialization support
+	void Jsonize(JsonIO& jio) {
+		jio
+		("pitch", pitch)
+		("start_time", start_time)
+		("duration", duration)
+		("is_rest", is_rest);
+	}
 };
 
 struct Measure : public Upp::Moveable<Measure> {
@@ -32,6 +41,15 @@ struct Measure : public Upp::Moveable<Measure> {
 	Measure& operator=(const Measure& other) = delete;
 	Measure(Measure&& other) = default;
 	Measure& operator=(Measure&& other) = default;
+	
+	// Serialization support
+	void Jsonize(JsonIO& jio) {
+		jio
+		("notes", notes)
+		("time_signature_top", time_signature_top)
+		("time_signature_bottom", time_signature_bottom)
+		("tempo", tempo);
+	}
 };
 
 class NotationModel {
@@ -41,6 +59,11 @@ public:
 	void RemoveMeasure(int index);
 	const Upp::Vector<Measure>& GetMeasures() const { return measures; }
 	void Clear();
+	
+	// Serialization support
+	void Jsonize(JsonIO& jio) {
+		jio("measures", measures);
+	}
 	
 private:
 	Upp::Vector<Measure> measures;

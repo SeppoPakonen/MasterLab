@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "VSTHost/VSTHost.h"
+#include "Devices/Devices.h"
+
+// Main application code for VST Host

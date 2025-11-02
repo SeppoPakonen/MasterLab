@@ -13,4 +13,6 @@ file
 	NotationModel.h,
 	NotationModel.cpp,
 	Functions.h,
-	Functions.cpp;
+	Functions.cpp,
+	ScoreProject.h,
+	ScoreProject.cpp;

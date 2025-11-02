@@ -928,7 +928,11 @@ void MainWindow::OnExportMusicXML() {}
 void MainWindow::OnExportOMF() {}
 void MainWindow::OnReplaceAudioInVideo() {}
 void MainWindow::OnCleanup() {}
-void MainWindow::OnPreferences() {}
+void MainWindow::OnPreferences() {
+    // Create and show the preferences dialog
+    am::PreferencesDlg dlg;
+    dlg.Execute();
+}
 void MainWindow::OnKeyCommands() {}
 void MainWindow::OnQuit() {}
 

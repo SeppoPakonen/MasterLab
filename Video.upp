@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Video/Video.h"
+#include "MediaPool/MediaPool.h"
+
+// Main application code for Video

@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "TransportPrefs/TransportPrefs.h"
+#include "Preferences/Preferences.h"
+
+// Main application code for Transport Preferences

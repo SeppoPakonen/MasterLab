@@ -6,9 +6,8 @@ NotationModel::NotationModel() {
 }
 
 void NotationModel::AddMeasure(const Measure& measure) {
-	// Measure has deleted copy constructor, so we can't copy it
+	// For now, we'll create a default measure since we can't copy the Measure due to deleted copy constructor
 	// In a real implementation, this would need to be redesigned
-	// For now, we'll just create a default measure
 	measures.Add(Measure());
 }
 

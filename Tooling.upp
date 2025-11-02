@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Tooling/Tooling.h"
+#include "Editors/Editors.h"
+
+// Main application code for Tooling

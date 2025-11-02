@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "FileIO/FileIO.h"
+#include "ProjectMgmt/ProjectMgmt.h"
+
+// Main application code for File I/O

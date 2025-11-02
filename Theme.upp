@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "Theme/Theme.h"
+#include "UIEngine/UIEngine.h"
+
+// Main application code for Theme

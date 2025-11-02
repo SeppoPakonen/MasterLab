@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "MediaPool/MediaPool.h"
+#include "Browser/Browser.h"
+
+// Main application code for Media Pool

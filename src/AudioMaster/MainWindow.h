@@ -10,6 +10,7 @@
 #include <HelpAbout/HelpAbout.h>
 #include <Math/Math.h>
 #include <MIDI/MIDI.h>
+#include <Preferences/Preferences.h>
 #include <ProjectMgmt/ProjectMgmt.h>
 #include <ProjectWindow/ProjectWindow.h>
 #include <ProjectSetup/ProjectSetup.h>

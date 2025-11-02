@@ -1,0 +1,7 @@
+GUI_APP_MAIN
+
+#include "App.h"
+#include "TransportUI/TransportUI.h"
+#include "AudioCore/AudioCore.h"
+
+// Main application code for Transport UI
