@@ -36,14 +36,14 @@ class PanelRegistry {
 public:
 	static PanelRegistry& Instance();
 	
-	void RegisterPanel(const Upp::String& category, const Upp::String& subcategory, std::function<PreferencesPane*()> factory);
+	void RegisterPanel(const Upp::String& category, const Upp::String& subcategory, Upp::Function<PreferencesPane*()> factory);
 	Upp::Vector<Upp::String> GetCategories() const;
 	Upp::Vector<Upp::String> GetSubcategories(const Upp::String& category) const;
 	PreferencesPane* CreatePanel(const Upp::String& category, const Upp::String& subcategory) const;
 	
 private:
 	PanelRegistry() = default;
-	VectorMap<Upp::String, VectorMap<Upp::String, std::function<PreferencesPane*()>>> registry;
+	VectorMap<Upp::String, VectorMap<Upp::String, Upp::Function<PreferencesPane*()>>> registry;
 };
 
 // Registration helper macro
@@ -104,15 +104,18 @@ private:
 };
 
 // Supporting UI controls
-class Row : public Ctrl {
+class Row : public ParentCtrl {
 public:
 	typedef Row CLASSNAME;
 	Row();
+	~Row();
 	void Add(Ctrl& ctrl, int proportion = 1);
+	virtual void Layout() override;
 	
 private:
-	StaticRect bg;
-	ArrayCtrl layout;
+	void RefreshLayout();
+	Vector<Ctrl*> controls;
+	Vector<int> proportions;
 };
 
 class LabelBox : public ParentCtrl {

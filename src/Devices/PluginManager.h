@@ -23,7 +23,8 @@ struct PluginInfo : public Moveable<PluginInfo> {
 	
 	// Add explicit constructors for U++ compatibility
 	PluginInfo() = default;
-	// Note: Cannot have copy constructor because Vector<Upp::String> has deleted copy constructor
+	PluginInfo(const PluginInfo& other) = delete;
+	PluginInfo& operator=(const PluginInfo& other) = delete;
 	PluginInfo(PluginInfo&& other) = default;
 	PluginInfo& operator=(PluginInfo&& other) = default;
 };
@@ -34,7 +35,7 @@ public:
 	void ScanForPlugins();
 	const Upp::Vector<PluginInfo>& GetAvailablePlugins() const { return available_plugins; }
 	Upp::Vector<PluginInfo> GetPluginsByType(PluginType type) const;
-	PluginInfo GetPlugin(const Upp::String& name) const;
+	const PluginInfo* GetPlugin(const Upp::String& name) const;
 	void AddPluginPath(const Upp::String& path);
 	void RemovePluginPath(const Upp::String& path);
 	void RefreshPluginCache();  // Cache of discovered plugins

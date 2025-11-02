@@ -4,12 +4,6 @@
 #include <Core/Core.h>
 using namespace Upp;
 
-// Include the key definitions
-#define KEYGROUPNAME "AK"
-#define KEYNAMESPACE AKKeys
-#define KEYFILE      <ProjectMgmt/AK.key>
-#include             <CtrlLib/key_source.h>
-
 namespace am {
 
 struct CommandContext {

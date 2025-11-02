@@ -17,6 +17,10 @@ private:
 	void InitGeneralSection();
 	void InitMetersSection();
 	void InitWorkAreaSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

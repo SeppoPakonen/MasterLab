@@ -20,6 +20,10 @@ private:
 	void InitRealtimeSection();
 	void InitChaseSection();
 	void InitTimingSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

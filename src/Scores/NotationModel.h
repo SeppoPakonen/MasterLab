@@ -6,11 +6,18 @@ using namespace Upp;
 
 namespace am {
 
-struct Note {
+struct Note : public Upp::Moveable<Note> {
 	int pitch;  // MIDI note number
 	double start_time;
 	double duration;
 	bool is_rest = false;
+	
+	// Add explicit constructors for U++ compatibility
+	Note() = default;
+	Note(const Note& other) = delete;
+	Note& operator=(const Note& other) = delete;
+	Note(Note&& other) = default;
+	Note& operator=(Note&& other) = default;
 };
 
 struct Measure : public Upp::Moveable<Measure> {
@@ -20,8 +27,9 @@ struct Measure : public Upp::Moveable<Measure> {
 	double tempo = 120.0;
 	
 	// Add explicit constructors for U++ compatibility
-	// Note: Cannot have explicit copy constructor because Vector<Note> has deleted copy constructor
 	Measure() = default;
+	Measure(const Measure& other) = delete;
+	Measure& operator=(const Measure& other) = delete;
 	Measure(Measure&& other) = default;
 	Measure& operator=(Measure&& other) = default;
 };

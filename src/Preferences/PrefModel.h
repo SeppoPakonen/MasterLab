@@ -767,16 +767,27 @@ public:
 	
 	// Model access
 	AppearancePrefs& GetAppearance() { return appearance; }
+	const AppearancePrefs& GetAppearance() const { return appearance; }
 	EditingPrefs& GetEditing() { return editing; }
+	const EditingPrefs& GetEditing() const { return editing; }
 	EventDisplayPrefs& GetEventDisplay() { return event_display; }
+	const EventDisplayPrefs& GetEventDisplay() const { return event_display; }
 	GeneralPrefs& GetGeneral() { return general; }
+	const GeneralPrefs& GetGeneral() const { return general; }
 	MIDIPrefs& GetMIDI() { return midi; }
+	const MIDIPrefs& GetMIDI() const { return midi; }
 	MediaBayPrefs& GetMediaBay() { return mediabay; }
+	const MediaBayPrefs& GetMediaBay() const { return mediabay; }
 	RecordPrefs& GetRecord() { return record; }
+	const RecordPrefs& GetRecord() const { return record; }
 	ScoresPrefs& GetScores() { return scores; }
+	const ScoresPrefs& GetScores() const { return scores; }
 	TransportPrefs& GetTransport() { return transport; }
+	const TransportPrefs& GetTransport() const { return transport; }
 	VSTPrefs& GetVST() { return vst; }
+	const VSTPrefs& GetVST() const { return vst; }
 	VariAudioPrefs& GetVariAudio() { return variaudio; }
+	const VariAudioPrefs& GetVariAudio() const { return variaudio; }
 	
 	// Version for schema versioning
 	int GetVersion() const { return version; }

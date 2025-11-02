@@ -57,12 +57,43 @@ Ctrl& PreferencesPane::CreateKeyAssignRow(const Upp::String& label) {
 
 // Row implementation
 Row::Row() {
-	Add(bg);
-	Add(layout.SizePos());
+	// Constructor implementation
 }
 
 void Row::Add(Ctrl& ctrl, int proportion) {
-	layout.Add(ctrl, proportion);
+	controls.Add(&ctrl);
+	proportions.Add(proportion);
+	
+	// Add the control as a child
+	AddChild(&ctrl);
+	
+	// Update the layout
+	RefreshLayout();
+}
+
+void Row::RefreshLayout() {
+	Size sz = GetSize();
+	int total_prop = 0;
+	for(int prop : proportions) {
+		total_prop += prop;
+	}
+	
+	if(total_prop == 0) return;
+	
+	int x = 0;
+	for(int i = 0; i < controls.GetCount(); i++) {
+		int width = (sz.cx * proportions[i]) / total_prop;
+		controls[i]->SetRect(x, 0, width, sz.cy);
+		x += width;
+	}
+}
+
+void Row::Layout() {
+	RefreshLayout();
+}
+
+Row::~Row() {
+	// Destructor implementation
 }
 
 // LabelBox implementation
@@ -191,8 +222,8 @@ PanelRegistry& PanelRegistry::Instance() {
 	return instance;
 }
 
-void PanelRegistry::RegisterPanel(const Upp::String& category, const Upp::String& subcategory, std::function<PreferencesPane*()> factory) {
-	VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcategories = registry.GetAdd(category);
+void PanelRegistry::RegisterPanel(const Upp::String& category, const Upp::String& subcategory, Upp::Function<PreferencesPane*()> factory) {
+	VectorMap<Upp::String, Upp::Function<PreferencesPane*()>>& subcategories = registry.GetAdd(category);
 	subcategories.GetAdd(subcategory) = factory;
 }
 
@@ -207,7 +238,7 @@ Upp::Vector<Upp::String> PanelRegistry::GetCategories() const {
 Upp::Vector<Upp::String> PanelRegistry::GetSubcategories(const Upp::String& category) const {
 	Upp::Vector<Upp::String> subcategories;
 	if(registry.Find(category) >= 0) {
-		const VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
+		const VectorMap<Upp::String, Upp::Function<PreferencesPane*()>>& subcat_map = registry.Get(category);
 		for(int i = 0; i < subcat_map.GetCount(); i++) {
 			subcategories.Add(subcat_map.GetKey(i));
 		}
@@ -217,7 +248,7 @@ Upp::Vector<Upp::String> PanelRegistry::GetSubcategories(const Upp::String& cate
 
 PreferencesPane* PanelRegistry::CreatePanel(const Upp::String& category, const Upp::String& subcategory) const {
 	if(registry.Find(category) >= 0) {
-		const VectorMap<Upp::String, std::function<PreferencesPane*()>>& subcat_map = registry.Get(category);
+		const VectorMap<Upp::String, Upp::Function<PreferencesPane*()>>& subcat_map = registry.Get(category);
 		int idx = subcat_map.Find(subcategory);
 		if(idx >= 0) {
 			return subcat_map[idx]();
@@ -271,12 +302,12 @@ void PreferencesDlg::RefreshTree() {
 	
 	for(const Upp::String& category : categories) {
 		int cat_node = this->tree.Add(0);  // Add to root (0)
-		this->tree.SetLabel(cat_node, category);
+		this->tree.Set(cat_node, category, 0); // Use Set with text and value
 		Upp::Vector<Upp::String> subcategories = registry.GetSubcategories(category);
 		
 		for(const Upp::String& subcategory : subcategories) {
 			int subcat_node = this->tree.Add(cat_node);  // Add to category node
-			this->tree.SetLabel(subcat_node, subcategory);
+			this->tree.Set(subcat_node, subcategory, 0); // Use Set with text and value
 		}
 	}
 }
@@ -284,27 +315,31 @@ void PreferencesDlg::RefreshTree() {
 void PreferencesDlg::OnTreeSel() {
 	int node_id = this->tree.GetCursor();
 	if(node_id >= 0) {
-		// Simple implementation without using GetLabel
-		Upp::String subcategory = "Unknown";
+		Value node_data = this->tree.Get(node_id);
 		int parent_id = this->tree.GetParent(node_id);
-		Upp::String category = (parent_id >= 0) ? "Unknown" : subcategory;
 		
 		if(current_panel) {
 			// Store current panel's data before switching
 			Upp::Vector<bool> changed;
-			// current_panel->Store(model, changed); // Commented out for now
+			current_panel->Store(model, changed);
 			view_holder.Remove();
 			delete current_panel;
 			current_panel = nullptr;
 		}
 		
 		// Only try to create panel if it's a subcategory (has a parent)
-		if (parent_id >= 0) {
-			current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
-			if(current_panel) {
-				view_holder.Add(current_panel->SizePos());
-				// current_panel->Init(model); // Commented out for now
-				// current_panel->Load(model); // Commented out for now
+		if (parent_id >= 0 && !node_data.IsNull()) {
+			Value parent_data = this->tree.Get(parent_id);
+			if (!parent_data.IsNull() && node_data.Is<String>() && parent_data.Is<String>()) {
+				Upp::String category = parent_data;
+				Upp::String subcategory = node_data;
+				
+				current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
+				if(current_panel) {
+					current_panel->Init(model);
+					current_panel->Load(model);
+					view_holder.Add(current_panel->SizePos());
+				}
 			}
 		}
 	}
@@ -392,7 +427,7 @@ void PreferencesDlg::OnHelp() {
 void PreferencesDlg::OnPresetChange() {
 	int selected_index = presets_list.GetIndex();
 	if (selected_index >= 0) {
-		Upp::String selected_preset = presets_list.Get(selected_index);
+		Upp::String selected_preset = AsString(presets_list.Get());
 		if (!selected_preset.IsEmpty()) {
 			preset_mgr.ReadPreset(selected_preset, model);
 			if(current_panel) {

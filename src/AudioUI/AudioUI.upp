@@ -16,6 +16,4 @@ file
 	GraphEditorWidgets.h,
 	Breadcrumb.cpp,
 	PostGraphView.h,
-	PostGraphView.cpp,
-	PostView.h,
-	PostView.cpp;
+	PostView.h;

@@ -15,7 +15,8 @@ struct VideoDeviceInfo : public Moveable<VideoDeviceInfo> {
 	
 	// Add explicit constructors for U++ compatibility
 	VideoDeviceInfo() = default;
-	// Note: Cannot have copy constructor because Vector<Upp::String> has deleted copy constructor
+	VideoDeviceInfo(const VideoDeviceInfo& other) = default;
+	VideoDeviceInfo& operator=(const VideoDeviceInfo& other) = default;
 	VideoDeviceInfo(VideoDeviceInfo&& other) = default;
 	VideoDeviceInfo& operator=(VideoDeviceInfo&& other) = default;
 };

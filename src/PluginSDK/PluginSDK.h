@@ -121,7 +121,8 @@ struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
 	
 	// Add explicit constructors for U++ compatibility
 	ParameterDescriptor() = default;
-	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
+	ParameterDescriptor(const ParameterDescriptor& other) = default;
+	ParameterDescriptor& operator=(const ParameterDescriptor& other) = default;
 	ParameterDescriptor(ParameterDescriptor&& other) = default;
 	ParameterDescriptor& operator=(ParameterDescriptor&& other) = default;
 };

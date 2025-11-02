@@ -21,5 +21,12 @@ You either:
 - There's no Row or ModKeys type in U++
 - ArrayCtrl rows are edited directly with functions
 
+## Build Requirements
+
+### Successful Completion Criteria
+- When tasks are marked as "successfully completed", the build script (build.sh) should not produce any errors
+- All implemented features must compile without warnings or errors
+- Any claimed implementation must result in a working build
+
 ### Image Placeholders
 For TreeCtrl items and other UI elements requiring images, use `CtrlImg::smallright()` which provides a proper U++ Image object as a placeholder.

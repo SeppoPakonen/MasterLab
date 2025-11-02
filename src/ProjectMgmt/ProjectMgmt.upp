@@ -18,4 +18,5 @@ file
 	Selection.h,
 	Selection.cpp,
 	AK.h,
-	AK.key;
+	AK.key,
+	AK.cpp;

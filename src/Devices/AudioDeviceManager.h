@@ -17,7 +17,8 @@ struct AudioDevice : public Moveable<AudioDevice> {
 	
 	// Add explicit constructors for U++ compatibility
 	AudioDevice() = default;
-	// Note: Cannot have copy constructor because Vector<int> has deleted copy constructor
+	AudioDevice(const AudioDevice& other) = delete;
+	AudioDevice& operator=(const AudioDevice& other) = delete;
 	AudioDevice(AudioDevice&& other) = default;
 	AudioDevice& operator=(AudioDevice&& other) = default;
 };

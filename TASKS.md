@@ -245,6 +245,7 @@
 93. Build shared AI/groove/phrase services (`DSP::AIRecommender`, `Midi::GrooveExtractor`, `Midi::PhraseDatabase`) powering Bandmate-style suggestions across audio and MIDI stubs
 107. Scaffold `VSTConnections` UI (`VSTConnectionsCtrl`, per-tab panes, presenter) and implement `Devices::IOMatrixService`/`RoutingRepository` skeletons providing snapshots, change application, and preset hooks.
 108. Refactor `Editors::ScoreEditor` using the documented controller/toolstrip layout; introduce `ScoreEditorCtrl`, presenter wiring to `Scores::NotationDocument`, and connect to `ProjectMgmt::CommandManager`/`AudioCore::MidiPreview`.
+
 ### MEDIUM PRIORITY
 81. Create .upp files for new packages with proper uses declarations
 94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
@@ -255,10 +256,7 @@
 * Add internationalization (i18n) support
 * Design custom plugin API for third-party developers
 
-## IN PROGRESS
 
-* Organizing and prioritizing remaining TODO items in TASKS.md (Task 72-75)
-* Updating project documentation and tracking systems
 
 ## DONE
 

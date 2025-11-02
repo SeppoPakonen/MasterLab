@@ -73,7 +73,7 @@ public:
 	~PostViewWrapper();
 	
 private:
-	am::ui::PostView postView; // Pointer to avoid needing full definition in header
+	am::ui::PostView* postView; // Pointer to avoid needing full definition in header
 	void InitLayout() override;
 };
 
@@ -83,7 +83,7 @@ public:
 	~PostGraphViewWrapper();
 	
 private:
-	am::ui::PostGraphView postGraphView; // Pointer to avoid needing full definition in header
+	am::ui::PostGraphView* postGraphView; // Pointer to avoid needing full definition in header
 	void InitLayout() override;
 };
 
