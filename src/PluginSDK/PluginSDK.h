@@ -5,6 +5,7 @@
 
 namespace PluginSDK {
 
+// Simple POD-like structs that are trivially relocatable
 struct AudioConfig : public Upp::Moveable<AudioConfig> {
 	int sample_rate = 44100;
 	int block_size = 0;
@@ -24,6 +25,9 @@ struct AudioBus : public Upp::Moveable<AudioBus> {
 	float** channels = nullptr;
 	int channel_count = 0;
 	int frame_count = 0;
+
+	bool IsValid() const;
+	float* GetChannel(int index) const;
 	
 	// Add explicit constructors for U++ compatibility
 	AudioBus() = default;
@@ -31,9 +35,6 @@ struct AudioBus : public Upp::Moveable<AudioBus> {
 	AudioBus(AudioBus&& other) = default;
 	AudioBus& operator=(const AudioBus& other) = default;
 	AudioBus& operator=(AudioBus&& other) = default;
-
-	bool IsValid() const;
-	float* GetChannel(int index) const;
 };
 
 struct TransportInfo : public Upp::Moveable<TransportInfo> {
@@ -53,15 +54,14 @@ struct TransportInfo : public Upp::Moveable<TransportInfo> {
 struct ModulationBus : public Upp::Moveable<ModulationBus> {
 	Upp::Vector<float*> lanes;
 	int lane_length = 0;
+
+	void Clear();
 	
 	// Add explicit constructors for U++ compatibility
 	ModulationBus() = default;
-	ModulationBus(const ModulationBus& other) = default;
+	// Note: Cannot have copy constructor because Vector<float*> has deleted copy constructor
 	ModulationBus(ModulationBus&& other) = default;
-	ModulationBus& operator=(const ModulationBus& other) = default;
 	ModulationBus& operator=(ModulationBus&& other) = default;
-
-	void Clear();
 };
 
 struct NoteEvent : public Upp::Moveable<NoteEvent> {
@@ -106,9 +106,8 @@ struct ProcessContext : public Upp::Moveable<ProcessContext> {
 	
 	// Add explicit constructors for U++ compatibility
 	ProcessContext() = default;
-	ProcessContext(const ProcessContext& other) = default;
+	// Note: Cannot have copy constructor because it contains pointers to Vector objects
 	ProcessContext(ProcessContext&& other) = default;
-	ProcessContext& operator=(const ProcessContext& other) = default;
 	ProcessContext& operator=(ProcessContext&& other) = default;
 };
 
@@ -122,9 +121,8 @@ struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
 	
 	// Add explicit constructors for U++ compatibility
 	ParameterDescriptor() = default;
-	ParameterDescriptor(const ParameterDescriptor& other) = default;
+	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
 	ParameterDescriptor(ParameterDescriptor&& other) = default;
-	ParameterDescriptor& operator=(const ParameterDescriptor& other) = default;
 	ParameterDescriptor& operator=(ParameterDescriptor&& other) = default;
 };
 
@@ -164,9 +162,8 @@ public:
 		
 		// Add explicit constructors for U++ compatibility
 		Edge() = default;
-		Edge(const Edge& other) = default;
+		// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
 		Edge(Edge&& other) = default;
-		Edge& operator=(const Edge& other) = default;
 		Edge& operator=(Edge&& other) = default;
 	};
 
@@ -184,9 +181,8 @@ struct GraphNode : public Upp::Moveable<GraphNode> {
 	
 	// Add explicit constructors for U++ compatibility
 	GraphNode() = default;
-	GraphNode(const GraphNode& other) = default;
+	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
 	GraphNode(GraphNode&& other) = default;
-	GraphNode& operator=(const GraphNode& other) = default;
 	GraphNode& operator=(GraphNode&& other) = default;
 };
 
@@ -199,23 +195,21 @@ struct GraphEdge : public Upp::Moveable<GraphEdge> {
 	
 	// Add explicit constructors for U++ compatibility
 	GraphEdge() = default;
-	GraphEdge(const GraphEdge& other) = default;
+	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
 	GraphEdge(GraphEdge&& other) = default;
-	GraphEdge& operator=(const GraphEdge& other) = default;
 	GraphEdge& operator=(GraphEdge&& other) = default;
 };
 
 struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
 	Upp::Vector<GraphNode> nodes;
 	Upp::Vector<GraphEdge> edges;
+	void Clear();
 	
 	// Add explicit constructors for U++ compatibility
 	GraphVisualization() = default;
-	GraphVisualization(const GraphVisualization& other) = default;
+	// Note: Cannot have copy constructor because Vector<GraphNode> and Vector<GraphEdge> have deleted copy constructors
 	GraphVisualization(GraphVisualization&& other) = default;
-	GraphVisualization& operator=(const GraphVisualization& other) = default;
 	GraphVisualization& operator=(GraphVisualization&& other) = default;
-	void Clear();
 };
 
 class AnalyzerTap {

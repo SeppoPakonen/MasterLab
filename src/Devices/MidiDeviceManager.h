@@ -6,11 +6,18 @@ using namespace Upp;
 
 namespace am {
 
-struct MidiDevice {
+struct MidiDevice : public Moveable<MidiDevice> {
 	Upp::String name;
 	Upp::String id;
 	bool is_input;
 	bool is_output;
+	
+	// Add explicit constructors for U++ compatibility
+	MidiDevice() = default;
+	MidiDevice(const MidiDevice& other) = default;
+	MidiDevice(MidiDevice&& other) = default;
+	MidiDevice& operator=(const MidiDevice& other) = default;
+	MidiDevice& operator=(MidiDevice&& other) = default;
 };
 
 class MidiDeviceManager {

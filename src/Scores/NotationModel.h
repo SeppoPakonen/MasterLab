@@ -13,11 +13,17 @@ struct Note {
 	bool is_rest = false;
 };
 
-struct Measure {
+struct Measure : public Upp::Moveable<Measure> {
 	Upp::Vector<Note> notes;
 	int time_signature_top = 4;
 	int time_signature_bottom = 4;
 	double tempo = 120.0;
+	
+	// Add explicit constructors for U++ compatibility
+	// Note: Cannot have explicit copy constructor because Vector<Note> has deleted copy constructor
+	Measure() = default;
+	Measure(Measure&& other) = default;
+	Measure& operator=(Measure&& other) = default;
 };
 
 class NotationModel {

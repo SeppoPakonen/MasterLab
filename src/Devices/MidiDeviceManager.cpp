@@ -24,8 +24,14 @@ Upp::Vector<MidiDevice> MidiDeviceManager::GetOutputDevices() const {
 bool MidiDeviceManager::OpenInputDevice(const Upp::String& deviceId) {
 	LOG("Opening MIDI input device: " + deviceId);
 	// Stub - implement actual device opening
-	// Use FindIndex instead of Find
-	int index = open_input_devices.FindIndex(deviceId);
+	// Use FindIndex method that actually exists in U++
+	int index = -1;
+	for(int i = 0; i < open_input_devices.GetCount(); i++) {
+		if(open_input_devices[i] == deviceId) {
+			index = i;
+			break;
+		}
+	}
 	if(index < 0) {
 		open_input_devices.Add(deviceId);
 	}
@@ -35,8 +41,14 @@ bool MidiDeviceManager::OpenInputDevice(const Upp::String& deviceId) {
 bool MidiDeviceManager::OpenOutputDevice(const Upp::String& deviceId) {
 	LOG("Opening MIDI output device: " + deviceId);
 	// Stub - implement actual device opening
-	// Use FindIndex instead of Find
-	int index = open_output_devices.FindIndex(deviceId);
+	// Use FindIndex method that actually exists in U++
+	int index = -1;
+	for(int i = 0; i < open_output_devices.GetCount(); i++) {
+		if(open_output_devices[i] == deviceId) {
+			index = i;
+			break;
+		}
+	}
 	if(index < 0) {
 		open_output_devices.Add(deviceId);
 	}
@@ -46,8 +58,14 @@ bool MidiDeviceManager::OpenOutputDevice(const Upp::String& deviceId) {
 void MidiDeviceManager::CloseInputDevice(const Upp::String& deviceId) {
 	LOG("Closing MIDI input device: " + deviceId);
 	// Stub - implement actual device closing
-	// Use FindIndex instead of Find
-	int pos = open_input_devices.FindIndex(deviceId);
+	// Use FindIndex method that actually exists in U++
+	int pos = -1;
+	for(int i = 0; i < open_input_devices.GetCount(); i++) {
+		if(open_input_devices[i] == deviceId) {
+			pos = i;
+			break;
+		}
+	}
 	if(pos >= 0) {
 		open_input_devices.Remove(pos);
 	}
@@ -56,8 +74,14 @@ void MidiDeviceManager::CloseInputDevice(const Upp::String& deviceId) {
 void MidiDeviceManager::CloseOutputDevice(const Upp::String& deviceId) {
 	LOG("Closing MIDI output device: " + deviceId);
 	// Stub - implement actual device closing
-	// Use FindIndex instead of Find
-	int pos = open_output_devices.FindIndex(deviceId);
+	// Use FindIndex method that actually exists in U++
+	int pos = -1;
+	for(int i = 0; i < open_output_devices.GetCount(); i++) {
+		if(open_output_devices[i] == deviceId) {
+			pos = i;
+			break;
+		}
+	}
 	if(pos >= 0) {
 		open_output_devices.Remove(pos);
 	}

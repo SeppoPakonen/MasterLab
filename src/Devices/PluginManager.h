@@ -13,13 +13,19 @@ enum PluginType {
 	CLAP
 };
 
-struct PluginInfo {
+struct PluginInfo : public Moveable<PluginInfo> {
 	Upp::String name;
 	Upp::String vendor;
 	Upp::String path;
 	PluginType type;
 	int version;
 	Upp::Vector<Upp::String> parameters;  // Names of parameters
+	
+	// Add explicit constructors for U++ compatibility
+	PluginInfo() = default;
+	// Note: Cannot have copy constructor because Vector<Upp::String> has deleted copy constructor
+	PluginInfo(PluginInfo&& other) = default;
+	PluginInfo& operator=(PluginInfo&& other) = default;
 };
 
 class PluginManager {

@@ -6,13 +6,21 @@ AudioDeviceManager::AudioDeviceManager() {
 }
 
 Upp::Vector<AudioDevice> AudioDeviceManager::GetAvailableDevices() const {
-	return available_devices;
+	// Use <<= for deep copy to avoid copy constructor issues
+	Upp::Vector<AudioDevice> result;
+	result <<= available_devices;
+	return result;
 }
 
 AudioDevice AudioDeviceManager::GetDefaultInputDevice() const {
 	// Return first input device as default
 	for(const auto& device : available_devices) {
-		if(device.input_channels > 0) return device;
+		if(device.input_channels > 0) {
+			// Create a copy using <<= for deep copy
+			AudioDevice result;
+			result <<= device;
+			return result;
+		}
 	}
 	return AudioDevice();
 }
@@ -20,7 +28,12 @@ AudioDevice AudioDeviceManager::GetDefaultInputDevice() const {
 AudioDevice AudioDeviceManager::GetDefaultOutputDevice() const {
 	// Return first output device as default
 	for(const auto& device : available_devices) {
-		if(device.output_channels > 0) return device;
+		if(device.output_channels > 0) {
+			// Create a copy using <<= for deep copy
+			AudioDevice result;
+			result <<= device;
+			return result;
+		}
 	}
 	return AudioDevice();
 }

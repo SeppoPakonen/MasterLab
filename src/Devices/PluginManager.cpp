@@ -29,16 +29,28 @@ PluginInfo PluginManager::GetPlugin(const Upp::String& name) const {
 }
 
 void PluginManager::AddPluginPath(const Upp::String& path) {
-	// Use FindIndex instead of Find
-	int index = plugin_paths.FindIndex(path);
+	// Use manual search instead of FindIndex
+	int index = -1;
+	for(int i = 0; i < plugin_paths.GetCount(); i++) {
+		if(plugin_paths[i] == path) {
+			index = i;
+			break;
+		}
+	}
 	if(index < 0) {
 		plugin_paths.Add(path);
 	}
 }
 
 void PluginManager::RemovePluginPath(const Upp::String& path) {
-	// Use FindIndex instead of Find
-	int pos = plugin_paths.FindIndex(path);
+	// Use manual search instead of FindIndex
+	int pos = -1;
+	for(int i = 0; i < plugin_paths.GetCount(); i++) {
+		if(plugin_paths[i] == path) {
+			pos = i;
+			break;
+		}
+	}
 	if(pos >= 0) {
 		plugin_paths.Remove(pos);
 	}

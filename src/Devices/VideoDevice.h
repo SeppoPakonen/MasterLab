@@ -6,18 +6,24 @@ using namespace Upp;
 
 namespace am {
 
-struct VideoDeviceInfo {
+struct VideoDeviceInfo : public Moveable<VideoDeviceInfo> {
 	Upp::String name;
 	Upp::String id;
-	int width;
-	int height;
-	double frame_rate;
+	int width = 0;
+	int height = 0;
+	double frame_rate = 0.0;
+	
+	// Add explicit constructors for U++ compatibility
+	VideoDeviceInfo() = default;
+	// Note: Cannot have copy constructor because Vector<Upp::String> has deleted copy constructor
+	VideoDeviceInfo(VideoDeviceInfo&& other) = default;
+	VideoDeviceInfo& operator=(VideoDeviceInfo&& other) = default;
 };
 
 class VideoDevice {
 public:
 	VideoDevice();
-	const Upp::Vector<VideoDeviceInfo>& GetAvailableDevices() const { return available_devices; }
+	Upp::Vector<VideoDeviceInfo> GetAvailableDevices() const;
 	bool OpenDevice(const Upp::String& deviceId);
 	void CloseDevice();
 	bool IsOpen() const { return open; }

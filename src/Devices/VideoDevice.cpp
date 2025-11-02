@@ -5,8 +5,11 @@ VideoDevice::VideoDevice() {
 	// Initialize with default values
 }
 
-Upp::Vector<VideoDevice> VideoDevice::GetAvailableDevices() const {
-	return available_devices;
+Upp::Vector<VideoDeviceInfo> VideoDevice::GetAvailableDevices() const {
+	// Use <<= for deep copy to avoid copy constructor issues
+	Upp::Vector<VideoDeviceInfo> result;
+	result <<= available_devices;
+	return result;
 }
 
 bool VideoDevice::OpenDevice(const Upp::String& deviceId) {

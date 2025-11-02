@@ -173,3 +173,18 @@ void MidiInstrumentProcessor::Process(ProcessContext& ctx, Upp::Vector<NoteEvent
 }
 
 } // namespace PluginSDK
+
+// Explicitly instantiate templates for U++ compatibility
+template struct Upp::Moveable<PluginSDK::AudioConfig>;
+template struct Upp::Moveable<PluginSDK::AudioBus>;
+template struct Upp::Moveable<PluginSDK::TransportInfo>;
+template struct Upp::Moveable<PluginSDK::ModulationBus>;
+template struct Upp::Moveable<PluginSDK::NoteEvent>;
+template struct Upp::Moveable<PluginSDK::ControlEvent>;
+template struct Upp::Moveable<PluginSDK::ProcessContext>;
+template struct Upp::Moveable<PluginSDK::ParameterDescriptor>;
+template struct Upp::Moveable<PluginSDK::ParameterState>;
+template struct Upp::Moveable<PluginSDK::RoutingMap::Edge>;
+template struct Upp::Moveable<PluginSDK::GraphNode>;
+template struct Upp::Moveable<PluginSDK::GraphEdge>;
+template struct Upp::Moveable<PluginSDK::GraphVisualization>;
