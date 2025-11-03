@@ -252,6 +252,15 @@ void AudioTrack::SetAutomationValueAtTime(String parameter, double time, double 
     }
 }
 
+Vector<AutomationPoint> AudioTrack::GetAutomationPoints(String parameter_name) const {
+    int index = automation.Find(parameter_name);
+    if (index >= 0) {
+        return automation[index].GetPoints();
+    }
+    // Return empty vector if parameter not found
+    return Vector<AutomationPoint>();
+}
+
 void Timeline::SetMetronomeEnabled(bool enabled) {
     metronome_enabled = enabled;
 }
@@ -1234,5 +1243,232 @@ void AudioEditor::SetTrackAutomationValueAtTime(int track_index, String paramete
     Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
     if(track_index >= 0 && track_index < all_tracks.GetCount()) {
         all_tracks[track_index].SetAutomationValueAtTime(parameter, time, value);
+    }
+}
+
+Vector<AutomationPoint> AudioEditor::GetTrackAutomationPoints(int track_index, String parameter) const {
+    const Vector<AudioTrack>& all_tracks = timeline.GetTracks();
+    if(track_index >= 0 && track_index < all_tracks.GetCount()) {
+        return all_tracks[track_index].GetAutomationPoints(parameter);
+    }
+    // Return empty vector if track not found
+    return Vector<AutomationPoint>();
+}
+
+// AutomationEditor implementation
+AutomationEditor::AutomationEditor() : editor(nullptr), track_index(-1), 
+    start_time(0.0), end_time(10.0), min_value(0.0), max_value(1.0), 
+    is_dragging(false), selected_point(-1) {
+    // Set default ranges
+    AddFrame(BlackFrame());  // Add a border
+}
+
+void AutomationEditor::SetEditor(AudioEditor* ed) {
+    editor = ed;
+}
+
+void AutomationEditor::SetTrack(int track_idx) {
+    track_index = track_idx;
+    RefreshPointPositions();
+}
+
+void AutomationEditor::SetParameter(String param) {
+    parameter_name = param;
+    RefreshPointPositions();
+}
+
+void AutomationEditor::SetTimeRange(double start, double end) {
+    start_time = start;
+    end_time = end;
+    RefreshPointPositions();
+}
+
+void AutomationEditor::SetValueRange(double min, double max) {
+    min_value = min;
+    max_value = max;
+    RefreshPointPositions();
+}
+
+void AutomationEditor::Paint(Draw& draw) {
+    Size sz = GetSize();
+    
+    // Draw background
+    draw.DrawRect(sz, White());
+    
+    // Draw grid lines
+    int num_time_lines = 10;
+    int num_value_lines = 5;
+    
+    for(int i = 1; i < num_time_lines; i++) {
+        int x = (sz.cx * i) / num_time_lines;
+        draw.DrawLine(x, 0, x, sz.cy, 1, RGBA(200, 200, 200));
+    }
+    
+    for(int i = 1; i < num_value_lines; i++) {
+        int y = (sz.cy * i) / num_value_lines;
+        draw.DrawLine(0, y, sz.cx, y, 1, RGBA(200, 200, 200));
+    }
+    
+    // Draw the automation curve if we have an editor and track
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        
+        // Draw the curve
+        if(points.GetCount() > 1) {
+            Point prev_point = ValueTimeToPoint(points[0].time, points[0].value);
+            for(int i = 1; i < points.GetCount(); i++) {
+                Point curr_point = ValueTimeToPoint(points[i].time, points[i].value);
+                
+                // Draw line between points
+                draw.DrawLine(prev_point, curr_point, 2, Blue());
+                
+                prev_point = curr_point;
+            }
+        }
+        
+        // Draw the automation points
+        for(int i = 0; i < points.GetCount(); i++) {
+            Point pos = ValueTimeToPoint(points[i].time, points[i].value);
+            Color point_color = (i == selected_point) ? Red() : Blue();
+            draw.DrawEllipse(pos.x - 5, pos.y - 5, 10, 10, point_color, 2, White());
+        }
+    }
+}
+
+void AutomationEditor::Layout() {
+    // The control doesn't need special layout, just refresh the display
+    RefreshPointPositions();
+    Refresh();
+}
+
+bool AutomationEditor::Key(dword key, int count) {
+    if(key == K_DELETE && selected_point >= 0) {
+        // Delete the selected point
+        OnRemovePoint(selected_point);
+        Refresh();
+        return true;
+    }
+    return Ctrl::Key(key, count);
+}
+
+void AutomationEditor::MouseMove(Point p, dword keyflags) {
+    if(is_dragging && selected_point >= 0) {
+        // Move the selected point to the new position
+        Point<double> timeValue = PointToValueTime(p);
+        
+        // Update the automation point with the new time and value
+        if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+            editor->SetTrackAutomationValueAtTime(track_index, parameter_name, timeValue.x, timeValue.y);
+            RefreshPointPositions();
+            Refresh();
+        }
+    }
+    
+    Ctrl::MouseMove(p, keyflags);
+}
+
+void AutomationEditor::LeftDown(Point p, dword keyflags) {
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        // Check if we clicked on an existing point
+        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        
+        bool found_point = false;
+        for(int i = 0; i < points.GetCount(); i++) {
+            Point pos = ValueTimeToPoint(points[i].time, points[i].value);
+            int dx = abs(pos.x - p.x);
+            int dy = abs(pos.y - p.y);
+            
+            if(dx <= 5 && dy <= 5) {
+                // Clicked on a point
+                selected_point = i;
+                is_dragging = true;
+                Refresh();
+                found_point = true;
+                break;
+            }
+        }
+        
+        if(!found_point) {
+            // Add a new point at the clicked position
+            Point<double> timeValue = PointToValueTime(p);
+            OnAddPoint(p);
+        }
+    }
+    
+    Ctrl::LeftDown(p, keyflags);
+}
+
+void AutomationEditor::LeftUp(Point p, dword keyflags) {
+    is_dragging = false;
+    Ctrl::LeftUp(p, keyflags);
+}
+
+void AutomationEditor::LeftDouble(Point p, dword keyflags) {
+    // Double-click adds a new point at the position
+    OnAddPoint(p);
+    Ctrl::LeftDouble(p, keyflags);
+}
+
+void AutomationEditor::OnAddPoint(Point p) {
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        Point<double> timeValue = PointToValueTime(p);
+        editor->AddTrackAutomationPoint(track_index, parameter_name, 
+                                       AutomationPoint(timeValue.x, timeValue.y));
+        RefreshPointPositions();
+        Refresh();
+    }
+}
+
+void AutomationEditor::OnRemovePoint(int point_index) {
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        editor->RemoveTrackAutomationPoint(track_index, parameter_name, point_index);
+        if(selected_point == point_index) {
+            selected_point = -1;
+        }
+        RefreshPointPositions();
+        Refresh();
+    }
+}
+
+void AutomationEditor::OnMovePoint(int point_index, Point new_pos) {
+    // This would be used to move a specific point to a new position
+    // The actual movement is handled in MouseMove
+}
+
+Point AutomationEditor::ValueTimeToPoint(double time, double value) const {
+    Size sz = GetSize();
+    
+    // Convert time and value to coordinates
+    double time_range = end_time - start_time;
+    double value_range = max_value - min_value;
+    
+    int x = (time_range > 0) ? (int)((time - start_time) / time_range * sz.cx) : 0;
+    int y = (value_range > 0) ? (int)(sz.cy - ((value - min_value) / value_range * sz.cy)) : sz.cy / 2;
+    
+    return Point(x, y);
+}
+
+Point<double> AutomationEditor::PointToValueTime(Point p) const {
+    Size sz = GetSize();
+    
+    // Convert coordinates to time and value
+    double time_range = end_time - start_time;
+    double value_range = max_value - min_value;
+    
+    double time = (sz.cx > 0) ? (p.x * time_range / sz.cx + start_time) : start_time;
+    double value = (sz.cy > 0) ? (max_value - (p.y * value_range / sz.cy)) : min_value;
+    
+    return Point<double>(time, value);
+}
+
+void AutomationEditor::RefreshPointPositions() {
+    point_positions.Clear();
+    
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        
+        for(int i = 0; i < points.GetCount(); i++) {
+            point_positions.Add(ValueTimeToPoint(points[i].time, points[i].value));
+        }
     }
 }

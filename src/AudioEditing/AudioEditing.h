@@ -149,6 +149,7 @@ public:
     void RemoveAutomationPoint(String parameter, int index);
     double GetAutomationValueAtTime(String parameter, double time) const;
     void SetAutomationValueAtTime(String parameter, double time, double value);
+    Vector<AutomationPoint> GetAutomationPoints(String parameter_name) const;
 };
 
 // Class to represent markers on the timeline
@@ -601,6 +602,54 @@ public:
     void UpdateStrip(int track_index);
 };
 
+// Automation editor control for visualizing and editing automation curves
+class AutomationEditor : public Ctrl {
+private:
+    AudioEditor* editor;
+    int track_index;
+    String parameter_name;
+    
+    // Current view settings
+    double start_time;
+    double end_time;
+    double min_value;
+    double max_value;
+    
+    // Editing state
+    bool is_dragging;
+    int selected_point;
+    Vector<Point> point_positions;  // Cached positions of automation points
+    
+public:
+    AutomationEditor();
+    void SetEditor(AudioEditor* ed);
+    void SetTrack(int track_idx);
+    void SetParameter(String param);
+    
+    // View control
+    void SetTimeRange(double start, double end);
+    void SetValueRange(double min, double max);
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    virtual void MouseMove(Point p, dword keyflags);
+    virtual void LeftDown(Point p, dword keyflags);
+    virtual void LeftUp(Point p, dword keyflags);
+    virtual void LeftDouble(Point p, dword keyflags);
+    
+    // Event handlers
+    void OnAddPoint(Point p);
+    void OnRemovePoint(int point_index);
+    void OnMovePoint(int point_index, Point new_pos);
+    
+    // Utility functions
+    Point ValueTimeToPoint(double time, double value) const;
+    Point<double> PointToValueTime(Point p) const;
+    void RefreshPointPositions();
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
@@ -690,6 +739,7 @@ public:
     void RemoveTrackAutomationPoint(int track_index, String parameter, int point_index);
     double GetTrackAutomationValueAtTime(int track_index, String parameter, double time) const;
     void SetTrackAutomationValueAtTime(int track_index, String parameter, double time, double value);
+    Vector<AutomationPoint> GetTrackAutomationPoints(int track_index, String parameter) const;
 };
 
 #endif
