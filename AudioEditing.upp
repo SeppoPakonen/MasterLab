@@ -1,6 +1,6 @@
 GUI_APP_MAIN
 
-#include "App.h"
+#include "src/App/App.h"
 #include "AudioEditing/AudioEditing.h"
 #include "AudioCore/AudioCore.h"
 
