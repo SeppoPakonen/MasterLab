@@ -1,0 +1,10 @@
+description "CtrlLog package for logging UI controls";
+
+uses
+	CtrlLib;
+
+file
+	CtrlLog.h,
+	CtrlLog.cpp,
+	CtrlLog.lay,
+	CtrlLog.iml;

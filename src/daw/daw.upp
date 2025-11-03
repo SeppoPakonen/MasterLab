@@ -17,7 +17,9 @@ uses
 	TransportUI,
 	Video,
 	VSTHost,
-	Windowing;
+	Windowing,
+	CtrlLog,
+	AudioMaster;
 
 file
 	daw.h,

@@ -12,8 +12,19 @@ MainWindow::MainWindow() {
 	AddFrame(status);
 	status = "AudioMaster - Ready";
 	
-	// Initialize SubWindows container
-	Add(workspace.SizePos());
+	// Initialize main layout with splitter for main view and CtrlLog
+	mainSplitter.Vert(); // Vertical splitter - main view on top, CtrlLog on bottom
+	
+	// Initialize CtrlLog
+	ctrlLog.Create();
+	
+	// Initialize SubWindows container and add to top of splitter; CtrlLog to bottom
+	mainSplitter.Set(workspace.SizePos(), *ctrlLog); // Top: main view area, Bottom: CtrlLog
+	mainSplitter.SetPos(6666); // Set initial position (0-10000 scale, 6666 means ~66% for top pane)
+	ctrlLog->Hide(); // Initially hide the CtrlLog
+	
+	// Add the splitter to main window
+	Add(mainSplitter.SizePos());
 	
 	// Create view instances
 	InitView(masteringView, masteringWin);
@@ -768,7 +779,8 @@ void MainWindow::OnWindow(Bar& bar) {
 	bar.Add("Transport", THISBACK(OnTransportWindow));
 	// These would typically be dynamically populated with open document/file windows
 	bar.Add("Project File Window", THISBACK(OnProjectFileWindow));  // Placeholder for actual project file window
-	bar.Add("Library File Window", THISBACK(OnLibraryFileWindow));  // Placeholder for actual library file window
+	bar.Add("Library File Window", THISBACK(OnLibraryFileWindow));  // Placeholder for actual library window
+	bar.Add("CtrlLog", CtrlImg::smallright(), THISBACK(OnViewCtrlLog)).Check(IsCtrlLogVisible());
 }
 
 void MainWindow::OnHelp(Bar& bar) {
@@ -1359,6 +1371,25 @@ void MainWindow::OnFLStudioReWire() {}
 void MainWindow::OnMelodyneReWire() {}
 void MainWindow::OnWavesReWire() {}
 void MainWindow::OnShowPanel() {}
+
+void MainWindow::OnViewCtrlLog() {
+	if (ctrlLog) {
+		if (ctrlLog->IsShown()) {
+			ctrlLog->Hide();
+			// Adjust splitter to hide CtrlLog
+			mainSplitter.SetPos(10000); // Move splitter to bottom (hide bottom pane)
+		} else {
+			ctrlLog->Show();
+			// Adjust splitter to show CtrlLog
+			mainSplitter.SetPos(6666); // Set back to default position
+		}
+		Refresh(); // Refresh the main window layout
+	}
+}
+
+bool MainWindow::IsCtrlLogVisible() {
+	return ctrlLog && ctrlLog->IsShown();
+}
 void MainWindow::OnDeviceSetup() {}
 
 // Window menu implementations

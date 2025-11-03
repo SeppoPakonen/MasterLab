@@ -1,0 +1,9 @@
+// Recommended for CtrlLog
+// To use this layout in C++, do:
+//  GUI_APP_MAIN
+//  {
+//      CtrlLog dlg;
+//      dlg.Run();
+//  }
+
+BOXFA(CtrlLog, tree, TreeCtrl, DockBottom, SizePosit(), tree);

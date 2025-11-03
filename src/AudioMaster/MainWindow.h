@@ -29,6 +29,7 @@
 #include <AudioMaster/AudioMaster.h>
 #include <PluginSDK/PluginSDK.h>
 #include <SubWindowCtrl/SubWindowCtrl.h>
+#include "CtrlLog/CtrlLog.h"
 // #include <ProjectWindow/ProjectWindowHost.h>
 // #include <MediaPool/PoolWindow.h>
 using namespace Upp;
@@ -503,6 +504,7 @@ private:
 	void OnTransportWindow();
 	void OnProjectFileWindow();
 	void OnLibraryFileWindow();
+	void OnViewCtrlLog();
 	
 	// Help menu functions
 	void OnVisitMasterLabWebsite();
@@ -510,10 +512,14 @@ private:
 	void OnRegistration();
 	void OnAboutMasterLab();
 
+	// Check functions
+	bool IsCtrlLogVisible();
+
 	MenuBar menu;
 	StatusBar status;
 	SubWindows workspace;
 	Ptr<Ctrl> currentView;
+	Splitter mainSplitter;
 	
 	// View instances
 	MasteringView masteringView;
@@ -537,6 +543,8 @@ private:
 	One<am::ProjectWindowHost> projectWindowHost;
 	One<am::ExportAudioMixdownDialog> exportAudioMixdown;
 	One<am::ProjectSetupDialog> projectSetup;
+	
+	One<CtrlLog> ctrlLog;
 
 };
 

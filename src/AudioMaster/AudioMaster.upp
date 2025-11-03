@@ -6,7 +6,8 @@ uses
 	ExportAudioMixdown,
 	ProjectSetup,
 	ProjectWindow,
-	TransportUI;
+	TransportUI,
+	CtrlLog;
 
 file
 	AudioMaster.h,
