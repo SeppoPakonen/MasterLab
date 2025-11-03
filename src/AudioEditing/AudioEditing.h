@@ -650,6 +650,57 @@ public:
     void RefreshPointPositions();
 };
 
+// Timeline view control for displaying tracks and clips visually
+class TimelineCtrl : public Ctrl {
+private:
+    AudioEditor* editor;
+    
+    // View settings
+    double start_time;
+    double end_time;
+    int pixels_per_second;
+    int track_height;
+    
+    // Interaction state
+    Point last_mouse_pos;
+    bool is_dragging;
+    int drag_track_idx;
+    int drag_clip_idx;
+    double drag_offset;
+    
+    // Visual elements
+    Vector<int> track_y_positions;  // Y positions of each track
+    
+public:
+    TimelineCtrl();
+    void SetEditor(AudioEditor* ed);
+    
+    // View control
+    void SetTimeRange(double start, double end);
+    void SetPixelsPerSecond(int pixels);
+    void SetTrackHeight(int height);
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    virtual void MouseMove(Point p, dword keyflags);
+    virtual void LeftDown(Point p, dword keyflags);
+    virtual void LeftUp(Point p, dword keyflags);
+    
+    // Event handlers
+    void OnClipMove(int track_idx, int clip_idx, double new_start_time);
+    void OnClipResize(int track_idx, int clip_idx, double new_duration);
+    void OnAddClip(int track_idx, double time);
+    
+    // Utility functions
+    Point TimeToX(double time) const;
+    double XToTime(int x) const;
+    int TrackToY(int track_idx) const;
+    int YToTrack(int y) const;
+    void RefreshTrackPositions();
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
@@ -740,6 +791,10 @@ public:
     double GetTrackAutomationValueAtTime(int track_index, String parameter, double time) const;
     void SetTrackAutomationValueAtTime(int track_index, String parameter, double time, double value);
     Vector<AutomationPoint> GetTrackAutomationPoints(int track_index, String parameter) const;
+    
+    // Timeline access methods
+    const Timeline& GetTimeline() const { return timeline; }
+    Timeline& GetTimelineForUpdate() { return timeline; }
 };
 
 #endif

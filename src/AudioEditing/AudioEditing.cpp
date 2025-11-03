@@ -1472,3 +1472,257 @@ void AutomationEditor::RefreshPointPositions() {
         }
     }
 }
+
+// TimelineCtrl implementation
+TimelineCtrl::TimelineCtrl() : editor(nullptr), start_time(0.0), end_time(60.0), 
+    pixels_per_second(50), track_height(50), is_dragging(false), drag_track_idx(-1), 
+    drag_clip_idx(-1), drag_offset(0.0) {
+    // Set default values
+    AddFrame(BlackFrame());  // Add a border
+}
+
+void TimelineCtrl::SetEditor(AudioEditor* ed) {
+    editor = ed;
+    RefreshTrackPositions();
+}
+
+void TimelineCtrl::SetTimeRange(double start, double end) {
+    start_time = start;
+    end_time = end;
+    Refresh();
+}
+
+void TimelineCtrl::SetPixelsPerSecond(int pixels) {
+    pixels_per_second = pixels;
+    Refresh();
+}
+
+void TimelineCtrl::SetTrackHeight(int height) {
+    track_height = height;
+    RefreshTrackPositions();
+    Refresh();
+}
+
+void TimelineCtrl::Paint(Draw& draw) {
+    Size sz = GetSize();
+    
+    // Draw background
+    draw.DrawRect(sz, White());
+    
+    // Draw grid lines (vertical time lines)
+    double time_range = end_time - start_time;
+    int total_width = (int)(time_range * pixels_per_second);
+    
+    // Draw time grid
+    for(double time = floor(start_time); time <= end_time; time += 1.0) {
+        int x = (int)((time - start_time) * pixels_per_second);
+        if(x >= 0 && x < sz.cx) {
+            draw.DrawLine(x, 0, x, sz.cy, 1, RGBA(200, 200, 200));
+            // Draw time label
+            draw.DrawText(x + 2, 2, Format("%.1f s", time), StdFont(), Black());
+        }
+    }
+    
+    if(editor == nullptr) return;
+    
+    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
+    
+    // Draw tracks and clips
+    for(int track_idx = 0; track_idx < tracks.GetCount(); track_idx++) {
+        int y_pos = TrackToY(track_idx);
+        
+        // Draw track background
+        if(y_pos < sz.cy) {
+            int height = std::min(track_height, sz.cy - y_pos);
+            draw.DrawRect(0, y_pos, sz.cx, height, 
+                         track_idx % 2 == 0 ? RGBA(240, 240, 240) : RGBA(250, 250, 250));
+            
+            // Draw track name
+            draw.DrawText(5, y_pos + 2, tracks[track_idx].GetName(), StdFont(), Black());
+        }
+        
+        // Draw clips in this track
+        const Vector<AudioClip>& clips = tracks[track_idx].GetClips();
+        for(int clip_idx = 0; clip_idx < clips.GetCount(); clip_idx++) {
+            const AudioClip& clip = clips[clip_idx];
+            
+            int x_start = (int)((clip.GetStartTime() - start_time) * pixels_per_second);
+            int x_end = (int)((clip.GetEndTime() - start_time) * pixels_per_second);
+            
+            if(x_end > 0 && x_start < sz.cx) {
+                // Ensure we're within the track's vertical bounds
+                int clip_top = y_pos + 20;
+                int clip_height = std::min(track_height - 25, sz.cy - clip_top);
+                
+                if(clip_height > 0) {
+                    Color clip_color = clip.GetMuteStatus() ? Gray() : Blue();
+                    int width = std::max(2, x_end - x_start);  // Minimum width of 2 pixels
+                    
+                    // Adjust to be within the track area
+                    int adjusted_start = std::max(0, x_start);
+                    int adjusted_width = std::min(width, sz.cx - adjusted_start);
+                    
+                    if(adjusted_width > 0) {
+                        draw.DrawRect(adjusted_start, clip_top, adjusted_width, clip_height, 
+                                     clip_color, 1, clip.GetMuteStatus() ? Gray() : Blue());
+                        
+                        // Draw clip name
+                        String clip_name = clip.GetName();
+                        if(adjusted_width > 20) {  // Only draw text if we have enough space
+                            draw.DrawText(adjusted_start + 2, clip_top + 2, 
+                                         clip_name.Mid(0, std::min(20, clip_name.GetLength())), 
+                                         StdFont(10), White());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Draw playhead if needed
+    // This would be implemented based on playback state
+}
+
+void TimelineCtrl::Layout() {
+    RefreshTrackPositions();
+    Refresh();
+}
+
+bool TimelineCtrl::Key(dword key, int count) {
+    // Handle keyboard shortcuts for timeline operations
+    switch(key) {
+        case K_DELETE:
+            // If a clip is selected, delete it
+            return true;
+        case K_SPACE:
+            // Play/pause toggle
+            return true;
+        case Ctrl('a'):
+            // Select all clips
+            return true;
+    }
+    return Ctrl::Key(key, count);
+}
+
+void TimelineCtrl::MouseMove(Point p, dword keyflags) {
+    if(is_dragging && drag_track_idx >= 0 && drag_clip_idx >= 0 && editor != nullptr) {
+        // Calculate new time based on mouse position
+        double new_time = XToTime(p.x) - drag_offset;
+        
+        // Update the clip position
+        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
+        
+        if(drag_track_idx < tracks.GetCount()) {
+            Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[drag_track_idx].GetClips());
+            
+            if(drag_clip_idx < clips.GetCount()) {
+                double clip_duration = clips[drag_clip_idx].GetDuration();
+                
+                // Update the clip's start and end times
+                clips[drag_clip_idx].SetStartTime(new_time);
+                clips[drag_clip_idx].SetEndTime(new_time + clip_duration);
+                
+                Refresh();  // Update the display
+            }
+        }
+    }
+    
+    last_mouse_pos = p;
+    Ctrl::MouseMove(p, keyflags);
+}
+
+void TimelineCtrl::LeftDown(Point p, dword keyflags) {
+    if(editor == nullptr) return;
+    
+    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
+    int clicked_track = YToTrack(p.y);
+    
+    if(clicked_track >= 0 && clicked_track < tracks.GetCount()) {
+        // Check if we clicked on a clip in this track
+        const Vector<AudioClip>& clips = tracks[clicked_track].GetClips();
+        double clicked_time = XToTime(p.x);
+        
+        for(int i = 0; i < clips.GetCount(); i++) {
+            if(clips[i].ContainsTime(clicked_time)) {
+                // We clicked on a clip
+                is_dragging = true;
+                drag_track_idx = clicked_track;
+                drag_clip_idx = i;
+                drag_offset = clicked_time - clips[i].GetStartTime();
+                
+                Refresh();  // Highlight the selected clip
+                break;
+            }
+        }
+    }
+    
+    Ctrl::LeftDown(p, keyflags);
+}
+
+void TimelineCtrl::LeftUp(Point p, dword keyflags) {
+    is_dragging = false;
+    drag_track_idx = -1;
+    drag_clip_idx = -1;
+    
+    Ctrl::LeftUp(p, keyflags);
+}
+
+void TimelineCtrl::OnClipMove(int track_idx, int clip_idx, double new_start_time) {
+    // This would be called to move a clip to a new time position
+    if(editor && track_idx >= 0 && track_idx < editor->GetAllTracks().GetCount()) {
+        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
+        Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[track_idx].GetClips());
+        
+        if(clip_idx >= 0 && clip_idx < clips.GetCount()) {
+            double duration = clips[clip_idx].GetDuration();
+            clips[clip_idx].SetStartTime(new_start_time);
+            clips[clip_idx].SetEndTime(new_start_time + duration);
+        }
+    }
+}
+
+void TimelineCtrl::OnClipResize(int track_idx, int clip_idx, double new_duration) {
+    // This would be called to resize a clip
+    if(editor && track_idx >= 0 && track_idx < editor->GetAllTracks().GetCount()) {
+        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
+        Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[track_idx].GetClips());
+        
+        if(clip_idx >= 0 && clip_idx < clips.GetCount()) {
+            clips[clip_idx].SetDuration(new_duration);
+        }
+    }
+}
+
+void TimelineCtrl::OnAddClip(int track_idx, double time) {
+    // This would be called to add a new clip at the specified time
+    // Implementation would depend on how the user specifies the audio file
+}
+
+Point TimelineCtrl::TimeToX(double time) const {
+    return (int)((time - start_time) * pixels_per_second);
+}
+
+double TimelineCtrl::XToTime(int x) const {
+    return start_time + ((double)x / pixels_per_second);
+}
+
+int TimelineCtrl::TrackToY(int track_idx) const {
+    return track_idx * track_height;
+}
+
+int TimelineCtrl::YToTrack(int y) const {
+    if(track_height > 0) {
+        return y / track_height;
+    }
+    return -1;  // Invalid track height
+}
+
+void TimelineCtrl::RefreshTrackPositions() {
+    track_y_positions.Clear();
+    if(editor) {
+        const Vector<AudioTrack>& tracks = editor->GetAllTracks();
+        for(int i = 0; i < tracks.GetCount(); i++) {
+            track_y_positions.Add(TrackToY(i));
+        }
+    }
+}

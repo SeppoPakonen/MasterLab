@@ -239,5 +239,53 @@ CONSOLE_APP_MAIN
         cout << "Automation tests passed!" << endl;
     }
     
+    // Test TimelineCtrl functionality
+    {
+        AudioEditor editor;
+        
+        // Add a track with a clip to the editor's timeline
+        AudioTrack track("Test Track");
+        AudioClip clip("Test Clip", "test.wav", 1.0, 3.0);
+        track.AddClip(clip);
+        
+        Timeline& timeline = editor.GetTimelineForUpdate();
+        timeline.AddTrack(track);
+        
+        // Test timeline control creation
+        TimelineCtrl timelineCtrl;
+        timelineCtrl.SetEditor(&editor);
+        assert(timelineCtrl.IsOpen());
+        
+        // Test time/position conversion
+        timelineCtrl.SetTimeRange(0.0, 10.0);
+        timelineCtrl.SetPixelsPerSecond(100);
+        
+        Point pos = timelineCtrl.TimeToX(5.0);
+        double time = timelineCtrl.XToTime(pos.x);
+        
+        // Allow for small floating point precision differences
+        assert(abs(time - 5.0) < 0.01);
+        
+        cout << "TimelineCtrl tests passed!" << endl;
+    }
+        
+        // Test timeline control creation
+        TimelineCtrl timelineCtrl;
+        timelineCtrl.SetEditor(&editor);
+        assert(timelineCtrl.IsOpen());
+        
+        // Test time/position conversion
+        timelineCtrl.SetTimeRange(0.0, 10.0);
+        timelineCtrl.SetPixelsPerSecond(100);
+        
+        Point pos = timelineCtrl.TimeToX(5.0);
+        double time = timelineCtrl.XToTime(pos.x);
+        
+        // Allow for small floating point precision differences
+        assert(abs(time - 5.0) < 0.01);
+        
+        cout << "TimelineCtrl tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }
