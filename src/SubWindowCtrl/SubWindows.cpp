@@ -24,6 +24,31 @@ SubWindows::SubWindows() : menu(this) {
 	menu.WhenCloseOthers = THISBACK(CloseOthers);
 }
 
+void SubWindows::RefreshFrame() {
+	if (menu.IsVisible()) {
+		menu.Show();
+		Size sz = GetSize();
+		menu.SetRect(0, sz.cy-20, sz.cx, 20);
+		sub_area.SetRect(0, 0, sz.cx, sz.cy-20);
+	} else {
+		menu.Hide();
+		Size sz = GetSize();
+		sub_area.SetRect(0, 0, sz.cx, sz.cy);
+	}
+	Layout();
+	Refresh();
+}
+
+void SubWindows::ShowWindowList(bool show) {
+	menu.SetVisible(show);
+	RefreshFrame();
+}
+
+void SubWindows::ToggleWindowList() {
+	menu.ToggleVisibility();
+	RefreshFrame();
+}
+
 SubWindows::~SubWindows() {
 	for(; owned_wins.GetCount();) {
 		SubWindowCtrl* ptr = owned_wins[0];
@@ -53,7 +78,14 @@ SubWindow& SubWindows::AddWindow(SubWindowCtrl& ctrl) {
 	sw.WhenMinimize = THISBACK1(MinimizeWindow, id);
 	sw.WhenIsActive = THISBACK1(IsActiveWindow, id);
 	int i = wins.GetCount();
-	sw.SetRect(i * 30, i * 30, 320, 240);
+	
+	// Use a more dynamic initial size instead of hardcoded 320x240
+	Size defaultSize = ctrl.GetInitialSize();  // Use the size from the control if available
+	if (defaultSize.cx == 0 && defaultSize.cy == 0) {
+		defaultSize = Size(320, 240);  // Fallback to the old size if no specific size is provided
+	}
+	
+	sw.SetRect(i * 30, i * 30, defaultSize.cx, defaultSize.cy);
 	if (maximize_all) MaximizeWindow(id);
 	int prev_active_id = active_id;
 	active_pos = pos;
@@ -61,6 +93,12 @@ SubWindow& SubWindows::AddWindow(SubWindowCtrl& ctrl) {
 	if (wins.Find(prev_active_id) != -1) wins.Get(prev_active_id).Refresh();
 	menu.Refresh();
 	ctrl.SubWindowCtrl::Init(this, id);
+	
+	// Set icon from SubWindowCtrl
+	Image ctrl_icon = ctrl.GetIcon();
+	if (!ctrl_icon.IsEmpty())
+		sw.Icon(ctrl_icon);
+	
 	WhenActiveWindowChanges();
 	return sw;
 }
@@ -73,6 +111,7 @@ SubWindow& SubWindows::GetWindow(SubWindowCtrl& ctrl) {
 		}
 	}
 	NEVER();
+	return wins[0]; // This line will never be reached due to NEVER() macro
 }
 
 void SubWindows::FocusSubWindow(SubWindowCtrl* ctrl) {

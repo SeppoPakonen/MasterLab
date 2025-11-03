@@ -12,30 +12,43 @@ class SubWindows;
 
 class SubWindowDecoration : public Ctrl {
 	Upp::String label;
+	Image icon;
 	bool left_down;
 	Point left_down_pt;
+	bool icon_clicked; // To track if icon was clicked
 	
 public:
 	typedef SubWindowDecoration CLASSNAME;
 	SubWindowDecoration();
 	
-	virtual void Paint(Draw& draw);
+	virtual void Paint(Draw& draw) override;
 	
 	void SetLabel(Upp::String str) {label = str;}
+	void SetIcon(const Image& img) {icon = img;}
 	
 	Upp::String GetLabel() const {return label;}
+	Image GetIcon() const {return icon;}
 	
-	virtual void LeftDown(Point p, dword keyflags);
-	virtual void LeftDouble(Point p, dword keyflags);
-	virtual void LeftUp(Point p, dword keyflags);
-	virtual void MouseMove(Point p, dword keyflags);
-	virtual void RightDown(Point p, dword keyflags);
+	virtual void LeftDown(Point p, dword keyflags) override;
+	virtual void LeftDouble(Point p, dword keyflags) override;
+	virtual void LeftUp(Point p, dword keyflags) override;
+	virtual void MouseMove(Point p, dword keyflags) override;
+	virtual void RightDown(Point p, dword keyflags) override;
 	
 	void LocalMenu(Bar& bar);
 	
-	
 	Callback1<Point> WhenWindowMove;
 	Callback WhenFocus, WhenClose, WhenMaximize, WhenMinimize;
+	
+private:
+	bool IsIconAt(Point p) const;
+	
+public:
+	void SetActive(bool active) { active_status = active; }
+	bool GetActive() const { return active_status; }
+	
+private:
+	bool active_status = false;
 	
 };
 
@@ -43,6 +56,7 @@ public:
 class SubWindowCtrl : public ParentCtrl {
 	SubWindows* wm;
 	int id;
+	Image icon;
 	
 public:
 	SubWindowCtrl();
@@ -52,10 +66,16 @@ public:
 	virtual void Start() {}
 	virtual void CloseWindow() {}
 	virtual Upp::String GetTitle() {return "";}
+	virtual Image GetIcon() {return Image();} // Default implementation returns empty image
+	virtual Size GetInitialSize() { return Size(0, 0); } // Default: use fallback size
 	virtual void RefreshData() {};
 	virtual void FocusEvent() {}
 	
 	void Title(const Upp::String& title);
+	void Icon(const Image& img) {icon = img;}
+	Image GetCtrlIcon() const {return icon;}
+	
+	void ApplyTheme(bool isDark);
 	
 };
 
@@ -64,6 +84,12 @@ class SubWindow : public ParentCtrl {
 	Button minimize, maximize, close;
 	SubWindowCtrl* ctrl = NULL;
 	Rect stored_rect;
+	
+	// Resize functionality
+	bool resizing;
+	int resize_mode; // 0=none, 1=left, 2=right, 3=top, 4=bottom, 5=top-left, 6=top-right, 7=bottom-left, 8=bottom-right
+	Point resize_start;
+	Rect resize_original;
 	
 protected:
 	friend class SubWindows;
@@ -76,25 +102,37 @@ public:
 	SubWindow();
 	
 	void Title(Upp::String label) {decor.SetLabel(label);}
+	void Icon(const Image& img) {decor.SetIcon(img);}
 	void StoreRect() {stored_rect = GetRect();}
 	void LoadRect() {ASSERT(stored_rect.bottom && stored_rect.right); SetRect(stored_rect);}
 	void SetStoredRect(Rect r) {stored_rect = r;}
 	
 	Rect GetStoredRect() const {return stored_rect;}
 	Upp::String GetTitle() const {return decor.GetLabel();}
+	Image GetIcon() const {return decor.GetIcon();}
 	SubWindowCtrl* GetSubWindowCtrl() {return ctrl;}
 	bool IsMaximized() const {return maximized;}
 	bool IsActive() const {bool b = false; WhenIsActive(&b); return b;}
 	void Maximize() {WhenMaximize(); FocusEvent();}
-	void FocusEvent() {WhenFocus(); ctrl->FocusEvent();}
+	void FocusEvent() {WhenFocus(); ctrl->FocusEvent(); decor.SetActive(true); Refresh();}
+	void SetInactive() {decor.SetActive(false); Refresh();}
 	
-	virtual void LeftDown(Point p, dword keyflags);
-	virtual void ChildGotFocus();
-	virtual void ChildMouseEvent(Ctrl *child, int event, Point p, int zdelta, dword keyflags);
+	virtual void LeftDown(Point p, dword keyflags) override;
+	virtual void LeftUp(Point p, dword keyflags) override;
+	virtual void MouseMove(Point p, dword keyflags) override;
+	virtual void ChildGotFocus() override;
+	virtual void ChildMouseEvent(Ctrl *child, int event, Point p, int zdelta, dword keyflags) override;
+	
+	void ApplyThemeToWindow(bool isDark);
 	
 	Callback1<Point> WhenWindowMove;
 	Callback1<bool*> WhenIsActive;
 	Callback WhenFocus, WhenClose, WhenMaximize, WhenMinimize;
+	
+private:
+	int GetResizeMode(Point p);
+	void StartResize(int mode, Point p);
+	void DoResize(Point p);
 	
 };
 
@@ -107,10 +145,11 @@ public:
 
 class SubMenuFrame : public Ctrl {
 	int height, shift, arrow_border;
-	bool left_arrow, right_arrow;
+	bool left_arrow, right_arrow, visible;
 	SubWindows* wins;
 	Color clr_bg, clr_tr;
 	Upp::Vector<int> id_pos;
+	Upp::Vector<Image> id_icons;
 	int clicked_id;
 	
 protected:
@@ -123,6 +162,9 @@ public:
 	typedef SubMenuFrame CLASSNAME;
 	SubMenuFrame(SubWindows* wins);
 	
+	void SetVisible(bool b) { visible = b; }
+	bool IsVisible() const { return visible; }
+	void ToggleVisibility() { visible = !visible; }
 	
 	virtual void Paint(Draw& w);
 	virtual void LeftDown(Point p, dword keyflags);
@@ -131,7 +173,7 @@ public:
 	
 	void LocalMenu(Bar& bar);
 	
-	Callback WhenTileWindows, WhenCloseAll;
+	Callback WhenTileWindows, WhenCloseAll, WhenVisibilityChanged;
 	Callback1<int> WhenFocus, WhenClose, WhenMaximize, WhenMinimize, WhenCloseOthers;
 };
 
@@ -164,6 +206,7 @@ protected:
 	
 	void LoadRectAll();
 	void SetMaximizeAll(bool b=true) {maximize_all = b;}
+	void RefreshFrame();
 	
 public:
 	SubWindows();
@@ -202,6 +245,10 @@ public:
 	virtual bool Key(dword key, int count);
 	virtual void LeftDown(Point p, dword keyflags);
 	virtual void Layout();
+	
+	void ShowWindowList(bool show=true);
+	void HideWindowList() { ShowWindowList(false); }
+	void ToggleWindowList();
 	
 	int GetCount() const {return wins.GetCount();}
 	SubWindow& operator[] (int i) {return wins[i];}
