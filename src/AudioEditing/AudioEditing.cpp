@@ -1913,3 +1913,130 @@ void TransportCtrl::AddCtrls() {
     Add(loop_button);
     Add(position_ctrl);
 }
+
+// MixerRack implementation
+MixerRack::MixerRack() : editor(nullptr), current_scroll_pos(0) {
+    // Set up the scroll bar
+    hscroll.SetLinePage(10, 100);
+    hscroll <<= THISBACK(Scrolling);
+    AddFrame(hscroll);
+}
+
+void MixerRack::SetEditor(AudioEditor* ed) {
+    editor = ed;
+    RefreshRack();
+}
+
+void MixerRack::RefreshRack() {
+    // Remove existing strips
+    for (auto& strip : strips) {
+        RemoveChild(&(*strip));
+        delete strip;
+    }
+    strips.Clear();
+    
+    if (!editor) return;
+    
+    // Create a mixer strip for each track
+    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
+    for (int i = 0; i < tracks.GetCount(); i++) {
+        MixerStrip* strip = new MixerStrip();
+        strip->SetTrackIndex(i);
+        strip->SetEditor(editor);
+        strips.Add(strip);
+        AddChild(strip);
+    }
+    
+    // Set up horizontal scrolling based on number of tracks
+    Size sz = GetSize();
+    int total_width_needed = strips.GetCount() * 150;  // 150px per strip
+    
+    if (total_width_needed > sz.cx) {
+        hscroll.SetTotal(total_width_needed);
+        hscroll.SetPageSize(sz.cx);
+    } else {
+        hscroll.SetTotal(sz.cx);
+        hscroll.SetPageSize(sz.cx);
+    }
+    
+    Layout();
+}
+
+void MixerRack::Paint(Draw& draw) {
+    // Draw the mixer rack background
+    draw.DrawRect(GetSize(), RGBA(45, 45, 45));  // Dark gray background
+    
+    // Draw a subtle dividing line
+    Size sz = GetSize();
+    draw.DrawLine(0, 0, sz.cx, 0, 1, Gray());
+}
+
+void MixerRack::Layout() {
+    if (strips.GetCount() == 0) return;
+    
+    Size sz = GetSize();
+    
+    // Calculate width for each strip (limited width to ensure visibility)
+    int strip_width = 150;  // Fixed width for each strip
+    int visible_start = current_scroll_pos;
+    
+    int current_x = -visible_start;  // Start position adjusted by scroll
+    
+    for (int i = 0; i < strips.GetCount(); i++) {
+        // Only layout strips that would be visible
+        if (current_x + strip_width > 0 && current_x < sz.cx) {
+            strips[i]->SetRect(current_x, 0, strip_width, sz.cy);
+            strips[i]->Show();  // Make sure it's visible
+        } else {
+            strips[i]->Hide();  // Hide if not visible
+        }
+        
+        current_x += strip_width;
+    }
+}
+
+bool MixerRack::Key(dword key, int count) {
+    switch(key) {
+        case K_LEFT:
+            current_scroll_pos -= 50;
+            if (current_scroll_pos < 0) current_scroll_pos = 0;
+            Layout();
+            hscroll.SetPos(current_scroll_pos);
+            return true;
+        case K_RIGHT:
+            current_scroll_pos += 50;
+            Size sz = GetSize();
+            int max_scroll = strips.GetCount() * 150 - sz.cx;
+            if (current_scroll_pos > max_scroll) current_scroll_pos = max_scroll;
+            if (current_scroll_pos < 0) current_scroll_pos = 0;
+            Layout();
+            hscroll.SetPos(current_scroll_pos);
+            return true;
+    }
+    return Ctrl::Key(key, count);
+}
+
+void MixerRack::Scrolling(ScrollCtrl& self) {
+    current_scroll_pos = hscroll.GetPos();
+    Layout();
+}
+
+void MixerRack::UpdateStrip(int track_index) {
+    if (track_index >= 0 && track_index < strips.GetCount()) {
+        strips[track_index]->RefreshControls();
+    }
+}
+
+void MixerRack::AddStrip(int track_index) {
+    if (!editor) return;
+    
+    // In a complete implementation, we would add a new mixer strip at the specified index
+    // For now, we'll just refresh the entire rack to include the new track
+    RefreshRack();
+}
+
+void MixerRack::RemoveStrip(int track_index) {
+    // In a real implementation, we would remove the specific strip
+    // For now, we'll just refresh the entire rack
+    RefreshRack();
+}

@@ -752,6 +752,37 @@ public:
     void UpdateDisplay();
 };
 
+// Mixer rack view showing all channel strips
+class MixerRack : public Ctrl {
+private:
+    AudioEditor* editor;
+    Vector<MixerStrip*> strips;  // Array of mixer strips, one for each track
+    int current_scroll_pos;  // Current horizontal scroll position
+    
+    // UI elements
+    ScrollBar hscroll;
+    
+public:
+    MixerRack();
+    void SetEditor(AudioEditor* ed);
+    void RefreshRack();
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    
+    // Scroll handling
+    void Scrolling(ScrollCtrl& self);
+    
+    // Update individual strips
+    void UpdateStrip(int track_index);
+    
+    // Utility functions
+    void AddStrip(int track_index);
+    void RemoveStrip(int track_index);
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:

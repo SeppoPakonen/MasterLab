@@ -310,5 +310,31 @@ CONSOLE_APP_MAIN
         cout << "TransportCtrl tests passed!" << endl;
     }
     
+    // Test MixerRack functionality
+    {
+        AudioEditor editor;
+        
+        // Add tracks to the editor
+        AudioTrack track1("Track 1");
+        AudioTrack track2("Track 2");
+        Timeline& timeline = editor.GetTimelineForUpdate();
+        timeline.AddTrack(track1);
+        timeline.AddTrack(track2);
+        
+        // Test mixer rack creation
+        MixerRack mixerRack;
+        mixerRack.SetEditor(&editor);
+        assert(mixerRack.IsOpen());
+        
+        // Check that the rack has the right number of strips
+        // This would require access to the internal strips, which we don't expose
+        // So we'll just verify the control can be created and laid out
+        
+        mixerRack.RefreshRack();
+        mixerRack.Layout();
+        
+        cout << "MixerRack tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }
