@@ -123,5 +123,32 @@ CONSOLE_APP_MAIN
         cout << "AudioEditor tests passed!" << endl;
     }
     
+    // Test AudioBus functionality
+    {
+        AudioBus bus("MainOut", 2);  // Stereo bus
+        
+        // Test basic properties
+        assert(bus.GetName() == "MainOut");
+        assert(bus.GetChannelCount() == 2);
+        assert(bus.GetVolume() == 1.0);
+        
+        // Test source track assignment
+        bus.AddSourceTrack(0);
+        bus.AddSourceTrack(1);
+        
+        auto sources = bus.GetSourceTracks();
+        assert(sources.GetCount() == 2);
+        assert(sources[0] == 0);
+        assert(sources[1] == 1);
+        
+        // Test removing a source track
+        bus.RemoveSourceTrack(0);
+        sources = bus.GetSourceTracks();
+        assert(sources.GetCount() == 1);
+        assert(sources[0] == 1);
+        
+        cout << "AudioBus tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }
