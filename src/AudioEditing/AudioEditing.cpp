@@ -1726,3 +1726,190 @@ void TimelineCtrl::RefreshTrackPositions() {
         }
     }
 }
+
+// TransportCtrl implementation
+TransportCtrl::TransportCtrl() : editor(nullptr), is_playing(false), is_recording(false), current_time(0.0) {
+    // Initialize buttons
+    play_button.SetLabel("▶");
+    play_button <<= THISBACK(OnPlay);
+    
+    stop_button.SetLabel("■");
+    stop_button <<= THISBACK(OnStop);
+    
+    record_button.SetLabel("●");
+    record_button <<= THISBACK(OnRecord);
+    
+    loop_button.SetLabel(" LOOP ");
+    loop_button <<= THISBACK(OnLoopToggle);
+    
+    // Initialize position control
+    position_ctrl.SetData("00:00:000");
+    position_ctrl <<= THISBACK(OnPositionChange);
+    
+    // Add controls to the transport
+    AddCtrls();
+}
+
+void TransportCtrl::SetEditor(AudioEditor* ed) {
+    editor = ed;
+}
+
+void TransportCtrl::StartPlayback() {
+    if (!is_playing) {
+        is_playing = true;
+        is_recording = false; // Can't record while just playing
+        
+        // In a real implementation, we would start the audio playback system
+        // For now, we'll just simulate playback by updating the time periodically
+        
+        UpdateDisplay();
+    }
+}
+
+void TransportCtrl::StopPlayback() {
+    is_playing = false;
+    is_recording = false;
+    
+    // In a real implementation, we would stop the audio playback system
+    
+    UpdateDisplay();
+}
+
+void TransportCtrl::StartRecording() {
+    is_recording = true;
+    is_playing = true;  // Usually recording also starts playback
+    
+    // In a real implementation, we would start the recording system
+    
+    UpdateDisplay();
+}
+
+void TransportCtrl::ToggleLoop() {
+    // In a real implementation, this would toggle looping during playback
+    UpdateDisplay();
+}
+
+void TransportCtrl::SetPosition(double time) {
+    current_time = time;
+    
+    // Update the position display to show time in MM:SS:ms format
+    int minutes = (int)(time / 60);
+    int seconds = (int)(time) % 60;
+    int milliseconds = (int)((time - (int)time) * 1000);
+    
+    String time_str = Format("%02d:%02d:%03d", minutes, seconds, milliseconds);
+    position_ctrl.SetData(time_str);
+    
+    // Call the time update callback if set
+    if (time_update_callback)
+        time_update_callback(current_time);
+}
+
+void TransportCtrl::Paint(Draw& draw) {
+    // Draw transport control background
+    draw.DrawRect(GetSize(), RGBA(220, 220, 220));
+    
+    // Draw a subtle dividing line
+    Size sz = GetSize();
+    draw.DrawLine(0, sz.cy-1, sz.cx, sz.cy-1, 1, Gray());
+}
+
+void TransportCtrl::Layout() {
+    // Calculate positions for all transport controls
+    Size sz = GetSize();
+    
+    int btn_width = 40;
+    int btn_height = 30;
+    int margin = 5;
+    
+    // Position the buttons from left to right
+    int x = margin;
+    
+    // Record button
+    record_button.SetRect(x, (sz.cy - btn_height) / 2, btn_width, btn_height);
+    x += btn_width + margin;
+    
+    // Play button
+    play_button.SetRect(x, (sz.cy - btn_height) / 2, btn_width, btn_height);
+    x += btn_width + margin;
+    
+    // Stop button
+    stop_button.SetRect(x, (sz.cy - btn_height) / 2, btn_width, btn_height);
+    x += btn_width + margin;
+    
+    // Loop button
+    loop_button.SetRect(x, (sz.cy - btn_height) / 2, btn_width + 20, btn_height);
+    x += btn_width + 20 + margin;
+    
+    // Position control (time display)
+    int pos_width = 100;
+    int pos_height = 25;
+    position_ctrl.SetRect(sz.cx - pos_width - margin, (sz.cy - pos_height) / 2, pos_width, pos_height);
+}
+
+bool TransportCtrl::Key(dword key, int count) {
+    switch(key) {
+        case K_SPACE:
+            if (is_playing) {
+                StopPlayback();
+            } else {
+                StartPlayback();
+            }
+            return true;
+        case Ctrl('k'):
+            // Toggle loop
+            ToggleLoop();
+            return true;
+    }
+    
+    return Ctrl::Key(key, count);
+}
+
+void TransportCtrl::OnPlay() {
+    StartPlayback();
+}
+
+void TransportCtrl::OnStop() {
+    StopPlayback();
+}
+
+void TransportCtrl::OnRecord() {
+    StartRecording();
+}
+
+void TransportCtrl::OnLoopToggle() {
+    ToggleLoop();
+}
+
+void TransportCtrl::OnPositionChange() {
+    // Parse the time from the position control
+    String time_str = position_ctrl.GetData();
+    
+    // This is a simplified implementation - in reality, we'd parse the time string
+    // and set the playhead position accordingly
+    double new_time = current_time;
+    
+    // For now, just update the current time to the new value
+    SetPosition(new_time);
+    
+    // Update the display
+    UpdateDisplay();
+}
+
+void TransportCtrl::UpdateDisplay() {
+    // Update button states based on transport state
+    play_button.SetLabel(is_playing ? "‖" : "▶");  // Change to pause symbol if playing
+    record_button.SetLook(is_recording ? Button::PUSHED : Button::NORMAL);
+    
+    // Update position display
+    SetPosition(current_time);
+}
+
+void TransportCtrl::AddCtrls() {
+    // Add all controls to the transport
+    Add(play_button);
+    Add(stop_button);
+    Add(record_button);
+    Add(loop_button);
+    Add(position_ctrl);
+}

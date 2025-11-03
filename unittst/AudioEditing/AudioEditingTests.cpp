@@ -287,5 +287,28 @@ CONSOLE_APP_MAIN
         cout << "TimelineCtrl tests passed!" << endl;
     }
     
+    // Test TransportCtrl functionality
+    {
+        AudioEditor editor;
+        
+        // Test transport control creation
+        TransportCtrl transport;
+        transport.SetEditor(&editor);
+        assert(transport.IsOpen());
+        
+        // Test basic transport operations
+        transport.StartPlayback();
+        assert(transport.GetPosition() == 0.0);
+        
+        transport.SetPosition(5.5);
+        assert(transport.GetPosition() == 5.5);
+        
+        // Test stop functionality
+        transport.StopPlayback();
+        assert(!transport.GetPosition() == 0.0); // Position remains same, but state changes
+        
+        cout << "TransportCtrl tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }

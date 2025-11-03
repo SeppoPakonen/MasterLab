@@ -701,6 +701,57 @@ public:
     void RefreshTrackPositions();
 };
 
+// Transport control for managing playback
+class TransportCtrl : public Ctrl {
+private:
+    AudioEditor* editor;
+    
+    // Transport state
+    bool is_playing;
+    bool is_recording;
+    double current_time;
+    
+    // UI elements
+    Button play_button;
+    Button stop_button;
+    Button record_button;
+    Button loop_button;
+    SpinCtrl position_ctrl;  // Time position display/control
+    
+    // Callback function for updates
+    Function<void(double)> time_update_callback;
+    
+public:
+    TransportCtrl();
+    void SetEditor(AudioEditor* ed);
+    
+    // Transport operations
+    void StartPlayback();
+    void StopPlayback();
+    void StartRecording();
+    void ToggleLoop();
+    
+    // Time operations
+    void SetPosition(double time);
+    double GetPosition() const { return current_time; }
+    void SetTimeUpdateCallback(Function<void(double)> callback) { time_update_callback = callback; }
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    
+    // Event handlers
+    void OnPlay();
+    void OnStop();
+    void OnRecord();
+    void OnLoopToggle();
+    void OnPositionChange();
+    
+    // Update display based on state
+    void UpdateDisplay();
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
