@@ -783,6 +783,90 @@ public:
     void RemoveStrip(int track_index);
 };
 
+// Class to manage an entire audio project
+class AudioProject {
+private:
+    String name;
+    String path;
+    Timeline timeline;
+    Vector<AudioBus> buses;
+    
+public:
+    AudioProject();
+    AudioProject(String project_name, String project_path = "");
+    
+    // Getters
+    String GetName() const { return name; }
+    String GetPath() const { return path; }
+    const Timeline& GetTimeline() const { return timeline; }
+    const Vector<AudioBus>& GetBuses() const { return buses; }
+    
+    // Setters
+    void SetName(String n) { name = n; }
+    void SetPath(String p) { path = p; }
+    
+    // Project operations
+    bool Save();
+    bool SaveAs(String new_path);
+    bool Load(String project_path);
+    bool ImportFromFormat(String import_path, String format);
+    bool ExportToFormat(String export_path, String format);
+    
+    // Access to project elements
+    Timeline& GetTimelineForUpdate() { return timeline; }
+    Vector<AudioBus>& GetBusesForUpdate() { return buses; }
+    
+    void Jsonize(JsonIO& jio) {
+        jio("name", name)("path", path)("timeline", timeline)("buses", buses);
+    }
+    
+    bool operator==(const AudioProject& other) const {
+        return name == other.name && path == other.path && 
+               timeline == other.timeline && buses == other.buses;
+    }
+};
+
+// Main application window for the DAW
+class AudioDAWApp : public TopWindow {
+private:
+    AudioProject project;
+    
+    // UI components
+    MenuBar main_menu;
+    ToolBar main_toolbar;
+    TimelineCtrl timeline_view;
+    MixerRack mixer_rack;
+    TransportCtrl transport_ctrl;
+    StatusBar status_bar;
+    
+public:
+    AudioDAWApp();
+    
+    // UI setup
+    void Menu(Bar& bar);
+    void Tool(Bar& bar);
+    
+    // Project operations
+    void NewProject();
+    void OpenProject();
+    void SaveProject();
+    void SaveProjectAs();
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    
+    // Event handlers
+    void OnNewProject();
+    void OnOpenProject();
+    void OnSaveProject();
+    void OnSaveProjectAs();
+    void OnQuit();
+    
+    // Application operations
+    void RefreshUI();
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:

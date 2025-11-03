@@ -336,5 +336,24 @@ CONSOLE_APP_MAIN
         cout << "MixerRack tests passed!" << endl;
     }
     
+    // Test AudioProject functionality
+    {
+        // Test project creation
+        AudioProject project("Test Project", "/path/to/test.mlp");
+        assert(project.GetName() == "Test Project");
+        assert(project.GetPath() == "/path/to/test.mlp");
+        
+        // Test timeline access
+        Timeline& timeline = project.GetTimelineForUpdate();
+        assert(timeline.GetTracks().GetCount() == 0);
+        
+        // Add a track to the project
+        AudioTrack track("Track 1");
+        timeline.AddTrack(track);
+        assert(project.GetTimeline().GetTracks().GetCount() == 1);
+        
+        cout << "AudioProject tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }

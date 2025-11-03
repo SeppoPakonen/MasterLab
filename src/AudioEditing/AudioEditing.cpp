@@ -2040,3 +2040,218 @@ void MixerRack::RemoveStrip(int track_index) {
     // For now, we'll just refresh the entire rack
     RefreshRack();
 }
+
+// AudioProject implementation
+AudioProject::AudioProject() : name("Untitled Project"), path("") {}
+
+AudioProject::AudioProject(String project_name, String project_path) 
+    : name(project_name), path(project_path) {}
+
+bool AudioProject::Save() {
+    if (path.IsEmpty()) {
+        return false; // No path specified
+    }
+    
+    // Serialize project to JSON and save to file
+    String json_data = Jsonize(*this);
+    
+    FileOut file;
+    if (!file.Open(path)) {
+        return false;
+    }
+    
+    file.Put(json_data);
+    return file.IsError() ? false : true;
+}
+
+bool AudioProject::SaveAs(String new_path) {
+    path = new_path;
+    return Save();
+}
+
+bool AudioProject::Load(String project_path) {
+    FileIn file;
+    if (!file.Open(project_path)) {
+        return false;
+    }
+    
+    String json_data = LoadFile(project_path);
+    if (json_data.IsEmpty()) {
+        return false;
+    }
+    
+    try {
+        JsonIO io(json_data);
+        Jsonize(io);
+        path = project_path;
+        name = GetFileTitle(project_path);  // Use filename as project name
+        return true;
+    } catch (...) {
+        return false; // Error parsing JSON
+    }
+}
+
+bool AudioProject::ImportFromFormat(String import_path, String format) {
+    // Import project from another DAW format
+    // This would involve format-specific parsing
+    return true;
+}
+
+bool AudioProject::ExportToFormat(String export_path, String format) {
+    // Export project to another DAW format
+    // This would involve format-specific serialization
+    return true;
+}
+
+// AudioDAWApp implementation
+AudioDAWApp::AudioDAWApp() {
+    // Set up the main window
+    Title("MasterLab DAW");
+    Sizeable().Zoomable();
+    
+    // Set up the main components
+    timeline_view.SetEditor(nullptr);  // Will be set once we have an actual editor
+    mixer_rack.SetEditor(nullptr);
+    transport_ctrl.SetEditor(nullptr);
+    
+    // Add components to the window
+    AddFrame(main_menu);
+    AddFrame(main_toolbar);
+    AddFrame(status_bar);
+    
+    // Create the layout (will be finalized in Layout())
+    Add(timeline_view.HSizePos().TopPos(100, 200));
+    Add(mixer_rack.HSizePos().VSizePos(300, 100));
+    Add(transport_ctrl.HSizePos().BottomPos(0, 50));
+    
+    // Set up status bar
+    status_bar.Set("Ready");
+    
+    RefreshUI();
+}
+
+void AudioDAWApp::Menu(Bar& bar) {
+    bar.Add("File", CtrlImg::fileopen(), THISBACK(OnNewProject)).Help("Create a new project");
+    bar.Add("Open", CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open an existing project");
+    bar.Add("Save", CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save the current project");
+    bar.Add("Save As", CtrlImg::saveall(), THISBACK(OnSaveProjectAs)).Help("Save project with a new name");
+    bar.Separator();
+    bar.Add("Exit", CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit the application");
+}
+
+void AudioDAWApp::Tool(Bar& bar) {
+    bar.Add(CtrlImg::fileopen(), THISBACK(OnNewProject)).Help("New project");
+    bar.Add(CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open project");
+    bar.Add(CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save project");
+    bar.Add(CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit application");
+}
+
+void AudioDAWApp::NewProject() {
+    // Create a new project
+    project = AudioProject("Untitled Project");
+    RefreshUI();
+    status_bar.Set("New project created");
+}
+
+void AudioDAWApp::OpenProject() {
+    // Open a project file
+    String file_path = PromptFile("Open Project File", "*.mlp", GetExeDir());
+    if (!file_path.IsEmpty()) {
+        if (project.Load(file_path)) {
+            RefreshUI();
+            status_bar.Set("Project loaded: " + GetFileName(file_path));
+        } else {
+            Exclamation("Error loading project file: " + file_path);
+        }
+    }
+}
+
+void AudioDAWApp::SaveProject() {
+    if (project.GetPath().IsEmpty()) {
+        SaveProjectAs();  // If no path, prompt for a new one
+        return;
+    }
+    
+    if (project.Save()) {
+        status_bar.Set("Project saved: " + project.GetPath());
+    } else {
+        Exclamation("Error saving project file: " + project.GetPath());
+    }
+}
+
+void AudioDAWApp::SaveProjectAs() {
+    String file_path = PromptFile("Save Project As", "*.mlp", GetExeDir(), "mlp");
+    if (!file_path.IsEmpty()) {
+        if (project.SaveAs(file_path)) {
+            status_bar.Set("Project saved as: " + GetFileName(file_path));
+        } else {
+            Exclamation("Error saving project file: " + file_path);
+        }
+    }
+}
+
+void AudioDAWApp::Paint(Draw& draw) {
+    // Paint any additional elements specific to the main window
+}
+
+void AudioDAWApp::Layout() {
+    // Layout all the components based on window size
+    TopWindow::Layout();
+    
+    // Calculate sizes for the components
+    Size sz = GetSize();
+    
+    // Menu and toolbar take top space
+    int top_height = 80;  // Menu + toolbar
+    
+    // Transport takes bottom space
+    int transport_height = 50;
+    
+    // Calculate middle area for timeline and mixer
+    int middle_height = sz.cy - top_height - transport_height;
+    
+    // Timeline takes upper part of middle
+    int timeline_height = middle_height * 2 / 3;  // 2/3 of middle area
+    
+    // Mixer takes lower part
+    int mixer_height = middle_height - timeline_height;
+    
+    // Position components
+    main_menu.SetRect(0, 0, sz.cx, 20);
+    main_toolbar.SetRect(0, 20, sz.cx, 60);
+    
+    timeline_view.SetRect(0, top_height, sz.cx, timeline_height);
+    mixer_rack.SetRect(0, top_height + timeline_height, sz.cx, mixer_height);
+    transport_ctrl.SetRect(0, sz.cy - transport_height, sz.cx, transport_height);
+    
+    status_bar.SetRect(0, sz.cy - 20, sz.cx, 20);
+}
+
+void AudioDAWApp::OnNewProject() {
+    NewProject();
+}
+
+void AudioDAWApp::OnOpenProject() {
+    OpenProject();
+}
+
+void AudioDAWApp::OnSaveProject() {
+    SaveProject();
+}
+
+void AudioDAWApp::OnSaveProjectAs() {
+    SaveProjectAs();
+}
+
+void AudioDAWApp::OnQuit() {
+    Close();
+}
+
+void AudioDAWApp::RefreshUI() {
+    // Refresh all UI components to reflect the project state
+    // This would update all controls based on the project content
+    timeline_view.Refresh();
+    mixer_rack.RefreshRack();
+    
+    Title("MasterLab DAW - " + project.GetName());
+}
