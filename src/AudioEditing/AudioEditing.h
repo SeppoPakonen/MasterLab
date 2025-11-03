@@ -184,6 +184,7 @@ public:
 class Timeline {
 private:
     Vector<AudioTrack> tracks;
+    Vector<AudioBus> buses;
     double duration;
     int time_signature_numerator;
     int time_signature_denominator;
@@ -197,6 +198,7 @@ public:
     
     // Getters
     const Vector<AudioTrack>& GetTracks() const { return tracks; }  // Return const reference
+    const Vector<AudioBus>& GetBuses() const { return buses; }  // Return const reference
     double GetDuration() const { return duration; }
     int GetTimeSignatureNumerator() const { return time_signature_numerator; }
     int GetTimeSignatureDenominator() const { return time_signature_denominator; }
@@ -215,6 +217,9 @@ public:
     void AddTrack(const AudioTrack& track);
     void RemoveTrack(int index);
     void MoveTrack(int from_index, int to_index);
+    void AddBus(const AudioBus& bus);
+    void RemoveBus(int index);
+    void MoveBus(int from_index, int to_index);
     void AddMarker(const Marker& marker);
     void AddRegion(const Region& region);
     void RemoveMarker(int index);
@@ -235,13 +240,13 @@ public:
     bool ExportAbletonProject(String file_path);
     
     void Jsonize(JsonIO& jio) {
-        jio("tracks", tracks)("duration", duration)("time_signature_numerator", time_signature_numerator)
+        jio("tracks", tracks)("buses", buses)("duration", duration)("time_signature_numerator", time_signature_numerator)
            ("time_signature_denominator", time_signature_denominator)("tempo", tempo)
            ("metronome_enabled", metronome_enabled)("markers", markers)("regions", regions);
     }
     
     bool operator==(const Timeline& other) const {
-        return tracks == other.tracks && duration == other.duration &&
+        return tracks == other.tracks && buses == other.buses && duration == other.duration &&
                time_signature_numerator == other.time_signature_numerator &&
                time_signature_denominator == other.time_signature_denominator &&
                tempo == other.tempo && metronome_enabled == other.metronome_enabled &&
@@ -269,10 +274,69 @@ public:
     virtual void LeftDown(Point p, dword keyflags);
 };
 
+// Class to represent audio buses for routing
+class AudioBus {
+private:
+    String name;
+    int channel_count;
+    double volume;
+    bool is_muted;
+    bool is_soloed;
+    Vector<int> source_tracks;  // Tracks that send audio to this bus
+
+public:
+    AudioBus();
+    AudioBus(String bus_name, int channels = 2); // Default to stereo
+    
+    // Getters
+    String GetName() const { return name; }
+    int GetChannelCount() const { return channel_count; }
+    double GetVolume() const { return volume; }
+    bool GetMuteStatus() const { return is_muted; }
+    bool GetSoloStatus() const { return is_soloed; }
+    const Vector<int>& GetSourceTracks() const { return source_tracks; }
+    
+    // Setters
+    void SetName(String n) { name = n; }
+    void SetChannelCount(int channels) { channel_count = channels; }
+    void SetVolume(double vol) { volume = vol; }
+    void SetMuteStatus(bool muted) { is_muted = muted; }
+    void SetSoloStatus(bool soloed) { is_soloed = soloed; }
+    
+    // Bus operations
+    void AddSourceTrack(int track_index);
+    void RemoveSourceTrack(int track_index);
+    
+    void Jsonize(JsonIO& jio) {
+        jio("name", name)("channel_count", channel_count)("volume", volume)
+           ("is_muted", is_muted)("is_soloed", is_soloed)("source_tracks", source_tracks);
+    }
+    
+    bool operator==(const AudioBus& other) const {
+        return name == other.name && channel_count == other.channel_count &&
+               volume == other.volume && is_muted == other.is_muted &&
+               is_soloed == other.is_soloed && source_tracks == other.source_tracks;
+    }
+};
+
+// Add to the Vector includes at the top
+template<>
+struct IsContainer<AudioBus> : std::true_type {};
+
+template<>
+struct PlacementAlloc<AudioBus> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) AudioBus; }
+    static void  Free(AudioBus *ptr) { ptr->~AudioBus(); }
+    static void  Copy(AudioBus *dst, const AudioBus *src) { new(dst) AudioBus(*src); }
+    static void  Move(AudioBus *dst, AudioBus *src) { new(dst) AudioBus(pick(*src)); }
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
     Timeline timeline;
+    Vector<AudioBus> buses;  // Audio buses for routing
     bool clipboard_has_content;
     AudioClip clipboard_content;
 
@@ -318,6 +382,12 @@ public:
     void RemoveRegion(int index);
     void UpdateRegion(int index, double start_time, double end_time, String label, Color color);
     Vector<Region> GetAllRegions() const;
+    
+    // Bus operations
+    void AddBus(const AudioBus& bus);
+    void RemoveBus(int index);
+    void AssignTrackToBus(int track_index, int bus_index);
+    const Vector<AudioBus>& GetAllBuses() const { return buses; }
     
     // DAW integration methods
     bool ImportFromCubase(String project_path);

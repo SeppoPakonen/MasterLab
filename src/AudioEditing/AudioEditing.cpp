@@ -131,6 +131,25 @@ void Timeline::RemoveRegion(int index) {
 
 Timeline::Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4), tempo(120.0), metronome_enabled(false) {}
 
+void Timeline::AddBus(const AudioBus& bus) {
+    buses.Add(bus);
+}
+
+void Timeline::RemoveBus(int index) {
+    if(index >= 0 && index < buses.GetCount()) {
+        buses.Remove(index);
+    }
+}
+
+void Timeline::MoveBus(int from_index, int to_index) {
+    if(from_index >= 0 && from_index < buses.GetCount() && 
+       to_index >= 0 && to_index < buses.GetCount()) {
+        AudioBus temp = pick(buses[from_index]);  // Move using pick() as per U++ convention
+        buses.Remove(from_index);
+        buses.Insert(to_index, temp);
+    }
+}
+
 void Timeline::SetMetronomeEnabled(bool enabled) {
     metronome_enabled = enabled;
 }
@@ -641,6 +660,30 @@ bool AudioEditor::ExportProject(String file_path) {
     return true;
 }
 
+// AudioBus implementation
+AudioBus::AudioBus() : name("New Bus"), channel_count(2), volume(1.0), is_muted(false), is_soloed(false) {}
+
+AudioBus::AudioBus(String bus_name, int channels) : name(bus_name), channel_count(channels), volume(1.0), is_muted(false), is_soloed(false) {}
+
+void AudioBus::AddSourceTrack(int track_index) {
+    // Check if track is already assigned to this bus
+    for(int i = 0; i < source_tracks.GetCount(); i++) {
+        if(source_tracks[i] == track_index) {
+            return; // Track is already assigned to this bus
+        }
+    }
+    source_tracks.Add(track_index);
+}
+
+void AudioBus::RemoveSourceTrack(int track_index) {
+    for(int i = 0; i < source_tracks.GetCount(); i++) {
+        if(source_tracks[i] == track_index) {
+            source_tracks.Remove(i);
+            break;
+        }
+    }
+}
+
 bool AudioEditor::ExportProjectAsAudio(String file_path, String format) {
     // Export the mixed audio of the entire project to the specified format
     // This would mix down all tracks according to their timeline positions
@@ -655,4 +698,28 @@ bool AudioEditor::ExportProjectAsAudio(String file_path, String format) {
     
     // Default to WAV if format not recognized
     return ExportToWav(file_path);
+}
+
+// Bus operations implementation
+void AudioEditor::AddBus(const AudioBus& bus) {
+    buses.Add(bus);
+}
+
+void AudioEditor::RemoveBus(int index) {
+    if(index >= 0 && index < buses.GetCount()) {
+        buses.Remove(index);
+    }
+}
+
+void AudioEditor::AssignTrackToBus(int track_index, int bus_index) {
+    if(bus_index >= 0 && bus_index < buses.GetCount() && 
+       track_index >= 0 && track_index < timeline.GetTracks().GetCount()) {
+        // Remove track from any existing bus assignment
+        for(int i = 0; i < buses.GetCount(); i++) {
+            buses[i].RemoveSourceTrack(track_index);
+        }
+        
+        // Add track to the specified bus
+        buses[bus_index].AddSourceTrack(track_index);
+    }
 }
