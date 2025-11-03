@@ -205,6 +205,53 @@ int MidiTrack::FindMidiClipAtTime(double time) const {
     return -1;  // Not found
 }
 
+// AudioTrack automation methods
+void AudioTrack::AddAutomationPoint(String parameter, const AutomationPoint& point) {
+    // Check if we already have automation for this parameter
+    int index = automation.Find(parameter);
+    if (index >= 0) {
+        // Parameter already exists, add point to existing automation
+        automation[index].AddPoint(point);
+    } else {
+        // Create new automation for this parameter
+        Automation automation_data(parameter);
+        automation_data.AddPoint(point);
+        automation.Add(parameter, automation_data);
+    }
+}
+
+void AudioTrack::RemoveAutomationPoint(String parameter, int index) {
+    int param_idx = automation.Find(parameter);
+    if (param_idx >= 0) {
+        automation[param_idx].RemovePoint(index);
+    }
+}
+
+double AudioTrack::GetAutomationValueAtTime(String parameter, double time) const {
+    int index = automation.Find(parameter);
+    if (index >= 0) {
+        return automation[index].GetValueAtTime(time);
+    }
+    // Return default value if parameter not found
+    return 0.0;
+}
+
+void AudioTrack::SetAutomationValueAtTime(String parameter, double time, double value) {
+    AutomationPoint point(time, value);
+    
+    // Check if we already have automation for this parameter
+    int index = automation.Find(parameter);
+    if (index >= 0) {
+        // Parameter already exists, add point to existing automation
+        automation[index].AddPoint(point);
+    } else {
+        // Create new automation for this parameter
+        Automation automation_data(parameter);
+        automation_data.AddPoint(point);
+        automation.Add(parameter, automation_data);
+    }
+}
+
 void Timeline::SetMetronomeEnabled(bool enabled) {
     metronome_enabled = enabled;
 }
@@ -1066,5 +1113,126 @@ void MixerCtrl::UpdateStrip(int track_index) {
     // Update the specific strip for the given track index
     if (track_index >= 0 && track_index < strips.GetCount()) {
         strips[track_index]->RefreshControls();
+    }
+}
+
+// Automation implementation
+Automation::Automation() : parameter_name("default") {}
+
+Automation::Automation(String param_name) : parameter_name(param_name) {}
+
+void Automation::AddPoint(const AutomationPoint& point) {
+    // Find the correct position to insert the point to keep them in time order
+    int insert_pos = 0;
+    for(int i = 0; i < points.GetCount(); i++) {
+        if(points[i].time > point.time) {
+            break;
+        }
+        insert_pos++;
+    }
+    points.Insert(insert_pos, point);
+}
+
+void Automation::RemovePoint(int index) {
+    if(index >= 0 && index < points.GetCount()) {
+        points.Remove(index);
+    }
+}
+
+void Automation::UpdatePoint(int index, const AutomationPoint& new_point) {
+    if(index >= 0 && index < points.GetCount()) {
+        points[index] = new_point;
+        // Ensure the points remain in time order after update
+        if(index > 0 && points[index].time < points[index-1].time) {
+            // Move backward to correct position
+            for(int i = index; i > 0 && points[i].time < points[i-1].time; i--) {
+                std::swap(points[i], points[i-1]);
+            }
+        } else if(index < points.GetCount()-1 && points[index].time > points[index+1].time) {
+            // Move forward to correct position
+            for(int i = index; i < points.GetCount()-1 && points[i].time > points[i+1].time; i++) {
+                std::swap(points[i], points[i+1]);
+            }
+        }
+    }
+}
+
+double Automation::GetValueAtTime(double time) const {
+    if(points.GetCount() == 0) return 0.0;
+    if(points.GetCount() == 1) return points[0].value;
+    
+    // Find the two points that frame the given time
+    int first_point = -1;
+    int second_point = -1;
+    
+    for(int i = 0; i < points.GetCount(); i++) {
+        if(points[i].time <= time) {
+            first_point = i;
+        } else {
+            if(first_point != -1) {
+                second_point = i;
+                break;
+            }
+        }
+    }
+    
+    if(first_point == -1) {
+        // time is before the first point, return the first point's value
+        return points[0].value;
+    }
+    
+    if(second_point == -1) {
+        // time is after the last point, return the last point's value
+        return points[points.GetCount()-1].value;
+    }
+    
+    // Interpolate between the two points
+    const AutomationPoint& p1 = points[first_point];
+    const AutomationPoint& p2 = points[second_point];
+    
+    // Linear interpolation
+    double fraction = (time - p1.time) / (p2.time - p1.time);
+    return p1.value + fraction * (p2.value - p1.value);
+}
+
+Vector<AutomationPoint> Automation::GetPointsInRange(double start_time, double end_time) const {
+    Vector<AutomationPoint> result;
+    
+    for(int i = 0; i < points.GetCount(); i++) {
+        if(points[i].time >= start_time && points[i].time <= end_time) {
+            result.Add(points[i]);
+        }
+    }
+    
+    return result;
+}
+
+// AudioEditor automation methods
+void AudioEditor::AddTrackAutomationPoint(int track_index, String parameter, const AutomationPoint& point) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index >= 0 && track_index < all_tracks.GetCount()) {
+        all_tracks[track_index].AddAutomationPoint(parameter, point);
+    }
+}
+
+void AudioEditor::RemoveTrackAutomationPoint(int track_index, String parameter, int point_index) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index >= 0 && track_index < all_tracks.GetCount()) {
+        all_tracks[track_index].RemoveAutomationPoint(parameter, point_index);
+    }
+}
+
+double AudioEditor::GetTrackAutomationValueAtTime(int track_index, String parameter, double time) const {
+    const Vector<AudioTrack>& all_tracks = timeline.GetTracks();
+    if(track_index >= 0 && track_index < all_tracks.GetCount()) {
+        return all_tracks[track_index].GetAutomationValueAtTime(parameter, time);
+    }
+    return 0.0;  // Default value
+}
+
+void AudioEditor::SetTrackAutomationValueAtTime(int track_index, String parameter, double time, double value) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index >= 0 && track_index < all_tracks.GetCount()) {
+        all_tracks[track_index].SetAutomationValueAtTime(parameter, time, value);
     }
 }

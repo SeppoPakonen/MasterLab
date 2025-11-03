@@ -208,5 +208,36 @@ CONSOLE_APP_MAIN
         cout << "Mixer tests passed!" << endl;
     }
     
+    // Test Automation functionality
+    {
+        // Test AutomationPoint
+        AutomationPoint point(1.0, 0.5, 0);  // At 1.0s, value 0.5, linear shape
+        assert(point.time == 1.0);
+        assert(point.value == 0.5);
+        assert(point.shape == 0);
+        
+        // Test Automation
+        Automation volAutomation("volume");
+        volAutomation.AddPoint(AutomationPoint(0.0, 0.0));  // Start silent
+        volAutomation.AddPoint(AutomationPoint(2.0, 1.0));  // Fade in to full by 2s
+        
+        assert(volAutomation.GetPoints().GetCount() == 2);
+        assert(volAutomation.GetParameterName() == "volume");
+        
+        // Test value interpolation
+        assert(abs(volAutomation.GetValueAtTime(1.0) - 0.5) < 0.001);  // Should be halfway between 0 and 1
+        assert(abs(volAutomation.GetValueAtTime(0.5) - 0.25) < 0.001); // Should be 1/4 of the way
+        
+        // Test AudioTrack automation
+        AudioTrack track("Test Track with Automation");
+        track.AddAutomationPoint("volume", AutomationPoint(0.0, 0.0));
+        track.AddAutomationPoint("volume", AutomationPoint(4.0, 1.0));
+        
+        double valueAt2Sec = track.GetAutomationValueAtTime("volume", 2.0);
+        assert(abs(valueAt2Sec - 0.5) < 0.001);  // Should be halfway between 0 and 1
+        
+        cout << "Automation tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }

@@ -12,6 +12,8 @@ using namespace Upp;
 #include "SnapSettings.h"
 #include "FadeBehavior.h"
 
+// Ensure VectorMap is available
+
 // Class to represent individual audio clips
 class ClipMarker {
 public:
@@ -128,16 +130,25 @@ public:
     void TrimClip(int index, double new_start_time, double new_end_time);
     void SplitClip(int index, double split_time);
     
+    // Automation data for this track
+    VectorMap<String, Automation> automation;  // Map of parameter name to automation data
+    
     void Jsonize(JsonIO& jio) {
         jio("name", name)("clips", clips)("is_muted", is_muted)("is_soloed", is_soloed)
-           ("volume", volume)("height", height);
+           ("volume", volume)("height", height)("automation", automation);
     }
     
     bool operator==(const AudioTrack& other) const {
         return name == other.name && clips == other.clips && 
                is_muted == other.is_muted && is_soloed == other.is_soloed &&
-               volume == other.volume && height == other.height;
+               volume == other.volume && height == other.height && automation == other.automation;
     }
+    
+    // Automation-related methods
+    void AddAutomationPoint(String parameter, const AutomationPoint& point);
+    void RemoveAutomationPoint(String parameter, int index);
+    double GetAutomationValueAtTime(String parameter, double time) const;
+    void SetAutomationValueAtTime(String parameter, double time, double value);
 };
 
 // Class to represent markers on the timeline
@@ -453,13 +464,77 @@ public:
 template<>
 struct IsContainer<MidiTrack> : std::true_type {};
 
-template<>
-struct PlacementAlloc<MidiTrack> {
+// Class to represent automation points
+class AutomationPoint {
 public:
-    static void  Alloc(void *ptr) { new(ptr) MidiTrack; }
-    static void  Free(MidiTrack *ptr) { ptr->~MidiTrack(); }
-    static void  Copy(MidiTrack *dst, const MidiTrack *src) { new(dst) MidiTrack(*src); }
-    static void  Move(MidiTrack *dst, MidiTrack *src) { new(dst) MidiTrack(pick(*src)); }
+    double time;      // Time in seconds
+    double value;     // Parameter value (e.g., volume, pan)
+    int shape;        // Shape of transition (0=linear, 1=slow start, etc.)
+    
+    AutomationPoint() : time(0.0), value(0.0), shape(0) {}
+    AutomationPoint(double t, double v, int s = 0) : time(t), value(v), shape(s) {}
+    
+    void Jsonize(JsonIO& jio) {
+        jio("time", time)("value", value)("shape", shape);
+    }
+    
+    bool operator==(const AutomationPoint& other) const {
+        return time == other.time && value == other.value && shape == other.shape;
+    }
+};
+
+template<>
+struct IsContainer<AutomationPoint> : std::true_type {};
+
+template<>
+struct PlacementAlloc<AutomationPoint> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) AutomationPoint; }
+    static void  Free(AutomationPoint *ptr) { ptr->~AutomationPoint(); }
+    static void  Copy(AutomationPoint *dst, const AutomationPoint *src) { new(dst) AutomationPoint(*src); }
+    static void  Move(AutomationPoint *dst, AutomationPoint *src) { new(dst) AutomationPoint(pick(*src)); }
+};
+
+// Class to represent automation for a parameter
+class Automation {
+private:
+    Vector<AutomationPoint> points;
+    String parameter_name;  // Name of the parameter being automated
+    
+public:
+    Automation();
+    explicit Automation(String param_name);
+    
+    // Getters
+    const Vector<AutomationPoint>& GetPoints() const { return points; }
+    String GetParameterName() const { return parameter_name; }
+    
+    // Operations
+    void AddPoint(const AutomationPoint& point);
+    void RemovePoint(int index);
+    void UpdatePoint(int index, const AutomationPoint& new_point);
+    double GetValueAtTime(double time) const;  // Get interpolated value at specified time
+    Vector<AutomationPoint> GetPointsInRange(double start_time, double end_time) const;
+    
+    void Jsonize(JsonIO& jio) {
+        jio("points", points)("parameter_name", parameter_name);
+    }
+    
+    bool operator==(const Automation& other) const {
+        return points == other.points && parameter_name == other.parameter_name;
+    }
+};
+
+template<>
+struct IsContainer<Automation> : std::true_type {};
+
+template<>
+struct PlacementAlloc<Automation> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) Automation; }
+    static void  Free(Automation *ptr) { ptr->~Automation(); }
+    static void  Copy(Automation *dst, const Automation *src) { new(dst) Automation(*src); }
+    static void  Move(Automation *dst, Automation *src) { new(dst) Automation(pick(*src)); }
 };
 
 // Mixer channel strip control for audio tracks
@@ -609,6 +684,12 @@ public:
     
     // Additional methods needed for mixer
     const Vector<AudioTrack>& GetAllTracks() const { return timeline.GetTracks(); }
+    
+    // Automation methods
+    void AddTrackAutomationPoint(int track_index, String parameter, const AutomationPoint& point);
+    void RemoveTrackAutomationPoint(int track_index, String parameter, int point_index);
+    double GetTrackAutomationValueAtTime(int track_index, String parameter, double time) const;
+    void SetTrackAutomationValueAtTime(int track_index, String parameter, double time, double value);
 };
 
 #endif
