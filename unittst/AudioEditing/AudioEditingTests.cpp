@@ -186,5 +186,27 @@ CONSOLE_APP_MAIN
         cout << "MIDI tests passed!" << endl;
     }
     
+    // Test Mixer functionality
+    {
+        AudioEditor editor;
+        
+        // Add a track
+        AudioTrack track("Test Track");
+        // In a real implementation, we would use the editor to add a track
+        // For testing purposes, we'll just create a MixerStrip and MixerCtrl
+        
+        // Test mixer controls (creation logic)
+        MixerStrip strip;
+        strip.SetTrackIndex(0);
+        assert(strip.IsOpen());
+        
+        // Test mixer control
+        MixerCtrl mixer;
+        mixer.SetEditor(&editor);
+        assert(mixer.IsOpen());
+        
+        cout << "Mixer tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }

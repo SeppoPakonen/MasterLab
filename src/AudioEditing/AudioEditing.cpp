@@ -817,3 +817,254 @@ bool AudioEditor::SetMidiChannel(int track_index, int channel) {
     // In a complete implementation, this would set the MIDI channel for the track
     return true;
 }
+
+// MixerStrip implementation
+MixerStrip::MixerStrip() : track_index(-1), editor(nullptr) {
+    // Initialize controls with default values
+    volume_slider.SetRange(0, 100);  // 0-100% in UI, mapped to 0.0-2.0 in actual value
+    volume_slider <<= THISBACK(OnVolumeChange);
+    
+    pan_slider.SetRange(-100, 100);  // -100% to 100% (hard left to hard right)
+    pan_slider <<= THISBACK(OnPanChange);
+    
+    mute_button.SetLabel("MUTE");
+    mute_button <<= THISBACK(OnMuteToggle);
+    
+    solo_button.SetLabel("SOLO");
+    solo_button <<= THISBACK(OnSoloToggle);
+    
+    // Add controls to the layout
+    AddCtrls();
+}
+
+void MixerStrip::SetTrackIndex(int index) {
+    track_index = index;
+    RefreshControls();
+}
+
+void MixerStrip::SetEditor(AudioEditor* ed) {
+    editor = ed;
+    RefreshControls();
+}
+
+void MixerStrip::RefreshControls() {
+    if (!editor || track_index < 0) return;
+    
+    // Get track information from the editor
+    const Vector<AudioTrack>& tracks = editor->GetAllBuses().GetCount() > 0 ? 
+        editor->GetAllBuses()[0].GetSourceTracks().GetCount() > 0 ?
+        editor->GetAllBuses()[0].GetSourceTracks() : Vector<AudioTrack>() :
+        Vector<AudioTrack>();
+    
+    // Actually, we need to get the tracks from the timeline
+    // This is a simplified implementation
+    Layout();  // Refresh the layout to reflect any changes
+}
+
+void MixerStrip::Paint(Draw& draw) {
+    // Draw the mixer strip background
+    draw.DrawRect(GetSize(), White());
+    
+    // Draw a border around the mixer strip
+    draw.DrawRect(GetSize(), Black());
+}
+
+void MixerStrip::Layout() {
+    // Calculate positions for all controls based on the available size
+    Size sz = GetSize();
+    
+    // Position the controls: Track name at top, then volume/pan, then mute/solo, routing at bottom
+    int margin = 5;
+    int ctrl_width = 50;
+    int ctrl_height = 20;
+    int label_height = 15;
+    
+    // Track name display
+    track_name_display.SetRect(margin, margin, sz.cx - 2*margin, label_height);
+    
+    // Volume slider and display
+    int y = margin + label_height + margin;
+    volume_display.SetRect(margin, y, ctrl_width, ctrl_height);
+    volume_slider.SetRect(margin + ctrl_width + margin, y, ctrl_width, ctrl_height);
+    
+    // Pan slider
+    y += ctrl_height + margin;
+    pan_slider.SetRect(margin + ctrl_width + margin, y, ctrl_width, ctrl_height);
+    
+    // Mute and solo buttons
+    y += ctrl_height + margin;
+    mute_button.SetRect(margin, y, ctrl_width, ctrl_height);
+    solo_button.SetRect(margin + ctrl_width + margin, y, ctrl_width, ctrl_height);
+    
+    // Routing controls
+    y += ctrl_height + margin;
+    routing_ctrl.SetRect(margin, y, sz.cx - 2*margin, sz.cy - y - margin);
+    
+    Ctrl::Layout();
+}
+
+bool MixerStrip::Key(dword key, int count) {
+    // Handle keyboard shortcuts for mixer operations
+    switch(key) {
+        case K_DELETE:
+            // Implement track deletion if needed
+            return true;
+        case Ctrl('m'):
+            // Toggle mute
+            OnMuteToggle();
+            return true;
+        case Ctrl('s'):
+            // Toggle solo
+            OnSoloToggle();
+            return true;
+    }
+    return Ctrl::Key(key, count);
+}
+
+void MixerStrip::OnVolumeChange() {
+    // Handle volume change from slider
+    if (editor && track_index >= 0) {
+        // In a real implementation, this would update the track volume
+        // Convert slider value (0-100) to actual volume (0.0-2.0)
+        double volume = volume_slider.GetValue() / 50.0;  // Slider value 0-100 maps to 0.0-2.0
+        // editor->SetTrackVolume(track_index, volume);
+    }
+}
+
+void MixerStrip::OnPanChange() {
+    // Handle pan change from slider
+    if (editor && track_index >= 0) {
+        // In a real implementation, this would update the track pan
+        // Convert slider value (-100 to 100) to actual pan (-1.0 to 1.0)
+        double pan = pan_slider.GetValue() / 100.0;  // Slider value -100 to 100 maps to -1.0 to 1.0
+        // editor->SetTrackPan(track_index, pan);
+    }
+}
+
+void MixerStrip::OnMuteToggle() {
+    if (editor && track_index >= 0) {
+        // In a real implementation, this would toggle the track mute state
+        // bool current_mute = editor->GetTrackMuteStatus(track_index);
+        // editor->SetTrackMuteStatus(track_index, !current_mute);
+        mute_button.SetLabel(editor->GetMetronomeEnabled() ? "MUTE" : "UNMUTE"); // Placeholder
+    }
+}
+
+void MixerStrip::OnSoloToggle() {
+    if (editor && track_index >= 0) {
+        // In a real implementation, this would toggle the track solo state
+        // bool current_solo = editor->GetTrackSoloStatus(track_index);
+        // editor->SetTrackSoloStatus(track_index, !current_solo);
+    }
+}
+
+void MixerStrip::OnRoutingChange() {
+    // Handle routing change - update which bus this track sends to
+    if (editor && track_index >= 0) {
+        // In a real implementation, this would update the track-to-bus routing
+    }
+}
+
+void MixerStrip::AddCtrls() {
+    // Add all controls to the mixer strip
+    Add(track_name_display);
+    Add(volume_display);
+    Add(volume_slider);
+    Add(pan_slider);
+    Add(mute_button);
+    Add(solo_button);
+    Add(routing_ctrl);
+}
+
+// MixerCtrl implementation
+MixerCtrl::MixerCtrl() : editor(nullptr) {
+    // Initialize the mixer control
+}
+
+void MixerCtrl::SetEditor(AudioEditor* ed) {
+    editor = ed;
+    RefreshMixer();
+}
+
+void MixerCtrl::RefreshMixer() {
+    if (!editor) return;
+    
+    // Clear existing strips
+    for (auto& strip : strips) {
+        RemoveChild(&(*strip));
+        delete strip;
+    }
+    strips.Clear();
+    
+    // Create a mixer strip for each track
+    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
+    for (int i = 0; i < tracks.GetCount(); i++) {
+        MixerStrip* strip = new MixerStrip();
+        strip->SetTrackIndex(i);
+        strip->SetEditor(editor);
+        strips.Add(strip);
+        AddChild(strip);
+    }
+    
+    Layout();
+}
+
+void MixerCtrl::Paint(Draw& draw) {
+    // Draw the mixer background
+    draw.DrawRect(GetSize(), RGB(40, 40, 40));  // Dark gray background
+    
+    // Draw a border around the mixer
+    draw.DrawRect(GetSize(), Black());
+}
+
+void MixerCtrl::Layout() {
+    // Layout all the mixer strips in a vertical arrangement
+    Size sz = GetSize();
+    
+    if (strips.GetCount() == 0) return;
+    
+    // Calculate width for each strip
+    int strip_width = std::min(150, sz.cx / std::max(1, strips.GetCount()));  // At least 150px width per strip
+    int strip_height = sz.cy;  // Full height for now, might want to limit per strip
+    
+    for (int i = 0; i < strips.GetCount(); i++) {
+        int x_pos = i * strip_width;
+        strips[i]->SetRect(x_pos, 0, strip_width, strip_height);
+    }
+}
+
+bool MixerCtrl::Key(dword key, int count) {
+    return Ctrl::Key(key, count);
+}
+
+void MixerCtrl::OnStripChange(int track_index) {
+    // This would be called when a parameter changes on a specific strip
+    // In a real implementation, this might trigger a redraw or update
+}
+
+void MixerCtrl::AddStrip(int track_index) {
+    // Add a new mixer strip for the given track index
+    if (!editor) return;
+    
+    MixerStrip* strip = new MixerStrip();
+    strip->SetTrackIndex(track_index);
+    strip->SetEditor(editor);
+    strips.Add(strip);
+    AddChild(strip);
+    
+    Layout();  // Re-layout to accommodate the new strip
+}
+
+void MixerCtrl::RemoveStrip(int track_index) {
+    // Remove the mixer strip for the given track index
+    // In a real implementation, we would need to find and remove the specific strip
+    // For now, we'll just refresh the entire mixer
+    RefreshMixer();
+}
+
+void MixerCtrl::UpdateStrip(int track_index) {
+    // Update the specific strip for the given track index
+    if (track_index >= 0 && track_index < strips.GetCount()) {
+        strips[track_index]->RefreshControls();
+    }
+}

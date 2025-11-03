@@ -462,6 +462,70 @@ public:
     static void  Move(MidiTrack *dst, MidiTrack *src) { new(dst) MidiTrack(pick(*src)); }
 };
 
+// Mixer channel strip control for audio tracks
+class MixerStrip : public Ctrl {
+private:
+    int track_index;
+    AudioEditor* editor;
+    
+    // UI controls
+    SliderCtrl volume_slider;
+    Display volume_display;
+    SliderCtrl pan_slider;
+    Button mute_button;
+    Button solo_button;
+    ArrayCtrl routing_ctrl;  // For routing to buses
+    
+    // Track information display
+    Display track_name_display;
+    
+public:
+    MixerStrip();
+    void SetTrackIndex(int index);
+    void SetEditor(AudioEditor* ed);
+    void RefreshControls();
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    
+    // Event handlers
+    void OnVolumeChange();
+    void OnPanChange();
+    void OnMuteToggle();
+    void OnSoloToggle();
+    void OnRoutingChange();
+    
+    // Layout the mixer strip controls
+    void AddCtrls();
+};
+
+// Main mixer control that contains multiple mixer strips
+class MixerCtrl : public Ctrl {
+private:
+    AudioEditor* editor;
+    Vector<MixerStrip*> strips;  // Array of mixer strips, one for each track
+    
+public:
+    MixerCtrl();
+    void SetEditor(AudioEditor* ed);
+    void RefreshMixer();
+    
+    // UI layout
+    virtual void Paint(Draw& draw);
+    virtual void Layout();
+    virtual bool Key(dword key, int count);
+    
+    // Event handlers
+    void OnStripChange(int track_index);
+    
+    // Add or remove strips as tracks are added/removed
+    void AddStrip(int track_index);
+    void RemoveStrip(int track_index);
+    void UpdateStrip(int track_index);
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
@@ -542,6 +606,9 @@ public:
     Vector<MidiEvent> GetMidiEventsAtTime(int track_index, int clip_index, double time);
     bool SetMidiInstrument(int track_index, String instrument_name);
     bool SetMidiChannel(int track_index, int channel);
+    
+    // Additional methods needed for mixer
+    const Vector<AudioTrack>& GetAllTracks() const { return timeline.GetTracks(); }
 };
 
 #endif
