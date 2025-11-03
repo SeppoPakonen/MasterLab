@@ -332,6 +332,136 @@ public:
     static void  Move(AudioBus *dst, AudioBus *src) { new(dst) AudioBus(pick(*src)); }
 };
 
+// Class to represent MIDI events
+class MidiEvent {
+public:
+    int type;           // Note On = 0x90, Note Off = 0x80, etc.
+    int channel;        // MIDI channel (0-15 typically)
+    int note;           // Note number (0-127)
+    int velocity;       // Velocity (0-127)
+    double time;        // Time in seconds
+    
+    MidiEvent() : type(0), channel(0), note(60), velocity(100), time(0.0) {}
+    MidiEvent(int t, int ch, int n, int vel, double tm) 
+        : type(t), channel(ch), note(n), velocity(vel), time(tm) {}
+    
+    void Jsonize(JsonIO& jio) {
+        jio("type", type)("channel", channel)("note", note)("velocity", velocity)("time", time);
+    }
+    
+    bool operator==(const MidiEvent& other) const {
+        return type == other.type && channel == other.channel && 
+               note == other.note && velocity == other.velocity && time == other.time;
+    }
+};
+
+template<>
+struct IsContainer<MidiEvent> : std::true_type {};
+
+template<>
+struct PlacementAlloc<MidiEvent> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) MidiEvent; }
+    static void  Free(MidiEvent *ptr) { ptr->~MidiEvent(); }
+    static void  Copy(MidiEvent *dst, const MidiEvent *src) { new(dst) MidiEvent(*src); }
+    static void  Move(MidiEvent *dst, MidiEvent *src) { new(dst) MidiEvent(pick(*src)); }
+};
+
+// Class to represent a MIDI clip
+class MidiClip : public AudioClip {
+private:
+    Vector<MidiEvent> events;
+
+public:
+    MidiClip();
+    MidiClip(String clip_name, double start_time = 0.0, double end_time = 0.0);
+    
+    // Getters
+    const Vector<MidiEvent>& GetEvents() const { return events; }
+    
+    // MIDI operations
+    void AddEvent(const MidiEvent& event);
+    void RemoveEvent(int index);
+    void ClearEvents();
+    Vector<MidiEvent> GetEventsAtTime(double time) const;  // Get all events at specified time
+    
+    // Override Jsonize to include events
+    void Jsonize(JsonIO& jio) {
+        jio("name", name)("start_time", start_time)("end_time", end_time)
+           ("file_path", file_path)("is_muted", is_muted)("is_soloed", is_soloed)
+           ("volume", volume)("pitch_semitones", pitch_semitones)("markers", markers)
+           ("events", events);
+    }
+    
+    bool operator==(const MidiClip& other) const {
+        return AudioClip::operator==(other) && events == other.events;
+    }
+};
+
+template<>
+struct IsContainer<MidiClip> : std::true_type {};
+
+template<>
+struct PlacementAlloc<MidiClip> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) MidiClip; }
+    static void  Free(MidiClip *ptr) { ptr->~MidiClip(); }
+    static void  Copy(MidiClip *dst, const MidiClip *src) { new(dst) MidiClip(*src); }
+    static void  Move(MidiClip *dst, MidiClip *src) { new(dst) MidiClip(pick(*src)); }
+};
+
+// Class to represent a MIDI track
+class MidiTrack : public AudioTrack {
+private:
+    Vector<MidiClip> midi_clips;  // Only MIDI clips in this track
+    String instrument_name;       // Associated instrument
+    int midi_channel;             // MIDI channel for this track (0-15)
+
+public:
+    MidiTrack();
+    explicit MidiTrack(String track_name);
+    
+    // Getters
+    const Vector<MidiClip>& GetMidiClips() const { return midi_clips; }
+    String GetInstrumentName() const { return instrument_name; }
+    int GetMidiChannel() const { return midi_channel; }
+    
+    // Setters
+    void SetInstrumentName(String name) { instrument_name = name; }
+    void SetMidiChannel(int channel) { midi_channel = channel; }
+    
+    // MIDI operations
+    void AddMidiClip(const MidiClip& clip);
+    void RemoveMidiClip(int index);
+    int FindMidiClipAtTime(double time) const;  // Find which clip contains the given time
+    
+    // Override from AudioTrack
+    void Jsonize(JsonIO& jio) {
+        jio("name", name)("color", color)("is_muted", is_muted)("is_soloed", is_soloed)
+           ("volume", volume)("pan", pan)("automation", automation)("midi_clips", midi_clips)
+           ("instrument_name", instrument_name)("midi_channel", midi_channel);
+    }
+    
+    bool operator==(const MidiTrack& other) const {
+        return AudioTrack::operator==(other) && 
+               midi_clips == other.midi_clips &&
+               instrument_name == other.instrument_name &&
+               midi_channel == other.midi_channel;
+    }
+};
+
+template<>
+struct IsContainer<MidiTrack> : std::true_type {};
+
+template<>
+struct PlacementAlloc<MidiTrack> {
+public:
+    static void  Alloc(void *ptr) { new(ptr) MidiTrack; }
+    static void  Free(MidiTrack *ptr) { ptr->~MidiTrack(); }
+    static void  Copy(MidiTrack *dst, const MidiTrack *src) { new(dst) MidiTrack(*src); }
+    static void  Move(MidiTrack *dst, MidiTrack *src) { new(dst) MidiTrack(pick(*src)); }
+};
+
 // Class to handle audio editing operations
 class AudioEditor {
 private:
@@ -405,6 +535,13 @@ public:
     // Full project export
     bool ExportProject(String file_path);
     bool ExportProjectAsAudio(String file_path, String format); // Exports mixed audio of entire project
+    
+    // MIDI-specific operations
+    bool AddMidiEvent(int track_index, int clip_index, int type, int channel, int note, int velocity, double time);
+    bool RemoveMidiEvent(int track_index, int clip_index, int event_index);
+    Vector<MidiEvent> GetMidiEventsAtTime(int track_index, int clip_index, double time);
+    bool SetMidiInstrument(int track_index, String instrument_name);
+    bool SetMidiChannel(int track_index, int channel);
 };
 
 #endif

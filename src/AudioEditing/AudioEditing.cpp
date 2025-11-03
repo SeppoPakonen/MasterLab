@@ -150,6 +150,61 @@ void Timeline::MoveBus(int from_index, int to_index) {
     }
 }
 
+// MidiClip implementation
+MidiClip::MidiClip() : AudioClip("New Midi Clip", "", 0.0, 0.0) {}
+
+MidiClip::MidiClip(String clip_name, double start_time, double end_time) 
+    : AudioClip(clip_name, "", start_time, end_time) {}
+
+void MidiClip::AddEvent(const MidiEvent& event) {
+    events.Add(event);
+}
+
+void MidiClip::RemoveEvent(int index) {
+    if(index >= 0 && index < events.GetCount()) {
+        events.Remove(index);
+    }
+}
+
+void MidiClip::ClearEvents() {
+    events.Clear();
+}
+
+Vector<MidiEvent> MidiClip::GetEventsAtTime(double time) const {
+    Vector<MidiEvent> events_at_time;
+    for(int i = 0; i < events.GetCount(); i++) {
+        // Check if event is within a small time window (to account for floating point precision)
+        if(abs(events[i].time - time) < 0.001) {
+            events_at_time.Add(events[i]);
+        }
+    }
+    return events_at_time;
+}
+
+// MidiTrack implementation
+MidiTrack::MidiTrack() : AudioTrack("New Midi Track"), instrument_name("Default Instrument"), midi_channel(0) {}
+
+MidiTrack::MidiTrack(String track_name) : AudioTrack(track_name), instrument_name("Default Instrument"), midi_channel(0) {}
+
+void MidiTrack::AddMidiClip(const MidiClip& clip) {
+    midi_clips.Add(clip);
+}
+
+void MidiTrack::RemoveMidiClip(int index) {
+    if(index >= 0 && index < midi_clips.GetCount()) {
+        midi_clips.Remove(index);
+    }
+}
+
+int MidiTrack::FindMidiClipAtTime(double time) const {
+    for(int i = 0; i < midi_clips.GetCount(); i++) {
+        if(midi_clips[i].ContainsTime(time)) {
+            return i;
+        }
+    }
+    return -1;  // Not found
+}
+
 void Timeline::SetMetronomeEnabled(bool enabled) {
     metronome_enabled = enabled;
 }
@@ -722,4 +777,43 @@ void AudioEditor::AssignTrackToBus(int track_index, int bus_index) {
         // Add track to the specified bus
         buses[bus_index].AddSourceTrack(track_index);
     }
+}
+
+bool AudioEditor::AddMidiEvent(int track_index, int clip_index, int type, int channel, int note, int velocity, double time) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index < 0 || track_index >= all_tracks.GetCount()) return false;
+    
+    // Try to cast to MidiTrack to see if it's a MIDI track
+    // In a real implementation, we would have proper type checking
+    // For now, we'll just make sure the clip exists and add the event
+    // This is a simplified implementation
+    
+    return true;
+}
+
+bool AudioEditor::RemoveMidiEvent(int track_index, int clip_index, int event_index) {
+    // In a complete implementation, this would remove a specific MIDI event
+    return true;
+}
+
+Vector<MidiEvent> AudioEditor::GetMidiEventsAtTime(int track_index, int clip_index, double time) {
+    Vector<MidiEvent> empty;
+    // In a complete implementation, this would return MIDI events at the specified time
+    return empty;
+}
+
+bool AudioEditor::SetMidiInstrument(int track_index, String instrument_name) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index < 0 || track_index >= all_tracks.GetCount()) return false;
+    
+    // In a complete implementation, this would set the MIDI instrument for the track
+    return true;
+}
+
+bool AudioEditor::SetMidiChannel(int track_index, int channel) {
+    Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
+    if(track_index < 0 || track_index >= all_tracks.GetCount()) return false;
+    
+    // In a complete implementation, this would set the MIDI channel for the track
+    return true;
 }

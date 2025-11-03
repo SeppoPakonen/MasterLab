@@ -150,5 +150,41 @@ CONSOLE_APP_MAIN
         cout << "AudioBus tests passed!" << endl;
     }
     
+    // Test MIDI functionality
+    {
+        // Test MidiEvent
+        MidiEvent noteOn(0x90, 0, 60, 100, 1.0);  // Note On, channel 0, note 60, vel 100, at 1.0s
+        assert(noteOn.type == 0x90);
+        assert(noteOn.channel == 0);
+        assert(noteOn.note == 60);
+        assert(noteOn.velocity == 100);
+        assert(noteOn.time == 1.0);
+        
+        // Test MidiClip
+        MidiClip midiClip("Test Midi Clip", 0.0, 4.0);
+        assert(midiClip.GetName() == "Test Midi Clip");
+        
+        // Add a few MIDI events
+        midiClip.AddEvent(noteOn);
+        midiClip.AddEvent(MidiEvent(0x80, 0, 60, 0, 1.5));  // Note Off
+        assert(midiClip.GetEvents().GetCount() == 2);
+        
+        // Test MidiTrack
+        MidiTrack midiTrack("MIDI Track 1");
+        assert(midiTrack.GetName() == "MIDI Track 1");
+        assert(midiTrack.GetMidiChannel() == 0);
+        
+        midiTrack.SetInstrumentName("Grand Piano");
+        midiTrack.SetMidiChannel(1);
+        assert(midiTrack.GetInstrumentName() == "Grand Piano");
+        assert(midiTrack.GetMidiChannel() == 1);
+        
+        // Add the MIDI clip to the track
+        midiTrack.AddMidiClip(midiClip);
+        assert(midiTrack.GetMidiClips().GetCount() == 1);
+        
+        cout << "MIDI tests passed!" << endl;
+    }
+    
     cout << "All tests passed!" << endl;
 }
