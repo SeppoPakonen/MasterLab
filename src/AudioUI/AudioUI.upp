@@ -6,14 +6,20 @@ uses
 	AudioGraph,
 	AudioMaster,
 	CtrlLib,
-	SubWindowCtrl;
+	SubWindowCtrl,
+	PluginSDK;
 
 file
 	AGENTS.md,
 	AudioUI.h,
+	AudioUI.cpp,
 	Breadcrumb.h,
-	GraphEditorWidgets.cpp,
-	GraphEditorWidgets.h,
 	Breadcrumb.cpp,
+	GraphEditorWidgets.h,
+	GraphEditorWidgets.cpp,
+	GraphVisualizationCtrl.h,
+	GraphVisualizationCtrl.cpp,
 	PostGraphView.h,
-	PostView.h;
+	PostView.h,
+	UI.h,
+	UI.cpp;

@@ -2,76 +2,137 @@
 #define _Devices_IOMatrixService_h_
 
 #include <Core/Core.h>
-#include <plugin/PluginManager/PluginManager.h>
-#include "RoutingRepository.h"
+#include <CtrlLib/CtrlLib.h>
+#include <plugin/bass/bass.h> // For audio device management
 
 using namespace Upp;
 
 namespace Devices {
 
-// Represents a connection between source and destination in the I/O matrix
-struct Connection {
-    String source;      // Plugin/track name, bus name, etc.
-    String destination; // Plugin/track name, bus name, etc.
-    int channel;        // Audio channel or MIDI channel
-    bool isActive;      // Whether the connection is currently active
+// Structure representing an audio bus
+struct AudioBus {
+    String name;
+    String speakerConfig;  // Mono, Stereo, 5.0, 5.1, etc.
+    String audioDevice;
+    Vector<String> devicePorts;  // Per channel when expanded
+    bool isExpanded;
     
-    Connection() : channel(0), isActive(true) {}
-    Connection(const String& src, const String& dst, int ch, bool active = true)
-        : source(src), destination(dst), channel(ch), isActive(active) {}
+    AudioBus() : isExpanded(false) {}
 };
 
-// IOMatrixService manages VST connections and I/O routing
+// Structure for external FX
+struct ExternalFx {
+    String name;
+    String sendConfig;
+    String returnConfig;
+    String midiDevice;
+    double delayMs;
+    double sendGainDb;
+    double returnGainDb;
+    bool isUsed;
+    
+    ExternalFx() : delayMs(0.0), sendGainDb(0.0), returnGainDb(0.0), isUsed(false) {}
+};
+
+// Structure for external instruments
+struct ExternalInstrument {
+    String name;
+    int monoReturnsCount;
+    int stereoReturnsCount;
+    String midiDevice;
+    double delayMs;
+    double returnGainDb;
+    bool isUsed;
+    
+    ExternalInstrument() : monoReturnsCount(0), stereoReturnsCount(0), delayMs(0.0), returnGainDb(0.0), isUsed(false) {}
+};
+
+// Enum for connection types
+enum ConnectionType {
+    INPUTS,
+    OUTPUTS,
+    GROUPS_FX,
+    EXTERNAL_FX,
+    EXTERNAL_INSTRUMENTS,
+    STUDIO
+};
+
+// Service class for managing I/O routing matrix
 class IOMatrixService {
 public:
     IOMatrixService();
     ~IOMatrixService();
     
-    // Get current connection snapshot
-    Vector<Connection> GetSnapshot() const;
+    // Core functionality
+    void Initialize();
+    void Shutdown();
     
-    // Apply connections to the audio system
-    bool ApplyConnections(const Vector<Connection>& connections);
+    // Input management
+    Vector<AudioBus> GetInputs() const;
+    void AddInput(const AudioBus& bus);
+    void RemoveInput(int index);
+    void UpdateInput(int index, const AudioBus& bus);
     
-    // Create a new connection
-    bool CreateConnection(const Connection& conn);
+    // Output management
+    Vector<AudioBus> GetOutputs() const;
+    void AddOutput(const AudioBus& bus);
+    void RemoveOutput(int index);
+    void UpdateOutput(int index, const AudioBus& bus);
     
-    // Remove an existing connection
-    bool RemoveConnection(const Connection& conn);
+    // Groups/FX management
+    Vector<AudioBus> GetGroupsFx() const;
+    void AddGroup(const AudioBus& bus);
+    void RemoveGroup(int index);
+    void UpdateGroup(int index, const AudioBus& bus);
+    void AddFxChannel(const AudioBus& bus);
+    void RemoveFxChannel(int index);
+    void UpdateFxChannel(int index, const AudioBus& bus);
     
-    // Update an existing connection
-    bool UpdateConnection(const Connection& oldConn, const Connection& newConn);
+    // External FX management
+    Vector<ExternalFx> GetExternalFx() const;
+    void AddExternalFx(const ExternalFx& fx);
+    void RemoveExternalFx(int index);
+    void UpdateExternalFx(int index, const ExternalFx& fx);
     
-    // Get available sources for connections
-    Vector<String> GetAvailableSources() const;
+    // External Instruments management
+    Vector<ExternalInstrument> GetExternalInstruments() const;
+    void AddExternalInstrument(const ExternalInstrument& inst);
+    void RemoveExternalInstrument(int index);
+    void UpdateExternalInstrument(int index, const ExternalInstrument& inst);
     
-    // Get available destinations for connections
-    Vector<String> GetAvailableDestinations() const;
+    // Studio (Control Room) management
+    Vector<AudioBus> GetStudio() const;
+    void AddStudioBus(const AudioBus& bus);
+    void RemoveStudioBus(int index);
+    void UpdateStudioBus(int index, const AudioBus& bus);
     
-    // Get connections for a specific source
-    Vector<Connection> GetConnectionsForSource(const String& source) const;
+    // Preset management
+    void SavePreset(const String& name);
+    void LoadPreset(const String& name);
+    void DeletePreset(const String& name);
+    Vector<String> GetPresets() const;
     
-    // Get connections for a specific destination
-    Vector<Connection> GetConnectionsForDestination(const String& destination) const;
+    // Apply changes to the system
+    void ApplyChanges();
     
-    // Get audio routing repository
-    RoutingRepository& GetRoutingRepository() { return routingRepo; }
-    
-    // Update connection status in real-time
-    void UpdateConnectionStatus(const String& source, const String& destination, bool active);
-    
-    // Refresh available sources and destinations
-    void RefreshAvailableIO();
+    // Get snapshots of current state
+    ValueMap GetSnapshot(ConnectionType type) const;
+    void ApplySnapshot(ConnectionType type, const ValueMap& snapshot);
     
 private:
-    RoutingRepository routingRepo;
-    Vector<Connection> currentConnections;
+    Vector<AudioBus> inputs;
+    Vector<AudioBus> outputs;
+    Vector<AudioBus> groupsFx;  // Groups and FX channels mixed
+    Vector<ExternalFx> externalFx;
+    Vector<ExternalInstrument> externalInstruments;
+    Vector<AudioBus> studio;  // Control Room buses
     
-    // Internal methods
-    bool ValidateConnection(const Connection& conn) const;
-    void NotifyConnectionChange(const Connection& conn, int changeType); // 0=added, 1=removed, 2=updated
+    Vector<String> presets;
+    
+    // Private methods
+    void Reset();
 };
 
-}
+} // namespace Devices
 
 #endif

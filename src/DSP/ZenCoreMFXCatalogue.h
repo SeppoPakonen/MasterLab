@@ -18,13 +18,29 @@ enum MFXCategory {
     SPATIAL
 };
 
+struct ParameterTemplate : public Moveable<ParameterTemplate> {
+    Upp::String id;
+    Upp::String name;
+    double default_value;
+    double min_value;
+    double max_value;
+    Upp::String unit;  // e.g., "Hz", "%", "dB", ""
+    
+    ParameterTemplate() : default_value(0.0), min_value(0.0), max_value(1.0) {}
+    ParameterTemplate(const Upp::String& param_id, const Upp::String& param_name, 
+                     double default_val, double min_val, double max_val, const Upp::String& unit_str = "")
+        : id(param_id), name(param_name), default_value(default_val), 
+          min_value(min_val), max_value(max_val), unit(unit_str) {}
+};
+
 struct MFXAlgorithm : public Moveable<MFXAlgorithm> {
     Upp::String id;
     Upp::String name;
     Upp::String description;
     MFXCategory category;
     bool supports_combination;
-    Upp::Vector<Upp::String> parameters;
+    Upp::Vector<ParameterTemplate> parameter_templates;  // Enhanced with templates instead of just names
+    Upp::Vector<Upp::String> default_presets;  // Default presets for model expansions
     
     MFXAlgorithm() : category(FILTER), supports_combination(false) {}
     MFXAlgorithm(const Upp::String& alg_id, const Upp::String& alg_name, MFXCategory cat)
@@ -56,8 +72,20 @@ public:
     // Get algorithm metadata
     ValueMap GetMetadata(const Upp::String& id) const;
     
+    // Apply default parameters for specific model expansion
+    ValueMap ApplyDefaults(const Upp::String& algorithmId, const Upp::String& modelExpansion) const;
+    
+    // Get default parameters for a specific model expansion
+    ValueMap GetDefaultParameters(const Upp::String& algorithmId, const Upp::String& modelExpansion) const;
+    
+    // Initialize with ZenCore model expansion defaults
+    void InitializeWithModelDefaults();
+    
 private:
     VectorMap<Upp::String, MFXAlgorithm> algorithms;
+    
+    // Helper method to set up default parameters for model expansions
+    ValueMap GetModelExpansionDefaults(const Upp::String& algorithmId, const Upp::String& modelExpansion) const;
 };
 
 }

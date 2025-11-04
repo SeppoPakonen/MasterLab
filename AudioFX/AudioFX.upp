@@ -1,0 +1,30 @@
+description "Audio effects package\377255,127,80";
+
+uses
+	CtrlLib,
+	plugin/bass,
+	AudioCore;
+
+file
+	DSP.h,
+	DSP.cpp,
+	SignalBus.h,
+	SignalBus.cpp,
+	ParameterSet.h,
+	ParameterSet.cpp,
+	ModMatrix.h,
+	ModMatrix.cpp,
+	LatencyBuffer.h,
+	LatencyBuffer.cpp,
+	Analyzer.h,
+	Analyzer.cpp,
+	PresetManager.h,
+	PresetManager.cpp,
+	Modulation.h,
+	Modulation.cpp,
+	UI/RackView.h,
+	UI/RackView.cpp,
+	UI/SceneManager.h,
+	UI/SceneManager.cpp,
+	UI/XYPad.h,
+	UI/XYPad.cpp;

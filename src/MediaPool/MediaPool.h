@@ -6,6 +6,7 @@
 #include <AudioCore/AudioCore.h>
 using namespace Upp;
 
+#include "Sample.h"  // Include the Sample header
 #include "PoolWindow.h"
 #include "Conform.h"
 #include "Convert.h"

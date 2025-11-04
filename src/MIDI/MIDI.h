@@ -9,5 +9,6 @@ using namespace Upp;
 #include "MidiFilterConfig.h"
 #include "MidiDisplay.h"
 #include "MidiFilePrefs.h"
+#include "Groove.h"
 
 #endif

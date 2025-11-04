@@ -84,6 +84,12 @@ private:
     Vector<String> deviceList;
 };
 
+// Additional IOMatrixService functions (if needed)
+// IOMatrixService and related structures are already defined in IOMatrixService.h
+// which is included above
+
 }
+
+#endif
 
 #endif

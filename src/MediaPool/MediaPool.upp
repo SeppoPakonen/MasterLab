@@ -21,4 +21,6 @@ file
 	Integrity.h,
 	Integrity.cpp,
 	MediaSettings.h,
-	MediaSettings.cpp;
+	MediaSettings.cpp,
+	Sample.h,
+	Sample.cpp;

@@ -5,12 +5,17 @@
 namespace am {
 
 // ScoreEditorCtrl implementation
-ScoreEditorCtrl::ScoreEditorCtrl() : scoreProject(nullptr), zoomLevel(100) {
+ScoreEditorCtrl::ScoreEditorCtrl() : scoreProject(nullptr), notationDoc(nullptr), zoomLevel(100) {
     // Initialize the score control
 }
 
 void ScoreEditorCtrl::SetScoreProject(ScoreProjectData* scoreProject) {
     this->scoreProject = scoreProject;
+    RefreshDisplay();
+}
+
+void ScoreEditorCtrl::SetNotationDocument(Scores::NotationModel* doc) {
+    this->notationDoc = doc;
     RefreshDisplay();
 }
 
@@ -34,7 +39,7 @@ void ScoreEditorCtrl::Paint(Draw& draw) {
     
     if (!scoreProject) return;
     
-    const Vector<Measure>& measures = scoreProject->GetNotationModel().GetMeasures();
+    const Vector<Measure>& measures = notationDoc ? notationDoc->GetMeasures() : scoreProject->GetNotationModel().GetMeasures();
     int yPos = 50;
     int xPos = 50;
     
@@ -69,6 +74,7 @@ void ScoreEditorCtrl::Paint(Draw& draw) {
 
 void ScoreEditorCtrl::LeftDown(Point p, dword keyflags) {
     // Handle note placement
+    // In a real implementation, this would add notes via the command system
 }
 
 void ScoreEditorCtrl::MouseMove(Point p, dword keyflags) {
@@ -78,8 +84,18 @@ void ScoreEditorCtrl::MouseMove(Point p, dword keyflags) {
     }
 }
 
+void ScoreEditorCtrl::MouseWheel(Point p, int zdelta, dword keyflags) {
+    if (zdelta > 0) {
+        ZoomIn();
+    } else {
+        ZoomOut();
+    }
+}
+
 // ScoreEditorController implementation
-ScoreEditorController::ScoreEditorController() : view(nullptr), scoreProject(nullptr), project(nullptr) {
+ScoreEditorController::ScoreEditorController() : view(nullptr), scoreProject(nullptr), 
+                                                 project(nullptr), commandManager(nullptr), 
+                                                 midiPreview(nullptr), notationDoc(nullptr) {
     // Initialize the controller
 }
 
@@ -98,20 +114,52 @@ void ScoreEditorController::SetProject(am::Project* project) {
     this->project = project;
 }
 
+void ScoreEditorController::SetCommandManager(ProjectMgmt::CommandManager* cmdMgr) {
+    this->commandManager = cmdMgr;
+}
+
+void ScoreEditorController::SetMidiPreview(AudioCore::MidiPreview* midiPreview) {
+    this->midiPreview = midiPreview;
+}
+
+void ScoreEditorController::SetNotationDocument(Scores::NotationModel* doc) {
+    this->notationDoc = doc;
+    if (view) {
+        view->SetNotationDocument(doc);
+    }
+}
+
 void ScoreEditorController::HandleNoteAdd(int pitch, double start_time, double duration) {
-    if (!scoreProject || !project) return;
+    if (!scoreProject || !project || !commandManager) return;
     
-    // This would be a more complex implementation in a real system
-    // For now, we'll just add a note to the first measure if it exists
-    if (scoreProject->GetNotationModel().GetMeasures().GetCount() > 0) {
-        // In a real implementation, we would use the project's command system
+    // In a real implementation, we would create a command to add the note
+    // and execute it through the command manager
+    if (commandManager) {
+        // ProjectMgmt::AddNoteCommand cmd(scoreProject, pitch, start_time, duration);
+        // commandManager->ExecuteCommand(cmd);
+    }
+    
+    // Preview the note if midi preview is available
+    if (midiPreview) {
+        AudioCore::MidiEvent event;
+        event.type = AudioCore::MidiEvent::kNoteOn;
+        event.pitch = pitch;
+        event.velocity = 100;
+        event.channel = 0;
+        event.time = start_time;
+        midiPreview->PreviewMidiEvent(event);
     }
 }
 
 void ScoreEditorController::HandleNoteDelete(int noteIndex) {
-    if (!scoreProject || !project) return;
+    if (!scoreProject || !project || !commandManager) return;
     
-    // In a real implementation, we would use the project's command system
+    // In a real implementation, we would create a command to delete the note
+    // and execute it through the command manager
+    if (commandManager) {
+        // ProjectMgmt::DeleteNoteCommand cmd(scoreProject, noteIndex);
+        // commandManager->ExecuteCommand(cmd);
+    }
 }
 
 void ScoreEditorController::HandleZoomIn() {
@@ -120,6 +168,12 @@ void ScoreEditorController::HandleZoomIn() {
 
 void ScoreEditorController::HandleZoomOut() {
     if (view) view->ZoomOut();
+}
+
+void ScoreEditorController::HandleSelectionChanged(const Vector<int>& selectedNotes) {
+    // Handle when notes are selected in the UI
+    // This might trigger updates in other connected components
+    // In a real implementation, this would update the selection in the project
 }
 
 // ScoreEditor implementation
@@ -140,8 +194,14 @@ void ScoreEditor::InitLayout() {
     // Connect the controller
     controller.SetView(&scoreCtrl);
     
-    // Connect to command manager if available
-    // In a real implementation, this would connect to ProjectMgmt::CommandManager
+    // Connect to command manager if available (in a real implementation)
+    // This would be set via dependency injection or by getting from the main application
+    // ProjectMgmt::CommandManager* cmdMgr = GetGlobalCommandManager(); // This would be implemented
+    // controller.SetCommandManager(cmdMgr);
+    
+    // Connect to midi preview if available (in a real implementation)
+    // AudioCore::MidiPreview* midiPreview = GetGlobalMidiPreview(); // This would be implemented
+    // controller.SetMidiPreview(midiPreview);
 }
 
 void ScoreEditor::ToolMenu(Bar& bar) {

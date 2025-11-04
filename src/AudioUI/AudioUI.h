@@ -4,8 +4,10 @@
 #include <CtrlLib/CtrlLib.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
+#include <PluginSDK/PluginSDK.h>
 using namespace Upp;
 
 #include "UI.h"
+#include "GraphVisualizationCtrl.h"
 
 #endif

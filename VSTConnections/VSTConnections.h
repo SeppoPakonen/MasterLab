@@ -19,9 +19,7 @@ public:
     
 private:
     VSTConnectionsCtrl connectionsCtrl;
-    ToolBar toolBar;
     
-    void ToolMenu(Bar& bar);
     void Refresh();
 };
 

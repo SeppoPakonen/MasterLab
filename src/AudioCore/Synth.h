@@ -83,7 +83,7 @@ public:
 	void AddConnection(const Connection& conn);
 	void RemoveConnection(int index);
 	void ClearConnections();
-	void Process(FrameContext& ctx);
+	void Process();
 	
 	void SetSourceValue(Source source, double value);
 	double GetSourceValue(Source source) const;

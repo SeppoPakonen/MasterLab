@@ -101,7 +101,7 @@ void ModMatrix::ClearConnections() {
 	connections.Clear();
 }
 
-void ModMatrix::Process(FrameContext& ctx) {
+void ModMatrix::Process() {
 	// Process all modulation connections
 	for(auto& conn : connections) {
 		if(conn.enabled) {

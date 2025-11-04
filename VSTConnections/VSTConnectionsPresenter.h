@@ -5,6 +5,7 @@
 #include <CtrlLib/CtrlLib.h>
 #include "VSTConnectionsCtrl.h"
 #include "../Devices/Devices.h"
+#include "../Devices/IOMatrixService.h"
 
 using namespace Upp;
 
@@ -21,8 +22,15 @@ public:
     
 private:
     VSTConnectionsCtrl& view;
+    Devices::IOMatrixService& ioMatrixService;
     
     void OnConnectionChanged();
+    void LoadInputs();
+    void LoadOutputs();
+    void LoadGroupsFx();
+    void LoadExternalFx();
+    void LoadExternalInstruments();
+    void LoadStudio();
 };
 
 }

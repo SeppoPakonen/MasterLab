@@ -5,6 +5,7 @@
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
 #include <PluginSDK/PluginSDK.h>
+#include "GraphVisualizationCtrl.h"  // Include GraphVisualizationCtrl instead of forward declaration
 using namespace Upp;
 
 namespace am {
@@ -29,8 +30,17 @@ public:
 	// For automation bridging with DSP::PresetManager
 	void OnParameterChanged(const String& param_id, double new_value);
 	
+	// Graph visualization integration
+	void SetGraphVisualization(const PluginSDK::GraphVisualization& graph);
+	void SetActivePath(const Vector<String>& nodePath);
+	void SetModuleNodeMapping(const VectorMap<String, String>& mapping); // Map module names to graph nodes
+	void ShowGraphVisualization();
+	void HideGraphVisualization();
+	
 private:
 	void Init();
+	void UpdateGraphVisualization();
+	void LayoutModules();
 	
 	// Inner class to represent a module in the rack
 	struct ModuleInfo {
@@ -39,6 +49,13 @@ private:
 		bool visible;
 		bool enabled;
 	};
+	
+	// Graph visualization components
+	PluginSDK::GraphVisualization graph;
+	Vector<String> activePath;
+	VectorMap<String, String> moduleToNodeMap;  // Map module names to graph nodes
+	GraphVisualizationCtrl* graphCtrl;
+	bool showGraph;
 	
 	Vector<ModuleInfo> modules;
 	VectorMap<String, int> module_lookup;  // name to index

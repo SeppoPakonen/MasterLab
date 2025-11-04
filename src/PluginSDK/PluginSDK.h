@@ -175,19 +175,20 @@ private:
 	Upp::Vector<Edge> edges;
 };
 
-struct GraphNode : public Upp::Moveable<GraphNode> {
+struct GraphNode {
 	Upp::String id;
 	Upp::String label;
 	Upp::String group;
 	
 	// Add explicit constructors for U++ compatibility
 	GraphNode() = default;
-	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
+	GraphNode(const GraphNode& other) = default;  // Enable copy
 	GraphNode(GraphNode&& other) = default;
+	GraphNode& operator=(const GraphNode& other) = default;  // Enable copy assignment
 	GraphNode& operator=(GraphNode&& other) = default;
 };
 
-struct GraphEdge : public Upp::Moveable<GraphEdge> {
+struct GraphEdge {
 	Upp::String from;
 	Upp::String to;
 	bool audio = false;
@@ -196,21 +197,25 @@ struct GraphEdge : public Upp::Moveable<GraphEdge> {
 	
 	// Add explicit constructors for U++ compatibility
 	GraphEdge() = default;
-	// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
+	GraphEdge(const GraphEdge& other) = default;  // Enable copy
 	GraphEdge(GraphEdge&& other) = default;
+	GraphEdge& operator=(const GraphEdge& other) = default;  // Enable copy assignment
 	GraphEdge& operator=(GraphEdge&& other) = default;
 };
 
-struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
+struct GraphVisualization {
 	Upp::Vector<GraphNode> nodes;
 	Upp::Vector<GraphEdge> edges;
-	void Clear();
 	
 	// Add explicit constructors for U++ compatibility
 	GraphVisualization() = default;
-	// Note: Cannot have copy constructor because Vector<GraphNode> and Vector<GraphEdge> have deleted copy constructors
 	GraphVisualization(GraphVisualization&& other) = default;
 	GraphVisualization& operator=(GraphVisualization&& other) = default;
+	
+	void Clear() {
+		nodes.Clear();
+		edges.Clear();
+	}
 };
 
 class AnalyzerTap {
