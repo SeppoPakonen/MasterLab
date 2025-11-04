@@ -18,8 +18,7 @@ using namespace Upp;
 class AudioEditor;
 
 // Class to represent individual audio clips
-class ClipMarker {
-public:
+struct ClipMarker {
     double time;
     String label;
     Color color;
@@ -33,6 +32,10 @@ public:
     
     bool operator==(const ClipMarker& other) const {
         return time == other.time && label == other.label && color == other.color;
+    }
+    
+    bool operator!=(const ClipMarker& other) const {
+        return !(*this == other);
     }
 };
 
@@ -188,27 +191,42 @@ public:
     void TrimClip(int index, double new_start_time, double new_end_time_val);
     void SplitClip(int index, double split_time);
     
-    // For now, removing automation to avoid U++ container issues
-    // Vector<AutomationData> automation;  // List of parameter automations
-    Vector<int> dummy_automation;  // Placeholder to maintain structure
+    // Automation storage
+    struct AutomationData {
+        String parameter_name;
+        Vector<AutomationPoint> points;
+        
+        AutomationData() : parameter_name("default") {}
+        AutomationData(String param_name) : parameter_name(param_name) {}
+        
+        void Jsonize(JsonIO& jio) {
+            jio("parameter_name", parameter_name)("points", points);
+        }
+        
+        bool operator==(const AutomationData& other) const {
+            return parameter_name == other.parameter_name && points == other.points;
+        }
+    };
+    
+    Vector<AutomationData> automation;  // List of parameter automations
     
     void Jsonize(JsonIO& jio) {
         jio("name", name)("clips", clips)("is_muted", is_muted)("is_soloed", is_soloed)
-           ("volume", volume)("height", height)("dummy_automation", dummy_automation);
+           ("volume", volume)("height", height)("automation", automation);
     }
     
     bool operator==(const AudioTrack& other) const {
         return name == other.name && clips == other.clips && 
                is_muted == other.is_muted && is_soloed == other.is_soloed &&
-               volume == other.volume && height == other.height && dummy_automation == other.dummy_automation;
+               volume == other.volume && height == other.height && automation == other.automation;
     }
     
-    // Automation-related methods - temporarily removed due to U++ container issues
-    // void AddAutomationPoint(String parameter, const AutomationPoint& point);
-    // void RemoveAutomationPoint(String parameter, int index);
-    // double GetAutomationValueAtTime(String parameter, double time) const;
-    // void SetAutomationValueAtTime(String parameter, double time, double value);
-    // Vector<AutomationPoint> GetAutomationPoints(String parameter_name) const;
+    // Automation-related methods
+    void AddAutomationPoint(String parameter, const AutomationPoint& point);
+    void RemoveAutomationPoint(String parameter, int index);
+    double GetAutomationValueAtTime(String parameter, double time) const;
+    void SetAutomationValueAtTime(String parameter, double time, double value);
+    const Vector<AutomationPoint>& GetAutomationPoints(String parameter_name) const;
 };
 
 // Class to represent markers on the timeline
@@ -515,14 +533,14 @@ private:
     
     // UI controls
     SliderCtrl volume_slider;
-    Display volume_display;
+    StaticRect volume_display;
     SliderCtrl pan_slider;
     Button mute_button;
     Button solo_button;
     ArrayCtrl routing_ctrl;  // For routing to buses
     
     // Track information display
-    Display track_name_display;
+    Label track_name_display;
     
 public:
     MixerStrip();
@@ -610,6 +628,7 @@ public:
     
     // Event handlers
     void OnAddPoint(Point p);
+    void OnAddPoint(Point p, double time, double value);
     void OnRemovePoint(int point_index);
     void OnMovePoint(int point_index, Point new_pos);
     
@@ -719,6 +738,9 @@ public:
     
     // Update display based on state
     void UpdateDisplay();
+    
+    // Add controls to layout
+    void AddCtrls();
 };
 
 // Mixer rack view showing all channel strips
@@ -730,6 +752,9 @@ private:
     
     // UI elements
     ScrollBar hscroll;
+
+public:
+    typedef MixerRack CLASSNAME;
     
 public:
     MixerRack();
@@ -925,7 +950,7 @@ public:
     void RemoveTrackAutomationPoint(int track_index, String parameter, int point_index);
     double GetTrackAutomationValueAtTime(int track_index, String parameter, double time) const;
     void SetTrackAutomationValueAtTime(int track_index, String parameter, double time, double value);
-    Vector<AutomationPoint> GetTrackAutomationPoints(int track_index, String parameter) const;
+    const Vector<AutomationPoint>& GetTrackAutomationPoints(int track_index, String parameter) const;
     
     // Timeline access methods
     const Timeline& GetTimeline() const { return timeline; }

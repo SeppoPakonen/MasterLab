@@ -90,6 +90,130 @@ void AudioTrack::SplitClip(int index, double split_time) {
     }
 }
 
+void AudioTrack::AddAutomationPoint(String parameter, const AutomationPoint& point) {
+    // Find the automation data for this parameter, or create it if it doesn't exist
+    int auto_index = -1;
+    for(int i = 0; i < automation.GetCount(); i++) {
+        if(automation[i].parameter_name == parameter) {
+            auto_index = i;
+            break;
+        }
+    }
+    
+    if(auto_index == -1) {
+        // Create new automation data for this parameter
+        AutomationData new_auto(parameter);
+        automation.Add(new_auto);
+        auto_index = automation.GetCount() - 1;
+    }
+    
+    // Add the point to this automation data
+    automation[auto_index].points.Add(point);
+    
+    // Keep points sorted by time
+    for(int i = automation[auto_index].points.GetCount() - 1; i > 0; i--) {
+        if(automation[auto_index].points[i].time < automation[auto_index].points[i-1].time) {
+            std::swap(automation[auto_index].points[i], automation[auto_index].points[i-1]);
+        } else {
+            break;
+        }
+    }
+}
+
+void AudioTrack::RemoveAutomationPoint(String parameter, int index) {
+    // Find the automation data for this parameter
+    for(int i = 0; i < automation.GetCount(); i++) {
+        if(automation[i].parameter_name == parameter) {
+            if(index >= 0 && index < automation[i].points.GetCount()) {
+                automation[i].points.Remove(index);
+            }
+            return;
+        }
+    }
+}
+
+double AudioTrack::GetAutomationValueAtTime(String parameter, double time) const {
+    // Find the automation data for this parameter
+    for(int i = 0; i < automation.GetCount(); i++) {
+        if(automation[i].parameter_name == parameter) {
+            const Vector<AutomationPoint>& points = automation[i].points;
+            if(points.GetCount() == 0) return 0.0;
+            if(points.GetCount() == 1) return points[0].value;
+            
+            // Find the two points that frame the given time
+            int first_point = -1;
+            int second_point = -1;
+            
+            for(int j = 0; j < points.GetCount(); j++) {
+                if(points[j].time <= time) {
+                    first_point = j;
+                } else {
+                    if(first_point != -1) {
+                        second_point = j;
+                        break;
+                    }
+                }
+            }
+            
+            if(first_point == -1) {
+                // time is before the first point, return the first point's value
+                return points[0].value;
+            }
+            
+            if(second_point == -1) {
+                // time is after the last point, return the last point's value
+                return points[points.GetCount()-1].value;
+            }
+            
+            // Interpolate between the two points
+            const AutomationPoint& p1 = points[first_point];
+            const AutomationPoint& p2 = points[second_point];
+            
+            // Linear interpolation
+            double fraction = (time - p1.time) / (p2.time - p1.time);
+            return p1.value + fraction * (p2.value - p1.value);
+        }
+    }
+    
+    // Parameter not found, return default value
+    return 0.0;
+}
+
+void AudioTrack::SetAutomationValueAtTime(String parameter, double time, double value) {
+    // Find the automation data for this parameter
+    for(int i = 0; i < automation.GetCount(); i++) {
+        if(automation[i].parameter_name == parameter) {
+            // Look for an existing point at this time
+            for(int j = 0; j < automation[i].points.GetCount(); j++) {
+                if(abs(automation[i].points[j].time - time) < 0.001) { // Allow for floating point precision
+                    automation[i].points[j].value = value;
+                    return;
+                }
+            }
+            
+            // If no point exists at this time, add a new one
+            AddAutomationPoint(parameter, AutomationPoint(time, value));
+            return;
+        }
+    }
+    
+    // If parameter doesn't exist, create it and add the point
+    AddAutomationPoint(parameter, AutomationPoint(time, value));
+}
+
+const Vector<AutomationPoint>& AudioTrack::GetAutomationPoints(String parameter_name) const {
+    // Find the automation data for this parameter
+    for(int i = 0; i < automation.GetCount(); i++) {
+        if(automation[i].parameter_name == parameter_name) {
+            return automation[i].points;
+        }
+    }
+    
+    // Parameter not found, return empty vector
+    static Vector<AutomationPoint> empty;
+    empty.Clear();
+    return empty;
+}
 
 
 void Timeline::AddTrack(const AudioTrack& track) {
@@ -866,12 +990,6 @@ void MixerStrip::SetEditor(AudioEditor* ed) {
 void MixerStrip::RefreshControls() {
     if (!editor || track_index < 0) return;
     
-    // Get track information from the editor
-    const Vector<AudioTrack>& tracks = editor->GetAllBuses().GetCount() > 0 ? 
-        editor->GetAllBuses()[0].GetSourceTracks().GetCount() > 0 ?
-        editor->GetAllBuses()[0].GetSourceTracks() : Vector<AudioTrack>() :
-        Vector<AudioTrack>();
-    
     // Actually, we need to get the tracks from the timeline
     // This is a simplified implementation
     Layout();  // Refresh the layout to reflect any changes
@@ -925,11 +1043,11 @@ bool MixerStrip::Key(dword key, int count) {
         case K_DELETE:
             // Implement track deletion if needed
             return true;
-        case Ctrl('m'):
+        case K_CTRL_M:
             // Toggle mute
             OnMuteToggle();
             return true;
-        case Ctrl('s'):
+        case K_CTRL_S:
             // Toggle solo
             OnSoloToggle();
             return true;
@@ -942,7 +1060,7 @@ void MixerStrip::OnVolumeChange() {
     if (editor && track_index >= 0) {
         // In a real implementation, this would update the track volume
         // Convert slider value (0-100) to actual volume (0.0-2.0)
-        double volume = volume_slider.GetValue() / 50.0;  // Slider value 0-100 maps to 0.0-2.0
+        double volume = (double)volume_slider.GetData() / 50.0;  // Slider value 0-100 maps to 0.0-2.0
         // editor->SetTrackVolume(track_index, volume);
     }
 }
@@ -952,7 +1070,7 @@ void MixerStrip::OnPanChange() {
     if (editor && track_index >= 0) {
         // In a real implementation, this would update the track pan
         // Convert slider value (-100 to 100) to actual pan (-1.0 to 1.0)
-        double pan = pan_slider.GetValue() / 100.0;  // Slider value -100 to 100 maps to -1.0 to 1.0
+        double pan = (double)pan_slider.GetData() / 100.0;  // Slider value -100 to 100 maps to -1.0 to 1.0
         // editor->SetTrackPan(track_index, pan);
     }
 }
@@ -1027,7 +1145,7 @@ void MixerCtrl::RefreshMixer() {
 
 void MixerCtrl::Paint(Draw& draw) {
     // Draw the mixer background
-    draw.DrawRect(GetSize(), RGB(40, 40, 40));  // Dark gray background
+    draw.DrawRect(GetSize(), Color(40, 40, 40));  // Dark gray background
     
     // Draw a border around the mixer
     draw.DrawRect(GetSize(), Black());
@@ -1206,13 +1324,14 @@ void AudioEditor::SetTrackAutomationValueAtTime(int track_index, String paramete
     }
 }
 
-Vector<AutomationPoint> AudioEditor::GetTrackAutomationPoints(int track_index, String parameter) const {
+const Vector<AutomationPoint>& AudioEditor::GetTrackAutomationPoints(int track_index, String parameter) const {
     const Vector<AudioTrack>& all_tracks = timeline.GetTracks();
+    static Vector<AutomationPoint> empty;
     if(track_index >= 0 && track_index < all_tracks.GetCount()) {
         return all_tracks[track_index].GetAutomationPoints(parameter);
     }
     // Return empty vector if track not found
-    return Vector<AutomationPoint>();
+    return empty;
 }
 
 // AutomationEditor implementation
@@ -1261,17 +1380,17 @@ void AutomationEditor::Paint(Draw& draw) {
     
     for(int i = 1; i < num_time_lines; i++) {
         int x = (sz.cx * i) / num_time_lines;
-        draw.DrawLine(x, 0, x, sz.cy, 1, RGBA(200, 200, 200));
+        draw.DrawLine(x, 0, x, sz.cy, 1, Color(200, 200, 200));
     }
     
     for(int i = 1; i < num_value_lines; i++) {
         int y = (sz.cy * i) / num_value_lines;
-        draw.DrawLine(0, y, sz.cx, y, 1, RGBA(200, 200, 200));
+        draw.DrawLine(0, y, sz.cx, y, 1, Color(200, 200, 200));
     }
     
     // Draw the automation curve if we have an editor and track
     if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
-        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        const Vector<AutomationPoint>& points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
         
         // Draw the curve
         if(points.GetCount() > 1) {
@@ -1314,11 +1433,12 @@ bool AutomationEditor::Key(dword key, int count) {
 void AutomationEditor::MouseMove(Point p, dword keyflags) {
     if(is_dragging && selected_point >= 0) {
         // Move the selected point to the new position
-        Point<double> timeValue = PointToValueTime(p);
+        double timeValue = PointToValueTime(p, true);  // Get time
+        double valueValue = PointToValueTime(p, false);  // Get value
         
         // Update the automation point with the new time and value
         if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
-            editor->SetTrackAutomationValueAtTime(track_index, parameter_name, timeValue.x, timeValue.y);
+            editor->SetTrackAutomationValueAtTime(track_index, parameter_name, timeValue, valueValue);
             RefreshPointPositions();
             Refresh();
         }
@@ -1330,7 +1450,7 @@ void AutomationEditor::MouseMove(Point p, dword keyflags) {
 void AutomationEditor::LeftDown(Point p, dword keyflags) {
     if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
         // Check if we clicked on an existing point
-        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        const Vector<AutomationPoint>& points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
         
         bool found_point = false;
         for(int i = 0; i < points.GetCount(); i++) {
@@ -1350,8 +1470,9 @@ void AutomationEditor::LeftDown(Point p, dword keyflags) {
         
         if(!found_point) {
             // Add a new point at the clicked position
-            Point<double> timeValue = PointToValueTime(p);
-            OnAddPoint(p);
+            double timeValue = PointToValueTime(p, true);  // Get time
+            double valueValue = PointToValueTime(p, false);  // Get value
+            OnAddPoint(p, timeValue, valueValue);
         }
     }
     
@@ -1369,11 +1490,21 @@ void AutomationEditor::LeftDouble(Point p, dword keyflags) {
     Ctrl::LeftDouble(p, keyflags);
 }
 
+void AutomationEditor::OnAddPoint(Point p, double time, double value) {
+    if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
+        editor->AddTrackAutomationPoint(track_index, parameter_name, 
+                                       AutomationPoint(time, value));
+        RefreshPointPositions();
+        Refresh();
+    }
+}
+
 void AutomationEditor::OnAddPoint(Point p) {
     if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
-        Point<double> timeValue = PointToValueTime(p);
+        double time = PointToValueTime(p, true);
+        double value = PointToValueTime(p, false);
         editor->AddTrackAutomationPoint(track_index, parameter_name, 
-                                       AutomationPoint(timeValue.x, timeValue.y));
+                                       AutomationPoint(time, value));
         RefreshPointPositions();
         Refresh();
     }
@@ -1408,7 +1539,7 @@ Point AutomationEditor::ValueTimeToPoint(double time, double value) const {
     return Point(x, y);
 }
 
-Point<double> AutomationEditor::PointToValueTime(Point p) const {
+double AutomationEditor::PointToValueTime(Point p, bool forTime) const {
     Size sz = GetSize();
     
     // Convert coordinates to time and value
@@ -1418,14 +1549,14 @@ Point<double> AutomationEditor::PointToValueTime(Point p) const {
     double time = (sz.cx > 0) ? (p.x * time_range / sz.cx + start_time) : start_time;
     double value = (sz.cy > 0) ? (max_value - (p.y * value_range / sz.cy)) : min_value;
     
-    return Point<double>(time, value);
+    return forTime ? time : value;
 }
 
 void AutomationEditor::RefreshPointPositions() {
     point_positions.Clear();
     
     if(editor && track_index >= 0 && !parameter_name.IsEmpty()) {
-        Vector<AutomationPoint> points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
+        const Vector<AutomationPoint>& points = editor->GetAllTracks()[track_index].GetAutomationPoints(parameter_name);
         
         for(int i = 0; i < points.GetCount(); i++) {
             point_positions.Add(ValueTimeToPoint(points[i].time, points[i].value));
@@ -1433,278 +1564,26 @@ void AutomationEditor::RefreshPointPositions() {
     }
 }
 
-// TimelineCtrl implementation
-TimelineCtrl::TimelineCtrl() : editor(nullptr), start_time(0.0), end_time(60.0), 
-    pixels_per_second(50), track_height(50), is_dragging(false), drag_track_idx(-1), 
-    drag_clip_idx(-1), drag_offset(0.0) {
-    // Set default values
-    AddFrame(BlackFrame());  // Add a border
-}
 
-void TimelineCtrl::SetEditor(AudioEditor* ed) {
-    editor = ed;
-    RefreshTrackPositions();
-}
-
-void TimelineCtrl::SetTimeRange(double start, double end) {
-    start_time = start;
-    end_time = end;
-    Refresh();
-}
-
-void TimelineCtrl::SetPixelsPerSecond(int pixels) {
-    pixels_per_second = pixels;
-    Refresh();
-}
-
-void TimelineCtrl::SetTrackHeight(int height) {
-    track_height = height;
-    RefreshTrackPositions();
-    Refresh();
-}
-
-void TimelineCtrl::Paint(Draw& draw) {
-    Size sz = GetSize();
-    
-    // Draw background
-    draw.DrawRect(sz, White());
-    
-    // Draw grid lines (vertical time lines)
-    double time_range = end_time - start_time;
-    int total_width = (int)(time_range * pixels_per_second);
-    
-    // Draw time grid
-    for(double time = floor(start_time); time <= end_time; time += 1.0) {
-        int x = (int)((time - start_time) * pixels_per_second);
-        if(x >= 0 && x < sz.cx) {
-            draw.DrawLine(x, 0, x, sz.cy, 1, RGBA(200, 200, 200));
-            // Draw time label
-            draw.DrawText(x + 2, 2, Format("%.1f s", time), StdFont(), Black());
-        }
-    }
-    
-    if(editor == nullptr) return;
-    
-    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
-    
-    // Draw tracks and clips
-    for(int track_idx = 0; track_idx < tracks.GetCount(); track_idx++) {
-        int y_pos = TrackToY(track_idx);
-        
-        // Draw track background
-        if(y_pos < sz.cy) {
-            int height = std::min(track_height, sz.cy - y_pos);
-            draw.DrawRect(0, y_pos, sz.cx, height, 
-                         track_idx % 2 == 0 ? RGBA(240, 240, 240) : RGBA(250, 250, 250));
-            
-            // Draw track name
-            draw.DrawText(5, y_pos + 2, tracks[track_idx].GetName(), StdFont(), Black());
-        }
-        
-        // Draw clips in this track
-        const Vector<AudioClip>& clips = tracks[track_idx].GetClips();
-        for(int clip_idx = 0; clip_idx < clips.GetCount(); clip_idx++) {
-            const AudioClip& clip = clips[clip_idx];
-            
-            int x_start = (int)((clip.GetStartTime() - start_time) * pixels_per_second);
-            int x_end = (int)((clip.GetEndTime() - start_time) * pixels_per_second);
-            
-            if(x_end > 0 && x_start < sz.cx) {
-                // Ensure we're within the track's vertical bounds
-                int clip_top = y_pos + 20;
-                int clip_height = std::min(track_height - 25, sz.cy - clip_top);
-                
-                if(clip_height > 0) {
-                    Color clip_color = clip.GetMuteStatus() ? Gray() : Blue();
-                    int width = std::max(2, x_end - x_start);  // Minimum width of 2 pixels
-                    
-                    // Adjust to be within the track area
-                    int adjusted_start = std::max(0, x_start);
-                    int adjusted_width = std::min(width, sz.cx - adjusted_start);
-                    
-                    if(adjusted_width > 0) {
-                        draw.DrawRect(adjusted_start, clip_top, adjusted_width, clip_height, 
-                                     clip_color, 1, clip.GetMuteStatus() ? Gray() : Blue());
-                        
-                        // Draw clip name
-                        String clip_name = clip.GetName();
-                        if(adjusted_width > 20) {  // Only draw text if we have enough space
-                            draw.DrawText(adjusted_start + 2, clip_top + 2, 
-                                         clip_name.Mid(0, std::min(20, clip_name.GetLength())), 
-                                         StdFont(10), White());
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // Draw playhead if needed
-    // This would be implemented based on playback state
-}
-
-void TimelineCtrl::Layout() {
-    RefreshTrackPositions();
-    Refresh();
-}
-
-bool TimelineCtrl::Key(dword key, int count) {
-    // Handle keyboard shortcuts for timeline operations
-    switch(key) {
-        case K_DELETE:
-            // If a clip is selected, delete it
-            return true;
-        case K_SPACE:
-            // Play/pause toggle
-            return true;
-        case Ctrl('a'):
-            // Select all clips
-            return true;
-    }
-    return Ctrl::Key(key, count);
-}
-
-void TimelineCtrl::MouseMove(Point p, dword keyflags) {
-    if(is_dragging && drag_track_idx >= 0 && drag_clip_idx >= 0 && editor != nullptr) {
-        // Calculate new time based on mouse position
-        double new_time = XToTime(p.x) - drag_offset;
-        
-        // Update the clip position
-        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
-        
-        if(drag_track_idx < tracks.GetCount()) {
-            Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[drag_track_idx].GetClips());
-            
-            if(drag_clip_idx < clips.GetCount()) {
-                double clip_duration = clips[drag_clip_idx].GetDuration();
-                
-                // Update the clip's start and end times
-                clips[drag_clip_idx].SetStartTime(new_time);
-                clips[drag_clip_idx].SetEndTime(new_time + clip_duration);
-                
-                Refresh();  // Update the display
-            }
-        }
-    }
-    
-    last_mouse_pos = p;
-    Ctrl::MouseMove(p, keyflags);
-}
-
-void TimelineCtrl::LeftDown(Point p, dword keyflags) {
-    if(editor == nullptr) return;
-    
-    const Vector<AudioTrack>& tracks = editor->GetAllTracks();
-    int clicked_track = YToTrack(p.y);
-    
-    if(clicked_track >= 0 && clicked_track < tracks.GetCount()) {
-        // Check if we clicked on a clip in this track
-        const Vector<AudioClip>& clips = tracks[clicked_track].GetClips();
-        double clicked_time = XToTime(p.x);
-        
-        for(int i = 0; i < clips.GetCount(); i++) {
-            if(clips[i].ContainsTime(clicked_time)) {
-                // We clicked on a clip
-                is_dragging = true;
-                drag_track_idx = clicked_track;
-                drag_clip_idx = i;
-                drag_offset = clicked_time - clips[i].GetStartTime();
-                
-                Refresh();  // Highlight the selected clip
-                break;
-            }
-        }
-    }
-    
-    Ctrl::LeftDown(p, keyflags);
-}
-
-void TimelineCtrl::LeftUp(Point p, dword keyflags) {
-    is_dragging = false;
-    drag_track_idx = -1;
-    drag_clip_idx = -1;
-    
-    Ctrl::LeftUp(p, keyflags);
-}
-
-void TimelineCtrl::OnClipMove(int track_idx, int clip_idx, double new_start_time) {
-    // This would be called to move a clip to a new time position
-    if(editor && track_idx >= 0 && track_idx < editor->GetAllTracks().GetCount()) {
-        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
-        Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[track_idx].GetClips());
-        
-        if(clip_idx >= 0 && clip_idx < clips.GetCount()) {
-            double duration = clips[clip_idx].GetDuration();
-            clips[clip_idx].SetStartTime(new_start_time);
-            clips[clip_idx].SetEndTime(new_start_time + duration);
-        }
-    }
-}
-
-void TimelineCtrl::OnClipResize(int track_idx, int clip_idx, double new_duration) {
-    // This would be called to resize a clip
-    if(editor && track_idx >= 0 && track_idx < editor->GetAllTracks().GetCount()) {
-        Vector<AudioTrack>& tracks = const_cast<Vector<AudioTrack>&>(editor->GetAllTracks());
-        Vector<AudioClip>& clips = const_cast<Vector<AudioClip>&>(tracks[track_idx].GetClips());
-        
-        if(clip_idx >= 0 && clip_idx < clips.GetCount()) {
-            clips[clip_idx].SetDuration(new_duration);
-        }
-    }
-}
-
-void TimelineCtrl::OnAddClip(int track_idx, double time) {
-    // This would be called to add a new clip at the specified time
-    // Implementation would depend on how the user specifies the audio file
-}
-
-Point TimelineCtrl::TimeToX(double time) const {
-    return (int)((time - start_time) * pixels_per_second);
-}
-
-double TimelineCtrl::XToTime(int x) const {
-    return start_time + ((double)x / pixels_per_second);
-}
-
-int TimelineCtrl::TrackToY(int track_idx) const {
-    return track_idx * track_height;
-}
-
-int TimelineCtrl::YToTrack(int y) const {
-    if(track_height > 0) {
-        return y / track_height;
-    }
-    return -1;  // Invalid track height
-}
-
-void TimelineCtrl::RefreshTrackPositions() {
-    track_y_positions.Clear();
-    if(editor) {
-        const Vector<AudioTrack>& tracks = editor->GetAllTracks();
-        for(int i = 0; i < tracks.GetCount(); i++) {
-            track_y_positions.Add(TrackToY(i));
-        }
-    }
-}
 
 // TransportCtrl implementation
 TransportCtrl::TransportCtrl() : editor(nullptr), is_playing(false), is_recording(false), current_time(0.0) {
     // Initialize buttons
     play_button.SetLabel("▶");
-    play_button <<= THISBACK(OnPlay);
+    play_button <<= callback(this, &TransportCtrl::OnPlay);
     
     stop_button.SetLabel("■");
-    stop_button <<= THISBACK(OnStop);
+    stop_button <<= callback(this, &TransportCtrl::OnStop);
     
     record_button.SetLabel("●");
-    record_button <<= THISBACK(OnRecord);
+    record_button <<= callback(this, &TransportCtrl::OnRecord);
     
     loop_button.SetLabel(" LOOP ");
-    loop_button <<= THISBACK(OnLoopToggle);
+    loop_button <<= callback(this, &TransportCtrl::OnLoopToggle);
     
     // Initialize position control
     position_ctrl.SetData("00:00:000");
-    position_ctrl <<= THISBACK(OnPositionChange);
+    position_ctrl <<= callback(this, &TransportCtrl::OnPositionChange);
     
     // Add controls to the transport
     AddCtrls();
@@ -1767,7 +1646,7 @@ void TransportCtrl::SetPosition(double time) {
 
 void TransportCtrl::Paint(Draw& draw) {
     // Draw transport control background
-    draw.DrawRect(GetSize(), RGBA(220, 220, 220));
+    draw.DrawRect(GetSize(), Color(220, 220, 220));
     
     // Draw a subtle dividing line
     Size sz = GetSize();
@@ -1816,7 +1695,7 @@ bool TransportCtrl::Key(dword key, int count) {
                 StartPlayback();
             }
             return true;
-        case Ctrl('k'):
+        case K_CTRL_K:
             // Toggle loop
             ToggleLoop();
             return true;
@@ -1859,7 +1738,8 @@ void TransportCtrl::OnPositionChange() {
 void TransportCtrl::UpdateDisplay() {
     // Update button states based on transport state
     play_button.SetLabel(is_playing ? "‖" : "▶");  // Change to pause symbol if playing
-    record_button.SetLook(is_recording ? Button::PUSHED : Button::NORMAL);
+    // Just change the appearance based on state - record button will be red when recording
+    record_button.SetLabel(is_recording ? "● REC" : "●");
     
     // Update position display
     SetPosition(current_time);
@@ -1877,8 +1757,7 @@ void TransportCtrl::AddCtrls() {
 // MixerRack implementation
 MixerRack::MixerRack() : editor(nullptr), current_scroll_pos(0) {
     // Set up the scroll bar
-    hscroll.SetLinePage(10, 100);
-    hscroll <<= THISBACK(Scrolling);
+    hscroll.WhenScroll = THISBACK(Scrolling);
     AddFrame(hscroll);
 }
 
@@ -1913,10 +1792,10 @@ void MixerRack::RefreshRack() {
     
     if (total_width_needed > sz.cx) {
         hscroll.SetTotal(total_width_needed);
-        hscroll.SetPageSize(sz.cx);
+        hscroll.SetPage(sz.cx);
     } else {
         hscroll.SetTotal(sz.cx);
-        hscroll.SetPageSize(sz.cx);
+        hscroll.SetPage(sz.cx);
     }
     
     Layout();
@@ -1924,7 +1803,7 @@ void MixerRack::RefreshRack() {
 
 void MixerRack::Paint(Draw& draw) {
     // Draw the mixer rack background
-    draw.DrawRect(GetSize(), RGBA(45, 45, 45));  // Dark gray background
+    draw.DrawRect(GetSize(), Color(45, 45, 45));  // Dark gray background
     
     // Draw a subtle dividing line
     Size sz = GetSize();
@@ -1961,7 +1840,7 @@ bool MixerRack::Key(dword key, int count) {
             current_scroll_pos -= 50;
             if (current_scroll_pos < 0) current_scroll_pos = 0;
             Layout();
-            hscroll.SetPos(current_scroll_pos);
+            hscroll.Set(current_scroll_pos);
             return true;
         case K_RIGHT:
             current_scroll_pos += 50;
@@ -1970,14 +1849,14 @@ bool MixerRack::Key(dword key, int count) {
             if (current_scroll_pos > max_scroll) current_scroll_pos = max_scroll;
             if (current_scroll_pos < 0) current_scroll_pos = 0;
             Layout();
-            hscroll.SetPos(current_scroll_pos);
+            hscroll.Set(current_scroll_pos);
             return true;
     }
     return Ctrl::Key(key, count);
 }
 
-void MixerRack::Scrolling(ScrollCtrl& self) {
-    current_scroll_pos = hscroll.GetPos();
+void MixerRack::Scrolling(ScrollBar& self) {
+    current_scroll_pos = hscroll.Get();
     Layout();
 }
 
@@ -2013,7 +1892,11 @@ bool AudioProject::Save() {
     }
     
     // Serialize project to JSON and save to file
-    String json_data = Jsonize(*this);
+    String json_data;
+    {
+        JsonIO io(json_data);
+        Jsonize(io);
+    }
     
     FileOut file;
     if (!file.Open(path)) {
@@ -2091,16 +1974,16 @@ AudioDAWApp::AudioDAWApp() {
 }
 
 void AudioDAWApp::Menu(Bar& bar) {
-    bar.Add("File", CtrlImg::fileopen(), THISBACK(OnNewProject)).Help("Create a new project");
+    bar.Add("File", CtrlImg::new_doc(), THISBACK(OnNewProject)).Help("Create a new project");
     bar.Add("Open", CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open an existing project");
     bar.Add("Save", CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save the current project");
-    bar.Add("Save As", CtrlImg::saveall(), THISBACK(OnSaveProjectAs)).Help("Save project with a new name");
+    bar.Add("Save As", CtrlImg::save_as(), THISBACK(OnSaveProjectAs)).Help("Save project with a new name");
     bar.Separator();
     bar.Add("Exit", CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit the application");
 }
 
 void AudioDAWApp::Tool(Bar& bar) {
-    bar.Add(CtrlImg::fileopen(), THISBACK(OnNewProject)).Help("New project");
+    bar.Add(CtrlImg::new_doc(), THISBACK(OnNewProject)).Help("New project");
     bar.Add(CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open project");
     bar.Add(CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save project");
     bar.Add(CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit application");
@@ -2115,7 +1998,7 @@ void AudioDAWApp::NewProject() {
 
 void AudioDAWApp::OpenProject() {
     // Open a project file
-    String file_path = PromptFile("Open Project File", "*.mlp", GetExeDir());
+    String file_path = SelectFileOpen("*.mlp");
     if (!file_path.IsEmpty()) {
         if (project.Load(file_path)) {
             RefreshUI();
@@ -2140,7 +2023,7 @@ void AudioDAWApp::SaveProject() {
 }
 
 void AudioDAWApp::SaveProjectAs() {
-    String file_path = PromptFile("Save Project As", "*.mlp", GetExeDir(), "mlp");
+    String file_path = SelectFileSaveAs("*.mlp");
     if (!file_path.IsEmpty()) {
         if (project.SaveAs(file_path)) {
             status_bar.Set("Project saved as: " + GetFileName(file_path));
