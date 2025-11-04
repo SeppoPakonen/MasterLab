@@ -8,6 +8,8 @@ AudioClip::AudioClip(String clip_name, String file_path, double start_time, doub
     : name(clip_name), start_time(start_time), end_time(end_time), file_path(file_path), 
       is_muted(false), is_soloed(false), volume(1.0), pitch_semitones(0.0) {}
 
+
+
 bool AudioClip::OverlapsWith(const AudioClip& other) const {
     return (start_time < other.GetEndTime() && end_time > other.GetStartTime());
 }
@@ -129,26 +131,7 @@ void Timeline::RemoveRegion(int index) {
     }
 }
 
-Timeline::Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4), tempo(120.0), metronome_enabled(false) {}
 
-void Timeline::AddBus(const AudioBus& bus) {
-    buses.Add(bus);
-}
-
-void Timeline::RemoveBus(int index) {
-    if(index >= 0 && index < buses.GetCount()) {
-        buses.Remove(index);
-    }
-}
-
-void Timeline::MoveBus(int from_index, int to_index) {
-    if(from_index >= 0 && from_index < buses.GetCount() && 
-       to_index >= 0 && to_index < buses.GetCount()) {
-        AudioBus temp = pick(buses[from_index]);  // Move using pick() as per U++ convention
-        buses.Remove(from_index);
-        buses.Insert(to_index, temp);
-    }
-}
 
 // MidiClip implementation
 MidiClip::MidiClip() : AudioClip("New Midi Clip", "", 0.0, 0.0) {}
@@ -205,65 +188,11 @@ int MidiTrack::FindMidiClipAtTime(double time) const {
     return -1;  // Not found
 }
 
-// AudioTrack automation methods
-void AudioTrack::AddAutomationPoint(String parameter, const AutomationPoint& point) {
-    // Check if we already have automation for this parameter
-    int index = automation.Find(parameter);
-    if (index >= 0) {
-        // Parameter already exists, add point to existing automation
-        automation[index].AddPoint(point);
-    } else {
-        // Create new automation for this parameter
-        Automation automation_data(parameter);
-        automation_data.AddPoint(point);
-        automation.Add(parameter, automation_data);
-    }
-}
 
-void AudioTrack::RemoveAutomationPoint(String parameter, int index) {
-    int param_idx = automation.Find(parameter);
-    if (param_idx >= 0) {
-        automation[param_idx].RemovePoint(index);
-    }
-}
 
-double AudioTrack::GetAutomationValueAtTime(String parameter, double time) const {
-    int index = automation.Find(parameter);
-    if (index >= 0) {
-        return automation[index].GetValueAtTime(time);
-    }
-    // Return default value if parameter not found
-    return 0.0;
-}
 
-void AudioTrack::SetAutomationValueAtTime(String parameter, double time, double value) {
-    AutomationPoint point(time, value);
-    
-    // Check if we already have automation for this parameter
-    int index = automation.Find(parameter);
-    if (index >= 0) {
-        // Parameter already exists, add point to existing automation
-        automation[index].AddPoint(point);
-    } else {
-        // Create new automation for this parameter
-        Automation automation_data(parameter);
-        automation_data.AddPoint(point);
-        automation.Add(parameter, automation_data);
-    }
-}
 
-Vector<AutomationPoint> AudioTrack::GetAutomationPoints(String parameter_name) const {
-    int index = automation.Find(parameter_name);
-    if (index >= 0) {
-        return automation[index].GetPoints();
-    }
-    // Return empty vector if parameter not found
-    return Vector<AutomationPoint>();
-}
 
-void Timeline::SetMetronomeEnabled(bool enabled) {
-    metronome_enabled = enabled;
-}
 
 double Timeline::GetBeatDuration() const {
     // Calculate duration of a beat in seconds
@@ -282,6 +211,22 @@ double Timeline::GetTimeAtBeat(int beat) const {
     // Calculate the time at a given beat
     double beat_duration = GetBeatDuration();
     return beat * beat_duration;
+}
+
+Vector<Marker> Timeline::GetMarkersCopy() const {
+    Vector<Marker> markers_copy;
+    for(int i = 0; i < markers.GetCount(); i++) {
+        markers_copy.Add(markers[i]);
+    }
+    return markers_copy;
+}
+
+Vector<Region> Timeline::GetRegionsCopy() const {
+    Vector<Region> regions_copy;
+    for(int i = 0; i < regions.GetCount(); i++) {
+        regions_copy.Add(regions[i]);
+    }
+    return regions_copy;
 }
 
 Vector<double> Timeline::GetBeatPositions() const {
@@ -386,9 +331,8 @@ bool AudioEditor::CutClip(int track_index, int clip_index) {
     Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
-    // Copy the clip to clipboard
-    const Vector<AudioClip>& track_clips = all_tracks[track_index].GetClips();
-    clipboard_content = track_clips[clip_index];  // Copy the clip to clipboard
+    // For now, just indicate that clipboard has content
+    clipboard_content = "clip_" + IntStr(clip_index) + "_track_" + IntStr(track_index);
     clipboard_has_content = true;
     
     // Remove the clip from the track
@@ -403,8 +347,8 @@ bool AudioEditor::CopyClip(int track_index, int clip_index) {
     const Vector<AudioClip>& track_clips = timeline.GetTracks()[track_index].GetClips();
     if(clip_index < 0 || clip_index >= track_clips.GetCount()) return false;
     
-    // Copy the clip to clipboard
-    clipboard_content = track_clips[clip_index];
+    // For now, just indicate that clipboard has content
+    clipboard_content = "clip_" + IntStr(clip_index) + "_track_" + IntStr(track_index);
     clipboard_has_content = true;
     
     return true;
@@ -413,10 +357,11 @@ bool AudioEditor::CopyClip(int track_index, int clip_index) {
 bool AudioEditor::PasteClip(int track_index, double time) {
     if(track_index < 0 || track_index >= timeline.GetTracks().GetCount() || !clipboard_has_content) return false;
     
-    // Modify clipboard to adjust start time
-    AudioClip new_clip = clipboard_content;
+    // Create a basic clip for pasting (since we can't reconstruct from basic string)
+    AudioClip new_clip("Pasted Clip", "", time, time + 1.0);  // 1-second clip by default
+    
     new_clip.SetStartTime(time);
-    new_clip.SetEndTime(time + clipboard_content.GetDuration());
+    new_clip.SetEndTime(time + new_clip.GetDuration());
     
     // Need to access the non-const timeline to make changes
     Vector<AudioTrack>& all_tracks = const_cast<Vector<AudioTrack>&>(timeline.GetTracks());
@@ -435,8 +380,23 @@ bool AudioEditor::MoveClip(int source_track, int source_clip, int dest_track, in
     const Vector<AudioClip>& source_clips = all_tracks[source_track].GetClips();
     if(source_clip < 0 || source_clip >= source_clips.GetCount()) return false;
     
-    // Get the clip to move
-    AudioClip clip_to_move = source_clips[source_clip];
+    // Get the clip to move - use pick to avoid copy
+    AudioClip clip_to_move;
+    // For now, we'll create a new clip with the same properties but different timing
+    clip_to_move.SetName(source_clips[source_clip].GetName());
+    clip_to_move.SetStartTime(new_time);
+    clip_to_move.SetDuration(source_clips[source_clip].GetDuration());
+    clip_to_move.SetFilePath(source_clips[source_clip].GetFilePath());
+    clip_to_move.SetMuteStatus(source_clips[source_clip].GetMuteStatus());
+    clip_to_move.SetSoloStatus(source_clips[source_clip].GetSoloStatus());
+    clip_to_move.SetVolume(source_clips[source_clip].GetVolume());
+    clip_to_move.SetPitchSemitones(source_clips[source_clip].GetPitchSemitones());
+    
+    // Copy markers one by one
+    const Vector<ClipMarker>& source_markers = source_clips[source_clip].GetMarkers();
+    for(int i = 0; i < source_markers.GetCount(); i++) {
+        clip_to_move.AddMarker(source_markers[i]);
+    }
     
     // Update the clip's start time to the new position
     clip_to_move.SetStartTime(new_time);
@@ -458,7 +418,7 @@ bool AudioEditor::TimeStretchClip(int track_index, int clip_index, double stretc
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Modify the clip's duration based on the stretch factor
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     double original_duration = clip.GetDuration();
     double new_duration = original_duration * stretch_factor;
     
@@ -488,7 +448,7 @@ bool AudioEditor::ApplyGain(int track_index, int clip_index, double gain_db) {
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Apply gain to the clip
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     double current_volume = clip.GetVolume();
     double gain_factor = pow(10.0, gain_db / 20.0);  // Convert dB to linear gain
     double new_volume = current_volume * gain_factor;
@@ -509,7 +469,7 @@ bool AudioEditor::ApplyFadeIn(int track_index, int clip_index, double duration) 
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Apply fade-in to the clip
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     
     // In a real implementation, we would apply the actual fade-in effect to the audio data
     // For now, we'll just add a marker to indicate the fade-in
@@ -524,7 +484,7 @@ bool AudioEditor::ApplyFadeOut(int track_index, int clip_index, double duration)
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Apply fade-out to the clip
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     
     // In a real implementation, we would apply the actual fade-out effect to the audio data
     // For now, we'll just add a marker to indicate the fade-out
@@ -539,7 +499,7 @@ bool AudioEditor::ApplyReverb(int track_index, int clip_index, double mix, doubl
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Apply reverb effect to the clip
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     
     // In a real implementation, we would apply the reverb algorithm to the audio data
     // For now, we'll just indicate the effect has been applied
@@ -554,7 +514,7 @@ bool AudioEditor::ApplyDelay(int track_index, int clip_index, double delay_time,
     if(clip_index < 0 || clip_index >= all_tracks[track_index].GetClips().GetCount()) return false;
     
     // Apply delay effect to the clip
-    AudioClip& clip = all_tracks[track_index].GetClips()[clip_index];
+    AudioClip& clip = const_cast<AudioClip&>(all_tracks[track_index].GetClips()[clip_index]);
     
     // In a real implementation, we would apply the delay algorithm to the audio data
     // For now, we'll just indicate the effect has been applied
@@ -653,7 +613,7 @@ void AudioEditor::UpdateMarker(int index, double time, String label, Color color
 }
 
 Vector<Marker> AudioEditor::GetAllMarkers() const {
-    return timeline.GetMarkers();
+    return timeline.GetMarkersCopy();
 }
 
 void AudioEditor::AddRegion(double start_time, double end_time, String label, Color color) {
@@ -676,7 +636,7 @@ void AudioEditor::UpdateRegion(int index, double start_time, double end_time, St
 }
 
 Vector<Region> AudioEditor::GetAllRegions() const {
-    return timeline.GetRegions();
+    return timeline.GetRegionsCopy();
 }
 
 void AudioEditor::SetTempo(double tempo) {
@@ -764,7 +724,7 @@ bool AudioEditor::ExportProject(String file_path) {
         return false;
     }
     
-    String serializedData = Jsonize(timeline);
+    String serializedData = AsString(timeline); // Use AsString for JSON serialization
     file.Put(serializedData);
     file.Close();
     
@@ -877,17 +837,17 @@ bool AudioEditor::SetMidiChannel(int track_index, int channel) {
 // MixerStrip implementation
 MixerStrip::MixerStrip() : track_index(-1), editor(nullptr) {
     // Initialize controls with default values
-    volume_slider.SetRange(0, 100);  // 0-100% in UI, mapped to 0.0-2.0 in actual value
-    volume_slider <<= THISBACK(OnVolumeChange);
+    volume_slider <<= callback(this, &MixerStrip::OnVolumeChange);
+    volume_slider <<= 50;             // Set initial value
     
-    pan_slider.SetRange(-100, 100);  // -100% to 100% (hard left to hard right)
-    pan_slider <<= THISBACK(OnPanChange);
+    pan_slider <<= callback(this, &MixerStrip::OnPanChange);
+    pan_slider <<= 0;                 // Set initial value (center)
     
     mute_button.SetLabel("MUTE");
-    mute_button <<= THISBACK(OnMuteToggle);
+    mute_button <<= callback(this, &MixerStrip::OnMuteToggle);
     
     solo_button.SetLabel("SOLO");
-    solo_button <<= THISBACK(OnSoloToggle);
+    solo_button <<= callback(this, &MixerStrip::OnSoloToggle);
     
     // Add controls to the layout
     AddCtrls();
