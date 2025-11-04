@@ -18,7 +18,7 @@ using namespace Upp;
 class AudioEditor;
 
 // Class to represent individual audio clips
-struct ClipMarker {
+struct ClipMarker : Moveable<ClipMarker> {
     double time;
     String label;
     Color color;
@@ -37,11 +37,34 @@ struct ClipMarker {
     bool operator!=(const ClipMarker& other) const {
         return !(*this == other);
     }
+    
+    // Required methods for U++ guest type compatibility
+    void operator=(const ClipMarker& other) {
+        time = other.time;
+        label = other.label;
+        color = other.color;
+    }
+    
+    ClipMarker(const ClipMarker& other) : time(other.time), label(other.label), color(other.color) {}
+    
+    // U++ uses pick() for move operations
+    void operator<<=(ClipMarker& other) {
+        time = other.time;
+        label = pick(other.label);
+        color = other.color;
+    }
+    
+    // Implementing U++ guest type requirements
+    void Swap(ClipMarker& other) {
+        Upp::Swap(time, other.time);
+        Upp::Swap(label, other.label);
+        Upp::Swap(color, other.color);
+    }
 };
 
 
 
-class AudioClip {
+class AudioClip : Moveable<AudioClip> {
 private:
     String name;
     double start_time;
@@ -100,9 +123,38 @@ public:
                markers == other.markers;
     }
     
-    // Add move constructor and assignment operator for U++ compatibility
-    AudioClip(AudioClip&&) = default;
-    AudioClip& operator=(AudioClip&&) = default;
+    // U++ guest type operations
+    void operator=(const AudioClip& other) {
+        name = other.name;
+        start_time = other.start_time;
+        end_time = other.end_time;
+        file_path = other.file_path;
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        volume = other.volume;
+        pitch_semitones = other.pitch_semitones;
+        markers <<= other.markers;  // Use <<= for Vector assignment in U++
+    }
+    
+    AudioClip(const AudioClip& other) 
+        : name(other.name), start_time(other.start_time), end_time(other.end_time), 
+          file_path(other.file_path), is_muted(other.is_muted), is_soloed(other.is_soloed),
+          volume(other.volume), pitch_semitones(other.pitch_semitones) {
+        markers <<= other.markers; // Use <<= for Vector assignment in U++
+    }
+    
+    // U++ uses pick() for move operations
+    void operator<<=(AudioClip& other) {
+        name = pick(other.name);
+        start_time = other.start_time;
+        end_time = other.end_time;
+        file_path = pick(other.file_path);
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        volume = other.volume;
+        pitch_semitones = other.pitch_semitones;
+        markers = pick(other.markers);
+    }
 };
 
 // Class to represent automation points
@@ -155,7 +207,7 @@ public:
 };
 
 // Class to represent a single audio track containing multiple clips
-class AudioTrack {
+class AudioTrack : Moveable<AudioTrack> {
 private:
     String name;
     Vector<AudioClip> clips;
@@ -192,7 +244,7 @@ public:
     void SplitClip(int index, double split_time);
     
     // Automation storage
-    struct AutomationData {
+    struct AutomationData : Moveable<AutomationData> {
         String parameter_name;
         Vector<AutomationPoint> points;
         
@@ -205,6 +257,23 @@ public:
         
         bool operator==(const AutomationData& other) const {
             return parameter_name == other.parameter_name && points == other.points;
+        }
+        
+        // U++ guest type operations
+        void operator=(const AutomationData& other) {
+            parameter_name = other.parameter_name;
+            points <<= other.points;  // Use <<= for Vector assignment in U++
+        }
+        
+        AutomationData(const AutomationData& other) 
+            : parameter_name(other.parameter_name) {
+            points <<= other.points; // Use <<= for Vector assignment in U++
+        }
+        
+        // U++ uses pick() for move operations
+        void operator<<=(AutomationData& other) {
+            parameter_name = pick(other.parameter_name);
+            points = pick(other.points);
         }
     };
     
@@ -221,6 +290,35 @@ public:
                volume == other.volume && height == other.height && automation == other.automation;
     }
     
+    // U++ guest type operations
+    void operator=(const AudioTrack& other) {
+        name = other.name;
+        clips <<= other.clips;  // Use <<= for Vector assignment in U++
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        volume = other.volume;
+        height = other.height;
+        automation <<= other.automation;  // Use <<= for Vector assignment in U++
+    }
+    
+    AudioTrack(const AudioTrack& other) 
+        : name(other.name), is_muted(other.is_muted), 
+          is_soloed(other.is_soloed), volume(other.volume), height(other.height) {
+        clips <<= other.clips;  // Use <<= for Vector assignment in U++
+        automation <<= other.automation;  // Use <<= for Vector assignment in U++
+    }
+    
+    // U++ uses pick() for move operations
+    void operator<<=(AudioTrack& other) {
+        name = pick(other.name);
+        clips = pick(other.clips);
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        volume = other.volume;
+        height = other.height;
+        automation = pick(other.automation);
+    }
+    
     // Automation-related methods
     void AddAutomationPoint(String parameter, const AutomationPoint& point);
     void RemoveAutomationPoint(String parameter, int index);
@@ -230,7 +328,7 @@ public:
 };
 
 // Class to represent markers on the timeline
-class Marker {
+class Marker : Moveable<Marker> {
 public:
     double time;
     String label;
@@ -246,10 +344,27 @@ public:
     bool operator==(const Marker& other) const {
         return time == other.time && label == other.label && color == other.color;
     }
+    
+    // U++ guest type operations
+    void operator=(const Marker& other) {
+        time = other.time;
+        label = other.label;
+        color = other.color;
+    }
+    
+    Marker(const Marker& other) 
+        : time(other.time), label(other.label), color(other.color) {}
+    
+    // U++ uses pick() for move operations
+    void operator<<=(Marker& other) {
+        time = other.time;
+        label = pick(other.label);
+        color = other.color;
+    }
 };
 
 // Class to represent regions on the timeline
-class Region {
+class Region : Moveable<Region> {
 public:
     double start_time;
     double end_time;
@@ -267,10 +382,30 @@ public:
         return start_time == other.start_time && end_time == other.end_time && 
                label == other.label && color == other.color;
     }
+    
+    // U++ guest type operations
+    void operator=(const Region& other) {
+        start_time = other.start_time;
+        end_time = other.end_time;
+        label = other.label;
+        color = other.color;
+    }
+    
+    Region(const Region& other) 
+        : start_time(other.start_time), end_time(other.end_time), 
+          label(other.label), color(other.color) {}
+    
+    // U++ uses pick() for move operations
+    void operator<<=(Region& other) {
+        start_time = other.start_time;
+        end_time = other.end_time;
+        label = pick(other.label);
+        color = other.color;
+    }
 };
 
 // Class to represent audio buses for routing
-class AudioBus {
+class AudioBus : Moveable<AudioBus> {
 private:
     String name;
     int channel_count;
@@ -312,6 +447,32 @@ public:
                volume == other.volume && is_muted == other.is_muted &&
                is_soloed == other.is_soloed && source_tracks == other.source_tracks;
     }
+    
+    // U++ guest type operations
+    void operator=(const AudioBus& other) {
+        name = other.name;
+        channel_count = other.channel_count;
+        volume = other.volume;
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        source_tracks <<= other.source_tracks;  // Use <<= for Vector assignment in U++
+    }
+    
+    AudioBus(const AudioBus& other) 
+        : name(other.name), channel_count(other.channel_count), volume(other.volume),
+          is_muted(other.is_muted), is_soloed(other.is_soloed) {
+        source_tracks <<= other.source_tracks;  // Use <<= for Vector assignment in U++
+    }
+    
+    // U++ uses pick() for move operations
+    void operator<<=(AudioBus& other) {
+        name = pick(other.name);
+        channel_count = other.channel_count;
+        volume = other.volume;
+        is_muted = other.is_muted;
+        is_soloed = other.is_soloed;
+        source_tracks = pick(other.source_tracks);
+    }
 };
 
 // Class to represent the timeline containing multiple audio tracks
@@ -328,7 +489,8 @@ private:
     Vector<Region> regions;
 
 public:
-    Timeline();
+    Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4), 
+                 tempo(120.0), metronome_enabled(false) {}
     
     // Getters
     const Vector<AudioTrack>& GetTracks() const { return tracks; }  // Return const reference
@@ -436,7 +598,7 @@ public:
 
 
 // Class to represent a MIDI clip
-class MidiClip : public AudioClip {
+class MidiClip : public AudioClip, Moveable<MidiClip> {
 private:
     Vector<MidiEvent> events;
 
@@ -470,6 +632,25 @@ public:
                GetPitchSemitones() == other.GetPitchSemitones() &&
                GetMarkers() == other.GetMarkers() && 
                events == other.events;
+    }
+    
+    // U++ guest type operations
+    void operator=(const MidiClip& other) {
+        // Call base class assignment
+        AudioClip::operator=(other);
+        events <<= other.events;  // Use <<= for Vector assignment in U++
+    }
+    
+    MidiClip(const MidiClip& other) 
+        : AudioClip(other) {
+        events <<= other.events;  // Use <<= for Vector assignment in U++
+    }
+    
+    // U++ uses pick() for move operations
+    void operator<<=(MidiClip& other) {
+        // Use base class pick
+        *dynamic_cast<AudioClip*>(this) <<= dynamic_cast<AudioClip&>(other);
+        events = pick(other.events);
     }
 };
 
@@ -767,7 +948,7 @@ public:
     virtual bool Key(dword key, int count);
     
     // Scroll handling
-    void Scrolling(ScrollBar& self);  // Changed to ScrollBar since ScrollCtrl not found
+    void Scrolling();
     
     // Update individual strips
     void UpdateStrip(int track_index);
@@ -834,6 +1015,7 @@ private:
     StatusBar status_bar;
     
 public:
+    typedef AudioDAWApp CLASSNAME;
     AudioDAWApp();
     
     // UI setup

@@ -848,7 +848,11 @@ bool AudioEditor::ExportProject(String file_path) {
         return false;
     }
     
-    String serializedData = AsString(timeline); // Use AsString for JSON serialization
+    // Serialize the timeline to JSON string using Value
+    Value val;
+    JsonIO jsonio(val);
+    Jsonize(jsonio, timeline);
+    String serializedData = AsString(val);
     file.Put(serializedData);
     file.Close();
     
@@ -1855,7 +1859,7 @@ bool MixerRack::Key(dword key, int count) {
     return Ctrl::Key(key, count);
 }
 
-void MixerRack::Scrolling(ScrollBar& self) {
+void MixerRack::Scrolling() {
     current_scroll_pos = hscroll.Get();
     Layout();
 }
@@ -1979,14 +1983,14 @@ void AudioDAWApp::Menu(Bar& bar) {
     bar.Add("Save", CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save the current project");
     bar.Add("Save As", CtrlImg::save_as(), THISBACK(OnSaveProjectAs)).Help("Save project with a new name");
     bar.Separator();
-    bar.Add("Exit", CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit the application");
+    bar.Add("Exit", CtrlImg::new_doc(), THISBACK(OnQuit)).Help("Exit the application");
 }
 
 void AudioDAWApp::Tool(Bar& bar) {
     bar.Add(CtrlImg::new_doc(), THISBACK(OnNewProject)).Help("New project");
     bar.Add(CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open project");
     bar.Add(CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save project");
-    bar.Add(CtrlImg::exit(), THISBACK(OnQuit)).Help("Exit application");
+    bar.Add(CtrlImg::new_doc(), THISBACK(OnQuit)).Help("Exit application");
 }
 
 void AudioDAWApp::NewProject() {
@@ -2097,4 +2101,117 @@ void AudioDAWApp::RefreshUI() {
     mixer_rack.RefreshRack();
     
     Title("MasterLab DAW - " + project.GetName());
+}
+
+// Implementations for AudioTimelineCtrl
+AudioTimelineCtrl::AudioTimelineCtrl() {
+    start_time = 0.0;
+    end_time = 60.0;  // Default 60 seconds
+    pixels_per_second = 50;  // 50 pixels per second
+    track_height = 100;      // 100 pixels per track
+    is_dragging = false;
+    drag_track_idx = -1;
+    drag_clip_idx = -1;
+    drag_offset = 0.0;
+    editor = nullptr;
+}
+
+void AudioTimelineCtrl::SetEditor(AudioEditor* ed) {
+    editor = ed;
+}
+
+void AudioTimelineCtrl::SetTimeRange(double start, double end) {
+    start_time = start;
+    end_time = end;
+}
+
+void AudioTimelineCtrl::SetPixelsPerSecond(int pixels) {
+    pixels_per_second = pixels;
+}
+
+void AudioTimelineCtrl::SetTrackHeight(int height) {
+    track_height = height;
+}
+
+void AudioTimelineCtrl::Paint(Draw& draw) {
+    // Basic paint implementation for timeline
+    draw.DrawRect(GetSize(), White());
+    
+    // Draw timeline grid if needed
+    if (editor != nullptr) {
+        // Draw based on project timeline
+        // Implementation would draw tracks and clips
+    }
+}
+
+void AudioTimelineCtrl::Layout() {
+    // Basic layout implementation
+    Ctrl::Layout();
+}
+
+bool AudioTimelineCtrl::Key(dword key, int count) {
+    return Ctrl::Key(key, count);
+}
+
+void AudioTimelineCtrl::MouseMove(Point p, dword keyflags) {
+    // Handle mouse movement for dragging clips
+    if (is_dragging && drag_track_idx >= 0 && drag_clip_idx >= 0) {
+        // Update clip position during drag
+        last_mouse_pos = p;
+    }
+    Ctrl::MouseMove(p, keyflags);
+}
+
+void AudioTimelineCtrl::LeftDown(Point p, dword keyflags) {
+    // Handle selecting clips or creating new ones
+    last_mouse_pos = p;
+    
+    // Check if clicking on a clip
+    // Implementation would find track and clip based on coordinates
+    Ctrl::LeftDown(p, keyflags);
+}
+
+void AudioTimelineCtrl::LeftUp(Point p, dword keyflags) {
+    if (is_dragging) {
+        // Finalize clip movement
+        is_dragging = false;
+        drag_track_idx = -1;
+        drag_clip_idx = -1;
+    }
+    Ctrl::LeftUp(p, keyflags);
+}
+
+// Event handlers
+void AudioTimelineCtrl::OnClipMove(int track_idx, int clip_idx, double new_start_time) {
+    // Implementation for handling clip movement
+}
+
+void AudioTimelineCtrl::OnClipResize(int track_idx, int clip_idx, double new_duration) {
+    // Implementation for handling clip resizing
+}
+
+void AudioTimelineCtrl::OnAddClip(int track_idx, double time) {
+    // Implementation for adding a new clip
+}
+
+// Utility functions
+Point AudioTimelineCtrl::TimeToX(double time) const {
+    int x = (int)((time - start_time) * pixels_per_second);
+    return Point(x, 0);
+}
+
+double AudioTimelineCtrl::XToTime(int x) const {
+    return start_time + (double)x / pixels_per_second;
+}
+
+int AudioTimelineCtrl::TrackToY(int track_idx) const {
+    return track_idx * track_height;
+}
+
+int AudioTimelineCtrl::YToTrack(int y) const {
+    return y / track_height;
+}
+
+void AudioTimelineCtrl::RefreshTrackPositions() {
+    // Update track position cache
 }
