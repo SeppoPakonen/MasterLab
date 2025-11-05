@@ -1003,9 +1003,6 @@ public:
 
 // Main application window for the DAW
 class AudioDAWApp : public TopWindow {
-public:
-    typedef AudioDAWApp CLASSNAME;
-
 private:
     AudioProject project;
 

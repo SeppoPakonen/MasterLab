@@ -84,16 +84,6 @@ void SubWindow::LeftDown(Point p, dword keyflags) {
 	}
 }
 
-void SubWindow::LeftDown(Point p, dword keyflags) {
-	int mode = GetResizeMode(p);
-	if (mode > 0) {
-		StartResize(mode, p);
-	} else {
-		// Handle normal left down behavior
-		FocusEvent();
-	}
-}
-
 void SubWindow::LeftUp(Point p, dword keyflags) {
 	if (resizing) {
 		resizing = false;
