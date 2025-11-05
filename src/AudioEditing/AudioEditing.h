@@ -490,8 +490,7 @@ private:
     Vector<Region> regions;
 
 public:
-    Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4),
-                 tempo(120.0), metronome_enabled(false) {}
+    Timeline();
     
     // Getters
     const Vector<AudioTrack>& GetTracks() const { return tracks; }  // Return const reference

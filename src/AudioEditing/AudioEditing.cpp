@@ -4,48 +4,6 @@ using namespace Upp;
 // Timeline implementation
 Timeline::Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4),
     tempo(120.0), metronome_enabled(false) {}
-
-// AudioTimelineCtrl implementation
-AudioTimelineCtrl::AudioTimelineCtrl() : editor(nullptr), start_time(0.0), end_time(60.0),
-    pixels_per_second(10), track_height(100), is_dragging(false), drag_track_idx(-1),
-    drag_clip_idx(-1), drag_offset(0.0) {}
-
-void AudioTimelineCtrl::SetEditor(AudioEditor* ed) {
-    editor = ed;
-    Refresh();
-}
-
-void AudioTimelineCtrl::Paint(Draw& draw) {
-    // Basic paint implementation
-    Size sz = GetSize();
-    draw.DrawRect(sz, White());
-}
-
-void AudioTimelineCtrl::Layout() {
-    // Layout implementation
-    Ctrl::Layout();
-}
-
-bool AudioTimelineCtrl::Key(dword key, int count) {
-    // Key handler implementation
-    return Ctrl::Key(key, count);
-}
-
-void AudioTimelineCtrl::MouseMove(Point p, dword keyflags) {
-    // Mouse move implementation
-    Ctrl::MouseMove(p, keyflags);
-}
-
-void AudioTimelineCtrl::LeftDown(Point p, dword keyflags) {
-    // Left down implementation
-    Ctrl::LeftDown(p, keyflags);
-}
-
-void AudioTimelineCtrl::LeftUp(Point p, dword keyflags) {
-    // Left up implementation
-    Ctrl::LeftUp(p, keyflags);
-}
-
 // AudioClip implementation
 AudioClip::AudioClip() : name("NewClip"), start_time(0.0), end_time(0.0), is_muted(false), is_soloed(false), volume(1.0), pitch_semitones(0.0) {}
 
@@ -491,7 +449,7 @@ void WaveformCtrl::LeftDown(Point p, dword keyflags) {
 }
 
 // AudioEditor implementation
-AudioEditor::AudioEditor() : clipboard_has_content(false) {}
+AudioEditor::AudioEditor() : timeline(), clipboard_has_content(false) {}
 
 bool AudioEditor::CutClip(int track_index, int clip_index) {
     if(track_index < 0 || track_index >= timeline.GetTracks().GetCount()) return false;
@@ -1930,10 +1888,10 @@ void MixerRack::RemoveStrip(int track_index) {
 }
 
 // AudioProject implementation
-AudioProject::AudioProject() : name("Untitled Project"), path("") {}
+AudioProject::AudioProject() : timeline(), name("Untitled Project"), path("") {}
 
 AudioProject::AudioProject(String project_name, String project_path) 
-    : name(project_name), path(project_path) {}
+    : timeline(), name(project_name), path(project_path) {}
 
 bool AudioProject::Save() {
     if (path.IsEmpty()) {
