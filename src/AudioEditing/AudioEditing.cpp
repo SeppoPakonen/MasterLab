@@ -1,6 +1,51 @@
 #include "AudioEditing.h"
 using namespace Upp;
 
+// Timeline implementation
+Timeline::Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4),
+    tempo(120.0), metronome_enabled(false) {}
+
+// AudioTimelineCtrl implementation
+AudioTimelineCtrl::AudioTimelineCtrl() : editor(nullptr), start_time(0.0), end_time(60.0),
+    pixels_per_second(10), track_height(100), is_dragging(false), drag_track_idx(-1),
+    drag_clip_idx(-1), drag_offset(0.0) {}
+
+void AudioTimelineCtrl::SetEditor(AudioEditor* ed) {
+    editor = ed;
+    Refresh();
+}
+
+void AudioTimelineCtrl::Paint(Draw& draw) {
+    // Basic paint implementation
+    Size sz = GetSize();
+    draw.DrawRect(sz, White());
+}
+
+void AudioTimelineCtrl::Layout() {
+    // Layout implementation
+    Ctrl::Layout();
+}
+
+bool AudioTimelineCtrl::Key(dword key, int count) {
+    // Key handler implementation
+    return Ctrl::Key(key, count);
+}
+
+void AudioTimelineCtrl::MouseMove(Point p, dword keyflags) {
+    // Mouse move implementation
+    Ctrl::MouseMove(p, keyflags);
+}
+
+void AudioTimelineCtrl::LeftDown(Point p, dword keyflags) {
+    // Left down implementation
+    Ctrl::LeftDown(p, keyflags);
+}
+
+void AudioTimelineCtrl::LeftUp(Point p, dword keyflags) {
+    // Left up implementation
+    Ctrl::LeftUp(p, keyflags);
+}
+
 // AudioClip implementation
 AudioClip::AudioClip() : name("NewClip"), start_time(0.0), end_time(0.0), is_muted(false), is_soloed(false), volume(1.0), pitch_semitones(0.0) {}
 
@@ -20,7 +65,7 @@ AudioTrack::AudioTrack() : name("New Track"), is_muted(false), is_soloed(false),
 AudioTrack::AudioTrack(String track_name) : name(track_name), is_muted(false), is_soloed(false), volume(1.0), height(100) {}
 
 void AudioTrack::AddClip(const AudioClip& clip) {
-    clips.Add(clip);
+    clips.Add().operator=(clone(clip));
 }
 
 void AudioTrack::RemoveClip(int index) {
@@ -86,7 +131,7 @@ void AudioTrack::SplitClip(int index, double split_time) {
         original.SetEndTime(split_time);
         
         // Add the new clip to the track
-        clips.Add(new_clip);
+        clips.Add(pick(new_clip));
     }
 }
 
@@ -103,7 +148,7 @@ void AudioTrack::AddAutomationPoint(String parameter, const AutomationPoint& poi
     if(auto_index == -1) {
         // Create new automation data for this parameter
         AutomationData new_auto(parameter);
-        automation.Add(new_auto);
+        automation.Add(pick(new_auto));
         auto_index = automation.GetCount() - 1;
     }
     
@@ -217,7 +262,7 @@ const Vector<AutomationPoint>& AudioTrack::GetAutomationPoints(String parameter_
 
 
 void Timeline::AddTrack(const AudioTrack& track) {
-    tracks.Add(track);
+    tracks.Add().operator=(clone(track));
 }
 
 void Timeline::RemoveTrack(int index) {
@@ -294,7 +339,7 @@ MidiTrack::MidiTrack() : AudioTrack("New Midi Track"), instrument_name("Default 
 MidiTrack::MidiTrack(String track_name) : AudioTrack(track_name), instrument_name("Default Instrument"), midi_channel(0) {}
 
 void MidiTrack::AddMidiClip(const MidiClip& clip) {
-    midi_clips.Add(clip);
+    midi_clips.Add().operator=(clone(clip));
 }
 
 void MidiTrack::RemoveMidiClip(int index) {
@@ -855,7 +900,7 @@ bool AudioEditor::ExportProject(String file_path) {
     String serializedData = AsString(val);
     file.Put(serializedData);
     file.Close();
-    
+
     return true;
 }
 
@@ -901,7 +946,7 @@ bool AudioEditor::ExportProjectAsAudio(String file_path, String format) {
 
 // Bus operations implementation
 void AudioEditor::AddBus(const AudioBus& bus) {
-    buses.Add(bus);
+    buses.Add().operator=(clone(bus));
 }
 
 void AudioEditor::RemoveBus(int index) {
@@ -1983,14 +2028,14 @@ void AudioDAWApp::Menu(Bar& bar) {
     bar.Add("Save", CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save the current project");
     bar.Add("Save As", CtrlImg::save_as(), THISBACK(OnSaveProjectAs)).Help("Save project with a new name");
     bar.Separator();
-    bar.Add("Exit", CtrlImg::new_doc(), THISBACK(OnQuit)).Help("Exit the application");
+    bar.Add("Exit", CtrlImg::remove(), THISBACK(OnQuit)).Help("Exit the application");
 }
 
 void AudioDAWApp::Tool(Bar& bar) {
     bar.Add(CtrlImg::new_doc(), THISBACK(OnNewProject)).Help("New project");
     bar.Add(CtrlImg::open(), THISBACK(OnOpenProject)).Help("Open project");
     bar.Add(CtrlImg::save(), THISBACK(OnSaveProject)).Help("Save project");
-    bar.Add(CtrlImg::new_doc(), THISBACK(OnQuit)).Help("Exit application");
+    bar.Add(CtrlImg::remove(), THISBACK(OnQuit)).Help("Exit application");
 }
 
 void AudioDAWApp::NewProject() {

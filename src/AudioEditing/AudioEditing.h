@@ -22,18 +22,18 @@ struct ClipMarker : Moveable<ClipMarker> {
     double time;
     String label;
     Color color;
-    
+
     ClipMarker() : time(0.0) {}
     ClipMarker(double t, String l, Color c) : time(t), label(l), color(c) {}
-    
+
     void Jsonize(JsonIO& jio) {
         jio("time", time)("label", label)("color", color);
     }
-    
+
     bool operator==(const ClipMarker& other) const {
         return time == other.time && label == other.label && color == other.color;
     }
-    
+
     bool operator!=(const ClipMarker& other) const {
         return !(*this == other);
     }
@@ -79,7 +79,7 @@ private:
 public:
     AudioClip();
     AudioClip(String clip_name, String file_path, double start_time = 0.0, double end_time = 0.0);
-    
+
     // Getters
     String GetName() const { return name; }
     double GetStartTime() const { return start_time; }
@@ -116,13 +116,14 @@ public:
     }
     
     bool operator==(const AudioClip& other) const {
-        return name == other.name && start_time == other.start_time && 
+        return name == other.name && start_time == other.start_time &&
                end_time == other.end_time && file_path == other.file_path &&
                is_muted == other.is_muted && is_soloed == other.is_soloed &&
                volume == other.volume && pitch_semitones == other.pitch_semitones &&
                markers == other.markers;
     }
-    
+
+
     // U++ guest type operations
     void operator=(const AudioClip& other) {
         name = other.name;
@@ -135,14 +136,14 @@ public:
         pitch_semitones = other.pitch_semitones;
         markers <<= other.markers;  // Use <<= for Vector assignment in U++
     }
-    
-    AudioClip(const AudioClip& other) 
-        : name(other.name), start_time(other.start_time), end_time(other.end_time), 
+
+    AudioClip(const AudioClip& other)
+        : name(other.name), start_time(other.start_time), end_time(other.end_time),
           file_path(other.file_path), is_muted(other.is_muted), is_soloed(other.is_soloed),
           volume(other.volume), pitch_semitones(other.pitch_semitones) {
         markers <<= other.markers; // Use <<= for Vector assignment in U++
     }
-    
+
     // U++ uses pick() for move operations
     void operator<<=(AudioClip& other) {
         name = pick(other.name);
@@ -158,12 +159,12 @@ public:
 };
 
 // Class to represent automation points
-class AutomationPoint {
+class AutomationPoint : Moveable<AutomationPoint> {
 public:
     double time;      // Time in seconds
     double value;     // Parameter value (e.g., volume, pan)
     int shape;        // Shape of transition (0=linear, 1=slow start, etc.)
-    
+
     AutomationPoint() : time(0.0), value(0.0), shape(0) {}
     AutomationPoint(double t, double v, int s = 0) : time(t), value(v), shape(s) {}
     
@@ -219,7 +220,7 @@ private:
 public:
     AudioTrack();
     AudioTrack(String track_name);
-    
+
     // Getters
     String GetName() const { return name; }
     const Vector<AudioClip>& GetClips() const { return clips; }  // Return const reference
@@ -247,10 +248,10 @@ public:
     struct AutomationData : Moveable<AutomationData> {
         String parameter_name;
         Vector<AutomationPoint> points;
-        
+
         AutomationData() : parameter_name("default") {}
         AutomationData(String param_name) : parameter_name(param_name) {}
-        
+
         void Jsonize(JsonIO& jio) {
             jio("parameter_name", parameter_name)("points", points);
         }
@@ -333,7 +334,7 @@ public:
     double time;
     String label;
     Color color;
-    
+
     Marker() : time(0.0) {}
     Marker(double t, String l, Color c) : time(t), label(l), color(c) {}
     
@@ -370,7 +371,7 @@ public:
     double end_time;
     String label;
     Color color;
-    
+
     Region() : start_time(0.0), end_time(0.0) {}
     Region(double start, double end, String l, Color c) : start_time(start), end_time(end), label(l), color(c) {}
     
@@ -417,7 +418,7 @@ private:
 public:
     AudioBus();
     AudioBus(String bus_name, int channels = 2); // Default to stereo
-    
+
     // Getters
     String GetName() const { return name; }
     int GetChannelCount() const { return channel_count; }
@@ -476,7 +477,7 @@ public:
 };
 
 // Class to represent the timeline containing multiple audio tracks
-class Timeline {
+class Timeline : Moveable<Timeline>, DeepCopyOption<Timeline> {
 private:
     Vector<AudioTrack> tracks;
     Vector<AudioBus> buses;
@@ -489,7 +490,7 @@ private:
     Vector<Region> regions;
 
 public:
-    Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4), 
+    Timeline() : duration(0.0), time_signature_numerator(4), time_signature_denominator(4),
                  tempo(120.0), metronome_enabled(false) {}
     
     // Getters
@@ -605,7 +606,7 @@ private:
 public:
     MidiClip();
     MidiClip(String clip_name, double start_time = 0.0, double end_time = 0.0);
-    
+
     // Getters
     const Vector<MidiEvent>& GetEvents() const { return events; }
     
@@ -948,7 +949,7 @@ public:
     virtual bool Key(dword key, int count);
     
     // Scroll handling
-    void Scrolling();
+    void Scrolling();  // ScrollBar callback
     
     // Update individual strips
     void UpdateStrip(int track_index);
@@ -1003,9 +1004,12 @@ public:
 
 // Main application window for the DAW
 class AudioDAWApp : public TopWindow {
+public:
+    typedef AudioDAWApp CLASSNAME;
+
 private:
     AudioProject project;
-    
+
     // UI components
     MenuBar main_menu;
     ToolBar main_toolbar;
@@ -1013,7 +1017,7 @@ private:
     MixerRack mixer_rack;
     TransportCtrl transport_ctrl;
     StatusBar status_bar;
-    
+
 public:
     typedef AudioDAWApp CLASSNAME;
     AudioDAWApp();

@@ -409,3 +409,9 @@ void SubWindows::OrderTileWindowsVert() {
 		sw.maximized = false;
 	}
 }
+
+#ifdef flagMAIN
+GUI_APP_MAIN {
+	
+}
+#endif

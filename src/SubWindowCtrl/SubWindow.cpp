@@ -71,7 +71,17 @@ SubWindow::SubWindow() : stored_rect(0,0,0,0) {
 	close.WhenAction = Proxy(WhenClose);
 	maximize.WhenAction = THISBACK(Maximize);
 	minimize.WhenAction = Proxy(WhenMinimize);
-	
+
+}
+
+void SubWindow::LeftDown(Point p, dword keyflags) {
+	int mode = GetResizeMode(p);
+	if (mode > 0) {
+		StartResize(mode, p);
+	} else {
+		// Handle normal left down behavior
+		FocusEvent();
+	}
 }
 
 void SubWindow::LeftUp(Point p, dword keyflags) {

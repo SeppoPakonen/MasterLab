@@ -11,5 +11,6 @@ file
 	SubWindows.iml;
 
 mainconfig
-	"" = "GUI MT";
+	"" = "GUI MT",
+	"" = "GUI";
 

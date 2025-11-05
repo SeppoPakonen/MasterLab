@@ -100,6 +100,7 @@ protected:
 public:
 	typedef SubWindow CLASSNAME;
 	SubWindow();
+	virtual ~SubWindow() {}
 	
 	void Title(Upp::String label) {decor.SetLabel(label);}
 	void Icon(const Image& img) {decor.SetIcon(img);}
@@ -122,7 +123,7 @@ public:
 	virtual void MouseMove(Point p, dword keyflags) override;
 	virtual void ChildGotFocus() override;
 	virtual void ChildMouseEvent(Ctrl *child, int event, Point p, int zdelta, dword keyflags) override;
-	
+
 	void ApplyThemeToWindow(bool isDark);
 	
 	Callback1<Point> WhenWindowMove;
