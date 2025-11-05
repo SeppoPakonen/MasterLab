@@ -18,6 +18,10 @@ private:
 	void InitBehaviorSection();
 	void InitAdvancedBehaviorSection();
 	void InitScrubbingSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

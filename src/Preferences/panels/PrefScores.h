@@ -17,6 +17,10 @@ private:
 	void InitDisplaySection();
 	void InitNotationSection();
 	void InitPlaybackSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

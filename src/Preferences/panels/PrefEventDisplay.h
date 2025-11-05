@@ -19,6 +19,10 @@ private:
 	void InitZoomSection();
 	void InitTrackHeightSection();
 	void InitLaneDisplaySection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

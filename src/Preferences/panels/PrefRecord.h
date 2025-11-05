@@ -20,6 +20,10 @@ private:
 	void InitRecordingBehaviorSection();
 	void InitFileInfoSection();
 	void InitBehaviorSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

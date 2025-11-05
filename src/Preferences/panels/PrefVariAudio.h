@@ -18,6 +18,10 @@ private:
 	void InitProcessingSection();
 	void InitDisplaySection();
 	void InitWarningsSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

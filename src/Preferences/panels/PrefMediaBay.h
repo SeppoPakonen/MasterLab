@@ -18,6 +18,10 @@ private:
 	void InitSearchSection();
 	void InitOrganizationSection();
 	void InitAdvancedSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

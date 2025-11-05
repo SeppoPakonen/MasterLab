@@ -21,6 +21,10 @@ private:
 	void InitPluginManagementSection();
 	void InitPerformanceSection();
 	void InitControlRoomSection();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }

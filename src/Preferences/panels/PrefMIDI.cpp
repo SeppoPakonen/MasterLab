@@ -54,49 +54,61 @@ void PrefMIDI::Load(const PreferencesModel& model) {
 	// This method should populate the UI controls with values from the model
 	const MIDIPrefs& prefs = model.GetMIDI();
 	
-	// For now, we're using placeholder values since we need to properly connect controls
-	// In a real implementation, we would set the values of the actual controls here
 	if(data->input_device) {
-		// Set input device value from model
+		// Set input device value from model - map appropriately
+		data->input_device->SetData(0); // Placeholder
 	}
 	if(data->output_device) {
-		// Set output device value from model
+		// Set output device value from model - map appropriately
+		data->output_device->SetData(0); // Placeholder
 	}
 	if(data->channel) {
-		// Set channel value from model
+		// Set channel value from model - assume mapping to indices 0-16 for "All" + channels 1-16
+		data->channel->SetData(0); // Placeholder
 	}
 	if(data->echo) {
 		// Set echo value from model
+		data->echo->SetData(false); // Placeholder - should use actual model value
 	}
 	if(data->feedback) {
 		// Set feedback value from model
+		data->feedback->SetData(true); // Placeholder - should use actual model value
 	}
 	if(data->local_ctrl) {
 		// Set local control value from model
+		data->local_ctrl->SetData(true); // Placeholder - should use actual model value
 	}
 	if(data->quantize) {
-		// Set quantize value from model
+		// Set quantize value from model - mapping to indices for grid options
+		data->quantize->SetData(2); // Placeholder for "1/16" default
 	}
 	if(data->snap) {
 		// Set snap value from model
+		data->snap->SetData(true); // Placeholder - should use actual model value
 	}
 	if(data->rt_quantize) {
 		// Set realtime quantize value from model
+		data->rt_quantize->SetData(false); // Placeholder - should use actual model value
 	}
 	if(data->midi_clock) {
 		// Set MIDI clock value from model
+		data->midi_clock->SetData(false); // Placeholder - should use actual model value
 	}
 	if(data->chase_start) {
 		// Set chase start value from model
+		data->chase_start->SetData(true); // Placeholder - should use actual model value
 	}
 	if(data->chase_ctrls) {
 		// Set chase controllers value from model
+		data->chase_ctrls->SetData(true); // Placeholder - should use actual model value
 	}
 	if(data->latency) {
-		// Set latency value from model
+		// Set latency value from model - in ms range 0-100
+		data->latency->SetData(10); // Placeholder
 	}
 	if(data->out_latency) {
-		// Set output latency value from model
+		// Set output latency value from model - in ms range 0-100
+		data->out_latency->SetData(10); // Placeholder
 	}
 }
 
@@ -106,51 +118,91 @@ void PrefMIDI::Store(PreferencesModel& model, Upp::Vector<bool>& changed) {
 	// The 'changed' vector should indicate which values have changed
 	MIDIPrefs& prefs = model.GetMIDI();
 	
-	// Check if values have changed and update the model
+	// Get values from controls and update the model
+	int input_dev_idx = 0;
 	if(data->input_device) {
-		// Get value from input_device and update the model
-	}
-	if(data->output_device) {
-		// Get value from output_device and update the model
-	}
-	if(data->channel) {
-		// Get value from channel and update the model
-	}
-	if(data->echo) {
-		// Get value from echo and update the model
-	}
-	if(data->feedback) {
-		// Get value from feedback and update the model
-	}
-	if(data->local_ctrl) {
-		// Get value from local_ctrl and update the model
-	}
-	if(data->quantize) {
-		// Get value from quantize and update the model
-	}
-	if(data->snap) {
-		// Get value from snap and update the model
-	}
-	if(data->rt_quantize) {
-		// Get value from rt_quantize and update the model
-	}
-	if(data->midi_clock) {
-		// Get value from midi_clock and update the model
-	}
-	if(data->chase_start) {
-		// Get value from chase_start and update the model
-	}
-	if(data->chase_ctrls) {
-		// Get value from chase_ctrls and update the model
-	}
-	if(data->latency) {
-		// Get value from latency and update the model
-	}
-	if(data->out_latency) {
-		// Get value from out_latency and update the model
+		input_dev_idx = data->input_device->GetData();
+		// In a real implementation, map this index to actual device in the model
+		changed.Add(false); // Placeholder
 	}
 	
-	changed.Add(false); // Placeholder - in real implementation, would track actual changes
+	int output_dev_idx = 0;
+	if(data->output_device) {
+		output_dev_idx = data->output_device->GetData();
+		changed.Add(false); // Placeholder
+	}
+	
+	int channel_idx = 0;
+	if(data->channel) {
+		channel_idx = data->channel->GetData();
+		changed.Add(false); // Placeholder
+	}
+	
+	bool echo_val = false;
+	if(data->echo) {
+		echo_val = data->echo->GetData();
+		changed.Add(echo_val != false); // Compare with default
+	}
+	
+	bool feedback_val = true;
+	if(data->feedback) {
+		feedback_val = data->feedback->GetData();
+		changed.Add(feedback_val != true); // Compare with default
+	}
+	
+	bool local_ctrl_val = true;
+	if(data->local_ctrl) {
+		local_ctrl_val = data->local_ctrl->GetData();
+		changed.Add(local_ctrl_val != true); // Compare with default
+	}
+	
+	int quantize_idx = 2;
+	if(data->quantize) {
+		quantize_idx = data->quantize->GetData();
+		changed.Add(quantize_idx != 2); // Compare with default "1/16"
+	}
+	
+	bool snap_val = true;
+	if(data->snap) {
+		snap_val = data->snap->GetData();
+		changed.Add(snap_val != true); // Compare with default
+	}
+	
+	bool rt_quantize_val = false;
+	if(data->rt_quantize) {
+		rt_quantize_val = data->rt_quantize->GetData();
+		changed.Add(rt_quantize_val != false); // Compare with default
+	}
+	
+	bool midi_clock_val = false;
+	if(data->midi_clock) {
+		midi_clock_val = data->midi_clock->GetData();
+		changed.Add(midi_clock_val != false); // Compare with default
+	}
+	
+	bool chase_start_val = true;
+	if(data->chase_start) {
+		chase_start_val = data->chase_start->GetData();
+		changed.Add(chase_start_val != true); // Compare with default
+	}
+	
+	bool chase_ctrls_val = true;
+	if(data->chase_ctrls) {
+		chase_ctrls_val = data->chase_ctrls->GetData();
+		changed.Add(chase_ctrls_val != true); // Compare with default
+	}
+	
+	int latency_val = 10;
+	if(data->latency) {
+		latency_val = data->latency->GetData();
+		changed.Add(latency_val != 10); // Compare with default 10ms
+	}
+	
+	int out_latency_val = 10;
+	if(data->out_latency) {
+		out_latency_val = data->out_latency->GetData();
+		changed.Add(out_latency_val != 10); // Compare with default 10ms
+	}
 }
 
 void PrefMIDI::InitDefaultsSection() {

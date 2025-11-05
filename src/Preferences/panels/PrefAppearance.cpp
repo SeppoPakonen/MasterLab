@@ -40,33 +40,38 @@ void PrefAppearance::Load(const PreferencesModel& model) {
 	// This method should populate the UI controls with values from the model
 	const AppearancePrefs& prefs = model.GetAppearance();
 	
-	// For now, we're using placeholder values since we need to properly connect controls
-	// In a real implementation, we would set the values of the actual controls here
 	if(data->theme_ctrl) {
-		// Theme mapping would be implemented here
+		// Assuming themes are { "Light", "Dark", "High Contrast" } mapped to indices 0, 1, 2
+		// We'll need to implement proper mapping, for now just setting to a default
+		data->theme_ctrl->SetData(0); // Placeholder: should map from actual model value
 	}
 	if(data->density_ctrl) {
-		// Density mapping would be implemented here
+		// Assuming densities are { "Compact", "Normal", "Spacious" } mapped to indices 0, 1, 2
+		data->density_ctrl->SetData(1); // Default to "Normal"
 	}
 	if(data->font_ctrl) {
-		// Font mapping would be implemented here
+		// Assuming fonts are { "System Default", "Arial", "Helvetica", "Roboto" } mapped to indices 0, 1, 2, 3
+		data->font_ctrl->SetData(0); // Default to "System Default"
 	}
 	if(data->style_ctrl) {
-		// Meter style mapping would be implemented here
+		// Assuming meter styles are { "Vertical", "Horizontal", "Circular" } mapped to indices 0, 1, 2
+		data->style_ctrl->SetData(0); // Default to "Vertical"
 	}
 	if(data->response_ctrl) {
-		// Peak hold mapping would be implemented here
+		// For peak hold response
+		data->response_ctrl->SetData(true); // Default to enabled
 	}
 	if(data->grid_ctrl) {
-		// Show grid mapping would be implemented here
+		// For show grid option
+		data->grid_ctrl->SetData(true); // Default to enabled
 	}
 	if(data->ruler_ctrl) {
-		// Show rulers mapping would be implemented here
+		// For show rulers option
+		data->ruler_ctrl->SetData(true); // Default to enabled
 	}
 	if(data->height_ctrl) {
-		// Default track height mapping would be implemented here
-		// For now, just setting to a placeholder value
-		// In real implementation would use actual model value
+		// For default track height slider (20-200 range)
+		data->height_ctrl->SetData(80); // Default to 80px
 	}
 }
 
@@ -76,35 +81,55 @@ void PrefAppearance::Store(PreferencesModel& model, Upp::Vector<bool>& changed) 
 	// The 'changed' vector should indicate which values have changed
 	AppearancePrefs& prefs = model.GetAppearance();
 	
-	// Check if values have changed and update the model
+	// Create temporary values to check if they differ from the model
+	int theme_index = 0;
 	if(data->theme_ctrl) {
-		// Get value from theme_ctrl and update the model
-		// For now, using placeholder logic
-	}
-	if(data->density_ctrl) {
-		// Get value from density_ctrl and update the model
-	}
-	if(data->font_ctrl) {
-		// Get value from font_ctrl and update the model
-	}
-	if(data->style_ctrl) {
-		// Get value from style_ctrl and update the model
-	}
-	if(data->response_ctrl) {
-		// Get value from response_ctrl and update the model
-	}
-	if(data->grid_ctrl) {
-		// Get value from grid_ctrl and update the model
-	}
-	if(data->ruler_ctrl) {
-		// Get value from ruler_ctrl and update the model
-	}
-	if(data->height_ctrl) {
-		// Get value from height_ctrl and update the model
-		// In real implementation would use actual control value
+		theme_index = data->theme_ctrl->GetData();
+		// In a real implementation, we would map this index to an actual theme value in the model
+		changed.Add(theme_index != 0); // Placeholder comparison
 	}
 	
-	changed.Add(false); // Placeholder - in real implementation, would track actual changes
+	int density_index = 1;
+	if(data->density_ctrl) {
+		density_index = data->density_ctrl->GetData();
+		changed.Add(density_index != 1); // Default is 1 (Normal)
+	}
+	
+	int font_index = 0;
+	if(data->font_ctrl) {
+		font_index = data->font_ctrl->GetData();
+		changed.Add(font_index != 0); // Default is 0 (System Default)
+	}
+	
+	int style_index = 0;
+	if(data->style_ctrl) {
+		style_index = data->style_ctrl->GetData();
+		changed.Add(style_index != 0); // Default is 0 (Vertical)
+	}
+	
+	bool peak_hold = true;
+	if(data->response_ctrl) {
+		peak_hold = data->response_ctrl->GetData();
+		changed.Add(peak_hold != true); // Default is true
+	}
+	
+	bool show_grid = true;
+	if(data->grid_ctrl) {
+		show_grid = data->grid_ctrl->GetData();
+		changed.Add(show_grid != true); // Default is true
+	}
+	
+	bool show_rulers = true;
+	if(data->ruler_ctrl) {
+		show_rulers = data->ruler_ctrl->GetData();
+		changed.Add(show_rulers != true); // Default is true
+	}
+	
+	int track_height = 80;
+	if(data->height_ctrl) {
+		track_height = data->height_ctrl->GetData();
+		changed.Add(track_height != 80); // Default is 80
+	}
 }
 
 void PrefAppearance::InitGeneralSection() {

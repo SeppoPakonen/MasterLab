@@ -15,6 +15,10 @@ public:
 	
 private:
 	void InitControls();
+	
+	// Data structure to hold UI controls
+	struct Data;
+	Data* data;
 };
 
 }
