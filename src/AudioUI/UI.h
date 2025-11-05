@@ -43,7 +43,7 @@ private:
 	void LayoutModules();
 	
 	// Inner class to represent a module in the rack
-	struct ModuleInfo {
+	struct ModuleInfo : public Moveable<ModuleInfo> {
 		Ctrl* ctrl;
 		String name;
 		bool visible;

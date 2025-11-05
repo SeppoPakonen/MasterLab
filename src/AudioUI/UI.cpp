@@ -146,23 +146,6 @@ void RackView::SetGraphVisualization(const PluginSDK::GraphVisualization& graph_
 	UpdateGraphVisualization();
 }
 
-void RackView::LayoutModules() {
-	// If showing graph, don't layout traditional modules
-	if(showGraph && graphCtrl) {
-		graphCtrl->SetRect(GetSize());
-		return;
-	}
-	
-	// Arrange modules in a vertical stack
-	int y = 0;
-	for(int i = 0; i < modules.GetCount(); i++) {
-		if(modules[i].ctrl && modules[i].visible) {
-			modules[i].ctrl->LeftPos(0, GetSize().cx).TopPos(y, 100); // 100px height per module
-			y += 105; // 100px + 5px spacing
-		}
-	}
-}
-
 void RackView::SetActivePath(const Vector<String>& nodePath) {
 	activePath.Clear();
 	for(const auto& item : nodePath) {
@@ -241,7 +224,7 @@ void SceneManager::Init() {
 	
 	// Set up event handlers
 	scene_selector.WhenAction = [this]() {
-		String selected = scene_selector.GetText();
+		String selected = AsString(scene_selector.Get());
 		SelectScene(selected);
 	};
 	
@@ -270,7 +253,7 @@ void SceneManager::RemoveScene(const String& name) {
 void SceneManager::RenameScene(const String& old_name, const String& new_name) {
 	int idx = scene_selector.Find(old_name);
 	if(idx >= 0) {
-		scene_selector.Set(idx, new_name);
+		scene_selector.Set(idx, Value(new_name));
 	}
 }
 

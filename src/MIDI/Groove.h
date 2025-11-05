@@ -24,7 +24,7 @@ struct GroovePattern : public Moveable<GroovePattern> {
 };
 
 // Structure to represent a musical phrase
-struct MusicalPhrase {
+struct MusicalPhrase : public Moveable<MusicalPhrase> {
     String id;
     String name;
     String category;            // "bass", "melody", "chord", "drum", etc.
@@ -40,6 +40,63 @@ struct MusicalPhrase {
     String style;               // Style descriptor
     
     MusicalPhrase() : tempo(120.0), timeSignatureNumerator(4), timeSignatureDenominator(4) {}
+    
+    // Define copy constructor and assignment to make the struct copyable by copying each field
+    MusicalPhrase(const MusicalPhrase& other) 
+        : id(other.id), name(other.name), category(other.category), key(other.key),
+          tempo(other.tempo), timeSignatureNumerator(other.timeSignatureNumerator),
+          timeSignatureDenominator(other.timeSignatureDenominator),
+          tags(other.tags), style(other.style) {
+        // Copy vector contents element by element
+        for(int i = 0; i < other.notes.GetCount(); i++) {
+            notes.Add(other.notes[i]);
+        }
+        for(int i = 0; i < other.velocities.GetCount(); i++) {
+            velocities.Add(other.velocities[i]);
+        }
+        for(int i = 0; i < other.positions.GetCount(); i++) {
+            positions.Add(other.positions[i]);
+        }
+        for(int i = 0; i < other.durations.GetCount(); i++) {
+            durations.Add(other.durations[i]);
+        }
+    }
+    
+    MusicalPhrase& operator=(const MusicalPhrase& other) {
+        if (this != &other) {
+            id = other.id;
+            name = other.name;
+            category = other.category;
+            key = other.key;
+            tempo = other.tempo;
+            timeSignatureNumerator = other.timeSignatureNumerator;
+            timeSignatureDenominator = other.timeSignatureDenominator;
+            tags = other.tags;
+            style = other.style;
+            
+            // Clear and copy vector contents
+            notes.Clear();
+            for(int i = 0; i < other.notes.GetCount(); i++) {
+                notes.Add(other.notes[i]);
+            }
+            
+            velocities.Clear();
+            for(int i = 0; i < other.velocities.GetCount(); i++) {
+                velocities.Add(other.velocities[i]);
+            }
+            
+            positions.Clear();
+            for(int i = 0; i < other.positions.GetCount(); i++) {
+                positions.Add(other.positions[i]);
+            }
+            
+            durations.Clear();
+            for(int i = 0; i < other.durations.GetCount(); i++) {
+                durations.Add(other.durations[i]);
+            }
+        }
+        return *this;
+    }
 };
 
 // Groove extractor for analyzing MIDI performance patterns

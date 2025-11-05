@@ -1,5 +1,6 @@
 #include "ScoreEditor.h"
 #include <Scores/LayoutEngine.h>
+#include <Scores/NotationModel.h>  // Include full NotationModel definition for implementation
 #include <CtrlLib/CtrlLib.h>
 
 namespace am {
@@ -39,7 +40,8 @@ void ScoreEditorCtrl::Paint(Draw& draw) {
     
     if (!scoreProject) return;
     
-    const Vector<Measure>& measures = notationDoc ? notationDoc->GetMeasures() : scoreProject->GetNotationModel().GetMeasures();
+    if (!scoreProject) return;
+    const Vector<Measure>& measures = scoreProject->GetNotationModel().GetMeasures();
     int yPos = 50;
     int xPos = 50;
     
@@ -94,8 +96,7 @@ void ScoreEditorCtrl::MouseWheel(Point p, int zdelta, dword keyflags) {
 
 // ScoreEditorController implementation
 ScoreEditorController::ScoreEditorController() : view(nullptr), scoreProject(nullptr), 
-                                                 project(nullptr), commandManager(nullptr), 
-                                                 midiPreview(nullptr), notationDoc(nullptr) {
+                                                 project(nullptr), notationDoc(nullptr) {
     // Initialize the controller
 }
 
@@ -114,13 +115,7 @@ void ScoreEditorController::SetProject(am::Project* project) {
     this->project = project;
 }
 
-void ScoreEditorController::SetCommandManager(ProjectMgmt::CommandManager* cmdMgr) {
-    this->commandManager = cmdMgr;
-}
 
-void ScoreEditorController::SetMidiPreview(AudioCore::MidiPreview* midiPreview) {
-    this->midiPreview = midiPreview;
-}
 
 void ScoreEditorController::SetNotationDocument(Scores::NotationModel* doc) {
     this->notationDoc = doc;
@@ -130,36 +125,19 @@ void ScoreEditorController::SetNotationDocument(Scores::NotationModel* doc) {
 }
 
 void ScoreEditorController::HandleNoteAdd(int pitch, double start_time, double duration) {
-    if (!scoreProject || !project || !commandManager) return;
+    if (!scoreProject || !project) return;
     
     // In a real implementation, we would create a command to add the note
     // and execute it through the command manager
-    if (commandManager) {
-        // ProjectMgmt::AddNoteCommand cmd(scoreProject, pitch, start_time, duration);
-        // commandManager->ExecuteCommand(cmd);
-    }
-    
-    // Preview the note if midi preview is available
-    if (midiPreview) {
-        AudioCore::MidiEvent event;
-        event.type = AudioCore::MidiEvent::kNoteOn;
-        event.pitch = pitch;
-        event.velocity = 100;
-        event.channel = 0;
-        event.time = start_time;
-        midiPreview->PreviewMidiEvent(event);
-    }
+    // For now, this is a placeholder implementation
 }
 
 void ScoreEditorController::HandleNoteDelete(int noteIndex) {
-    if (!scoreProject || !project || !commandManager) return;
+    if (!scoreProject || !project) return;
     
     // In a real implementation, we would create a command to delete the note
     // and execute it through the command manager
-    if (commandManager) {
-        // ProjectMgmt::DeleteNoteCommand cmd(scoreProject, noteIndex);
-        // commandManager->ExecuteCommand(cmd);
-    }
+    // For now, this is a placeholder implementation
 }
 
 void ScoreEditorController::HandleZoomIn() {

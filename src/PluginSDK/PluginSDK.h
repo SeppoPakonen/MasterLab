@@ -175,7 +175,7 @@ private:
 	Upp::Vector<Edge> edges;
 };
 
-struct GraphNode {
+struct GraphNode : public Upp::Moveable<GraphNode> {
 	Upp::String id;
 	Upp::String label;
 	Upp::String group;
@@ -188,7 +188,7 @@ struct GraphNode {
 	GraphNode& operator=(GraphNode&& other) = default;
 };
 
-struct GraphEdge {
+struct GraphEdge : public Upp::Moveable<GraphEdge> {
 	Upp::String from;
 	Upp::String to;
 	bool audio = false;
@@ -203,7 +203,7 @@ struct GraphEdge {
 	GraphEdge& operator=(GraphEdge&& other) = default;
 };
 
-struct GraphVisualization {
+struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
 	Upp::Vector<GraphNode> nodes;
 	Upp::Vector<GraphEdge> edges;
 	
@@ -212,10 +212,7 @@ struct GraphVisualization {
 	GraphVisualization(GraphVisualization&& other) = default;
 	GraphVisualization& operator=(GraphVisualization&& other) = default;
 	
-	void Clear() {
-		nodes.Clear();
-		edges.Clear();
-	}
+	void Clear();
 };
 
 class AnalyzerTap {

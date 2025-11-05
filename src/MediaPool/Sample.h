@@ -104,7 +104,7 @@ public:
     LoopPool();
     
     // Define a loop point
-    struct LoopPoint {
+    struct LoopPoint : public Moveable<LoopPoint> {
         String name;
         int start;
         int end;
@@ -142,7 +142,7 @@ public:
     SliceEngine();
     
     // Define a slice
-    struct Slice {
+    struct Slice : public Moveable<Slice> {
         int start;
         int end;
         String name;
@@ -206,7 +206,7 @@ public:
     ArticulationEngine();
     
     // Define an articulation
-    struct Articulation {
+    struct Articulation : public Moveable<Articulation> {
         String name;
         String samplePath;
         int velocityStart;
@@ -240,7 +240,7 @@ public:
     MicMixer();
     
     // Define a microphone position
-    struct MicPosition {
+    struct MicPosition : public Moveable<MicPosition> {
         String name;
         double gain;
         double pan;
@@ -354,7 +354,7 @@ public:
     Zone();
     
     // Define a zone
-    struct Definition {
+    struct Definition : public Moveable<Definition> {
         String samplePath;
         int keyLow;      // Low key (MIDI note number)
         int keyHigh;     // High key (MIDI note number)

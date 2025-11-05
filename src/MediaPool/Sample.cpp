@@ -21,7 +21,7 @@ bool StreamEngine::Initialize(int bufferSize, SampleRate sampleRate) {
 bool StreamEngine::LoadSample(const String& filePath) {
     // In a real implementation, this would load the sample file
     // For now, we'll just set up a dummy sample for demonstration
-    filePath = filePath;
+    // filePath = filePath;  // Remove self-assignment
     totalSamples = 44100; // 1 second at 44.1kHz for demo
     sampleData.SetCount(totalSamples);
     
@@ -207,7 +207,7 @@ void TimeStretch::Process(const SampleBuffer& input, SampleBuffer& output, doubl
     
     if (stretchFactor == 1.0) {
         // No stretching needed
-        output = input;
+        output <<= input;
         return;
     }
     
@@ -469,7 +469,7 @@ DFDStream::DFDStream() : fftSize(1024), overlap(4), frequencyScale(1.0) {
 void DFDStream::Process(const SampleBuffer& input, SampleBuffer& output) {
     // In a real implementation, this would perform frequency domain processing
     // For now, just pass through with possible modifications
-    output = input;
+    output <<= input;
 }
 
 void DFDStream::SetFFTSize(int size) {

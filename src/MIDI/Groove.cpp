@@ -198,7 +198,7 @@ PhraseDatabase::PhraseDatabase() {
 }
 
 void PhraseDatabase::AddPhrase(const MusicalPhrase& phrase) {
-    phrases.Add(pick(const_cast<MusicalPhrase&>(phrase)));  // Use pick to move instead of copy
+    phrases.Add(phrase);  // Now that MusicalPhrase is copyable, we can add by value
     phraseLookup.GetAdd(phrase.id) = phrases.GetCount() - 1;
 }
 
@@ -325,11 +325,11 @@ bool PhraseDatabase::UpdatePhrase(const MusicalPhrase& phrase) {
         newPhrase.timeSignatureNumerator = phrase.timeSignatureNumerator;
         newPhrase.timeSignatureDenominator = phrase.timeSignatureDenominator;
         
-        // Copy vectors element by element
-        newPhrase.notes = phrase.notes;
-        newPhrase.velocities = phrase.velocities;
-        newPhrase.positions = phrase.positions;
-        newPhrase.durations = phrase.durations;
+        // Copy vectors using U++'s vector copy operator
+        newPhrase.notes <<= phrase.notes;
+        newPhrase.velocities <<= phrase.velocities;
+        newPhrase.positions <<= phrase.positions;
+        newPhrase.durations <<= phrase.durations;
         
         newPhrase.tags = phrase.tags;
         newPhrase.style = phrase.style;
