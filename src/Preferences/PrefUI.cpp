@@ -301,21 +301,22 @@ void PreferencesDlg::RefreshTree() {
 	Upp::Vector<Upp::String> categories = registry.GetCategories();
 	
 	for(const Upp::String& category : categories) {
-		int cat_node = this->tree.Add(0);  // Add to root (0)
+		int cat_node = this->tree.Add(CtrlImg::folder(), category);
 		this->tree.Set(cat_node, category, 0); // Use Set with text and value
 		Upp::Vector<Upp::String> subcategories = registry.GetSubcategories(category);
 		
 		for(const Upp::String& subcategory : subcategories) {
-			int subcat_node = this->tree.Add(cat_node);  // Add to category node
+			int subcat_node = this->tree.AddChild(cat_node, CtrlImg::smallright(), subcategory);  // Add to category node
 			this->tree.Set(subcat_node, subcategory, 0); // Use Set with text and value
 		}
+		this->tree.Expand(cat_node, true);  // Expand category by default
 	}
 }
 
 void PreferencesDlg::OnTreeSel() {
 	int node_id = this->tree.GetCursor();
 	if(node_id >= 0) {
-		Value node_data = this->tree.Get(node_id);
+		Value node_data = this->tree.GetText(node_id); // Get text instead of value
 		int parent_id = this->tree.GetParent(node_id);
 		
 		if(current_panel) {
@@ -327,19 +328,30 @@ void PreferencesDlg::OnTreeSel() {
 			current_panel = nullptr;
 		}
 		
-		// Only try to create panel if it's a subcategory (has a parent)
-		if (parent_id >= 0 && !node_data.IsNull()) {
-			Value parent_data = this->tree.Get(parent_id);
+		// Try to find the parent category name
+		Upp::String category, subcategory;
+		if (parent_id >= 0) {
+			Value parent_data = this->tree.GetText(parent_id);
 			if (!parent_data.IsNull() && node_data.Is<String>() && parent_data.Is<String>()) {
-				Upp::String category = parent_data;
-				Upp::String subcategory = node_data;
-				
-				current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
-				if(current_panel) {
-					current_panel->Init(model);
-					current_panel->Load(model);
-					view_holder.Add(current_panel->SizePos());
-				}
+				category = parent_data;
+				subcategory = node_data;
+			}
+		} else if (node_data.Is<String>()) {
+			// If no parent, then this is a category, not a subcategory
+			// We don't create a panel for categories, only for specific subcategories
+			category = node_data;
+			// For categories like "Key Commands" that might be at the top level
+			if (category == "Key Commands") {
+				subcategory = "All Commands";  // Default subcategory
+			}
+		}
+		
+		if (!category.IsEmpty() && !subcategory.IsEmpty()) {
+			current_panel = PanelRegistry::Instance().CreatePanel(category, subcategory);
+			if(current_panel) {
+				current_panel->Init(model);
+				current_panel->Load(model);
+				view_holder.Add(current_panel->SizePos());
 			}
 		}
 	}

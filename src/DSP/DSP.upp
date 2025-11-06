@@ -8,7 +8,10 @@ uses
 	AudioCore,
 	AudioGraph,
 	PluginSDK,
-	Math;
+	Math,
+	Devices,
+	AudioFX,
+	MIDI;
 
 file
 	DSP.h,
@@ -28,5 +31,9 @@ file
 	Analyzer.h,
 	Analyzer.cpp,
 	VocalProcessing.h,
-	VocalProcessing.cpp;
+	VocalProcessing.cpp,
+	RackInfrastructure.h,
+	RackInfrastructure.cpp,
+	AIRecommender.h,
+	AIRecommender.cpp;
 

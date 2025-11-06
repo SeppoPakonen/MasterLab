@@ -1,0 +1,27 @@
+description "AudioUI package\377138,100,238";
+
+uses
+	CtrlLib,
+	AudioCore,
+	DSP,
+	PluginSDK;
+
+file
+	AudioUI.h,
+	AudioUI.cpp,
+	UI.h,
+	UI.cpp,
+	Breadcrumb.h,
+	Breadcrumb.cpp,
+	GraphEditorWidgets.h,
+	GraphEditorWidgets.cpp,
+	GraphVisualizationCtrl.h,
+	GraphVisualizationCtrl.cpp,
+	PostGraphView.h,
+	PostView.h,
+	RackView.h,
+	RackView.cpp,
+	SceneManager.h,
+	SceneManager.cpp,
+	XYPAD.h,
+	XYPAD.cpp;

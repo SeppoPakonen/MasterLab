@@ -2,7 +2,8 @@
 #define _Preferences_KeyCommands_h_
 
 #include <CtrlLib/CtrlLib.h>
-#include <ProjectMgmt/ProjectMgmt.h>  // Include the project management module
+#include <ProjectMgmt/AK.h>  // Include the AK key definitions
+#include <ProjectMgmt/ProjectMgmt.h>
 using namespace Upp;
 
 namespace am {
@@ -46,6 +47,15 @@ public:
 	// New methods to work with U++ keys
 	Upp::String GetKeyName(int key_id) const;
 	int GetKeyId(const Upp::String& key_name) const;
+	
+	// Get command ID from AK key namespace
+	template<typename TKey>
+	int GetCommandIdFromAK(TKey key) const {
+		return static_cast<int>(key);
+	}
+	
+	// Get all AK key definitions for the preferences/key commands dialog
+	void LoadAKKeyDefinitions();
 	
 private:
 	Upp::Vector<KeyCommand> commands;

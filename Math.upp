@@ -1,0 +1,10 @@
+description "Math package\377200,100,200";
+
+uses
+	Core;
+
+file
+	Math.h,
+	Math.cpp,
+	AudioMath.h,
+	AudioMath.cpp;

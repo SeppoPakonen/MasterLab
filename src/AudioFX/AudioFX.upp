@@ -1,8 +1,19 @@
 description "Audio effects package\3770,255,255";
 
+uses
+	Core,
+	AudioCore,
+	DSP,
+	PluginSDK,
+	Math,
+	Devices;
+
 file
 	AGENTS.md,
 	AudioFX.h,
+	AudioFX.cpp,
+	DSP.h,
+	DSP.cpp,
 	Compressor.h,
 	Compressor.cpp,
 	Crossover.h,
@@ -18,4 +29,9 @@ file
 	ZenCoreCatalogue.h,
 	ZenCoreCatalogue.cpp,
 	Splitter.h,
-	Splitter.cpp;
+	Splitter.cpp,
+	GainNormalization.h,
+	GainNormalization.cpp,
+	SpatialDSP.h,
+	SpatialDSP.cpp,
+	SpatialDSPAdditional.cpp;

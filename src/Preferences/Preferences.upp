@@ -35,6 +35,8 @@ file
 	panels/PrefEventDisplay.cpp,
 	panels/PrefMIDI.h,
 	panels/PrefMIDI.cpp,
+	panels/KeyCommandsPrefPane.h,
+	panels/KeyCommandsPrefPane.cpp,
 	WithPreferencesLayout.h,
 	KeyCommandsDlg.h,
 	KeyCommandsDlg.cpp,

@@ -2,9 +2,16 @@
 #include "KeyCommandsDlg.h"
 #include "WithPresetsLayout.h"
 #include <CtrlLib/CtrlLib.h>
+#include <ProjectMgmt/AK.h>
 // using namespace Upp;  // Removed to avoid namespace conflicts
 
 namespace am {
+
+// Structure to hold tree node information with command ID
+struct TreeNodeData {
+	int command_id;  // AK command ID
+	String description;  // Function description
+};
 
 KeyCommandsDlg::KeyCommandsDlg() {
 	Title("Key Commands");
@@ -64,76 +71,129 @@ void KeyCommandsDlg::DataOut() {
 void KeyCommandsDlg::RefreshTree() {
 	functions_tree.Clear();
 	
-	// Populate the tree with command categories
-	// In U++, we need to use integer IDs for tree nodes
-	int file_node = functions_tree.Add(0); // Root node for "File"
-	functions_tree.Set(file_node, "File", 0);
+	// Get all key commands to build the tree
+	const Vector<KeyCommand>& all_commands = key_commands.GetCommands();
 	
-	int new_project_node = functions_tree.Add(file_node);
-	functions_tree.Set(new_project_node, "New Project", 0);
-	int open_node = functions_tree.Add(file_node);
-	functions_tree.Set(open_node, "Open...", 0);
-	int save_node = functions_tree.Add(file_node);
-	functions_tree.Set(save_node, "Save", 0);
-	int save_as_node = functions_tree.Add(file_node);
-	functions_tree.Set(save_as_node, "Save As...", 0);
-	int close_node = functions_tree.Add(file_node);
-	functions_tree.Set(close_node, "Close", 0);
+	// Group commands by category (based on description)
+	VectorMap<String, Vector<int>> categories;
 	
-	int edit_node = functions_tree.Add(0); // Root node for "Edit"
-	functions_tree.Set(edit_node, "Edit", 0);
+	for (int i = 0; i < all_commands.GetCount(); i++) {
+		const KeyCommand& cmd = all_commands[i];
+		String category = cmd.description;
+		
+		// Extract the category part (before the last slash)
+		int last_slash = category.ReverseFind('/');
+		if (last_slash != -1) {
+			String cat_name = category.Mid(0, last_slash);
+			String func_name = category.Mid(last_slash + 1);
+			categories.GetAdd(cat_name).Add(i);
+		} else {
+			// If no slash, put in "Other" category
+			categories.GetAdd("Other").Add(i);
+		}
+	}
 	
-	int undo_node = functions_tree.Add(edit_node);
-	functions_tree.Set(undo_node, "Undo", 0);
-	int redo_node = functions_tree.Add(edit_node);
-	functions_tree.Set(redo_node, "Redo", 0);
-	int cut_node = functions_tree.Add(edit_node);
-	functions_tree.Set(cut_node, "Cut", 0);
-	int copy_node = functions_tree.Add(edit_node);
-	functions_tree.Set(copy_node, "Copy", 0);
-	int paste_node = functions_tree.Add(edit_node);
-	functions_tree.Set(paste_node, "Paste", 0);
-	int delete_node = functions_tree.Add(edit_node);
-	functions_tree.Set(delete_node, "Delete", 0);
-	
-	int transport_node = functions_tree.Add(0); // Root node for "Transport"
-	functions_tree.Set(transport_node, "Transport", 0);
-	
-	int play_node = functions_tree.Add(transport_node);
-	functions_tree.Set(play_node, "Play", 0);
-	int stop_node = functions_tree.Add(transport_node);
-	functions_tree.Set(stop_node, "Stop", 0);
-	int record_node = functions_tree.Add(transport_node);
-	functions_tree.Set(record_node, "Record", 0);
-	
-	int preferences_node = functions_tree.Add(0); // Root node for "Preferences"
-	functions_tree.Set(preferences_node, "Preferences", 0);
-	
-	int prefs_node = functions_tree.Add(preferences_node);
-	functions_tree.Set(prefs_node, "Preferences...", 0);
+	// Build the tree from the categorized commands
+	for (int cat_idx = 0; cat_idx < categories.GetCount(); cat_idx++) {
+		const String& category = categories.GetKey(cat_idx);
+		const Vector<int>& cmd_indices = categories[cat_idx];
+		
+		// Add category node
+		int cat_node = functions_tree.Add(CtrlImg::smallright(), category);
+		functions_tree.Set(cat_node, category, 0);
+		
+		// Add command nodes under this category
+		for (int idx : cmd_indices) {
+			const KeyCommand& cmd = all_commands[idx];
+			String func_name = cmd.description;
+			
+			// Extract just the function name part (after the last slash)
+			int last_slash = func_name.ReverseFind('/');
+			if (last_slash != -1) {
+				func_name = func_name.Mid(last_slash + 1);
+			}
+			
+			// Add command node
+			int cmd_node = functions_tree.AddChild(cat_node, CtrlImg::smallright(), func_name);
+			
+			// Store command ID in the node data
+			TreeNodeData* node_data = new TreeNodeData;
+			node_data->command_id = cmd.command_id;
+			node_data->description = cmd.description;
+			functions_tree.Set(cmd_node, func_name, 0, node_data);
+		}
+		
+		// Expand the category
+		functions_tree.Expand(cat_node, true);
+	}
 }
 
 void KeyCommandsDlg::OnTreeSel() {
 	// When a function is selected in the tree, update the right panel
 	LOG("Tree selection changed");
-	// Implementation would update the keys array with shortcuts for the selected function
+	
+	int sel_node = functions_tree.GetCursor();
+	if (sel_node < 0) return;
+	
+	// Get the node data to find the command ID
+	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
+	if (!node_data) return;
+	
+	// Find the key command with this ID
+	const Vector<KeyCommand>& all_commands = key_commands.GetCommands();
+	for (const KeyCommand& cmd : all_commands) {
+		if (cmd.command_id == node_data->command_id) {
+			// Update the keys array with this command's key sequence
+			keys_array.Clear();
+			if (!cmd.key_sequence.IsEmpty()) {
+				keys_array.Add(cmd.key_sequence, cmd.description);
+			}
+			break;
+		}
+	}
 }
 
 void KeyCommandsDlg::OnAssign() {
 	// Assign the key in key_input to the currently selected function
 	LOG("Assigning key: " + AsString(key_input.GetData()));
-	// Implementation would assign the key to the function and update the UI
+	
+	int sel_node = functions_tree.GetCursor();
+	if (sel_node < 0) return;
+	
+	// Get the node data to find the command ID
+	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
+	if (!node_data) return;
+	
+	String new_key_sequence = AsString(key_input.GetData());
+	
+	// Update the command with the new key sequence
+	key_commands.UpdateCommand(node_data->command_id, new_key_sequence);
+	
+	// Update UI
+	OnTreeSel(); // Refresh the keys array
 }
 
 void KeyCommandsDlg::OnDelete() {
 	// Delete the selected shortcut
 	LOG("Deleting selected key");
-	// Implementation would remove the selected key from the array
+	
+	int sel_node = functions_tree.GetCursor();
+	if (sel_node < 0) return;
+	
+	// Get the node data to find the command ID
+	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
+	if (!node_data) return;
+	
+	// Clear the key sequence for this command
+	key_commands.UpdateCommand(node_data->command_id, "");
+	
+	// Update UI
+	OnTreeSel(); // Refresh the keys array
 }
 
 void KeyCommandsDlg::OnPresetSel() {
 	// Load the selected preset
-	LOG("Loading preset");
+	LOG("Loading preset: " + presets_list.GetText());
 }
 
 void KeyCommandsDlg::OnPresetSave() {
@@ -160,7 +220,10 @@ void KeyCommandsDlg::OnResetAll() {
 	// Reset all key bindings to defaults
 	LOG("Resetting all key bindings to defaults");
 	key_commands.LoadCommands(); // Reload defaults
+	
+	// Update UI
 	RefreshTree();
+	OnTreeSel();
 }
 
 void KeyCommandsDlg::OnOK() {

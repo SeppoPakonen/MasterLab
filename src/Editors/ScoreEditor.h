@@ -6,28 +6,16 @@
 #include <ProjectMgmt/ProjectMgmt.h>
 #include <FileIO/FileIO.h>
 #include <AudioCore/AudioCore.h>
+#include <AudioCore/MidiPreview.h>
 
 using namespace Upp;
-
-// Forward declarations (until the namespaces are properly included)
-namespace Scores {
-    class NotationModel;  // Forward declaration for NotationModel
-}
-namespace ProjectMgmt {
-    class CommandManager;  // Forward declaration for CommandManager
-}
-namespace AudioCore {
-    // Forward declaration for MidiPreview (if it exists in AudioCore)
-    // If it doesn't exist, I'll need to adjust accordingly
-    class Transport;  // Using Transport as a placeholder that likely exists
-}
 
 namespace am {
 
 // Forward declarations
 class ScoreProjectData;
 
-// Control interface for the Score Editor
+// Control interface for the Score Editor with toolbar and InfoBar
 class ScoreEditorCtrl : public Ctrl {
 public:
     typedef ScoreEditorCtrl CLASSNAME;
@@ -41,10 +29,41 @@ public:
     // Connect to notation document for updates
     void SetNotationDocument(Scores::NotationModel* model);
     
+    // Toolbar and UI elements
+    ToolBar& GetTopToolbar() { return topToolbar; }
+    ToolBar& GetToolstrip() { return toolstrip; }
+    ToolBar& GetFilterstrip() { return filterstrip; }
+    Ctrl& GetInfoBar() { return infoBarCtrl; }
+    Ctrl& GetSymbolsPane() { return symbolsPaneCtrl; }
+    
+    // Info bar management
+    void SetInfoBarContent(const String& content);
+    String GetInfoBarContent() const { return infoBarContent; }
+    
+    // Symbols pane management
+    void ShowSymbolsPane(bool show = true);
+    bool IsSymbolsPaneVisible() const { return symbolsPaneVisible; }
+    
+    // Selection management
+    void SetSelectedNote(int noteIndex);
+    int GetSelectedNote() const { return selectedNote; }
+    
 private:
     ScoreProjectData* scoreProject;
     Scores::NotationModel* notationDoc;
     int zoomLevel;
+    
+    // UI components
+    ToolBar topToolbar;
+    ToolBar toolstrip;
+    ToolBar filterstrip;
+    Ctrl infoBarCtrl;
+    Ctrl symbolsPaneCtrl;
+    
+    // Info bar content
+    String infoBarContent;
+    int selectedNote;
+    bool symbolsPaneVisible;
     
     virtual void Paint(Draw& draw);
     virtual void LeftDown(Point p, dword keyflags);
@@ -61,8 +80,16 @@ public:
     void SetScoreProject(ScoreProjectData* scoreProject);
     void SetProject(am::Project* project);
     
-    // Connect to notation document (command manager and midi preview connections may be added later)
+    // Connect to notation document
     void SetNotationDocument(Scores::NotationModel* doc);
+    
+    // Connect to command manager for undo/redo and command execution
+    void SetCommandManager(ProjectMgmt::CommandManager* cmdMgr);
+    ProjectMgmt::CommandManager* GetCommandManager() const { return commandManager; }
+    
+    // Connect to MIDI preview for auditioning notes
+    void SetMidiPreview(AudioCore::MidiPreview* midiPreview);
+    AudioCore::MidiPreview* GetMidiPreview() const { return midiPreview; }
     
     void HandleNoteAdd(int pitch, double start_time, double duration);
     void HandleNoteDelete(int noteIndex);
@@ -70,12 +97,21 @@ public:
     void HandleZoomOut();
     void HandleSelectionChanged(const Vector<int>& selectedNotes);
     
+    // Handle tool selection changes
+    void HandleToolChanged(int toolId);
+    
+    // Handle preview of notes when using mouse over notation
+    void HandleNotePreview(int pitch);
+    
+    // Handle notation document changes
+    void HandleNotationChanged();
+    
 private:
     ScoreEditorCtrl* view;
     ScoreProjectData* scoreProject;
     am::Project* project;
-    // ProjectMgmt::CommandManager* commandManager;  // Temporarily removed to fix compilation
-    // AudioCore::MidiPreview* midiPreview;  // Temporarily removed to fix compilation
+    ProjectMgmt::CommandManager* commandManager;
+    AudioCore::MidiPreview* midiPreview;
     Scores::NotationModel* notationDoc;
 };
 
@@ -111,7 +147,10 @@ private:
     
     ScoreEditorCtrl scoreCtrl;
     ScoreEditorController controller;
-    ToolBar toolBar;
+    
+    // Connect to external systems
+    void ConnectToCommandManager();
+    void ConnectToMidiPreview();
     
     // Project data
     ScoreProjectData* scoreProject;

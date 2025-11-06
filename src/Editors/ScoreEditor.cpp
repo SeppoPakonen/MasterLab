@@ -1,13 +1,22 @@
 #include "ScoreEditor.h"
 #include <Scores/LayoutEngine.h>
 #include <Scores/NotationModel.h>  // Include full NotationModel definition for implementation
+#include <ProjectMgmt/Commands.h>  // Include CommandManager
+#include <AudioCore/MidiPreview.h>  // Include MidiPreview
 #include <CtrlLib/CtrlLib.h>
 
 namespace am {
 
 // ScoreEditorCtrl implementation
-ScoreEditorCtrl::ScoreEditorCtrl() : scoreProject(nullptr), notationDoc(nullptr), zoomLevel(100) {
+ScoreEditorCtrl::ScoreEditorCtrl() : scoreProject(nullptr), notationDoc(nullptr), zoomLevel(100),
+                                     selectedNote(-1), symbolsPaneVisible(false) {
     // Initialize the score control
+    infoBarCtrl.SetFrame(BlackFrame());
+    infoBarCtrl.SetRect(0, 0, GetSize().cx, 20);  // Black info bar at top
+    infoBarCtrl.SetBgColor(Black());
+    
+    symbolsPaneCtrl.SetFrame(BlackFrame());
+    symbolsPaneCtrl.SetRect(0, 0, 50, GetSize().cy);  // Left symbols pane
 }
 
 void ScoreEditorCtrl::SetScoreProject(ScoreProjectData* scoreProject) {
@@ -34,16 +43,57 @@ void ScoreEditorCtrl::ZoomOut() {
     Refresh();
 }
 
+void ScoreEditorCtrl::SetInfoBarContent(const String& content) {
+    infoBarContent = content;
+    infoBarCtrl.Refresh();
+}
+
+void ScoreEditorCtrl::ShowSymbolsPane(bool show) {
+    symbolsPaneVisible = show;
+    Refresh();
+}
+
+void ScoreEditorCtrl::SetSelectedNote(int noteIndex) {
+    selectedNote = noteIndex;
+    
+    // Update info bar with details about the selected note
+    if (scoreProject && selectedNote >= 0) {
+        const Vector<Measure>& measures = scoreProject->GetNotationModel().GetMeasures();
+        // Find the note and update the info bar with its details
+        int tempNoteIdx = 0;
+        for (const Measure& measure : measures) {
+            for (const Note& note : measure.notes) {
+                if (tempNoteIdx == selectedNote) {
+                    String noteInfo = "Pitch: " + IntStr(note.pitch) + 
+                                     " | Start: " + DoubleStr(note.start_time, 3) +
+                                     " | Duration: " + DoubleStr(note.duration, 3);
+                    SetInfoBarContent(noteInfo);
+                    break;
+                }
+                tempNoteIdx++;
+            }
+        }
+    }
+}
+
 void ScoreEditorCtrl::Paint(Draw& draw) {
     // Paint the score notation
     draw.DrawRect(GetSize(), White());
     
     if (!scoreProject) return;
     
-    if (!scoreProject) return;
+    // Draw symbols pane if visible
+    if (symbolsPaneVisible) {
+        draw.DrawRect(0, 0, 50, GetSize().cy, Gray());
+    }
+    
+    // Draw the main notation area
+    int notationStartX = symbolsPaneVisible ? 50 : 0;
+    int notationWidth = GetSize().cx - notationStartX;
+    
     const Vector<Measure>& measures = scoreProject->GetNotationModel().GetMeasures();
     int yPos = 50;
-    int xPos = 50;
+    int xPos = notationStartX + 50;
     
     for (int i = 0; i < measures.GetCount(); i++) {
         const Measure& measure = measures[i];
@@ -59,8 +109,11 @@ void ScoreEditorCtrl::Paint(Draw& draw) {
                 // Draw rest
                 draw.DrawText(noteX, noteY, "r", StdFont(10));
             } else {
-                // Draw note
-                draw.DrawEllipse(noteX - 5, noteY - 5, 10, 10, Black());
+                // Draw note - highlight if it's the selected note
+                Color noteColor = (selectedNote >= 0 && 
+                                  GetNoteIndexAtPosition(Point(noteX, noteY)) == selectedNote) ? 
+                                  Red() : Black();
+                draw.DrawEllipse(noteX - 5, noteY - 5, 10, 10, noteColor);
             }
         }
         
@@ -70,19 +123,40 @@ void ScoreEditorCtrl::Paint(Draw& draw) {
     // Draw staff lines
     for (int i = 0; i < 5; i++) {
         int y = 150 - i * 10;
-        draw.DrawLine(20, y, GetSize().cx - 20, y, 1, Black());
+        draw.DrawLine(notationStartX + 20, y, notationStartX + notationWidth - 20, y, 1, Black());
+    }
+    
+    // Draw info bar content
+    if (!infoBarContent.IsEmpty()) {
+        draw.DrawText(notationStartX + 10, 5, infoBarContent, StdFont(10), White());
     }
 }
 
 void ScoreEditorCtrl::LeftDown(Point p, dword keyflags) {
-    // Handle note placement
-    // In a real implementation, this would add notes via the command system
+    // Check if the click was on a note
+    int noteIndex = GetNoteIndexAtPosition(p);
+    
+    if (noteIndex >= 0) {
+        // A note was clicked - select it
+        SetSelectedNote(noteIndex);
+        Refresh();
+    } else {
+        // Empty space was clicked - clear selection
+        SetSelectedNote(-1);
+        Refresh();
+    }
 }
 
 void ScoreEditorCtrl::MouseMove(Point p, dword keyflags) {
     // Handle mouse movement over notes
     if (HasMouseIn()) {
-        // Update cursor based on position
+        // For now, just update the cursor
+        int noteIndex = GetNoteIndexAtPosition(p);
+        if (noteIndex >= 0) {
+            SetCursor(Cursor::arrow);
+        } else {
+            SetCursor(Cursor::arrow);
+        }
     }
 }
 
@@ -94,9 +168,38 @@ void ScoreEditorCtrl::MouseWheel(Point p, int zdelta, dword keyflags) {
     }
 }
 
+int ScoreEditorCtrl::GetNoteIndexAtPosition(Point p) {
+    if (!scoreProject) return -1;
+    
+    int notationStartX = symbolsPaneVisible ? 50 : 0;
+    const Vector<Measure>& measures = scoreProject->GetNotationModel().GetMeasures();
+    int yPos = 50;
+    int xPos = notationStartX + 50;
+    int noteIndex = 0;
+    
+    for (int i = 0; i < measures.GetCount(); i++) {
+        const Measure& measure = measures[i];
+        // Check notes in this measure
+        for (const Note& note : measure.notes) {
+            int noteX = xPos + (int)(note.start_time * 10);
+            int noteY = 200 - (note.pitch % 12) * 10;
+            
+            // Simple hit detection (within 10 pixels)
+            if (abs(p.x - noteX) < 10 && abs(p.y - noteY) < 10) {
+                return noteIndex;
+            }
+            noteIndex++;
+        }
+        xPos += 150; // Move to next measure
+    }
+    
+    return -1; // No note at this position
+}
+
 // ScoreEditorController implementation
 ScoreEditorController::ScoreEditorController() : view(nullptr), scoreProject(nullptr), 
-                                                 project(nullptr), notationDoc(nullptr) {
+                                                 project(nullptr), commandManager(nullptr),
+                                                 midiPreview(nullptr), notationDoc(nullptr) {
     // Initialize the controller
 }
 
@@ -115,13 +218,19 @@ void ScoreEditorController::SetProject(am::Project* project) {
     this->project = project;
 }
 
-
-
 void ScoreEditorController::SetNotationDocument(Scores::NotationModel* doc) {
     this->notationDoc = doc;
     if (view) {
         view->SetNotationDocument(doc);
     }
+}
+
+void ScoreEditorController::SetCommandManager(ProjectMgmt::CommandManager* cmdMgr) {
+    this->commandManager = cmdMgr;
+}
+
+void ScoreEditorController::SetMidiPreview(AudioCore::MidiPreview* midiPreview) {
+    this->midiPreview = midiPreview;
 }
 
 void ScoreEditorController::HandleNoteAdd(int pitch, double start_time, double duration) {
@@ -151,35 +260,64 @@ void ScoreEditorController::HandleZoomOut() {
 void ScoreEditorController::HandleSelectionChanged(const Vector<int>& selectedNotes) {
     // Handle when notes are selected in the UI
     // This might trigger updates in other connected components
-    // In a real implementation, this would update the selection in the project
+    if (view && selectedNotes.GetCount() > 0) {
+        view->SetSelectedNote(selectedNotes[0]);  // Take the first selected note
+        view->RefreshDisplay();
+    }
+}
+
+void ScoreEditorController::HandleToolChanged(int toolId) {
+    // Handle changes in the selected tool
+    // In a real implementation, this would affect the behavior of different tools
+}
+
+void ScoreEditorController::HandleNotePreview(int pitch) {
+    // Preview the note using MIDI preview if available
+    if (midiPreview) {
+        midiPreview->PreviewNote(pitch, 100, 500);  // Preview with velocity 100 for 500ms
+    }
+}
+
+void ScoreEditorController::HandleNotationChanged() {
+    // Handle when the notation document has been modified
+    // This might trigger updates to linked views
+    if (view) {
+        view->RefreshDisplay();
+    }
 }
 
 // ScoreEditor implementation
 ScoreEditor::ScoreEditor() : scoreProject(nullptr), isModified(false) {
     Title("Score Editor");
-    Size(800, 600);
+    Size(1000, 700);
     InitLayout();
 }
 
 void ScoreEditor::InitLayout() {
-    // Add the tool bar
-    AddFrame(toolBar);
-    toolBar.Set(THISBACK(ToolMenu));
-    
-    // Add the score control
+    // Add the tool bars as frames
+    AddFrame(scoreCtrl.GetTopToolbar());  // Top toolbar
     Add(scoreCtrl);
     
     // Connect the controller
     controller.SetView(&scoreCtrl);
     
-    // Connect to command manager if available (in a real implementation)
-    // This would be set via dependency injection or by getting from the main application
-    // ProjectMgmt::CommandManager* cmdMgr = GetGlobalCommandManager(); // This would be implemented
-    // controller.SetCommandManager(cmdMgr);
-    
-    // Connect to midi preview if available (in a real implementation)
-    // AudioCore::MidiPreview* midiPreview = GetGlobalMidiPreview(); // This would be implemented
-    // controller.SetMidiPreview(midiPreview);
+    // Connect to external systems
+    ConnectToCommandManager();
+    ConnectToMidiPreview();
+}
+
+void ScoreEditor::ConnectToCommandManager() {
+    // Get the global command manager (in a real implementation, this would be properly initialized)
+    // For now, we'll create a temporary one
+    static ProjectMgmt::CommandManager globalCommandManager;
+    controller.SetCommandManager(&globalCommandManager);
+}
+
+void ScoreEditor::ConnectToMidiPreview() {
+    // Get the global MIDI preview system (in a real implementation, this would be properly initialized)
+    // For now, we'll create a temporary one
+    static AudioCore::MidiPreview globalMidiPreview;
+    controller.SetMidiPreview(&globalMidiPreview);
 }
 
 void ScoreEditor::ToolMenu(Bar& bar) {
@@ -191,6 +329,7 @@ void ScoreEditor::ToolMenu(Bar& bar) {
     bar.Add("Zoom In", CtrlImg::plus(), THISBACK(HandleZoomInFromController));
     bar.Add("Zoom Out", CtrlImg::minus(), THISBACK(HandleZoomOutFromController));
     bar.Add("Refresh", CtrlImg::redo(), THISBACK(Refresh));
+    bar.Add("Show Symbols", CtrlImg::folder(), [this]() { scoreCtrl.ShowSymbolsPane(true); });
 }
 
 void ScoreEditor::Menu(Bar& bar) {
@@ -216,6 +355,9 @@ void ScoreEditor::Menu(Bar& bar) {
         b.Add("Zoom In", THISBACK(HandleZoomInFromController));
         b.Add("Zoom Out", THISBACK(HandleZoomOutFromController));
         b.Add("Actual Size", THISBACK(Refresh));
+        b.Add("Show/Hide Symbols Pane", [this]() { 
+            scoreCtrl.ShowSymbolsPane(!scoreCtrl.IsSymbolsPaneVisible()); 
+        });
     });
 }
 
@@ -230,10 +372,14 @@ void ScoreEditor::Close() {
 }
 
 void ScoreEditor::SetData(void* data) {
-    // In a real implementation, this would set the project data
-    // and connect to the ProjectMgmt::CommandManager
+    // Set the project data and connect to the ProjectMgmt::CommandManager
     ScoreProjectData* scoreProject = reinterpret_cast<ScoreProjectData*>(data);
     controller.SetScoreProject(scoreProject);
+    controller.SetNotationDocument(&scoreProject->GetNotationModel());
+    
+    // Connect to external systems if not already done
+    ConnectToCommandManager();
+    ConnectToMidiPreview();
 }
 
 void ScoreEditor::Refresh() {
@@ -304,6 +450,9 @@ bool ScoreEditor::LoadProject(const String& projectPath) {
         currentProjectPath = projectPath;
         isModified = false;
         Refresh();
+        
+        // Connect the notation document to the controller
+        controller.SetNotationDocument(&scoreProject->GetNotationModel());
     }
     return result;
 }
@@ -342,6 +491,9 @@ void ScoreEditor::NewProject() {
             currentProjectPath = projectPath;
             isModified = false;
             Refresh();
+            
+            // Connect the notation document to the controller
+            controller.SetNotationDocument(&scoreProject->GetNotationModel());
             PromptOK("New project created successfully!");
         } else {
             PromptOK("Failed to create new project!");
@@ -362,6 +514,9 @@ void ScoreEditor::OpenProject() {
             currentProjectPath = projectPath;
             isModified = false;
             Refresh();
+            
+            // Connect the notation document to the controller
+            controller.SetNotationDocument(&scoreProject->GetNotationModel());
             PromptOK("Project loaded successfully!");
         } else {
             PromptOK("Failed to load project!");

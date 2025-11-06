@@ -1,7 +1,29 @@
-GUI_APP_MAIN
-
 #include "App.h"
-#include "VSTConnections/VSTConnections.h"
+#include "VSTConnections.h"
+#include "VSTConnectionsCtrl.h"
 #include "Devices/Devices.h"
 
-// Main application code for VST Connections
+// Main VST Connections window
+struct VSTConnectionsWnd : TopWindow {
+    VSTConnectionsCtrl connectionsCtrl;
+    
+    VSTConnectionsWnd();
+    void Close();
+};
+
+VSTConnectionsWnd::VSTConnectionsWnd() {
+    Add(connectionsCtrl);
+    connectionsCtrl.HSizePos().VSizePos();
+    Title("VST Connections");
+    Sizeable().Zoomable();
+}
+
+void VSTConnectionsWnd::Close() {
+    // Save any changes before closing
+    Ctrl::Close();
+}
+
+GUI_APP_MAIN
+{
+    VSTConnectionsWnd().Run();
+}
