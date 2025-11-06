@@ -2,110 +2,103 @@
 #define _instruments_zencoreworkstation_zencoreworkstation_h_
 
 #include <PluginSDK/PluginSDK.h>
-#include <AudioCore/AudioCore.h>
+#include <AudioCore/AudioCore.h>  // For DSP infrastructure
+#include <DSP/DSP.h>              // For DSP processing components
+#include <AudioUI/GraphVisualizationCtrl.h>  // For graph visualization
 
 namespace Instruments {
+
+// Graph Node Definition for signal routing
+struct GraphNode {
+	String nodeId;
+	String nodeType; // e.g., 'oscillator', 'filter', 'envelope', 'lfo', 'eq', 'compressor'
+	Vector<String> inputs;   // input node IDs
+	Vector<String> outputs;  // output node IDs
+	ValueMap parameters;     // node parameters
+	int order;               // processing order
+};
+
+// ZenCoreWorkstation Graph Visualization Extension
+class ZenCoreWorkstationGraph : public PluginSDK::GraphVisualization {
+public:
+	ZenCoreWorkstationGraph();
+	virtual ~ZenCoreWorkstationGraph();
+
+	// Initialize the graph structure for this plugin
+	void InitializeGraph();
+
+	// Update graph based on current parameter state
+	void UpdateGraph();
+
+	// Get the visualization for UI components
+	const UI::GraphVisualizationCtrl& GetVisualizationCtrl() const;
+
+private:
+	Vector<GraphNode> graph_nodes;
+	VectorMap<String, int> node_lookup;  // Maps node IDs to indices
+	UI::GraphVisualizationCtrl viz_ctrl;
+};
+
+// Parameter Definition for UI and automation
+enum ParameterId {
+	kParameter1 = 0,
+	kParameter2,
+	kParameter3,
+	kParameter4,
+	kParameter5,
+	kParameter6,
+	kParameter7,
+	kParameter8,
+	kParameterCount  // This will be customized per plugin
+};
 
 class ZenCoreWorkstation : public PluginSDK::InstrumentProcessor {
 public:
 	typedef ZenCoreWorkstation CLASSNAME;
 	ZenCoreWorkstation();
+	virtual ~ZenCoreWorkstation();
 
 	void Prepare(const PluginSDK::AudioConfig& cfg) override;
 	void Process(PluginSDK::ProcessContext& ctx) override;
 	void Reset() override;
+
+	// Graph Management Methods
+	void InitializeGraph();
+	void ProcessGraph(PluginSDK::ProcessContext& ctx);
+	void UpdateParameter(int index, double value);
+
+	// Parameter Access Methods
+	int GetNumParameters() const override;
+	double GetParameter(int index) const override;
+	void SetParameter(int index, double value) override;
+	String GetParameterName(int index) const override;
+	String GetParameterText(int index) const override;
+
+	// Graph Visualization Integration
+	ZenCoreWorkstationGraph& GetGraph() { return graph; }
+	const ZenCoreWorkstationGraph& GetGraph() const { return graph; }
+
+	// MIDI Processing Methods (if applicable)
+	void ProcessMidiEvents(const Upp::Vector<PluginSDK::MidiEvent>& events);
+	void RouteMidiEvent(const PluginSDK::MidiEvent& evt);
 	void NoteOn(const PluginSDK::NoteEvent& evt) override;
 	void NoteOff(const PluginSDK::NoteEvent& evt) override;
 	void AllNotesOff() override;
+	void PolyPressure(const PluginSDK::NoteEvent& evt) override;
 
 private:
-	static constexpr int kPartialCount = 4;
-	static constexpr int kDrumPadCount = 16;
-	static constexpr int kMotionLaneCount = 3;
-	static constexpr int kMacroCount = 4;
-	static constexpr int kMaxVoices = 64;
-
-	struct PartialSlot {
-		String id;
-		String node_id;
-		String ifx_node_id;
-		int to_mfx_edge = -1;
-		int enable_param = -1;
-		int level_param = -1;
-		int cutoff_param = -1;
-		int resonance_param = -1;
-		int coarse_param = -1;
-		int fine_param = -1;
-		int ifx_send_param = -1;
-		int tone_edge = -1;
-		int ifx_edge = -1;
-		Vector<int> control_edges;
-	};
-
-	struct DrumLane {
-		String id;
-		int level_param = -1;
-		int pan_param = -1;
-		int attack_param = -1;
-		int decay_param = -1;
-		int release_param = -1;
-	};
-
-	struct MotionLane {
-		String id;
-		String node_id;
-		int rate_param = -1;
-		int depth_param = -1;
-		int probability_param = -1;
-		Vector<int> control_edges;
-		double phase = 0.0;
-		double last_value = 0.0;
-	};
-
-	struct SceneMacro {
-		String id;
-		String node_id;
-		int param = -1;
-		Vector<int> control_edges;
-	};
-
-	struct VoiceState {
-		int voice_id = -1;
-		int note = -1;
-		double velocity = 0.0;
-		Vector<double> partial_gains;
-		double morph_position = 0.0;
-		bool releasing = false;
-	};
-
-	void SetupPartials();
-	void SetupDrumLanes();
-	void SetupMotionDesigner();
-	void SetupSceneMacros();
-	void RegisterParameters();
-	void BuildRouting();
-	void BuildGraph();
-	void UpdateGraphActivity();
-	void AdvanceMotionLanes(double delta_seconds);
-	void RefreshVoiceGains();
-	double GetParameterValue(int index) const;
-
-	Vector<PartialSlot> partials;
-	Vector<DrumLane> drum_lanes;
-	Vector<MotionLane> motion_lanes;
-	Vector<SceneMacro> scene_macros;
-	Vector<VoiceState> active_voices;
-	am::Synth::VoiceManager voice_manager;
-
-	int morph_param = -1;
-	int scene_blend_param = -1;
-	int engine_mode_param = -1;
-	int drum_edge = -1;
-	int drum_to_mfx_edge = -1;
-	int motion_drive_edge = -1;
-	int macro_drive_edge = -1;
-
 	PluginSDK::RoutingMap routing;
+	Vector<GraphNode> graphNodes;      // Processing graph nodes
+	Vector<double> parameters;         // Parameter values
+	Vector<String> parameterNames;     // Parameter names for UI
+	Vector<String> parameterTexts;     // Parameter value texts
+	ValueMap graphMetadata;            // Graph metadata
+	ZenCoreWorkstationGraph graph;           // Graph visualization interface
+
+	// Internal processing methods
+	void ProcessNode(const GraphNode& node, PluginSDK::ProcessContext& ctx);
+	void UpdateGraphRouting();
+	void UpdateVisualization();        // Update visualization when parameters change
 };
 
 } // namespace Instruments

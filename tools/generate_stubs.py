@@ -52,6 +52,11 @@ EFFECTS_SECTIONS = {
 	"Waves Guitar & Instrument Platforms (Waves)": "GuitarInstrumentPlatforms"
 }
 
+MIDI_EFFECTS_SECTIONS = {
+	"Groove Humanizer (MIDI Effect)": "GrooveHumanizer",
+	"Chord Progression Mapper (MIDI Effect)": "ChordProgressionMapper"
+}
+
 INSTRUMENT_SECTIONS = {
 	"Roland Zenology Workstation (Roland)": "ZenCoreWorkstation",
 	"Roland JX-8P Model Expansion (Roland)": "ZenModelJX8P",
@@ -226,7 +231,12 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 	else:
 		namespace = "Instruments"
 		
-	base_class = "PluginSDK::PluginProcessor" if is_effect else "PluginSDK::InstrumentProcessor"
+	if "MIDI" in str(data["title"]).upper():
+		base_class = "PluginSDK::MidiEffectProcessor"
+	elif is_effect:
+		base_class = "PluginSDK::PluginProcessor"
+	else:
+		base_class = "PluginSDK::InstrumentProcessor"
 
 	header_guard = f"_{'midieffects' if 'MIDI' in str(data['title']).upper() else 'effects' if is_effect else 'instruments'}_{class_name.lower()}_{class_name.lower()}_h_"
 	
@@ -245,7 +255,7 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		"// Graph Node Definition for signal routing",
 		"struct GraphNode {",
 		"\tString nodeId;",
-		"\tString nodeType; // e.g., 'oscillator', 'filter', 'envelope', 'lfo', 'eq', 'compressor'",",
+		"\tString nodeType; // e.g., 'oscillator', 'filter', 'envelope', 'lfo', 'eq', 'compressor'",
 		"\tVector<String> inputs;   // input node IDs",
 		"\tVector<String> outputs;  // output node IDs",
 		"\tValueMap parameters;     // node parameters",
@@ -256,7 +266,7 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		f"class {class_name}Graph : public PluginSDK::GraphVisualization {{",
 		"public:",
 		f"\t{class_name}Graph();",
-		"\tvirtual ~{class_name}Graph();",
+		f"\tvirtual ~{class_name}Graph();",
 		"",
 		"\t// Initialize the graph structure for this plugin",
 		"\tvoid InitializeGraph();",
@@ -290,10 +300,11 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		"public:",
 		f"\ttypedef {class_name} CLASSNAME;",
 		f"\t{class_name}();",
-		"\tvirtual ~{class_name}();",
+		f"\tvirtual ~{class_name}();",
 		"",
 		"\tvoid Prepare(const PluginSDK::AudioConfig& cfg) override;",
-		"\tvoid Process(PluginSDK::ProcessContext& ctx) override;",
+		f"\tvoid Process(PluginSDK::ProcessContext& ctx) override;" if base_class != "PluginSDK::MidiEffectProcessor" else 
+		"\tvoid Process(PluginSDK::ProcessContext& ctx, Vector<PluginSDK::NoteEvent>& in_notes,\n\t\tVector<PluginSDK::NoteEvent>& out_notes, Vector<PluginSDK::ControlEvent>& in_controls,\n\t\tVector<PluginSDK::ControlEvent>& out_controls) override;",
 		"\tvoid Reset() override;",
 		"",
 		"\t// Graph Management Methods",
@@ -309,8 +320,8 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		"\tString GetParameterText(int index) const override;",
 		"",
 		"\t// Graph Visualization Integration",
-		"\t{class_name}Graph& GetGraph() { return graph; }",
-		"\tconst {class_name}Graph& GetGraph() const { return graph; }",
+		f"\t{class_name}Graph& GetGraph() {{ return graph; }}",
+		f"\tconst {class_name}Graph& GetGraph() const {{ return graph; }}",
 		"",
 		"\t// MIDI Processing Methods (if applicable)",
 		"\tvoid ProcessMidiEvents(const Upp::Vector<PluginSDK::MidiEvent>& events);",
@@ -334,7 +345,7 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		"\tVector<String> parameterNames;     // Parameter names for UI",
 		"\tVector<String> parameterTexts;     // Parameter value texts",
 		"\tValueMap graphMetadata;            // Graph metadata",
-		"\t{class_name}Graph graph;           // Graph visualization interface",
+		f"\t{class_name}Graph graph;           // Graph visualization interface",
 		"",
 		"\t// Internal processing methods",
 		"\tvoid ProcessNode(const GraphNode& node, PluginSDK::ProcessContext& ctx);",
@@ -652,8 +663,10 @@ def main():
 
 	effects_root = REPO / "effects"
 	instruments_root = REPO / "instruments"
+	midi_effects_root = REPO / "midi_effects"
 	effects_root.mkdir(exist_ok=True)
 	instruments_root.mkdir(exist_ok=True)
+	midi_effects_root.mkdir(exist_ok=True)
 
 	for title, class_name in EFFECTS_SECTIONS.items():
 		if title not in effects_sections:
@@ -661,6 +674,29 @@ def main():
 		data = effects_sections[title]
 		display = camel_to_header(class_name)
 		write_stub(effects_root / class_name, class_name, display, data, is_effect=True)
+
+	for title, class_name in MIDI_EFFECTS_SECTIONS.items():
+		# For now, create basic structure for MIDI effects even if not documented in MD files
+		# This creates the basic stub files for existing MIDI effect implementations
+		class_name_lower = class_name.lower()
+		display = camel_to_header(class_name)
+		
+		# Create a basic data structure for MIDI effects
+		data = {
+			"title": f"{class_name} (MIDI Effect)",
+			"description": [f"MIDI effect for {class_name} processing"],
+			"tables": [[  # tables is a list of tables, each table is a list of rows (dictionaries)
+				{
+					"Group": class_name,
+					"Category": "MIDI effect",
+					"Generic blueprint": f"MIDI event processor handling transformation, routing, and parameter automation",
+					"Key features": "MIDI event transformation, routing, parameter automation<br>Graph visualization support<br>MIDI timing and synchronization",
+					"Core classes": "PluginSDK::MidiEffectProcessor",
+					"Signal flow": "MIDI input → Processing → MIDI output"
+				}
+			]]
+		}
+		write_stub(midi_effects_root / class_name, class_name, display, data, is_effect=True)  # MIDI effects are still effects
 
 	for title, class_name in INSTRUMENT_SECTIONS.items():
 		if title not in instrument_sections:

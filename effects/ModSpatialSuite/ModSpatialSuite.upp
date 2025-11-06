@@ -1,5 +1,11 @@
+description "Effect Plugin: Mod Spatial Suite\377200,200,200";
+
 uses
-	PluginSDK;
+	CtrlLib,
+	PluginSDK,
+	AudioCore,
+	DSP,
+	AudioUI;
 
 file
 	AGENTS.md,
