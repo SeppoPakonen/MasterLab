@@ -11,9 +11,8 @@ namespace Upp {
     // Convert decibels to gain
     double DbToGain(double db);
     
-    // Clamp a value between min and max
-    template<typename T>
-    T clamp(T value, T min, T max);
+    // Clamp a value between min and max (using Upp's built-in clamp function)
+    using Upp::clamp;
     
     // Linear interpolation between two values
     double lerp(double a, double b, double t);

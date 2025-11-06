@@ -387,7 +387,9 @@ Vector<PresetBrowser::PresetInfo> PresetBrowser::GetPresetsByModuleType(const St
 }
 
 Vector<PresetBrowser::PresetInfo> PresetBrowser::GetAllPresets() const {
-    return presets;
+    Vector<PresetInfo> result;
+    result <<= presets;  // Deep copy using <<= operator
+    return result;
 }
 
 Vector<PresetBrowser::PresetInfo> PresetBrowser::SearchPresets(const String& query) const {
@@ -495,7 +497,7 @@ SessionManager::~SessionManager() {
 
 bool SessionManager::CreateNewSession(const String& session_id, const String& name, 
                                      const String& description) {
-    current_session = MakeUnique<SessionInfo>();
+    current_session = std::make_unique<SessionInfo>();
     current_session->id = session_id;
     current_session->name = name;
     current_session->description = description;
@@ -509,7 +511,7 @@ bool SessionManager::CreateNewSession(const String& session_id, const String& na
 bool SessionManager::LoadSession(const String& filepath) {
     // In a real implementation, this would load a session from a file
     // For now, create a dummy session
-    current_session = MakeUnique<SessionInfo>();
+    current_session = std::make_unique<SessionInfo>();
     current_session->id = "dummy_session";
     current_session->name = "Dummy Session";
     current_session->creation_time = GetSysTime();

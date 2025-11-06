@@ -6,8 +6,8 @@ namespace DSP {
 AIRecommender::AIRecommender() : learning_enabled(true) {
     // Initialize the AI recommender system
     // For a basic implementation, we'll initialize some default preferences
-    user_preferences.Set("preferred_genres", Vector<String>());
-    user_preferences.Set("preferred_effects", Vector<String>());
+    user_preferences.Set("preferred_genres", Value(Vector<String>()));
+    user_preferences.Set("preferred_effects", Value(Vector<String>()));
     user_preferences.Set("preferred_complexity", 0.5);
     user_preferences.Set("learning_rate", 0.1);
 }
@@ -32,12 +32,14 @@ Vector<AIRecommender::Recommendation> AIRecommender::GenerateAudioRecommendation
     rec.description = "Suggested EQ settings to enhance the audio";
     rec.attributes.Set("effect_type", "EQ");
     rec.attributes.Set("frequency", features.Get("dominant_frequency", 1000.0));
-    rec.attributes.Set("boost_amount", features.Get("dynamic_range", 6.0)/10.0);
+    double dynamic_range = features.Get("dynamic_range", 6.0);
+    rec.attributes.Set("boost_amount", dynamic_range / 10.0);
     
     recommendations.Add(rec);
     
     // Add more recommendations based on other features
-    if (features.Get("spectral_centroid", 1000.0) > 2000.0) {
+    double spectral_centroid = features.Get("spectral_centroid", 1000.0);
+    if (spectral_centroid > 2000.0) {
         rec.id = "rec_" + Upp::AsString(++next_recommendation_id);
         rec.name = "High-End Compression";
         rec.description = "Recommended compressor settings for bright audio";
@@ -69,9 +71,11 @@ Vector<AIRecommender::Recommendation> AIRecommender::GenerateMidiRecommendations
     rec.description = "Best matching instrument for this melodic pattern";
     
     String suggested_instr = "Grand Piano";
-    if (features.Get("avg_note_density", 2.0) > 4.0) {
+    double avg_note_density = features.Get("avg_note_density", 2.0);
+    if (avg_note_density > 4.0) {
         suggested_instr = "Electric Piano";
-    } else if (features.Get("avg_velocity", 64.0) > 100.0) {
+    double avg_velocity = features.Get("avg_velocity", 64.0);
+    if (avg_velocity > 100.0) {
         suggested_instr = "Overdriven Guitar";
     }
     
@@ -87,9 +91,9 @@ Vector<AIRecommender::Recommendation> AIRecommender::GenerateContextualRecommend
     Vector<Recommendation> recommendations;
     
     // Analyze the project context to generate recommendations
-    String current_genre = project_context.Get("genre", "undefined");
-    String current_key = project_context.Get("key", "C");
-    double current_tempo = project_context.Get("tempo", 120.0);
+    String current_genre = AsString(project_context.Get("genre", "undefined"));
+    String current_key = AsString(project_context.Get("key", "C"));
+    double current_tempo = AsDouble(project_context.Get("tempo", 120.0));
     
     Recommendation rec;
     rec.id = "rec_" + Upp::AsString(++next_recommendation_id);
@@ -99,11 +103,24 @@ Vector<AIRecommender::Recommendation> AIRecommender::GenerateContextualRecommend
     rec.description = "Effects chain suggested for " + current_genre + " music";
     
     if (current_genre == "Rock") {
-        rec.attributes.Set("effects_chain", Vector<String>({"Compressor", "Distortion", "Delay", "Reverb"}));
+        Vector<String> effects_chain1;
+        effects_chain1.Add("Compressor");
+        effects_chain1.Add("Distortion");
+        effects_chain1.Add("Delay");
+        effects_chain1.Add("Reverb");
+        rec.attributes.Set("effects_chain", effects_chain1);
     } else if (current_genre == "Electronic") {
-        rec.attributes.Set("effects_chain", Vector<String>({"Sidechain Compressor", "Filter", "Delay", "Reverb"}));
+        Vector<String> effects_chain2;
+        effects_chain2.Add("Sidechain Compressor");
+        effects_chain2.Add("Filter");
+        effects_chain2.Add("Delay");
+        effects_chain2.Add("Reverb");
+        rec.attributes.Set("effects_chain", effects_chain2);
     } else if (current_genre == "Classical") {
-        rec.attributes.Set("effects_chain", Vector<String>({"Subtle Reverb", "EQ"}));
+        Vector<String> effects_chain3;
+        effects_chain3.Add("Subtle Reverb");
+        effects_chain3.Add("EQ");
+        rec.attributes.Set("effects_chain", effects_chain3);
     }
     
     recommendations.Add(rec);
@@ -234,10 +251,10 @@ ValueMap AIRecommender::ExtractMidiFeatures(const Vector<MidiEvent>& midi_events
     Vector<double> times;
     
     for (const auto& evt : midi_events) {
-        if (evt.GetType() == MidiEvent::NOTE_ON) {
-            note_numbers.Add(evt.GetNote());
-            velocities.Add(evt.GetVelocity());
-            times.Add(evt.GetTime());
+        if ((evt.type & 0xF0) == 0x90) {  // MIDI Note On events have type 0x90-0x9F
+            note_numbers.Add(evt.note);
+            velocities.Add(evt.velocity);
+            times.Add(evt.time);
         }
     }
     

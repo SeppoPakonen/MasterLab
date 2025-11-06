@@ -84,8 +84,8 @@ public:
     void SetNotationDocument(Scores::NotationModel* doc);
     
     // Connect to command manager for undo/redo and command execution
-    void SetCommandManager(ProjectMgmt::CommandManager* cmdMgr);
-    ProjectMgmt::CommandManager* GetCommandManager() const { return commandManager; }
+    void SetCommandManager(am::CommandManager* cmdMgr);
+    am::CommandManager* GetCommandManager() const { return commandManager; }
     
     // Connect to MIDI preview for auditioning notes
     void SetMidiPreview(AudioCore::MidiPreview* midiPreview);
@@ -106,11 +106,11 @@ public:
     // Handle notation document changes
     void HandleNotationChanged();
     
-private:
+    private:
     ScoreEditorCtrl* view;
     ScoreProjectData* scoreProject;
     am::Project* project;
-    ProjectMgmt::CommandManager* commandManager;
+    am::CommandManager* commandManager;
     AudioCore::MidiPreview* midiPreview;
     Scores::NotationModel* notationDoc;
 };

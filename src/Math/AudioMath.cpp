@@ -12,13 +12,6 @@ namespace Upp {
         return pow(10.0, db / 20.0);
     }
     
-    template<typename T>
-    T clamp(T value, T min, T max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-    
     double lerp(double a, double b, double t) {
         return a + (b - a) * Upp::max(0.0, Upp::min(1.0, t));
     }
@@ -52,9 +45,4 @@ namespace Upp {
         }
         return peak;
     }
-
-    // Explicit instantiation for common types
-    template int clamp<int>(int value, int min, int max);
-    template double clamp<double>(double value, double min, double max);
-    template float clamp<float>(float value, float min, float max);
 }

@@ -11,4 +11,11 @@ using namespace Upp;
 #include "Functions.h"
 #include "ScoreProject.h"
 
+// Provide Scores namespace for compatibility with editor modules
+namespace Scores {
+    using am::NotationModel;
+    using am::Note;
+    using am::Measure;
+}
+
 #endif

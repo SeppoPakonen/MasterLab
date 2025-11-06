@@ -4,6 +4,7 @@
 #include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/SpatialDSP.h>  // For some of the components
+#include <memory>
 
 using namespace Upp;
 
@@ -73,7 +74,7 @@ private:
     Vector<RackSlot> slots;
     VectorMap<String, int> slot_ids;  // Maps slot IDs to indices
     
-    struct Connection {
+    struct Connection : public Moveable<Connection> {
         String source_slot;
         String dest_slot;
         double gain;

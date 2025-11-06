@@ -12,4 +12,11 @@ using namespace Upp;
 #include "History.h"
 #include "Selection.h"
 
+// Provide ProjectMgmt namespace for compatibility with editor modules
+namespace ProjectMgmt {
+    using am::CommandManager;
+    using am::CommandContext;
+    using am::CommandFunction;
+}
+
 #endif

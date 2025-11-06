@@ -8,6 +8,36 @@
 
 using namespace Upp;
 
+// 3D Point structure for spatial audio processing
+struct Point3D {
+    double x, y, z;
+    
+    Point3D() : x(0.0), y(0.0), z(0.0) {}
+    Point3D(double x_val, double y_val, double z_val) : x(x_val), y(y_val), z(z_val) {}
+};
+
+// 3x3 Matrix structure for spatial audio processing
+struct Matrix3D {
+    double m[3][3];
+    
+    Matrix3D() {
+        // Initialize as identity matrix
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                m[i][j] = (i == j) ? 1.0 : 0.0;
+            }
+        }
+    }
+    
+    void SetIdentity() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                m[i][j] = (i == j) ? 1.0 : 0.0;
+            }
+        }
+    }
+};
+
 namespace DSP {
 
 // FIRDesigner - designs Finite Impulse Response filters for spatial processing
@@ -300,7 +330,7 @@ public:
     // Set analysis parameters
     void SetAnalysisWindow(int samples) { analysis_window = samples; }
     void SetAnalysisOverlap(double ratio) { analysis_overlap = ratio; }
-    void SetFrequencyBands(const Vector<double>& bands) { frequency_bands = bands; }
+    void SetFrequencyBands(const Vector<double>& bands) { frequency_bands <<= bands; }
     
     // Get current analysis
     const FieldAnalysis& GetCurrentAnalysis() const { return current_analysis; }

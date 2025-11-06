@@ -383,7 +383,9 @@ Vector<String> ZenCoreMFXCatalogue::GetSupportedModelExpansions() const {
 Vector<String> ZenCoreMFXCatalogue::GetAlgorithmsForModelExpansion(const String& modelExpansion) const {
     int idx = model_expansion_algorithms.Find(modelExpansion);
     if (idx >= 0) {
-        return model_expansion_algorithms[idx];
+        Vector<String> result;
+        result <<= model_expansion_algorithms[idx];  // Deep copy using <<= operator
+        return result;
     }
     return Vector<String>(); // Empty vector if not found
 }
@@ -445,9 +447,11 @@ ValueMap ZenCoreMFXCatalogue::GetModelExpansionParameterSet(const String& algori
 void ZenCoreMFXCatalogue::AddModelExpansionToAlgorithm(const Upp::String& algorithmId, const Upp::String& expansion) {
     // Add the algorithm to the list of algorithms that support this model expansion
     Vector<String>& algs = model_expansion_algorithms.GetAdd(expansion);
-    if (find(algs.begin(), algs.end(), algorithmId) == algs.end()) {  // Avoid duplicates
-        algs.Add(algorithmId);
+    for(int i = 0; i < algs.GetCount(); i++) { // Use a loop instead of Find to avoid the issue
+        if(algs[i] == algorithmId) 
+            return; // Already exists, avoid duplicates
     }
+    algs.Add(algorithmId);
 }
 
 }

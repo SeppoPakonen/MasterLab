@@ -33,8 +33,8 @@ public:
     double GetVolume() const { return volume; }
     
     // Transport integration
-    void SetTransport(Transport* transport);
-    Transport* GetTransport() const { return transport; }
+    void SetTransport(am::Transport* transport);
+    am::Transport* GetTransport() const { return transport; }
     
     // Set the audio output device
     void SetOutputDevice(const String& deviceId);
@@ -47,7 +47,7 @@ private:
     int currentChannel;
     double volume;
     String currentInstrument;
-    Transport* transport;
+    am::Transport* transport;
     
     // Internal implementation
     void InternalPreviewNote(int pitch, int velocity, int duration);
