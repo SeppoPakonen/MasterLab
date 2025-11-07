@@ -22,7 +22,6 @@ private:
 	
 	// UI Controls
 	Button keyCommandsButton;
-	WithPresetsLayout layout;
 };
 
 }

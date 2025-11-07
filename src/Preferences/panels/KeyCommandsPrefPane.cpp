@@ -28,7 +28,7 @@ void KeyCommandsPrefPane::Store(PreferencesModel& model, Upp::Vector<bool>& chan
 void KeyCommandsPrefPane::OnKeyCommandsButton() {
 	// Open the key commands dialog when the button is clicked
 	KeyCommandsDlg dlg;
-	dlg.Run(*this);
+	dlg.Run();
 }
 
 // Register this panel with the panel registry

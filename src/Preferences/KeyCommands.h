@@ -20,7 +20,7 @@ struct KeyCommand : public Moveable<KeyCommand> {
 		
 	// Constructor for U++ KeyInfo objects
 	KeyCommand(const KeyInfo& key_info, const Upp::String& sequence, const Upp::String& desc)
-		: command_id((int)key_info), key_sequence(sequence), description(desc) {}
+		: command_id((int)(intptr_t)&key_info), key_sequence(sequence), description(desc) {}
 	
 	// Add explicit copy constructor and assignment operator
 	KeyCommand(const KeyCommand& other) 

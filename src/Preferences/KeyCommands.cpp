@@ -18,28 +18,28 @@ void KeyCommands::LoadCommands() {
 	commands.Clear();
 	
 	// Add default key commands using AK keys
-	AddCommand(KeyCommand(AKKeys::FILE_NEW_PROJECT(), "Ctrl+N", "File/New Project"));
-	AddCommand(KeyCommand(AKKeys::FILE_OPEN(), "Ctrl+O", "File/Open..."));
-	AddCommand(KeyCommand(AKKeys::FILE_SAVE(), "Ctrl+S", "File/Save"));
-	AddCommand(KeyCommand(AKKeys::FILE_SAVE_AS(), "Ctrl+Shift+S", "File/Save As..."));
-	AddCommand(KeyCommand(AKKeys::FILE_CLOSE(), "Ctrl+W", "File/Close"));
-	AddCommand(KeyCommand(AKKeys::FILE_EXPORT_AUDIO_MIXDOWN(), "Ctrl+Shift+E", "File/Export Audio Mixdown..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_NEW_PROJECT(), "Ctrl+N", "File/New Project"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_OPEN(), "Ctrl+O", "File/Open..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_SAVE(), "Ctrl+S", "File/Save"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_SAVE_AS(), "Ctrl+Shift+S", "File/Save As..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_CLOSE(), "Ctrl+W", "File/Close"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN(), "Ctrl+Shift+E", "File/Export Audio Mixdown..."));
 	
-	AddCommand(KeyCommand(AKKeys::EDIT_UNDO(), "Ctrl+Z", "Edit/Undo"));
-	AddCommand(KeyCommand(AKKeys::EDIT_REDO(), "Ctrl+Y", "Edit/Redo"));
-	AddCommand(KeyCommand(AKKeys::EDIT_CUT(), "Ctrl+X", "Edit/Cut"));
-	AddCommand(KeyCommand(AKKeys::EDIT_COPY(), "Ctrl+C", "Edit/Copy"));
-	AddCommand(KeyCommand(AKKeys::EDIT_PASTE(), "Ctrl+V", "Edit/Paste"));
-	AddCommand(KeyCommand(AKKeys::EDIT_DELETE(), "Del", "Edit/Delete"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_UNDO(), "Ctrl+Z", "Edit/Undo"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_REDO(), "Ctrl+Y", "Edit/Redo"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_CUT(), "Ctrl+X", "Edit/Cut"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_COPY(), "Ctrl+C", "Edit/Copy"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_PASTE(), "Ctrl+V", "Edit/Paste"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_DELETE(), "Del", "Edit/Delete"));
 	
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_PLAY(), "Space", "Transport/Play"));
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_STOP(), "Ctrl+Space", "Transport/Stop"));
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_RECORD(), "R", "Transport/Record"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_PLAY(), "Space", "Transport/Play"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_STOP(), "Ctrl+Space", "Transport/Stop"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_RECORD(), "R", "Transport/Record"));
 	
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_OPEN(), "Ctrl+,", "File/Preferences..."));
-	AddCommand(KeyCommand(AKKeys::PROJECT_SETUP(), "", "Project/Project Setup..."));
-	AddCommand(KeyCommand(AKKeys::MEDIA_OPEN_POOL(), "", "Media/Open Pool Window"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_OPEN(), "", "File/Key Commands..."));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_OPEN(), "Ctrl+,", "File/Preferences..."));
+	AddCommand(KeyCommand(AKKeys::AK_PROJECT_SETUP(), "", "Project/Project Setup..."));
+	AddCommand(KeyCommand(AKKeys::AK_MEDIA_OPEN_POOL(), "", "Media/Open Pool Window"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_OPEN(), "", "File/Key Commands..."));
 }
 
 void KeyCommands::LoadAKKeyDefinitions() {
@@ -48,84 +48,84 @@ void KeyCommands::LoadAKKeyDefinitions() {
 	commands.Clear();
 	
 	// File menu
-	AddCommand(KeyCommand(AKKeys::FILE_NEW_PROJECT(), "Ctrl+N", "File/New Project"));
-	AddCommand(KeyCommand(AKKeys::FILE_OPEN(), "Ctrl+O", "File/Open..."));
-	AddCommand(KeyCommand(AKKeys::FILE_SAVE(), "Ctrl+S", "File/Save"));
-	AddCommand(KeyCommand(AKKeys::FILE_SAVE_AS(), "Ctrl+Shift+S", "File/Save As..."));
-	AddCommand(KeyCommand(AKKeys::FILE_CLOSE(), "Ctrl+W", "File/Close"));
-	AddCommand(KeyCommand(AKKeys::FILE_EXPORT_AUDIO_MIXDOWN(), "Ctrl+Shift+E", "File/Export Audio Mixdown..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_NEW_PROJECT(), "Ctrl+N", "File/New Project"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_OPEN(), "Ctrl+O", "File/Open..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_SAVE(), "Ctrl+S", "File/Save"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_SAVE_AS(), "Ctrl+Shift+S", "File/Save As..."));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_CLOSE(), "Ctrl+W", "File/Close"));
+	AddCommand(KeyCommand(AKKeys::AK_FILE_EXPORT_AUDIO_MIXDOWN(), "Ctrl+Shift+E", "File/Export Audio Mixdown..."));
 	
 	// Edit menu
-	AddCommand(KeyCommand(AKKeys::EDIT_UNDO(), "Ctrl+Z", "Edit/Undo"));
-	AddCommand(KeyCommand(AKKeys::EDIT_REDO(), "Ctrl+Y", "Edit/Redo"));
-	AddCommand(KeyCommand(AKKeys::EDIT_CUT(), "Ctrl+X", "Edit/Cut"));
-	AddCommand(KeyCommand(AKKeys::EDIT_COPY(), "Ctrl+C", "Edit/Copy"));
-	AddCommand(KeyCommand(AKKeys::EDIT_PASTE(), "Ctrl+V", "Edit/Paste"));
-	AddCommand(KeyCommand(AKKeys::EDIT_DELETE(), "Del", "Edit/Delete"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_UNDO(), "Ctrl+Z", "Edit/Undo"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_REDO(), "Ctrl+Y", "Edit/Redo"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_CUT(), "Ctrl+X", "Edit/Cut"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_COPY(), "Ctrl+C", "Edit/Copy"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_PASTE(), "Ctrl+V", "Edit/Paste"));
+	AddCommand(KeyCommand(AKKeys::AK_EDIT_DELETE(), "Del", "Edit/Delete"));
 	
 	// Transport
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_PLAY(), "Space", "Transport/Play"));
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_STOP(), "Ctrl+Space", "Transport/Stop"));
-	AddCommand(KeyCommand(AKKeys::TRANSPORT_RECORD(), "R", "Transport/Record"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_PLAY(), "Space", "Transport/Play"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_STOP(), "Ctrl+Space", "Transport/Stop"));
+	AddCommand(KeyCommand(AKKeys::AK_TRANSPORT_RECORD(), "R", "Transport/Record"));
 	
 	// Audio
-	AddCommand(KeyCommand(AKKeys::AUDIO_NORMALIZE(), "", "Audio/Normalize"));
-	AddCommand(KeyCommand(AKKeys::AUDIO_GAIN(), "", "Audio/Gain"));
+	AddCommand(KeyCommand(AKKeys::AK_AUDIO_NORMALIZE(), "", "Audio/Normalize"));
+	AddCommand(KeyCommand(AKKeys::AK_AUDIO_GAIN(), "", "Audio/Gain"));
 	
 	// MIDI
-	AddCommand(KeyCommand(AKKeys::MIDI_QUANTIZE(), "", "MIDI/Quantize"));
-	AddCommand(KeyCommand(AKKeys::MIDI_TRANSPOSE(), "", "MIDI/Transpose"));
+	AddCommand(KeyCommand(AKKeys::AK_MIDI_QUANTIZE(), "", "MIDI/Quantize"));
+	AddCommand(KeyCommand(AKKeys::AK_MIDI_TRANSPOSE(), "", "MIDI/Transpose"));
 	
 	// Additional commands
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_OPEN(), "Ctrl+,", "File/Preferences..."));
-	AddCommand(KeyCommand(AKKeys::PROJECT_SETUP(), "", "Project/Project Setup..."));
-	AddCommand(KeyCommand(AKKeys::MEDIA_OPEN_POOL(), "", "Media/Open Pool Window"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_OPEN(), "", "File/Key Commands..."));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_SAVE_PRESET(), "", "Key Commands/Save Preset"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_LOAD_PRESET(), "", "Key Commands/Load Preset"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_DELETE_PRESET(), "", "Key Commands/Delete Preset"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_RESET_ALL(), "", "Key Commands/Reset All"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_SHOW_MACROS(), "", "Key Commands/Show Macros"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_OPEN(), "Ctrl+,", "File/Preferences..."));
+	AddCommand(KeyCommand(AKKeys::AK_PROJECT_SETUP(), "", "Project/Project Setup..."));
+	AddCommand(KeyCommand(AKKeys::AK_MEDIA_OPEN_POOL(), "", "Media/Open Pool Window"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_OPEN(), "", "File/Key Commands..."));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_SAVE_PRESET(), "", "Key Commands/Save Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_LOAD_PRESET(), "", "Key Commands/Load Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_DELETE_PRESET(), "", "Key Commands/Delete Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_RESET_ALL(), "", "Key Commands/Reset All"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_SHOW_MACROS(), "", "Key Commands/Show Macros"));
 	
 	// Preferences dialog sections
-	AddCommand(KeyCommand(AKKeys::PREFS_APPEARANCE(), "", "Preferences/Appearance"));
-	AddCommand(KeyCommand(AKKeys::PREFS_AUDIO(), "", "Preferences/Audio"));
-	AddCommand(KeyCommand(AKKeys::PREFS_MIDI(), "", "Preferences/MIDI"));
-	AddCommand(KeyCommand(AKKeys::PREFS_DEVICES(), "", "Preferences/Devices"));
-	AddCommand(KeyCommand(AKKeys::PREFS_TRANSPORT(), "", "Preferences/Transport"));
-	AddCommand(KeyCommand(AKKeys::PREFS_EDITING(), "", "Preferences/Editing"));
-	AddCommand(KeyCommand(AKKeys::PREFS_KEY_COMMANDS(), "", "Preferences/Key Commands"));
-	AddCommand(KeyCommand(AKKeys::PREFS_PLUGINS(), "", "Preferences/Plugins"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_APPEARANCE(), "", "Preferences/Appearance"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_AUDIO(), "", "Preferences/Audio"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_MIDI(), "", "Preferences/MIDI"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_DEVICES(), "", "Preferences/Devices"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_TRANSPORT(), "", "Preferences/Transport"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_EDITING(), "", "Preferences/Editing"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_KEY_COMMANDS(), "", "Preferences/Key Commands"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFS_PLUGINS(), "", "Preferences/Plugins"));
 	
 	// Key Commands dialog specific commands
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_ASSIGN(), "", "Key Commands/Assign"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_DELETE(), "", "Key Commands/Delete"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_REFRESH(), "", "Key Commands/Refresh"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_SEARCH(), "", "Key Commands/Search"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_RESET_SELECTED(), "", "Key Commands/Reset Selected"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_IMPORT(), "", "Key Commands/Import"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_EXPORT(), "", "Key Commands/Export"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_COLLISION_SELECT(), "", "Key Commands/Select Collision"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_OPEN_PRESET(), "", "Key Commands/Open Preset"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_SAVE_PRESET_AS(), "", "Key Commands/Save Preset As"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_ASSIGN(), "", "Key Commands/Assign"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_DELETE(), "", "Key Commands/Delete"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_REFRESH(), "", "Key Commands/Refresh"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_SEARCH(), "", "Key Commands/Search"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_RESET_SELECTED(), "", "Key Commands/Reset Selected"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_IMPORT(), "", "Key Commands/Import"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_EXPORT(), "", "Key Commands/Export"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_COLLISION_SELECT(), "", "Key Commands/Select Collision"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_OPEN_PRESET(), "", "Key Commands/Open Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_SAVE_PRESET_AS(), "", "Key Commands/Save Preset As"));
 	
 	// Macro related commands
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_NEW_MACRO(), "", "Key Commands/New Macro"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_EDIT_MACRO(), "", "Key Commands/Edit Macro"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_DELETE_MACRO(), "", "Key Commands/Delete Macro"));
-	AddCommand(KeyCommand(AKKeys::KEY_COMMANDS_ADD_COMMAND_TO_MACRO(), "", "Key Commands/Add Command to Macro"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_NEW_MACRO(), "", "Key Commands/New Macro"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_EDIT_MACRO(), "", "Key Commands/Edit Macro"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_DELETE_MACRO(), "", "Key Commands/Delete Macro"));
+	AddCommand(KeyCommand(AKKeys::AK_KEY_COMMANDS_ADD_COMMAND_TO_MACRO(), "", "Key Commands/Add Command to Macro"));
 
 	// Preferences dialog commands
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_REFRESH(), "", "Preferences/Refresh"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_APPLY(), "", "Preferences/Apply"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_RESET(), "", "Preferences/Reset"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_SAVE_PRESET(), "", "Preferences/Save Preset"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_LOAD_PRESET(), "", "Preferences/Load Preset"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_DELETE_PRESET(), "", "Preferences/Delete Preset"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_RENAME_PRESET(), "", "Preferences/Rename Preset"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_MARKED_ONLY(), "", "Preferences/Store Marked Only"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_DEFAULTS(), "", "Preferences/Restore Defaults"));
-	AddCommand(KeyCommand(AKKeys::PREFERENCES_HELP(), "", "Preferences/Help"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_REFRESH(), "", "Preferences/Refresh"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_APPLY(), "", "Preferences/Apply"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_RESET(), "", "Preferences/Reset"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_SAVE_PRESET(), "", "Preferences/Save Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_LOAD_PRESET(), "", "Preferences/Load Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_DELETE_PRESET(), "", "Preferences/Delete Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_RENAME_PRESET(), "", "Preferences/Rename Preset"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_MARKED_ONLY(), "", "Preferences/Store Marked Only"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_DEFAULTS(), "", "Preferences/Restore Defaults"));
+	AddCommand(KeyCommand(AKKeys::AK_PREFERENCES_HELP(), "", "Preferences/Help"));
 }
 
 void KeyCommands::SaveCommands() {

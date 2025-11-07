@@ -36,9 +36,14 @@ public:
         double confidence;  // 0.0 to 1.0
         String description;
         ValueMap attributes;  // Specific attributes for the recommendation
-        Vector<String> related_items;  // Related items that go with this recommendation
+        String related_items_str;  // Store related items as a joined string to avoid vector copy issues
         
         Recommendation() : type(EFFECT_SUGGESTION), confidence(0.5) {}
+        
+        // U++ Moveable requires these operations to work with containers
+        void Serialize(Stream &s) {
+            s % id % name % (int &)type % confidence % description % attributes % related_items_str;
+        }
     };
     
     // Generate recommendations based on input audio

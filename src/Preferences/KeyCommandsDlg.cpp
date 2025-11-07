@@ -7,11 +7,7 @@
 
 namespace am {
 
-// Structure to hold tree node information with command ID
-struct TreeNodeData {
-	int command_id;  // AK command ID
-	String description;  // Function description
-};
+
 
 KeyCommandsDlg::KeyCommandsDlg() {
 	Title("Key Commands");
@@ -99,8 +95,8 @@ void KeyCommandsDlg::RefreshTree() {
 		const Vector<int>& cmd_indices = categories[cat_idx];
 		
 		// Add category node
-		int cat_node = functions_tree.Add(CtrlImg::smallright(), category);
-		functions_tree.Set(cat_node, category, 0);
+		int cat_node = functions_tree.Add(0, CtrlImg::smallright(), category);
+		functions_tree.Set(cat_node, category);
 		
 		// Add command nodes under this category
 		for (int idx : cmd_indices) {
@@ -114,17 +110,14 @@ void KeyCommandsDlg::RefreshTree() {
 			}
 			
 			// Add command node
-			int cmd_node = functions_tree.AddChild(cat_node, CtrlImg::smallright(), func_name);
+			int cmd_node = functions_tree.Add(cat_node, CtrlImg::smallright(), func_name);
 			
-			// Store command ID in the node data
-			TreeNodeData* node_data = new TreeNodeData;
-			node_data->command_id = cmd.command_id;
-			node_data->description = cmd.description;
-			functions_tree.Set(cmd_node, func_name, 0, node_data);
+			// Set the command description in the node
+			functions_tree.Set(cmd_node, func_name);
 		}
 		
 		// Expand the category
-		functions_tree.Expand(cat_node, true);
+		functions_tree.Open(cat_node, true);
 	}
 }
 
@@ -135,21 +128,27 @@ void KeyCommandsDlg::OnTreeSel() {
 	int sel_node = functions_tree.GetCursor();
 	if (sel_node < 0) return;
 	
-	// Get the node data to find the command ID
-	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
-	if (!node_data) return;
+	// Get the node text value which represents the command description
+	Value node_value = functions_tree.Get(sel_node);
+	if (!node_value.Is<String>()) return;
+	String node_text = node_value;
 	
-	// Find the key command with this ID
+	// Find the key command that matches this node text
 	const Vector<KeyCommand>& all_commands = key_commands.GetCommands();
+	const KeyCommand* found_cmd = nullptr;
 	for (const KeyCommand& cmd : all_commands) {
-		if (cmd.command_id == node_data->command_id) {
-			// Update the keys array with this command's key sequence
-			keys_array.Clear();
-			if (!cmd.key_sequence.IsEmpty()) {
-				keys_array.Add(cmd.key_sequence, cmd.description);
-			}
+		if (cmd.description == node_text) {
+			found_cmd = &cmd;
 			break;
 		}
+	}
+	
+	if (!found_cmd) return;
+	
+	// Update the keys array with this command's key sequence
+	keys_array.Clear();
+	if (!found_cmd->key_sequence.IsEmpty()) {
+		keys_array.Add(found_cmd->key_sequence, found_cmd->description);
 	}
 }
 
@@ -160,14 +159,27 @@ void KeyCommandsDlg::OnAssign() {
 	int sel_node = functions_tree.GetCursor();
 	if (sel_node < 0) return;
 	
-	// Get the node data to find the command ID
-	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
-	if (!node_data) return;
+	// Get the node text value which represents the command description
+	Value node_value = functions_tree.Get(sel_node);
+	if (!node_value.Is<String>()) return;
+	String node_text = node_value;
+	
+	// Find the key command that matches this node text
+	const Vector<KeyCommand>& all_commands = key_commands.GetCommands();
+	const KeyCommand* found_cmd = nullptr;
+	for (const KeyCommand& cmd : all_commands) {
+		if (cmd.description == node_text) {
+			found_cmd = &cmd;
+			break;
+		}
+	}
+	
+	if (!found_cmd) return;
 	
 	String new_key_sequence = AsString(key_input.GetData());
 	
 	// Update the command with the new key sequence
-	key_commands.UpdateCommand(node_data->command_id, new_key_sequence);
+	key_commands.UpdateCommand(found_cmd->command_id, new_key_sequence);
 	
 	// Update UI
 	OnTreeSel(); // Refresh the keys array
@@ -180,12 +192,25 @@ void KeyCommandsDlg::OnDelete() {
 	int sel_node = functions_tree.GetCursor();
 	if (sel_node < 0) return;
 	
-	// Get the node data to find the command ID
-	TreeNodeData* node_data = (TreeNodeData*)functions_tree.GetNodeData(sel_node);
-	if (!node_data) return;
+	// Get the node text value which represents the command description
+	Value node_value = functions_tree.Get(sel_node);
+	if (!node_value.Is<String>()) return;
+	String node_text = node_value;
+	
+	// Find the key command that matches this node text
+	const Vector<KeyCommand>& all_commands = key_commands.GetCommands();
+	const KeyCommand* found_cmd = nullptr;
+	for (const KeyCommand& cmd : all_commands) {
+		if (cmd.description == node_text) {
+			found_cmd = &cmd;
+			break;
+		}
+	}
+	
+	if (!found_cmd) return;
 	
 	// Clear the key sequence for this command
-	key_commands.UpdateCommand(node_data->command_id, "");
+	key_commands.UpdateCommand(found_cmd->command_id, "");
 	
 	// Update UI
 	OnTreeSel(); // Refresh the keys array
@@ -193,7 +218,7 @@ void KeyCommandsDlg::OnDelete() {
 
 void KeyCommandsDlg::OnPresetSel() {
 	// Load the selected preset
-	LOG("Loading preset: " + presets_list.GetText());
+	LOG("Loading preset: " + AsString(presets_list.Get())); // Use Get() instead of GetText()
 }
 
 void KeyCommandsDlg::OnPresetSave() {

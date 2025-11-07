@@ -301,22 +301,22 @@ void PreferencesDlg::RefreshTree() {
 	Upp::Vector<Upp::String> categories = registry.GetCategories();
 	
 	for(const Upp::String& category : categories) {
-		int cat_node = this->tree.Add(CtrlImg::folder(), category);
+		int cat_node = this->tree.Add(0, CtrlImg::smallright(), category);  // Use smallright as placeholder for folder icon
 		this->tree.Set(cat_node, category, 0); // Use Set with text and value
 		Upp::Vector<Upp::String> subcategories = registry.GetSubcategories(category);
 		
 		for(const Upp::String& subcategory : subcategories) {
-			int subcat_node = this->tree.AddChild(cat_node, CtrlImg::smallright(), subcategory);  // Add to category node
+			int subcat_node = this->tree.Add(cat_node, CtrlImg::smallright(), subcategory);  // Use Add instead of AddChild
 			this->tree.Set(subcat_node, subcategory, 0); // Use Set with text and value
 		}
-		this->tree.Expand(cat_node, true);  // Expand category by default
+		this->tree.Open(cat_node, true);  // Use Open instead of Expand for TreeCtrl
 	}
 }
 
 void PreferencesDlg::OnTreeSel() {
 	int node_id = this->tree.GetCursor();
 	if(node_id >= 0) {
-		Value node_data = this->tree.GetText(node_id); // Get text instead of value
+		Value node_data = this->tree.Get(node_id); // Use Get with only the node ID
 		int parent_id = this->tree.GetParent(node_id);
 		
 		if(current_panel) {
@@ -331,7 +331,7 @@ void PreferencesDlg::OnTreeSel() {
 		// Try to find the parent category name
 		Upp::String category, subcategory;
 		if (parent_id >= 0) {
-			Value parent_data = this->tree.GetText(parent_id);
+			Value parent_data = this->tree.Get(parent_id); // Use Get with only the node ID
 			if (!parent_data.IsNull() && node_data.Is<String>() && parent_data.Is<String>()) {
 				category = parent_data;
 				subcategory = node_data;
