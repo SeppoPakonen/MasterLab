@@ -7,5 +7,7 @@ file
 	Math.h,
 	Math.cpp,
 	AudioMath.h,
-	AudioMath.cpp;
+	AudioMath.cpp,
+	FFT.h,
+	FFT.cpp;
 
