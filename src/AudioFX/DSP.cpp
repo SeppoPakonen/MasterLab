@@ -7,10 +7,10 @@ namespace DSP {
 // VoiceFeatureExtractor implementation
 VoiceFeatureExtractor::VoiceFeatureExtractor() {
     // Initialize parameters for voice feature extraction
-    parameters.Set("pitch_tracking_enabled", 1.0);
-    parameters.Set("formant_tracking_enabled", 1.0);
-    parameters.Set("min_frequency", 80.0);  // Min voice frequency in Hz
-    parameters.Set("max_frequency", 500.0); // Max voice frequency in Hz
+    parameters.Add("pitch_tracking_enabled", 1.0);
+    parameters.Add("formant_tracking_enabled", 1.0);
+    parameters.Add("min_frequency", 80.0);  // Min voice frequency in Hz
+    parameters.Add("max_frequency", 500.0); // Max voice frequency in Hz
 }
 
 VoiceFeatureExtractor::~VoiceFeatureExtractor() {
@@ -25,7 +25,7 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
         // Simplified pitch detection
         double pitch = 0.0;
         // In a real implementation, we would use autocorrelation or other pitch detection methods
-        features.Set("pitch", pitch);
+        features.Add("pitch", pitch);
     }
     
     // Formant estimation
@@ -36,7 +36,7 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
         formants.Add(500.0);  // F1
         formants.Add(1500.0); // F2
         formants.Add(2500.0); // F3
-        features.Set("formants", formants);
+        features.Add("formants", AsString(formants));
     }
     
     // Spectral centroid
@@ -48,7 +48,7 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
         sum_weighted_magnitude += magnitude * i;
     }
     double spectral_centroid = (sum_magnitude > 0) ? sum_weighted_magnitude / sum_magnitude : 0.0;
-    features.Set("spectral_centroid", spectral_centroid);
+    features.Add("spectral_centroid", ToValue(spectral_centroid));
     
     // Zero crossing rate
     int zero_crossings = 0;
@@ -57,32 +57,36 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
             zero_crossings++;
         }
     }
-    features.Set("zero_crossing_rate", (double)zero_crossings / sample_count);
+    features.Add("zero_crossing_rate", ToValue((double)zero_crossings / sample_count));
 }
 
 Value VoiceFeatureExtractor::GetFeature(FeatureType type) const {
     switch(type) {
         case PITCH:
-            return features.Get("pitch", 0.0);
+            return features.Get("pitch", Value(0.0));
         case FORMANTS:
-            return features.Get("formants", Vector<double>());
+            return features.Get("formants", Value(Vector<double>()));
         case SPECTRAL_CENTROID:
-            return features.Get("spectral_centroid", 0.0);
+            return features.Get("spectral_centroid", Value(0.0));
         case ZERO_CROSSING_RATE:
-            return features.Get("zero_crossing_rate", 0.0);
+            return features.Get("zero_crossing_rate", Value(0.0));
         case MFCC:
             // Return MFCC features if computed
-            return features.Get("mfcc", Vector<double>());
+            return features.Get("mfcc", Value(Vector<double>()));
         case CHROMA:
             // Return chroma features if computed
-            return features.Get("chroma", Vector<double>());
+            return features.Get("chroma", Value(Vector<double>()));
         default:
             return Value();
     }
 }
 
 void VoiceFeatureExtractor::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double VoiceFeatureExtractor::GetParameter(const String& name) const {
@@ -91,9 +95,9 @@ double VoiceFeatureExtractor::GetParameter(const String& name) const {
 
 // HarmonyGenerator implementation
 HarmonyGenerator::HarmonyGenerator() {
-    parameters.Set("voice_count", 2.0);
-    parameters.Set("dry_wet", 0.5);
-    parameters.Set("detune_amount", 0.5);
+    parameters.Add("voice_count", 2.0);
+    parameters.Add("dry_wet", 0.5);
+    parameters.Add("detune_amount", 0.5);
 }
 
 HarmonyGenerator::~HarmonyGenerator() {
@@ -163,7 +167,11 @@ void HarmonyGenerator::SetChord(const String& chord) {
 }
 
 void HarmonyGenerator::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double HarmonyGenerator::GetParameter(const String& name) const {
@@ -172,9 +180,9 @@ double HarmonyGenerator::GetParameter(const String& name) const {
 
 // StyleTransferNet implementation
 StyleTransferNet::StyleTransferNet() {
-    parameters.Set("strength", 0.7);
-    parameters.Set("complexity", 0.5);
-    parameters.Set("smoothing", 0.3);
+    parameters.Add("strength", 0.7);
+    parameters.Add("complexity", 0.5);
+    parameters.Add("smoothing", 0.3);
 }
 
 StyleTransferNet::~StyleTransferNet() {
@@ -217,7 +225,11 @@ void StyleTransferNet::Train(const Vector<double*>& training_data, int data_coun
 }
 
 void StyleTransferNet::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double StyleTransferNet::GetParameter(const String& name) const {
@@ -226,9 +238,9 @@ double StyleTransferNet::GetParameter(const String& name) const {
 
 // VoiceEncoder implementation
 VoiceEncoder::VoiceEncoder() {
-    parameters.Set("compression_ratio", 0.5);
-    parameters.Set("quality", 0.8);
-    parameters.Set("algorithm_complexity", 0.7);
+    parameters.Add("compression_ratio", 0.5);
+    parameters.Add("quality", 0.8);
+    parameters.Add("algorithm_complexity", 0.7);
 }
 
 VoiceEncoder::~VoiceEncoder() {
@@ -249,7 +261,11 @@ void VoiceEncoder::SetEncodingType(EncodingType type) {
 }
 
 void VoiceEncoder::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double VoiceEncoder::GetParameter(const String& name) const {
@@ -258,8 +274,8 @@ double VoiceEncoder::GetParameter(const String& name) const {
 
 // VoiceDecoder implementation
 VoiceDecoder::VoiceDecoder() {
-    parameters.Set("enhancement", 0.5);
-    parameters.Set("noise_reduction", 0.7);
+    parameters.Add("enhancement", 0.5);
+    parameters.Add("noise_reduction", 0.7);
 }
 
 VoiceDecoder::~VoiceDecoder() {
@@ -275,7 +291,11 @@ int VoiceDecoder::Decode(const void* input_buffer, int buffer_size, double* outp
 }
 
 void VoiceDecoder::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double VoiceDecoder::GetParameter(const String& name) const {
@@ -284,9 +304,9 @@ double VoiceDecoder::GetParameter(const String& name) const {
 
 // FormantMorpher implementation
 FormantMorpher::FormantMorpher() {
-    parameters.Set("morph_amount", 0.5);
-    parameters.Set("formant_shift", 1.0);
-    parameters.Set("preservation", 0.7);
+    parameters.Add("morph_amount", 0.5);
+    parameters.Add("formant_shift", 1.0);
+    parameters.Add("preservation", 0.7);
 }
 
 FormantMorpher::~FormantMorpher() {
@@ -314,11 +334,19 @@ void FormantMorpher::SetMorphType(MorphType type) {
 
 void FormantMorpher::SetAmount(double amount) {
     amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    parameters.Set("morph_amount", amount);
+    if (parameters.Find("morph_amount") >= 0) {
+        parameters.GetAdd("morph_amount") = amount;
+    } else {
+        parameters.Add("morph_amount", amount);
+    }
 }
 
 void FormantMorpher::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double FormantMorpher::GetParameter(const String& name) const {
@@ -516,9 +544,9 @@ void ISPDetector::Reset() {
 AutoGainScheduler::AutoGainScheduler() : target_loudness(-16.0), 
                                         attack_time_ms(10.0), release_time_ms(100.0),
                                         current_gain(1.0) {
-    parameters.Set("target_loudness", -16.0);
-    parameters.Set("attack_time_ms", 10.0);
-    parameters.Set("release_time_ms", 100.0);
+    parameters.Add("target_loudness", -16.0);
+    parameters.Add("attack_time_ms", 10.0);
+    parameters.Add("release_time_ms", 100.0);
 }
 
 AutoGainScheduler::~AutoGainScheduler() {
@@ -565,17 +593,29 @@ void AutoGainScheduler::Process(const double* input, double* output, int sample_
 
 void AutoGainScheduler::SetTargetLoudness(double lufs) {
     target_loudness = lufs;
-    parameters.Set("target_loudness", lufs);
+    if (parameters.Find("target_loudness") >= 0) {
+        parameters.GetAdd("target_loudness") = lufs;
+    } else {
+        parameters.Add("target_loudness", lufs);
+    }
 }
 
 void AutoGainScheduler::SetAttackTime(double ms) {
     attack_time_ms = ms;
-    parameters.Set("attack_time_ms", ms);
+    if (parameters.Find("attack_time_ms") >= 0) {
+        parameters.GetAdd("attack_time_ms") = ms;
+    } else {
+        parameters.Add("attack_time_ms", ms);
+    }
 }
 
 void AutoGainScheduler::SetReleaseTime(double ms) {
     release_time_ms = ms;
-    parameters.Set("release_time_ms", ms);
+    if (parameters.Find("release_time_ms") >= 0) {
+        parameters.GetAdd("release_time_ms") = ms;
+    } else {
+        parameters.Add("release_time_ms", ms);
+    }
 }
 
 double AutoGainScheduler::GetAppliedGain() const {
@@ -583,7 +623,11 @@ double AutoGainScheduler::GetAppliedGain() const {
 }
 
 void AutoGainScheduler::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double AutoGainScheduler::GetParameter(const String& name) const {
@@ -592,10 +636,10 @@ double AutoGainScheduler::GetParameter(const String& name) const {
 
 // MasterAssistant implementation
 MasterAssistant::MasterAssistant() : mode(PRESET_BASED), preset_name("Balanced") {
-    parameters.Set("master_mode", (int)PRESET_BASED);
-    parameters.Set("target_lufs", -14.0);
-    parameters.Set("max_ceiling_db", -0.1);
-    parameters.Set("allow_limiter", 1.0);
+    parameters.Add("master_mode", (int)PRESET_BASED);
+    parameters.Add("target_lufs", -14.0);
+    parameters.Add("max_ceiling_db", -0.1);
+    parameters.Add("allow_limiter", 1.0);
 }
 
 MasterAssistant::~MasterAssistant() {
@@ -661,7 +705,11 @@ void MasterAssistant::Process(const double* input, double* output, int sample_co
 
 void MasterAssistant::SetMasterMode(MasterMode mode) {
     this->mode = mode;
-    parameters.Set("master_mode", (int)mode);
+    if (parameters.Find("master_mode") >= 0) {
+        parameters.GetAdd("master_mode") = (int)mode;
+    } else {
+        parameters.Add("master_mode", (int)mode);
+    }
 }
 
 void MasterAssistant::SetReferenceTrack(const String& track_name) {
@@ -673,7 +721,11 @@ void MasterAssistant::SetPreset(const String& preset_name) {
 }
 
 void MasterAssistant::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double MasterAssistant::GetParameter(const String& name) const {
@@ -682,9 +734,9 @@ double MasterAssistant::GetParameter(const String& name) const {
 
 // Stabilizer implementation
 Stabilizer::Stabilizer() : threshold_db(-12.0), ratio(2.0), knee_db(2.0) {
-    parameters.Set("threshold_db", -12.0);
-    parameters.Set("ratio", 2.0);
-    parameters.Set("knee_db", 2.0);
+    parameters.Add("threshold_db", -12.0);
+    parameters.Add("ratio", 2.0);
+    parameters.Add("knee_db", 2.0);
 }
 
 Stabilizer::~Stabilizer() {
@@ -730,21 +782,37 @@ void Stabilizer::Process(const double* input, double* output, int sample_count, 
 
 void Stabilizer::SetThreshold(double db) {
     threshold_db = db;
-    parameters.Set("threshold_db", db);
+    if (parameters.Find("threshold_db") >= 0) {
+        parameters.GetAdd("threshold_db") = db;
+    } else {
+        parameters.Add("threshold_db", db);
+    }
 }
 
 void Stabilizer::SetRatio(double ratio) {
     this->ratio = ratio;
-    parameters.Set("ratio", ratio);
+    if (parameters.Find("ratio") >= 0) {
+        parameters.GetAdd("ratio") = ratio;
+    } else {
+        parameters.Add("ratio", ratio);
+    }
 }
 
 void Stabilizer::SetKnee(double db) {
     knee_db = db;
-    parameters.Set("knee_db", db);
+    if (parameters.Find("knee_db") >= 0) {
+        parameters.GetAdd("knee_db") = db;
+    } else {
+        parameters.Add("knee_db", db);
+    }
 }
 
 void Stabilizer::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double Stabilizer::GetParameter(const String& name) const {
@@ -753,10 +821,26 @@ double Stabilizer::GetParameter(const String& name) const {
 
 // ImpactShaper implementation
 ImpactShaper::ImpactShaper() : mode(ATTACK_ENHANCE), amount(0.5) {
-    parameters.Set("shape_mode", (int)ATTACK_ENHANCE);
-    parameters.Set("amount", 0.5);
-    parameters.Set("attack_sensitivity", 0.5);
-    parameters.Set("release_sensitivity", 0.5);
+    if (parameters.Find("shape_mode") >= 0) {
+        parameters.GetAdd("shape_mode") = (int)ATTACK_ENHANCE;
+    } else {
+        parameters.Add("shape_mode", (int)ATTACK_ENHANCE);
+    }
+    if (parameters.Find("amount") >= 0) {
+        parameters.GetAdd("amount") = 0.5;
+    } else {
+        parameters.Add("amount", 0.5);
+    }
+    if (parameters.Find("attack_sensitivity") >= 0) {
+        parameters.GetAdd("attack_sensitivity") = 0.5;
+    } else {
+        parameters.Add("attack_sensitivity", 0.5);
+    }
+    if (parameters.Find("release_sensitivity") >= 0) {
+        parameters.GetAdd("release_sensitivity") = 0.5;
+    } else {
+        parameters.Add("release_sensitivity", 0.5);
+    }
 }
 
 ImpactShaper::~ImpactShaper() {
@@ -806,16 +890,28 @@ void ImpactShaper::Process(const double* input, double* output, int sample_count
 
 void ImpactShaper::SetShapeMode(ShapeMode mode) {
     this->mode = mode;
-    parameters.Set("shape_mode", (int)mode);
+    if (parameters.Find("shape_mode") >= 0) {
+        parameters.GetAdd("shape_mode") = (int)mode;
+    } else {
+        parameters.Add("shape_mode", (int)mode);
+    }
 }
 
 void ImpactShaper::SetAmount(double amount) {
     this->amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    parameters.Set("amount", this->amount);
+    if (parameters.Find("amount") >= 0) {
+        parameters.GetAdd("amount") = this->amount;
+    } else {
+        parameters.Add("amount", this->amount);
+    }
 }
 
 void ImpactShaper::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double ImpactShaper::GetParameter(const String& name) const {
@@ -824,8 +920,8 @@ double ImpactShaper::GetParameter(const String& name) const {
 
 // PriorityAllocator implementation
 PriorityAllocator::PriorityAllocator() {
-    parameters.Set("frequency_resolution", 64.0);
-    parameters.Set("allocation_method", 0.0);  // 0=dynamic, 1=static
+    parameters.Add("frequency_resolution", 64.0);
+    parameters.Add("allocation_method", 0.0);  // 0=dynamic, 1=static
 }
 
 PriorityAllocator::~PriorityAllocator() {
@@ -862,7 +958,11 @@ void PriorityAllocator::SetCrossoverFrequencies(const Vector<double>& freqs) {
 }
 
 void PriorityAllocator::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double PriorityAllocator::GetParameter(const String& name) const {
@@ -871,8 +971,8 @@ double PriorityAllocator::GetParameter(const String& name) const {
 
 // DitherEngine implementation
 DitherEngine::DitherEngine() : dither_type(SHIBATA) {
-    parameters.Set("dither_type", (int)SHIBATA);
-    parameters.Set("dither_amount", 1.0);
+    parameters.Add("dither_type", (int)SHIBATA);
+    parameters.Add("dither_amount", 1.0);
 }
 
 DitherEngine::~DitherEngine() {
@@ -932,11 +1032,19 @@ void DitherEngine::Process(float* samples, int count, int source_bits, int targe
 
 void DitherEngine::SetDitherType(DitherType type) {
     dither_type = type;
-    parameters.Set("dither_type", (int)type);
+    if (parameters.Find("dither_type") >= 0) {
+        parameters.GetAdd("dither_type") = (int)type;
+    } else {
+        parameters.Add("dither_type", (int)type);
+    }
 }
 
 void DitherEngine::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double DitherEngine::GetParameter(const String& name) const {

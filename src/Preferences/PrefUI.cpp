@@ -1,5 +1,6 @@
 #include "Preferences.h"
 #include "WithPreferencesLayout.h"
+#include "PrefPresets.h"
 #include <CtrlLib/CtrlLib.h>
 
 namespace am {
@@ -262,6 +263,9 @@ PreferencesDlg::PreferencesDlg() {
 	Title("Preferences");
 	Sizeable().Zoomable();
 	
+	// Initialize the preset manager
+	this->preset_mgr = new PreferencePresetManager();
+	
 	// Initialize the tree control
 	this->tree.NoWantFocus();
 	this->tree.WhenSel = THISBACK(OnTreeSel);
@@ -292,6 +296,13 @@ PreferencesDlg::PreferencesDlg() {
 	
 	// Load initial data
 	DataIn();
+}
+
+PreferencesDlg::~PreferencesDlg() {
+	if (preset_mgr) {
+		delete preset_mgr;
+		preset_mgr = nullptr;
+	}
 }
 
 void PreferencesDlg::RefreshTree() {
@@ -366,7 +377,7 @@ void PreferencesDlg::DataIn() {
 	
 	// Populate presets dropdown
 	this->presets_list.Clear();
-	Upp::Vector<Upp::String> preset_names = preset_mgr.GetPresetNames();
+	Upp::Vector<Upp::String> preset_names = preset_mgr->GetPresetNames();
 	for(const Upp::String& name : preset_names) {
 		this->presets_list.Add(name);
 	}
@@ -380,7 +391,7 @@ void PreferencesDlg::DataIn() {
 	this->preset_rename_btn.WhenAction = THISBACK(OnPresetRename);
 	this->preset_delete_btn.WhenAction = THISBACK(OnPresetDelete);
 	this->preset_marked_only.WhenAction = [this]() {
-		preset_mgr.SetMarkedOnly(this->preset_marked_only);
+		preset_mgr->SetMarkedOnly(this->preset_marked_only);
 	};
 	
 	// Select the first item if available
@@ -441,7 +452,7 @@ void PreferencesDlg::OnPresetChange() {
 	if (selected_index >= 0) {
 		Upp::String selected_preset = AsString(presets_list.Get());
 		if (!selected_preset.IsEmpty()) {
-			preset_mgr.ReadPreset(selected_preset, model);
+			preset_mgr->ReadPreset(selected_preset, model);
 			if(current_panel) {
 				current_panel->Load(model);
 			}
@@ -458,7 +469,7 @@ void PreferencesDlg::OnPresetStore() {
 	// For now, we'll use a default name
 	Upp::String preset_name = "New Preset";
 	if (!preset_name.IsEmpty()) {
-		preset_mgr.CreatePreset(preset_name, model);
+		preset_mgr->CreatePreset(preset_name, model);
 		presets_list.Add(preset_name);
 		presets_list.Set(preset_name);
 		LOG("Stored preset: " + preset_name);
@@ -477,13 +488,13 @@ void PreferencesDlg::OnPresetRename() {
 		if (!new_name.IsEmpty() && new_name != old_name) {
 			// Load the preset with the old name
 			PreferencesModel temp_model;
-			preset_mgr.ReadPreset(old_name, temp_model);
+			preset_mgr->ReadPreset(old_name, temp_model);
 			
 			// Create a new preset with the new name
-			preset_mgr.CreatePreset(new_name, temp_model);
+			preset_mgr->CreatePreset(new_name, temp_model);
 			
 			// Delete the old preset
-			preset_mgr.DeletePreset(old_name);
+			preset_mgr->DeletePreset(old_name);
 			
 			// Update the dropdown
 			presets_list.Remove(idx);
@@ -501,7 +512,7 @@ void PreferencesDlg::OnPresetDelete() {
 	if (idx >= 0) {
 		Upp::String preset_name = "Selected Preset"; // Placeholder for now
 		if (Upp::PromptYesNo("Are you sure you want to delete the preset '" + preset_name + "'?")) {
-			preset_mgr.DeletePreset(preset_name);
+			preset_mgr->DeletePreset(preset_name);
 			presets_list.Remove(idx);
 			
 			// If we removed the last item, clear the dropdown

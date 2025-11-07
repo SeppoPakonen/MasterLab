@@ -25,7 +25,6 @@
 #include <FileIO/FileIO.h>
 #include <Devices/Devices.h>
 #include <Editors/Editors.h>
-#include <AudioMaster/AudioMaster.h>
 #include <PluginSDK/PluginSDK.h>
 using namespace Upp;
 

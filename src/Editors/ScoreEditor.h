@@ -2,11 +2,18 @@
 #define _Editors_ScoreEditor_h_
 
 #include <CtrlLib/CtrlLib.h>
-#include <Scores/Scores.h>
+#include <Scores/NotationModel.h>
 #include <ProjectMgmt/ProjectMgmt.h>
 #include <FileIO/FileIO.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioCore/MidiPreview.h>
+
+// Define Scores namespace to match the expected interface
+namespace Scores {
+    using am::NotationModel;
+    using am::Note;
+    using am::Measure;
+}
 
 using namespace Upp;
 
@@ -47,6 +54,9 @@ public:
     // Selection management
     void SetSelectedNote(int noteIndex);
     int GetSelectedNote() const { return selectedNote; }
+    
+    // Helper methods
+    int GetNoteIndexAtPosition(Point p);
     
 private:
     ScoreProjectData* scoreProject;

@@ -4,6 +4,7 @@
 #include <ProjectMgmt/Commands.h>  // Include CommandManager
 #include <AudioCore/MidiPreview.h>  // Include MidiPreview
 #include <CtrlLib/CtrlLib.h>
+#include <Scores/ScoreProject.h>  // Include ScoreProject.h for ScoreProjectData definition
 
 namespace am {
 
@@ -13,7 +14,7 @@ ScoreEditorCtrl::ScoreEditorCtrl() : scoreProject(nullptr), notationDoc(nullptr)
     // Initialize the score control
     infoBarCtrl.SetFrame(BlackFrame());
     infoBarCtrl.SetRect(0, 0, GetSize().cx, 20);  // Black info bar at top
-    infoBarCtrl.SetBgColor(Black());
+    infoBarCtrl.AddFrame(BlackFrame());
     
     symbolsPaneCtrl.SetFrame(BlackFrame());
     symbolsPaneCtrl.SetRect(0, 0, 50, GetSize().cy);  // Left symbols pane
@@ -65,8 +66,8 @@ void ScoreEditorCtrl::SetSelectedNote(int noteIndex) {
             for (const Note& note : measure.notes) {
                 if (tempNoteIdx == selectedNote) {
                     String noteInfo = "Pitch: " + IntStr(note.pitch) + 
-                                     " | Start: " + DoubleStr(note.start_time, 3) +
-                                     " | Duration: " + DoubleStr(note.duration, 3);
+                                     " | Start: " + AsString(note.start_time, 3) +
+                                     " | Duration: " + AsString(note.duration, 3);
                     SetInfoBarContent(noteInfo);
                     break;
                 }
@@ -329,7 +330,7 @@ void ScoreEditor::ToolMenu(Bar& bar) {
     bar.Add("Zoom In", CtrlImg::plus(), THISBACK(HandleZoomInFromController));
     bar.Add("Zoom Out", CtrlImg::minus(), THISBACK(HandleZoomOutFromController));
     bar.Add("Refresh", CtrlImg::redo(), THISBACK(Refresh));
-    bar.Add("Show Symbols", CtrlImg::folder(), [this]() { scoreCtrl.ShowSymbolsPane(true); });
+    bar.Add("Show Symbols", CtrlImg::smallright(), [this]() { scoreCtrl.ShowSymbolsPane(true); });
 }
 
 void ScoreEditor::Menu(Bar& bar) {

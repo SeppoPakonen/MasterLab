@@ -7,6 +7,9 @@
 
 namespace am {
 
+// Forward declaration
+class PreferencePresetManager;
+
 // Base class for all preference panels
 class PreferencesPane : public Ctrl {
 public:
@@ -59,6 +62,7 @@ class PreferencesDlg : public TopWindow {
 public:
 	typedef PreferencesDlg CLASSNAME;
 	PreferencesDlg();
+	~PreferencesDlg();
 	
 private:
 	void DataIn();
@@ -100,7 +104,7 @@ private:
 	Upp::Button preset_store;
 	
 	// Preset manager
-	PreferencePresetManager preset_mgr;
+	PreferencePresetManager* preset_mgr;
 };
 
 // Supporting UI controls
@@ -242,6 +246,9 @@ struct PrefKey {
 	
 	PrefKey(const Upp::String& k, const T& def) : key(k), default_value(def) {}
 };
+
+// Forward declaration for PreferencePresetManager
+class PreferencePresetManager;
 
 }
 

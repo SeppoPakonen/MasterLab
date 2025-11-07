@@ -5,9 +5,9 @@ namespace DSP {
 
 // GainStage implementation
 GainStage::GainStage() : gain(0.0), mode(DECIBELS), auto_gain(false), current_gain(1.0) {
-    parameters.Set("gain_db", 0.0);
-    parameters.Set("mode", (int)DECIBELS);
-    parameters.Set("auto_gain", 0.0);
+    parameters.Add("gain_db", 0.0);
+    parameters.Add("mode", (int)DECIBELS);
+    parameters.Add("auto_gain", 0.0);
 }
 
 GainStage::~GainStage() {
@@ -32,21 +32,37 @@ void GainStage::Process(const double* input, double* output, int sample_count, d
 
 void GainStage::SetGain(double gain_db) {
     gain = gain_db;
-    parameters.Set("gain_db", gain_db);
+    if (parameters.Find("gain_db") >= 0) {
+        parameters.GetAdd("gain_db") = gain_db;
+    } else {
+        parameters.Add("gain_db", gain_db);
+    }
 }
 
 void GainStage::SetMode(GainMode mode) {
     this->mode = mode;
-    parameters.Set("mode", (int)mode);
+    if (parameters.Find("mode") >= 0) {
+        parameters.GetAdd("mode") = (int)mode;
+    } else {
+        parameters.Add("mode", (int)mode);
+    }
 }
 
 void GainStage::SetAutoGain(bool enabled) {
     auto_gain = enabled;
-    parameters.Set("auto_gain", enabled ? 1.0 : 0.0);
+    if (parameters.Find("auto_gain") >= 0) {
+        parameters.GetAdd("auto_gain") = enabled ? 1.0 : 0.0;
+    } else {
+        parameters.Add("auto_gain", enabled ? 1.0 : 0.0);
+    }
 }
 
 void GainStage::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double GainStage::GetParameter(const String& name) const {
@@ -56,9 +72,9 @@ double GainStage::GetParameter(const String& name) const {
 // NormalizationStage implementation
 NormalizationStage::NormalizationStage() : target_level(-1.0), lookahead_samples(0), 
                                           soft_knee(false), current_peak(0.0), buffer_pos(0) {
-    parameters.Set("target_level", -1.0);
-    parameters.Set("lookahead_samples", 0.0);
-    parameters.Set("soft_knee", 0.0);
+    parameters.Add("target_level", -1.0);
+    parameters.Add("lookahead_samples", 0.0);
+    parameters.Add("soft_knee", 0.0);
 }
 
 NormalizationStage::~NormalizationStage() {
@@ -112,12 +128,20 @@ void NormalizationStage::Process(const double* input, double* output, int sample
 
 void NormalizationStage::SetTargetLevel(double level_db) {
     target_level = level_db;
-    parameters.Set("target_level", level_db);
+    if (parameters.Find("target_level") >= 0) {
+        parameters.GetAdd("target_level") = level_db;
+    } else {
+        parameters.Add("target_level", level_db);
+    }
 }
 
 void NormalizationStage::SetLookahead(int samples) {
     lookahead_samples = samples;
-    parameters.Set("lookahead_samples", (double)samples);
+    if (parameters.Find("lookahead_samples") >= 0) {
+        parameters.GetAdd("lookahead_samples") = (double)samples;
+    } else {
+        parameters.Add("lookahead_samples", (double)samples);
+    }
     if (samples > 0) {
         lookahead_buffer.SetCount(samples);
     }
@@ -125,11 +149,19 @@ void NormalizationStage::SetLookahead(int samples) {
 
 void NormalizationStage::SetSoftKnee(bool enabled) {
     soft_knee = enabled;
-    parameters.Set("soft_knee", enabled ? 1.0 : 0.0);
+    if (parameters.Find("soft_knee") >= 0) {
+        parameters.GetAdd("soft_knee") = enabled ? 1.0 : 0.0;
+    } else {
+        parameters.Add("soft_knee", enabled ? 1.0 : 0.0);
+    }
 }
 
 void NormalizationStage::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double NormalizationStage::GetParameter(const String& name) const {
@@ -139,10 +171,10 @@ double NormalizationStage::GetParameter(const String& name) const {
 // AdaptiveGainControl implementation
 AdaptiveGainControl::AdaptiveGainControl() : target_rms(0.1), attack_coeff(0.999), 
                                            release_coeff(0.99), hold_counter(0), current_gain(1.0) {
-    parameters.Set("target_rms", 0.1);
-    parameters.Set("attack_time_ms", 10.0);
-    parameters.Set("release_time_ms", 100.0);
-    parameters.Set("hold_time_ms", 0.0);
+    parameters.Add("target_rms", 0.1);
+    parameters.Add("attack_time_ms", 10.0);
+    parameters.Add("release_time_ms", 100.0);
+    parameters.Add("hold_time_ms", 0.0);
 }
 
 AdaptiveGainControl::~AdaptiveGainControl() {
@@ -201,23 +233,43 @@ void AdaptiveGainControl::Process(const double* input, double* output, int sampl
 
 void AdaptiveGainControl::SetTargetRMS(double target_rms) {
     this->target_rms = target_rms;
-    parameters.Set("target_rms", target_rms);
+    if (parameters.Find("target_rms") >= 0) {
+        parameters.GetAdd("target_rms") = target_rms;
+    } else {
+        parameters.Add("target_rms", target_rms);
+    }
 }
 
 void AdaptiveGainControl::SetAttackTime(double ms) {
-    parameters.Set("attack_time_ms", ms);
+    if (parameters.Find("attack_time_ms") >= 0) {
+        parameters.GetAdd("attack_time_ms") = ms;
+    } else {
+        parameters.Add("attack_time_ms", ms);
+    }
 }
 
 void AdaptiveGainControl::SetReleaseTime(double ms) {
-    parameters.Set("release_time_ms", ms);
+    if (parameters.Find("release_time_ms") >= 0) {
+        parameters.GetAdd("release_time_ms") = ms;
+    } else {
+        parameters.Add("release_time_ms", ms);
+    }
 }
 
 void AdaptiveGainControl::SetHoldTime(double ms) {
-    parameters.Set("hold_time_ms", ms);
+    if (parameters.Find("hold_time_ms") >= 0) {
+        parameters.GetAdd("hold_time_ms") = ms;
+    } else {
+        parameters.Add("hold_time_ms", ms);
+    }
 }
 
 void AdaptiveGainControl::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    if (parameters.Find(name) >= 0) {
+        parameters.GetAdd(name) = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double AdaptiveGainControl::GetParameter(const String& name) const {
