@@ -99,14 +99,14 @@ public:
     IIRDesigner();
     virtual ~IIRDesigner();
     
-    struct IIRCoefficients {
+    struct IIRCoefficients : public Upp::Moveable<IIRCoefficients> {
         Vector<double> b; // Feedforward coefficients
         Vector<double> a; // Feedback coefficients
         double gain = 1.0; // Overall gain factor
         
-        typedef IIRDesigner CLASSNAME;  // Make this struct compatible with U++ containers
+        typedef IIRCoefficients CLASSNAME;  // Make this struct compatible with U++ containers
         
-        // Implement move and copy operations properly for U++ containers
+        // Proper constructors for U++ compatibility
         IIRCoefficients() : gain(1.0) {}
         
         // Copy constructor using U++ deep copy operator
@@ -177,6 +177,8 @@ private:
                                          double gain, 
                                          double sample_rate);
 };
+
+
 
 // AmbisonicsEncoder - encodes audio signals to ambisonics format
 class AmbisonicsEncoder {

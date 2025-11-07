@@ -582,11 +582,11 @@ private:
 // SceneMorph - morphs between different parameter scenes
 class SceneMorph {
 public:
-	struct Scene {
+	struct Scene : public Upp::Moveable<Scene> {
 		String name;
 		ValueMap parameters;  // Parameter ID to value mapping
 		
-		typedef SceneMorph CLASSNAME;  // Make this struct compatible with U++ containers
+		typedef Scene CLASSNAME;  // Make this struct compatible with U++ containers
 	};
 	
 	SceneMorph();
@@ -608,6 +608,8 @@ private:
 	bool crossfade_enabled = false;
 	VectorMap<String, double> parameters;
 };
+
+
 
 // StepSequencer - classic step sequencer
 class StepSequencer {
@@ -674,14 +676,14 @@ private:
 // MacroController - high-level parameter controller
 class MacroController {
 public:
-	struct MacroParameter {
+	struct MacroParameter : public Upp::Moveable<MacroParameter> {
 		String parameter_id;
 		double min_value = 0.0;
 		double max_value = 1.0;
 		double default_value = 0.5;
 		double current_value = 0.5;
 		
-		typedef MacroController CLASSNAME;  // Make this struct compatible with U++ containers
+		typedef MacroParameter CLASSNAME;  // Make this struct compatible with U++ containers
 	};
 	
 	MacroController();
@@ -701,8 +703,12 @@ private:
 	VectorMap<String, double> parameters;
 };
 
+
+
 }  // namespace DSP
 }  // namespace am
+
+
 
 // UI namespace forward declarations for UI::RackView
 namespace am {

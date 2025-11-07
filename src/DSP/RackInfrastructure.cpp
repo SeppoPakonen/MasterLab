@@ -493,11 +493,18 @@ SessionManager::SessionManager() {
 
 SessionManager::~SessionManager() {
     // Cleanup
+    if (current_session) {
+        delete current_session;
+        current_session = nullptr;
+    }
 }
 
 bool SessionManager::CreateNewSession(const String& session_id, const String& name, 
                                      const String& description) {
-    current_session = std::make_unique<SessionInfo>();
+    if (current_session) {
+        delete current_session;
+    }
+    current_session = new SessionInfo();
     current_session->id = session_id;
     current_session->name = name;
     current_session->description = description;
@@ -511,7 +518,10 @@ bool SessionManager::CreateNewSession(const String& session_id, const String& na
 bool SessionManager::LoadSession(const String& filepath) {
     // In a real implementation, this would load a session from a file
     // For now, create a dummy session
-    current_session = std::make_unique<SessionInfo>();
+    if (current_session) {
+        delete current_session;
+    }
+    current_session = new SessionInfo();
     current_session->id = "dummy_session";
     current_session->name = "Dummy Session";
     current_session->creation_time = GetSysTime();
@@ -533,7 +543,10 @@ bool SessionManager::SaveSession(const String& filepath) {
 }
 
 void SessionManager::CloseSession() {
-    current_session.reset();
+    if (current_session) {
+        delete current_session;
+        current_session = nullptr;
+    }
     OnSessionClosed();
 }
 

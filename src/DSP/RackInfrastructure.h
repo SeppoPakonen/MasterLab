@@ -4,9 +4,6 @@
 #include <Core/Core.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/SpatialDSP.h>  // For some of the components
-#include <memory>
-
-using namespace Upp;
 
 namespace DSP {
 
@@ -19,10 +16,10 @@ public:
     virtual ~RackHost();
     
     // Define a RackSlot for hosting DSP modules
-    struct RackSlot : public Moveable<RackSlot> {
-        String id;
-        String name;
-        String module_type;  // "effect", "synth", "utility", etc.
+    struct RackSlot : public Upp::Moveable<RackSlot> {
+        Upp::String id;
+        Upp::String name;
+        Upp::String module_type;  // "effect", "synth", "utility", etc.
         bool is_active;
         double position_x;
         double position_y;
@@ -35,34 +32,34 @@ public:
     };
     
     // Add a slot to the rack
-    void AddSlot(const String& slot_id, const String& module_type = "generic");
+    void AddSlot(const Upp::String& slot_id, const Upp::String& module_type = "generic");
     
     // Remove a slot from the rack
-    bool RemoveSlot(const String& slot_id);
+    bool RemoveSlot(const Upp::String& slot_id);
     
     // Activate/deactivate a slot
-    void ActivateSlot(const String& slot_id, bool active = true);
-    void BypassSlot(const String& slot_id, bool bypass = true);
+    void ActivateSlot(const Upp::String& slot_id, bool active = true);
+    void BypassSlot(const Upp::String& slot_id, bool bypass = true);
     
     // Get/set slot parameters
-    void SetSlotPosition(const String& slot_id, double x, double y);
-    void SetSlotGain(const String& slot_id, double gain_db);
-    void SetSlotPan(const String& slot_id, double pan);  // -1.0 to 1.0
+    void SetSlotPosition(const Upp::String& slot_id, double x, double y);
+    void SetSlotGain(const Upp::String& slot_id, double gain_db);
+    void SetSlotPan(const Upp::String& slot_id, double pan);  // -1.0 to 1.0
     
     // Get rack slots
-    const Vector<RackSlot>& GetSlots() const { return slots; }
-    RackSlot* GetSlot(const String& slot_id);
+    const Upp::Vector<RackSlot>& GetSlots() const { return slots; }
+    RackSlot* GetSlot(const Upp::String& slot_id);
     
     // Connect slots in the rack
-    bool ConnectSlots(const String& source_slot, const String& dest_slot, double gain = 1.0);
-    bool DisconnectSlots(const String& source_slot, const String& dest_slot);
+    bool ConnectSlots(const Upp::String& source_slot, const Upp::String& dest_slot, double gain = 1.0);
+    bool DisconnectSlots(const Upp::String& source_slot, const Upp::String& dest_slot);
     
     // Process audio through the rack
-    void Process(const Vector<double>& input, Vector<double>& output, double sample_rate);
+    void Process(const Upp::Vector<double>& input, Upp::Vector<double>& output, double sample_rate);
     
     // Session management
-    void SaveRack(const String& filename);
-    bool LoadRack(const String& filename);
+    void SaveRack(const Upp::String& filename);
+    bool LoadRack(const Upp::String& filename);
     
     // Event callbacks
     virtual void OnSlotAdded(const String& slot_id) {}
@@ -71,18 +68,18 @@ public:
     virtual void OnSlotDisconnected(const String& source, const String& dest) {}
     
 private:
-    Vector<RackSlot> slots;
-    VectorMap<String, int> slot_ids;  // Maps slot IDs to indices
+    Upp::Vector<RackSlot> slots;
+    Upp::VectorMap<Upp::String, int> slot_ids;  // Maps slot IDs to indices
     
-    struct Connection : public Moveable<Connection> {
-        String source_slot;
-        String dest_slot;
+    struct Connection : public Upp::Moveable<Connection> {
+        Upp::String source_slot;
+        Upp::String dest_slot;
         double gain;
         
-        Connection(const String& src, const String& dst, double g = 1.0) 
+        Connection(const Upp::String& src, const Upp::String& dst, double g = 1.0) 
             : source_slot(src), dest_slot(dst), gain(g) {}
     };
-    Vector<Connection> connections;
+    Upp::Vector<Connection> connections;
 };
 
 // ChainNode - represents a node in an audio processing chain
@@ -101,11 +98,11 @@ public:
         ROUTER_NODE
     };
     
-    struct NodeInfo : public Moveable<NodeInfo> {
-        String id;
-        String name;
+    struct NodeInfo : public Upp::Moveable<NodeInfo> {
+        Upp::String id;
+        Upp::String name;
         NodeType type;
-        String plugin_id;  // For processor nodes
+        Upp::String plugin_id;  // For processor nodes
         int input_channels;
         int output_channels;
         bool is_active;
@@ -121,13 +118,13 @@ public:
     void Initialize(const NodeInfo& info);
     
     // Process audio through the node
-    virtual void Process(const Vector<double*>& inputs, int input_count,
-                        Vector<double*>& outputs, int output_count,
+    virtual void Process(const Upp::Vector<double*>& inputs, int input_count,
+                        Upp::Vector<double*>& outputs, int output_count,
                         int sample_count, double sample_rate);
     
     // Get node information
     const NodeInfo& GetInfo() const { return info; }
-    String GetId() const { return info.id; }
+    Upp::String GetId() const { return info.id; }
     NodeType GetType() const { return info.type; }
     
     // Node state control
@@ -142,8 +139,8 @@ public:
     double GetPan() const { return info.pan; }
     
     // Specialized processor methods (to be overridden by derived classes)
-    virtual void SetParameter(const String& param_id, double value);
-    virtual double GetParameter(const String& param_id) const;
+    virtual void SetParameter(const Upp::String& param_id, double value);
+    virtual double GetParameter(const Upp::String& param_id) const;
     
 protected:
     NodeInfo info;
@@ -158,10 +155,10 @@ public:
     virtual ~MacroMapper();
     
     // Define a mapping
-    struct ParameterMapping : public Moveable<ParameterMapping> {
-        String parameter_id;      // ID of parameter to map
-        String parameter_name;    // Human-readable name
-        String module_id;         // Which module contains the parameter
+    struct ParameterMapping : public Upp::Moveable<ParameterMapping> {
+        Upp::String parameter_id;      // ID of parameter to map
+        Upp::String parameter_name;    // Human-readable name
+        Upp::String module_id;         // Which module contains the parameter
         double min_value;         // Min value after mapping
         double max_value;         // Max value after mapping
         double mapped_value;      // Current mapped value
@@ -170,29 +167,29 @@ public:
     };
     
     // Add a parameter to the macro
-    void AddParameter(const String& macro_name, const ParameterMapping& mapping);
+    void AddParameter(const Upp::String& macro_name, const ParameterMapping& mapping);
     
     // Remove a parameter from the macro
-    bool RemoveParameter(const String& macro_name, const String& param_id);
+    bool RemoveParameter(const Upp::String& macro_name, const Upp::String& param_id);
     
     // Set macro value (0.0 to 1.0), which updates all mapped parameters
-    void SetMacroValue(const String& macro_name, double value);
+    void SetMacroValue(const Upp::String& macro_name, double value);
     
     // Get current value of a mapped parameter
-    double GetMappedValue(const String& macro_name, const String& param_id) const;
+    double GetMappedValue(const Upp::String& macro_name, const Upp::String& param_id) const;
     
     // Get all mappings for a macro
-    const Vector<ParameterMapping>& GetMappings(const String& macro_name) const;
+    const Upp::Vector<ParameterMapping>& GetMappings(const Upp::String& macro_name) const;
     
     // Get all macro names
-    Vector<String> GetMacroNames() const;
+    Upp::Vector<Upp::String> GetMacroNames() const;
     
     // Update all mapped parameters (typically called during audio processing)
-    void UpdateMappings(const String& macro_name);
+    void UpdateMappings(const Upp::String& macro_name);
     
 private:
-    VectorMap<String, Vector<ParameterMapping>> macros;
-    VectorMap<String, double> macro_values;
+    Upp::VectorMap<Upp::String, Upp::Vector<ParameterMapping>> macros;
+    Upp::VectorMap<Upp::String, double> macro_values;
 };
 
 // PresetBrowser - browse and manage presets for rack modules
@@ -204,16 +201,16 @@ public:
     virtual ~PresetBrowser();
     
     // Preset information
-    struct PresetInfo : public Moveable<PresetInfo> {
-        String id;
-        String name;
-        String category;
-        String author;
-        String description;
-        String module_type;  // What type of module this preset is for
-        String file_path;
-        Time creation_time;
-        Time modification_time;
+    struct PresetInfo : public Upp::Moveable<PresetInfo> {
+        Upp::String id;
+        Upp::String name;
+        Upp::String category;
+        Upp::String author;
+        Upp::String description;
+        Upp::String module_type;  // What type of module this preset is for
+        Upp::String file_path;
+        Upp::Time creation_time;
+        Upp::Time modification_time;
         
         PresetInfo() {}
     };
@@ -222,39 +219,39 @@ public:
     void AddPreset(const PresetInfo& preset);
     
     // Remove a preset
-    bool RemovePreset(const String& preset_id);
+    bool RemovePreset(const Upp::String& preset_id);
     
     // Browse presets
-    Vector<PresetInfo> GetPresetsByCategory(const String& category) const;
-    Vector<PresetInfo> GetPresetsByAuthor(const String& author) const;
-    Vector<PresetInfo> GetPresetsByModuleType(const String& module_type) const;
-    Vector<PresetInfo> GetAllPresets() const;
+    Upp::Vector<PresetInfo> GetPresetsByCategory(const Upp::String& category) const;
+    Upp::Vector<PresetInfo> GetPresetsByAuthor(const Upp::String& author) const;
+    Upp::Vector<PresetInfo> GetPresetsByModuleType(const Upp::String& module_type) const;
+    Upp::Vector<PresetInfo> GetAllPresets() const;
     
     // Search presets
-    Vector<PresetInfo> SearchPresets(const String& query) const;
+    Upp::Vector<PresetInfo> SearchPresets(const Upp::String& query) const;
     
     // Load preset into a rack module
-    bool ApplyPreset(const String& preset_id, RackHost& rack, const String& slot_id);
-    bool ApplyPreset(const String& preset_id, ChainNode& node);
+    bool ApplyPreset(const Upp::String& preset_id, RackHost& rack, const Upp::String& slot_id);
+    bool ApplyPreset(const Upp::String& preset_id, ChainNode& node);
     
     // Save current module state as preset
-    bool SavePreset(const String& preset_id, const String& preset_name, 
-                   const RackHost& rack, const String& slot_id);
-    bool SavePreset(const String& preset_id, const String& preset_name, 
+    bool SavePreset(const Upp::String& preset_id, const Upp::String& preset_name, 
+                   const RackHost& rack, const Upp::String& slot_id);
+    bool SavePreset(const Upp::String& preset_id, const Upp::String& preset_name, 
                    const ChainNode& node);
     
     // Load preset library from a file
-    bool LoadPresetLibrary(const String& filepath);
+    bool LoadPresetLibrary(const Upp::String& filepath);
     
     // Save preset library to a file
-    void SavePresetLibrary(const String& filepath) const;
+    void SavePresetLibrary(const Upp::String& filepath) const;
     
     // Get preset by ID
-    const PresetInfo* GetPreset(const String& preset_id) const;
+    const PresetInfo* GetPreset(const Upp::String& preset_id) const;
     
 private:
-    Vector<PresetInfo> presets;
-    VectorMap<String, int> preset_lookup;  // Maps preset IDs to indices
+    Upp::Vector<PresetInfo> presets;
+    Upp::VectorMap<Upp::String, int> preset_lookup;  // Maps preset IDs to indices
 };
 
 // LatencyManager - manages latency compensation across the rack
@@ -312,18 +309,18 @@ public:
     virtual ~SessionManager();
     
     // Session information
-    struct SessionInfo : public Moveable<SessionInfo> {
-        String id;
-        String name;
-        String description;
-        String project_file;
-        String rack_template;
-        Vector<String> active_presets;
-        ValueMap global_settings;
+    struct SessionInfo : public Upp::Moveable<SessionInfo> {
+        Upp::String id;
+        Upp::String name;
+        Upp::String description;
+        Upp::String project_file;
+        Upp::String rack_template;
+        Upp::Vector<Upp::String> active_presets;
+        Upp::ValueMap global_settings;
         int sample_rate;
         int buffer_size;
-        Time creation_time;
-        Time modification_time;
+        Upp::Time creation_time;
+        Upp::Time modification_time;
         
         SessionInfo() : sample_rate(44100), buffer_size(512) {}
     };
@@ -342,7 +339,7 @@ public:
     void CloseSession();
     
     // Get current session info
-    const SessionInfo* GetCurrentSession() const { return current_session.get(); }
+    const SessionInfo* GetCurrentSession() const { return current_session; }
     
     // Add/remove modules to/from session
     bool AddModuleToSession(const String& module_id, const String& module_type);
@@ -355,17 +352,17 @@ public:
     bool LoadFromRack(const RackHost& rack_host);
     
     // Session lifecycle events
-    virtual void OnSessionCreated(const String& session_id) {}
-    virtual void OnSessionLoaded(const String& filepath) {}
-    virtual void OnSessionSaved(const String& filepath) {}
+    virtual void OnSessionCreated(const Upp::String& session_id) {}
+    virtual void OnSessionLoaded(const Upp::String& filepath) {}
+    virtual void OnSessionSaved(const Upp::String& filepath) {}
     virtual void OnSessionClosed() {}
     
     // Get session templates
-    Vector<String> GetAvailableTemplates() const;
+    Upp::Vector<Upp::String> GetAvailableTemplates() const;
     
 private:
-    std::unique_ptr<SessionInfo> current_session;
-    VectorMap<String, SessionInfo> session_templates;
+    SessionInfo* current_session;  // Using raw pointer instead of std::unique_ptr to avoid <memory> include
+    Upp::VectorMap<Upp::String, SessionInfo> session_templates;
 };
 
 }  // namespace DSP
@@ -418,7 +415,7 @@ protected:
     Protocol protocol;
     String endpoint;
     bool connected;
-    ValueMap settings;  // Protocol-specific settings
+    Upp::ValueMap settings;  // Protocol-specific settings
     
     // Performance monitoring
     Vector<Time> timestamps;
