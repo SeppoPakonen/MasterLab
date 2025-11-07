@@ -5,6 +5,7 @@ uses
 	Appearance,
 	AudioAnalysis,
 	AudioEditing,
+	AudioCore,
 	Browser,
 	DSP,
 	HelpAbout,

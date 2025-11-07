@@ -65,8 +65,9 @@ namespace Upp {
         }
         
         if (inverse) {
+            double inv_n = 1.0 / n;
             for (int i = 0; i < n; i++) {
-                data[i] = data[i] / n;
+                data[i] = data[i] * inv_n;  // Use multiplication instead of division
             }
         }
     }
@@ -105,7 +106,12 @@ namespace Upp {
             full_data[i] = complex_data[i];
         }
         for (int i = n; i < full_n; i++) {
-            full_data[i] = conj(complex_data[full_n - i]);
+            int j = full_n - i;
+            // Create conjugate: same real part, imaginary part negated
+            // For U++, Complex is likely std::complex compatible, so accessing as std::complex
+            std::complex<double> temp_full = static_cast<std::complex<double>>(complex_data[j]);
+            temp_full = std::conj(temp_full);
+            full_data[i] = static_cast<Upp::Complex>(temp_full);
         }
         
         // Perform inverse FFT
@@ -114,7 +120,8 @@ namespace Upp {
         // Extract real part
         Vector<double> result(full_n);
         for (int i = 0; i < full_n; i++) {
-            result[i] = real(full_data[i]);
+            std::complex<double> temp_real = static_cast<std::complex<double>>(full_data[i]);
+            result[i] = std::real(temp_real);
         }
         
         return result;

@@ -7,4 +7,7 @@ file
 	Math.h,
 	Math.cpp,
 	AudioMath.h,
-	AudioMath.cpp;
+	AudioMath.cpp,
+	// FFT implementation for AIRecommender and other DSP operations
+	FFT.h,
+	FFT.cpp;

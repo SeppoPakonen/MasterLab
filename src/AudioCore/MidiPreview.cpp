@@ -42,7 +42,7 @@ void MidiPreview::SetVolume(double volume) {
     }
 }
 
-void MidiPreview::SetTransport(Transport* transport) {
+void MidiPreview::SetTransport(am::Transport* transport) {
     this->transport = transport;
 }
 

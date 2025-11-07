@@ -14,6 +14,8 @@ file
 	Clip.h,
 	IIdentified.h,
 	IIdentified.cpp,
+	MidiPreview.h,
+	MidiPreview.cpp,
 	Mixer.h,
 	Mixer.cpp,
 	Synth.h,

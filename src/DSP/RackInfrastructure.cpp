@@ -630,6 +630,22 @@ double TransportLayer::GetPacketLoss() const {
     return 0.0;
 }
 
+bool TransportLayer::SendAudio(const Vector<double>& audio_data, const String& destination) {
+    if (!connected) return false;
+
+    // In a real implementation, this would stream audio data via the selected protocol
+    // For now, this is a placeholder implementation
+    return true;
+}
+
+int TransportLayer::ReceiveAudio(Vector<double>& audio_data, const String& sender) {
+    if (!connected) return 0;
+
+    // In a real implementation, this would receive audio data via the selected protocol
+    // For now, return 0 to indicate no audio data received
+    return 0;
+}
+
 void TransportLayer::Close() {
     connected = false;
 }
