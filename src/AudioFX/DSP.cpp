@@ -48,7 +48,7 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
         sum_weighted_magnitude += magnitude * i;
     }
     double spectral_centroid = (sum_magnitude > 0) ? sum_weighted_magnitude / sum_magnitude : 0.0;
-    features.Add("spectral_centroid", ToValue(spectral_centroid));
+    features.Add("spectral_centroid", Value(spectral_centroid));
     
     // Zero crossing rate
     int zero_crossings = 0;
@@ -57,25 +57,35 @@ void VoiceFeatureExtractor::Process(const double* input, int sample_count, doubl
             zero_crossings++;
         }
     }
-    features.Add("zero_crossing_rate", ToValue((double)zero_crossings / sample_count));
+    features.Add("zero_crossing_rate", Value((double)zero_crossings / sample_count));
 }
 
 Value VoiceFeatureExtractor::GetFeature(FeatureType type) const {
     switch(type) {
-        case PITCH:
-            return features.Get("pitch", Value(0.0));
-        case FORMANTS:
-            return features.Get("formants", Value(Vector<double>()));
-        case SPECTRAL_CENTROID:
-            return features.Get("spectral_centroid", Value(0.0));
-        case ZERO_CROSSING_RATE:
-            return features.Get("zero_crossing_rate", Value(0.0));
-        case MFCC:
-            // Return MFCC features if computed
-            return features.Get("mfcc", Value(Vector<double>()));
-        case CHROMA:
-            // Return chroma features if computed
-            return features.Get("chroma", Value(Vector<double>()));
+        case PITCH: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("pitch");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
+        }
+        case FORMANTS: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("formants");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
+        }
+        case SPECTRAL_CENTROID: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("spectral_centroid");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
+        }
+        case ZERO_CROSSING_RATE: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("zero_crossing_rate");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
+        }
+        case MFCC: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("mfcc");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
+        }
+        case CHROMA: {
+            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("chroma");
+            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
+        }
         default:
             return Value();
     }
@@ -253,7 +263,7 @@ int VoiceEncoder::Encode(const double* input, int sample_count, double sample_ra
     
     // In a real implementation, this would encode the input and write to output_buffer
     // For now, we'll just return a placeholder encoded size
-    return min(sample_count * sizeof(double) / 2, buffer_size); // Simplified compression
+    return min((int)(sample_count * sizeof(double) / 2), (int)buffer_size); // Simplified compression
 }
 
 void VoiceEncoder::SetEncodingType(EncodingType type) {
@@ -287,7 +297,7 @@ int VoiceDecoder::Decode(const void* input_buffer, int buffer_size, double* outp
     // In a real implementation, this would decode the input buffer
     
     // For now, we'll just return a placeholder decoded count
-    return min(buffer_size / sizeof(double) * 2, max_samples); // Simplified decoding
+    return min((int)(buffer_size / sizeof(double) * 2), (int)max_samples); // Simplified decoding
 }
 
 void VoiceDecoder::SetParameter(const String& name, double value) {
@@ -1062,9 +1072,9 @@ MotionSequencer::MotionSequencer() : tempo_bpm(120.0), playback_rate(1.0),
         step.active = true;
         steps.Add(step);
     }
-    parameters.Set("tempo_bpm", 120.0);
-    parameters.Set("playback_rate", 1.0);
-    parameters.Set("current_step", 0.0);
+    parameters.Add("tempo_bpm", 120.0);
+    parameters.Add("playback_rate", 1.0);
+    parameters.Add("current_step", 0.0);
 }
 
 MotionSequencer::~MotionSequencer() {
@@ -1087,7 +1097,12 @@ void MotionSequencer::Process(FrameContext& ctx) {
         // Move to next step
         step_progress = 0.0;
         current_step = (current_step + 1) % steps.GetCount();
-        parameters.Set("current_step", (double)current_step);
+        int idx = parameters.Find("current_step");
+        if (idx >= 0) {
+            parameters[idx] = (double)current_step;
+        } else {
+            parameters.Add("current_step", (double)current_step);
+        }
     }
 }
 
@@ -1097,16 +1112,31 @@ void MotionSequencer::SetSteps(const Vector<Step>& steps) {
 
 void MotionSequencer::SetTempo(double bpm) {
     tempo_bpm = bpm;
-    parameters.Set("tempo_bpm", bpm);
+    int idx = parameters.Find("tempo_bpm");
+    if (idx >= 0) {
+        parameters[idx] = bpm;
+    } else {
+        parameters.Add("tempo_bpm", bpm);
+    }
 }
 
 void MotionSequencer::SetPlaybackRate(double rate) {
     playback_rate = rate;
-    parameters.Set("playback_rate", rate);
+    int idx = parameters.Find("playback_rate");
+    if (idx >= 0) {
+        parameters[idx] = rate;
+    } else {
+        parameters.Add("playback_rate", rate);
+    }
 }
 
 void MotionSequencer::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    int idx = parameters.Find(name);
+    if (idx >= 0) {
+        parameters[idx] = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double MotionSequencer::GetParameter(const String& name) const {
@@ -1115,9 +1145,9 @@ double MotionSequencer::GetParameter(const String& name) const {
 
 // SceneMorph implementation
 SceneMorph::SceneMorph() : current_scene(0), morph_amount(0.0), crossfade_enabled(false) {
-    parameters.Set("current_scene", 0.0);
-    parameters.Set("morph_amount", 0.0);
-    parameters.Set("crossfade_enabled", 0.0);
+    parameters.Add("current_scene", 0.0);
+    parameters.Add("morph_amount", 0.0);
+    parameters.Add("crossfade_enabled", 0.0);
 }
 
 SceneMorph::~SceneMorph() {
@@ -1141,22 +1171,42 @@ void SceneMorph::AddScene(const Scene& scene) {
 void SceneMorph::SetCurrentScene(int scene_index) {
     if (scene_index >= 0 && scene_index < scenes.GetCount()) {
         current_scene = scene_index;
-        parameters.Set("current_scene", (double)scene_index);
+        int idx = parameters.Find("current_scene");
+        if (idx >= 0) {
+            parameters[idx] = (double)scene_index;
+        } else {
+            parameters.Add("current_scene", (double)scene_index);
+        }
     }
 }
 
 void SceneMorph::SetMorphAmount(double amount) {
     morph_amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    parameters.Set("morph_amount", morph_amount);
+    int idx = parameters.Find("morph_amount");
+    if (idx >= 0) {
+        parameters[idx] = morph_amount;
+    } else {
+        parameters.Add("morph_amount", morph_amount);
+    }
 }
 
 void SceneMorph::SetCrossfadeEnabled(bool enabled) {
     crossfade_enabled = enabled;
-    parameters.Set("crossfade_enabled", enabled ? 1.0 : 0.0);
+    int idx = parameters.Find("crossfade_enabled");
+    if (idx >= 0) {
+        parameters[idx] = enabled ? 1.0 : 0.0;
+    } else {
+        parameters.Add("crossfade_enabled", enabled ? 1.0 : 0.0);
+    }
 }
 
 void SceneMorph::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    int idx = parameters.Find(name);
+    if (idx >= 0) {
+        parameters[idx] = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double SceneMorph::GetParameter(const String& name) const {
@@ -1173,9 +1223,9 @@ StepSequencer::StepSequencer() : gate_mode(TRIGGER), tempo_bpm(120.0),
         step_values[i] = 0.0;
         step_gates[i] = (i % 4 == 0); // Gate every 4th step by default
     }
-    parameters.Set("tempo_bpm", 120.0);
-    parameters.Set("current_step", 0.0);
-    parameters.Set("octave_offset", 0.0);
+    parameters.Add("tempo_bpm", 120.0);
+    parameters.Add("current_step", 0.0);
+    parameters.Add("octave_offset", 0.0);
 }
 
 StepSequencer::~StepSequencer() {
@@ -1199,7 +1249,12 @@ void StepSequencer::Process(FrameContext& ctx) {
     if (step_counter >= samples_per_step) {
         step_counter = 0.0;
         current_step = (current_step + 1) % total_steps;
-        parameters.Set("current_step", (double)current_step);
+        int idx = parameters.Find("current_step");
+        if (idx >= 0) {
+            parameters[idx] = (double)current_step;
+        } else {
+            parameters.Add("current_step", (double)current_step);
+        }
     }
 }
 
@@ -1218,7 +1273,12 @@ void StepSequencer::SetGateMode(GateMode mode) {
 
 void StepSequencer::SetTempo(double bpm) {
     tempo_bpm = bpm;
-    parameters.Set("tempo_bpm", bpm);
+    int idx = parameters.Find("tempo_bpm");
+    if (idx >= 0) {
+        parameters[idx] = bpm;
+    } else {
+        parameters.Add("tempo_bpm", bpm);
+    }
 }
 
 void StepSequencer::SetSteps(int count) {
@@ -1229,11 +1289,21 @@ void StepSequencer::SetSteps(int count) {
 
 void StepSequencer::SetOctave(int octave_offset) {
     this->octave_offset = octave_offset;
-    parameters.Set("octave_offset", (double)octave_offset);
+    int idx = parameters.Find("octave_offset");
+    if (idx >= 0) {
+        parameters[idx] = (double)octave_offset;
+    } else {
+        parameters.Add("octave_offset", (double)octave_offset);
+    }
 }
 
 void StepSequencer::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    int idx = parameters.Find(name);
+    if (idx >= 0) {
+        parameters[idx] = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double StepSequencer::GetParameter(const String& name) const {
@@ -1242,8 +1312,8 @@ double StepSequencer::GetParameter(const String& name) const {
 
 // ModuleSwitcher implementation
 ModuleSwitcher::ModuleSwitcher() : current_module(0), switch_mode(TOGGLE) {
-    parameters.Set("current_module", 0.0);
-    parameters.Set("switch_mode", (int)TOGGLE);
+    parameters.Add("current_module", 0.0);
+    parameters.Add("switch_mode", (int)TOGGLE);
 }
 
 ModuleSwitcher::~ModuleSwitcher() {
@@ -1276,7 +1346,12 @@ void ModuleSwitcher::AddModule(const String& name, Function<void(const double*, 
 void ModuleSwitcher::SetCurrentModule(int index) {
     if (index >= 0 && index < module_names.GetCount()) {
         current_module = index;
-        parameters.Set("current_module", (double)index);
+        int idx = parameters.Find("current_module");
+        if (idx >= 0) {
+            parameters[idx] = (double)index;
+        } else {
+            parameters.Add("current_module", (double)index);
+        }
     }
 }
 
@@ -1284,17 +1359,32 @@ void ModuleSwitcher::SetCurrentModule(const String& name) {
     int index = FindIndex(module_names, name);
     if (index >= 0) {
         current_module = index;
-        parameters.Set("current_module", (double)index);
+        int idx = parameters.Find("current_module");
+        if (idx >= 0) {
+            parameters[idx] = (double)index;
+        } else {
+            parameters.Add("current_module", (double)index);
+        }
     }
 }
 
 void ModuleSwitcher::SetSwitchMode(SwitchMode mode) {
     switch_mode = mode;
-    parameters.Set("switch_mode", (int)mode);
+    int idx = parameters.Find("switch_mode");
+    if (idx >= 0) {
+        parameters[idx] = (int)mode;
+    } else {
+        parameters.Add("switch_mode", (int)mode);
+    }
 }
 
 void ModuleSwitcher::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    int idx = parameters.Find(name);
+    if (idx >= 0) {
+        parameters[idx] = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double ModuleSwitcher::GetParameter(const String& name) const {
@@ -1303,8 +1393,8 @@ double ModuleSwitcher::GetParameter(const String& name) const {
 
 // MacroController implementation
 MacroController::MacroController() {
-    parameters.Set("active", 1.0);
-    parameters.Set("smooth_time", 0.05); // 50ms smoothing
+    parameters.Add("active", 1.0);
+    parameters.Add("smooth_time", 0.05); // 50ms smoothing
 }
 
 MacroController::~MacroController() {
@@ -1324,7 +1414,13 @@ void MacroController::AddParameter(const String& macro_name, const MacroParamete
 
 void MacroController::SetMacroValue(const String& macro_name, double value) {
     value = max(0.0, min(1.0, value)); // Clamp to 0-1 range
-    macro_values.Set(macro_name, value);
+    
+    int idx = macro_values.Find(macro_name);
+    if (idx >= 0) {
+        macro_values[idx] = value;
+    } else {
+        macro_values.Add(macro_name, value);
+    }
     
     // Update all parameters controlled by this macro
     if (macro_params.Find(macro_name) >= 0) {
@@ -1342,7 +1438,12 @@ double MacroController::GetMacroValue(const String& macro_name) const {
 }
 
 void MacroController::SetParameter(const String& name, double value) {
-    parameters.Set(name, value);
+    int idx = parameters.Find(name);
+    if (idx >= 0) {
+        parameters[idx] = value;
+    } else {
+        parameters.Add(name, value);
+    }
 }
 
 double MacroController::GetParameter(const String& name) const {

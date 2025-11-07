@@ -103,6 +103,40 @@ public:
         Vector<double> b; // Feedforward coefficients
         Vector<double> a; // Feedback coefficients
         double gain = 1.0; // Overall gain factor
+        
+        typedef IIRDesigner CLASSNAME;  // Make this struct compatible with U++ containers
+        
+        // Implement move and copy operations properly for U++ containers
+        IIRCoefficients() : gain(1.0) {}
+        
+        // Copy constructor using U++ deep copy operator
+        IIRCoefficients(const IIRCoefficients& other) : b(), a(), gain(other.gain) {
+            b <<= other.b;
+            a <<= other.a;
+        }
+        
+        // Assignment operator
+        IIRCoefficients& operator=(const IIRCoefficients& other) {
+            if (this != &other) {
+                gain = other.gain;
+                b <<= other.b;
+                a <<= other.a;
+            }
+            return *this;
+        }
+        
+        // Move constructor
+        IIRCoefficients(IIRCoefficients&& other) : b(pick(other.b)), a(pick(other.a)), gain(other.gain) {}
+        
+        // Move assignment operator
+        IIRCoefficients& operator=(IIRCoefficients&& other) {
+            if (this != &other) {
+                b = pick(other.b);
+                a = pick(other.a);
+                gain = other.gain;
+            }
+            return *this;
+        }
     };
     
     // Design Butterworth filter
@@ -316,6 +350,7 @@ public:
         double front_rear_balance; // Front-rear balance (-1.0 to 1.0)
         double left_right_balance; // Left-right balance (-1.0 to 1.0)
         double top_bottom_balance; // Top-bottom balance (-1.0 to 1.0)
+        Time timestamp;         // Time of analysis
     };
     
     // Analyze multichannel input for spatial parameters

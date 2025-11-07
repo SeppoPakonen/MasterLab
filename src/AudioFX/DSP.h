@@ -585,6 +585,8 @@ public:
 	struct Scene {
 		String name;
 		ValueMap parameters;  // Parameter ID to value mapping
+		
+		typedef SceneMorph CLASSNAME;  // Make this struct compatible with U++ containers
 	};
 	
 	SceneMorph();
@@ -678,6 +680,8 @@ public:
 		double max_value = 1.0;
 		double default_value = 0.5;
 		double current_value = 0.5;
+		
+		typedef MacroController CLASSNAME;  // Make this struct compatible with U++ containers
 	};
 	
 	MacroController();

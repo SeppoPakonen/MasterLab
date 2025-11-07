@@ -77,7 +77,8 @@ Vector<double> FIRDesigner::DesignBandStop(int filter_length, double low_freq, d
 }
 
 Vector<double> FIRDesigner::ApplyWindow(const Vector<double>& ideal_impulse, int window_type) {
-    Vector<double> windowed_impulse = ideal_impulse;
+    Vector<double> windowed_impulse;
+    windowed_impulse <<= ideal_impulse; // Use U++ vector copy operator
     int length = ideal_impulse.GetCount();
     
     for (int i = 0; i < length; i++) {
