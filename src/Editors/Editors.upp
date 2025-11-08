@@ -3,7 +3,12 @@ description "Editors package\377128,128,0";
 uses
 	CtrlLib,
 	Draw,
-	AudioCore;
+	AudioCore,
+	Core,
+	CtrlCore,
+	ProjectMgmt,
+	FileIO,
+	Scores;
 
 file
 	Editors.h,

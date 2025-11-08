@@ -9,4 +9,10 @@ uses
 	Tooling;
 
 file
-	AGENTS.md;
+	AGENTS.md,
+	VSTConnectionsCtrl.h,
+	VSTConnectionsCtrl.cpp,
+	VSTConnectionsPresenter.h,
+	VSTConnectionsPresenter.cpp,
+	VSTConnectionsWnd.h,
+	VSTConnectionsWnd.cpp;

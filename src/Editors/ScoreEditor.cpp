@@ -223,7 +223,7 @@ void ScoreEditorController::SetNotationDocument(Scores::NotationModel* doc) {
     }
 }
 
-void ScoreEditorController::SetCommandManager(ProjectMgmt::CommandManager* cmdMgr) {
+void ScoreEditorController::SetCommandManager(am::CommandManager* cmdMgr) {
     this->commandManager = cmdMgr;
 }
 
@@ -307,7 +307,7 @@ void ScoreEditor::InitLayout() {
 void ScoreEditor::ConnectToCommandManager() {
     // Get the global command manager (in a real implementation, this would be properly initialized)
     // For now, we'll create a temporary one
-    static ProjectMgmt::CommandManager globalCommandManager;
+    static am::CommandManager globalCommandManager;
     controller.SetCommandManager(&globalCommandManager);
 }
 
@@ -374,9 +374,14 @@ void ScoreEditor::SetData(void* data) {
     ScoreProjectData* scoreProject = reinterpret_cast<ScoreProjectData*>(data);
     controller.SetScoreProject(scoreProject);
     controller.SetNotationDocument(&scoreProject->GetNotationModel());
-    
-    // Connect to external systems if not already done
-    ConnectToCommandManager();
+
+    // Connect to the project's command manager
+    if (scoreProject && scoreProject->GetProject()) {
+        controller.SetCommandManager(&scoreProject->GetProject()->GetCommandManager());
+    } else {
+        // Connect to external systems if not already done
+        ConnectToCommandManager();
+    }
     ConnectToMidiPreview();
 }
 

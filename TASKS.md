@@ -230,11 +230,10 @@
 *None currently.*
 
 ### HIGH PRIORITY
-107. Scaffold `VSTConnections` UI (`VSTConnectionsCtrl`, per-tab panes, presenter) and implement `Devices::IOMatrixService`/`RoutingRepository` skeletons providing snapshots, change application, and preset hooks.
-108. Refactor `Editors::ScoreEditor` using the documented controller/toolstrip layout; introduce `ScoreEditorCtrl`, presenter wiring to `Scores::NotationDocument`, and connect to `ProjectMgmt::CommandManager`/`AudioCore::MidiPreview`.
+
 
 ### MEDIUM PRIORITY
-94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
+
 
 ### FUTURE CONSIDERATION
 * Implement comprehensive error handling across all systems
@@ -255,9 +254,12 @@
 89. Implement rack and chain hosting infrastructure (Devices/AudioFX): `DSP::RackHost`, `DSP::ChainNode`, `DSP::MacroMapper`, `DSP::PresetBrowser`, `DSP::LatencyManager`, `NET::TransportLayer`, and `DSP::SessionManager` for StudioRack/StudioVerse workflows
 92. Integrate `PluginSDK::GraphVisualization` with AudioUI rack/macro surfaces to render node/edge diagrams and active-path overlays
 93. Build shared AI/groove/phrase services (`DSP::AIRecommender`, `Midi::GrooveExtractor`, `Midi::PhraseDatabase`) powering Bandmate-style suggestions across audio and MIDI stubs
+107. Scaffold `VSTConnections` UI (`VSTConnectionsCtrl`, per-tab panes, presenter) and implement `Devices::IOMatrixService`/`RoutingRepository` skeletons providing snapshots, change application, and preset hooks.
+108. Refactor `Editors::ScoreEditor` using the documented controller/toolstrip layout; introduce `ScoreEditorCtrl`, presenter wiring to `Scores::NotationDocument`, and connect to `ProjectMgmt::CommandManager`/`AudioCore::MidiPreview`.
 
 ## COMPLETED MEDIUM PRIORITY
 81. Create .upp files for new packages with proper uses declarations
+94. Extend `tools/generate_stubs.py` to regenerate new effect/instrument/MIDI packages with graph metadata and parameter scaffolding
 98. Enrich `DSP::ZenCoreMFXCatalogue` with parameter templates and apply defaults in ZenCore model expansions
 
 

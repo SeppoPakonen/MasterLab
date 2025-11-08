@@ -1,4 +1,5 @@
 #include "VSTConnections.h"
+#include "VSTConnectionsWnd.h"
 #include <AudioCore/AudioCore.h>
 #include <Devices/Devices.h>
 

@@ -18,5 +18,7 @@ file
 	ReWireHost.h,
 	ReWireHost.cpp,
 	VideoDevice.h,
-	VideoDevice.cpp;
+	VideoDevice.cpp,
+	IOMatrixService.h,
+	IOMatrixService.cpp;
 

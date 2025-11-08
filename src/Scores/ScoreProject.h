@@ -3,6 +3,7 @@
 
 #include <Core/Core.h>
 #include <FileIO/FileIO.h>
+#include <ProjectMgmt/ProjectMgmt.h>  // Include the Project management module
 #include "NotationModel.h"
 
 using namespace Upp;
@@ -114,8 +115,13 @@ public:
     bool IsLibraryFile() const { return isLibrary; }
     String GetLibraryPath() const { return libraryPath; }
     
+    // Project management
+    void SetProject(Project* project) { this->project = project; }
+    Project* GetProject() const { return project; }
+    
 private:
     bool isModified = false;
+    Project* project = nullptr;  // Reference to the main project
 };
 
 }

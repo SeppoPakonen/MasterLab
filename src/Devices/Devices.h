@@ -11,5 +11,6 @@ using namespace Upp;
 #include "PluginManager.h"
 #include "ReWireHost.h"
 #include "VideoDevice.h"
+#include "IOMatrixService.h"
 
 #endif

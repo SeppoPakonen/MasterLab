@@ -2,8 +2,8 @@
 
 namespace VSTConnections {
 
-VSTConnectionsPresenter::VSTConnectionsPresenter(VSTConnectionsCtrl& view) 
-    : view(view), ioMatrixService(view.ioMatrixService) {
+VSTConnectionsPresenter::VSTConnectionsPresenter(VSTConnectionsCtrl& view, am::IOMatrixService& service)
+    : view(view), ioMatrixService(service) {
     
 }
 

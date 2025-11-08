@@ -230,13 +230,23 @@ def write_stub(directory, class_name, display_name, data, is_effect):
 		namespace = "Effects"
 	else:
 		namespace = "Instruments"
-		
+
 	if "MIDI" in str(data["title"]).upper():
 		base_class = "PluginSDK::MidiEffectProcessor"
 	elif is_effect:
 		base_class = "PluginSDK::PluginProcessor"
 	else:
 		base_class = "PluginSDK::InstrumentProcessor"
+	
+	# Collect all parameters from all tables for parameter generation
+	all_parameters = []
+	for table in data["tables"]:
+		for row in table:
+			params_str = row.get("Parameters", "") or row.get("Controls", "") or ""
+			if params_str:
+				for param in [p.strip() for p in params_str.split(",") if p.strip()]:
+					if param not in all_parameters:
+						all_parameters.append(param)
 
 	header_guard = f"_{'midieffects' if 'MIDI' in str(data['title']).upper() else 'effects' if is_effect else 'instruments'}_{class_name.lower()}_{class_name.lower()}_h_"
 	

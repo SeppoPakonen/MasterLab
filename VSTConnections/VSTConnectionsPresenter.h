@@ -4,8 +4,7 @@
 #include <Core/Core.h>
 #include <CtrlLib/CtrlLib.h>
 #include "VSTConnectionsCtrl.h"
-#include "../Devices/Devices.h"
-#include "../Devices/IOMatrixService.h"
+#include <Devices/Devices.h>
 
 using namespace Upp;
 
@@ -14,7 +13,7 @@ namespace VSTConnections {
 // Presenter class to handle business logic for VST Connections UI
 class VSTConnectionsPresenter {
 public:
-    VSTConnectionsPresenter(VSTConnectionsCtrl& view);
+    VSTConnectionsPresenter(VSTConnectionsCtrl& view, am::IOMatrixService& service);
     void ConnectView();
     void LoadConnections();
     void SaveConnections();
@@ -22,7 +21,7 @@ public:
     
 private:
     VSTConnectionsCtrl& view;
-    Devices::IOMatrixService& ioMatrixService;
+    am::IOMatrixService& ioMatrixService;
     
     void OnConnectionChanged();
     void LoadInputs();
