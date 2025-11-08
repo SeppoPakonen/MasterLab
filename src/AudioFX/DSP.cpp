@@ -1,1454 +1,1804 @@
 #include "DSP.h"
-#include <Math/Math.h>
 
-namespace am {
 namespace DSP {
 
-// VoiceFeatureExtractor implementation
-VoiceFeatureExtractor::VoiceFeatureExtractor() {
-    // Initialize parameters for voice feature extraction
-    parameters.Add("pitch_tracking_enabled", 1.0);
-    parameters.Add("formant_tracking_enabled", 1.0);
-    parameters.Add("min_frequency", 80.0);  // Min voice frequency in Hz
-    parameters.Add("max_frequency", 500.0); // Max voice frequency in Hz
+// Implementation of SignalBus
+SignalBus::SignalBus() : channelCount(0), frameCount(0), maxFrames(0) {
+    // Default constructor
 }
 
-VoiceFeatureExtractor::~VoiceFeatureExtractor() {
-    // Clean up
+SignalBus::SignalBus(int channels, int maxFrames) : 
+    channelCount(channels), frameCount(0), maxFrames(maxFrames) {
+    Resize(channels, maxFrames);
 }
 
-void VoiceFeatureExtractor::Process(const double* input, int sample_count, double sample_rate) {
-    // Extract various features from the input signal
+void SignalBus::Resize(int channels, int frames) {
+    channelCount = channels;
+    frameCount = min(frames, maxFrames);
+    maxFrames = frames;
+    buffers.SetCount(channels);
+    for (int i = 0; i < channels; i++) {
+        buffers[i].SetCount(maxFrames);
+    }
+    Clear();
+}
+
+void SignalBus::Clear() {
+    for (int i = 0; i < channelCount; i++) {
+        for (int j = 0; j < maxFrames; j++) {
+            buffers[i][j] = 0.0;
+        }
+    }
+    frameCount = 0;
+}
+
+Sample* SignalBus::GetChannel(int channel) {
+    if (channel >= 0 && channel < channelCount) {
+        return buffers[channel].Begin();
+    }
+    return nullptr;
+}
+
+const Sample* SignalBus::GetChannel(int channel) const {
+    if (channel >= 0 && channel < channelCount) {
+        return buffers[channel].Begin();
+    }
+    return nullptr;
+}
+
+void SignalBus::ProcessAudio() {
+    // In a real implementation, this would process the audio data through various DSP algorithms
+    // For now, just a placeholder implementation
+    for (int ch = 0; ch < channelCount; ch++) {
+        for (int i = 0; i < frameCount; i++) {
+            // Process the sample
+            buffers[ch][i] *= 1.0;  // Example: unity gain
+        }
+    }
+}
+
+// Implementation of ParameterSet
+ParameterSet::ParameterSet() {
+    // Initialize with no parameters
+}
+
+void ParameterSet::AddParameter(const ParameterId& id, ParameterValue initial, 
+                                ParameterValue min, ParameterValue max,
+                                ParameterType type, const String& name) {
+    ParameterInfo info;
+    info.value = initial;
+    info.initial = initial;
+    info.min = min;
+    info.max = max;
+    info.type = type;
+    info.name = name;
+    parameters.GetAdd(id) = info;
+}
+
+ParameterValue ParameterSet::Get(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        return it->value;
+    }
+    return 0.0;  // Default value if parameter doesn't exist
+}
+
+bool ParameterSet::Set(const ParameterId& id, ParameterValue value) {
+    auto it = parameters.Find(id);
+    if (it) {
+        // Clamp the value to min/max range
+        value = max(it->min, min(it->max, value));
+        it->value = value;
+        return true;
+    }
+    return false;
+}
+
+bool ParameterSet::SetNormalized(const ParameterId& id, ParameterValue normalizedValue) {
+    auto it = parameters.Find(id);
+    if (it) {
+        // Convert normalized value (0.0 to 1.0) to parameter range
+        ParameterValue value = it->min + normalizedValue * (it->max - it->min);
+        value = max(it->min, min(it->max, value));
+        it->value = value;
+        return true;
+    }
+    return false;
+}
+
+ParameterValue ParameterSet::GetNormalized(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        // Convert parameter value to normalized (0.0 to 1.0) range
+        if (it->max != it->min) {
+            return (it->value - it->min) / (it->max - it->min);
+        }
+        return 0.0;
+    }
+    return 0.0;
+}
+
+ParameterValue ParameterSet::GetMin(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        return it->min;
+    }
+    return 0.0;
+}
+
+ParameterValue ParameterSet::GetMax(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        return it->max;
+    }
+    return 1.0;
+}
+
+ParameterType ParameterSet::GetType(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        return it->type;
+    }
+    return ParameterType::kFloat;
+}
+
+String ParameterSet::GetName(const ParameterId& id) const {
+    auto it = parameters.Find(id);
+    if (it) {
+        return it->name;
+    }
+    return "";
+}
+
+Vector<ParameterId> ParameterSet::GetParameterIds() const {
+    Vector<ParameterId> ids;
+    for (const auto& param : parameters) {
+        ids.Add(param.key);
+    }
+    return ids;
+}
+
+void ParameterSet::ResetToInitial() {
+    for (auto& param : parameters) {
+        param.value = param.initial;
+    }
+}
+
+// Implementation of ModMatrix
+ModMatrix::ModMatrix() {
+    // Initialize with no mappings
+}
+
+void ModMatrix::AddMapping(ModSource source, ModDestination destination, ParameterValue amount) {
+    // Check if mapping already exists and update if so
+    for (auto& mapping : mappings) {
+        if (mapping.source == source && mapping.destination == destination) {
+            mapping.amount = amount;
+            return;
+        }
+    }
+    // Add new mapping if it doesn't exist
+    mappings.Add(ModulationMapping(source, destination, amount));
+}
+
+void ModMatrix::RemoveMapping(ModSource source, ModDestination destination) {
+    for (int i = 0; i < mappings.GetCount(); i++) {
+        if (mappings[i].source == source && mappings[i].destination == destination) {
+            mappings.Remove(i--);
+        }
+    }
+}
+
+void ModMatrix::Process() {
+    // In a real implementation, this would calculate modulation values
+    // and apply them to destination parameters
+    // For now, just a placeholder implementation
+}
+
+ParameterValue ModMatrix::GetModulationAmount(ModSource source, ModDestination destination) const {
+    for (const auto& mapping : mappings) {
+        if (mapping.source == source && mapping.destination == destination) {
+            return mapping.amount;
+        }
+    }
+    return 0.0;
+}
+
+Vector<ModulationMapping> ModMatrix::GetMappings() const {
+    return mappings;
+}
+
+void ModMatrix::Clear() {
+    mappings.Clear();
+}
+
+// Implementation of LatencyBuffer
+LatencyBuffer::LatencyBuffer() : maxDelay(0), delaySamples(0), writeIndex(0) {
+    // Default constructor
+}
+
+LatencyBuffer::LatencyBuffer(int maxDelaySamples) : 
+    maxDelay(maxDelaySamples), delaySamples(0), writeIndex(0) {
+    delayLine.SetCount(maxDelay);
+    for (int i = 0; i < maxDelay; i++) {
+        delayLine[i] = 0.0;
+    }
+}
+
+void LatencyBuffer::SetDelay(int samples) {
+    delaySamples = max(0, min(samples, maxDelay));
+}
+
+Sample LatencyBuffer::Process(Sample input) {
+    // Write input to delay line at current write index
+    delayLine[writeIndex] = input;
     
-    // Pitch detection using autocorrelation
-    if (parameters.Get("pitch_tracking_enabled", 1.0) > 0.5) {
-        // Simplified pitch detection
-        double pitch = 0.0;
-        // In a real implementation, we would use autocorrelation or other pitch detection methods
-        features.Add("pitch", pitch);
+    // Calculate read index (with wraparound)
+    int readIndex = writeIndex - delaySamples;
+    if (readIndex < 0) {
+        readIndex += maxDelay;
     }
     
-    // Formant estimation
-    if (parameters.Get("formant_tracking_enabled", 1.0) > 0.5) {
-        // Estimate formant frequencies
-        // In a real implementation, we would use LPC analysis or other formant detection methods
-        Vector<double> formants;
-        formants.Add(500.0);  // F1
-        formants.Add(1500.0); // F2
-        formants.Add(2500.0); // F3
-        features.Add("formants", AsString(formants));
+    // Update write index
+    writeIndex = (writeIndex + 1) % maxDelay;
+    
+    // Return delayed sample
+    return delayLine[readIndex];
+}
+
+void LatencyBuffer::ProcessBuffer(const AudioBuffer& input, AudioBuffer& output) {
+    int size = input.GetCount();
+    output.SetCount(size);
+    
+    for (int i = 0; i < size; i++) {
+        output[i] = Process(input[i]);
+    }
+}
+
+// Implementation of Analyzer
+Analyzer::Analyzer() : rmsValue(0.0), peakValue(0.0), currentFrequency(0.0) {
+    // Initialize analyzer state
+}
+
+ValueMap Analyzer::Analyze(const AudioBuffer& buffer) {
+    ValueMap result;
+    
+    // Calculate RMS
+    double sum = 0.0;
+    double peak = 0.0;
+    for (Sample sample : buffer) {
+        sum += sample * sample;
+        if (abs(sample) > peak) peak = abs(sample);
+    }
+    rmsValue = sqrt(sum / buffer.GetCount());
+    peakValue = peak;
+    
+    // Store results in value map
+    result.Set("rms", rmsValue);
+    result.Set("peak", peakValue);
+    result.Set("frequency", currentFrequency);
+    
+    return result;
+}
+
+ValueMap Analyzer::GetRealTimeAnalysis() {
+    ValueMap result;
+    result.Set("rms", rmsValue);
+    result.Set("peak", peakValue);
+    result.Set("frequency", currentFrequency);
+    return result;
+}
+
+void Analyzer::Reset() {
+    rmsValue = 0.0;
+    peakValue = 0.0;
+    currentFrequency = 0.0;
+}
+
+// Implementation of PresetManager
+PresetManager::PresetManager() {
+    // Initialize with no presets
+}
+
+void PresetManager::AddPreset(const ParameterSet& params, const String& name) {
+    Preset preset;
+    preset.name = name;
+    
+    // Save current parameter values
+    Vector<ParameterId> ids = params.GetParameterIds();
+    for (const auto& id : ids) {
+        preset.parameters.Set(id, params.Get(id));
     }
     
-    // Spectral centroid
-    double sum_magnitude = 0.0;
-    double sum_weighted_magnitude = 0.0;
-    for (int i = 0; i < sample_count; i++) {
-        double magnitude = abs(input[i]);
-        sum_magnitude += magnitude;
-        sum_weighted_magnitude += magnitude * i;
-    }
-    double spectral_centroid = (sum_magnitude > 0) ? sum_weighted_magnitude / sum_magnitude : 0.0;
-    features.Add("spectral_centroid", Value(spectral_centroid));
-    
-    // Zero crossing rate
-    int zero_crossings = 0;
-    for (int i = 1; i < sample_count; i++) {
-        if ((input[i] >= 0) != (input[i-1] >= 0)) {
-            zero_crossings++;
-        }
-    }
-    features.Add("zero_crossing_rate", Value((double)zero_crossings / sample_count));
+    presets.Add(preset);
 }
 
-Value VoiceFeatureExtractor::GetFeature(FeatureType type) const {
-    switch(type) {
-        case PITCH: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("pitch");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
-        }
-        case FORMANTS: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("formants");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
-        }
-        case SPECTRAL_CENTROID: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("spectral_centroid");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
-        }
-        case ZERO_CROSSING_RATE: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("zero_crossing_rate");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(0.0);
-        }
-        case MFCC: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("mfcc");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
-        }
-        case CHROMA: {
-            int idx = const_cast<VoiceFeatureExtractor*>(this)->features.Find("chroma");
-            return (idx >= 0) ? const_cast<VoiceFeatureExtractor*>(this)->features[idx] : Value(Vector<double>());
-        }
-        default:
-            return Value();
-    }
-}
-
-void VoiceFeatureExtractor::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double VoiceFeatureExtractor::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// HarmonyGenerator implementation
-HarmonyGenerator::HarmonyGenerator() {
-    parameters.Add("voice_count", 2.0);
-    parameters.Add("dry_wet", 0.5);
-    parameters.Add("detune_amount", 0.5);
-}
-
-HarmonyGenerator::~HarmonyGenerator() {
-    // Clean up
-}
-
-void HarmonyGenerator::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Initialize output with input (dry signal)
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i] * (1.0 - parameters.Get("dry_wet", 0.5));
-    }
-    
-    // Generate harmonies based on the mode
-    double detune = parameters.Get("detune_amount", 0.5);
-    double voice_count = parameters.Get("voice_count", 2.0);
-    
-    switch(mode) {
-        case FIXED_INTERVAL: {
-            // Generate harmony at fixed interval
-            for (int i = 0; i < sample_count; i++) {
-                // Apply pitch shift by interval semitones
-                // This is a simplified approach - real implementation would use pitch shifting
-                if (i + 1 < sample_count) {
-                    double harmony_sample = input[i];
-                    // Apply slight detuning to avoid phasing
-                    harmony_sample *= (1.0 + detune * 0.001 * (double)(i % 100) / 100.0);
-                    output[i] += harmony_sample * 0.5;
-                }
+bool PresetManager::LoadPreset(const String& name, ParameterSet& params) {
+    for (const auto& preset : presets) {
+        if (preset.name == name) {
+            // Restore parameters from preset
+            for (const auto& param : preset.parameters) {
+                params.Set(param.key, (double)param.value);
             }
-            break;
+            return true;
         }
-        case CHORD_FOLLOWING: {
-            // Generate harmony based on chord progression
-            // In a real implementation, this would analyze the chord and generate appropriate harmonies
-            for (int i = 0; i < sample_count; i++) {
-                output[i] += input[i] * 0.3; // Simplified harmony
+    }
+    return false;
+}
+
+void PresetManager::SavePreset(const ParameterSet& params, const String& name) {
+    // Check if preset with this name already exists and update it
+    for (auto& preset : presets) {
+        if (preset.name == name) {
+            // Update existing preset
+            preset.parameters.Clear();
+            
+            Vector<ParameterId> ids = params.GetParameterIds();
+            for (const auto& id : ids) {
+                preset.parameters.Set(id, params.Get(id));
             }
-            break;
-        }
-        case INTELLIGENT_VOICING: {
-            // Use intelligent voice leading
-            // In a real implementation, this would use advanced algorithms to generate harmonies
-            for (int i = 0; i < sample_count; i++) {
-                output[i] += input[i] * 0.4; // Simplified harmony
-            }
-            break;
+            return;
         }
     }
     
-    // Apply wet/dry mix
-    double dry_wet = parameters.Get("dry_wet", 0.5);
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i] * (1.0 - dry_wet) + output[i] * dry_wet;
+    // Add new preset if it doesn't exist
+    AddPreset(params, name);
+}
+
+void PresetManager::DeletePreset(const String& name) {
+    for (int i = 0; i < presets.GetCount(); i++) {
+        if (presets[i].name == name) {
+            presets.Remove(i);
+            return;
+        }
     }
 }
 
-void HarmonyGenerator::SetHarmonyMode(HarmonyMode mode) {
-    this->mode = mode;
+Vector<String> PresetManager::GetPresetNames() const {
+    Vector<String> names;
+    for (const auto& preset : presets) {
+        names.Add(preset.name);
+    }
+    return names;
 }
 
-void HarmonyGenerator::SetInterval(int semitones) {
-    this->interval = semitones;
+String PresetManager::GetPresetName(int index) const {
+    if (index >= 0 && index < presets.GetCount()) {
+        return presets[index].name;
+    }
+    return "";
 }
 
-void HarmonyGenerator::SetChord(const String& chord) {
-    this->chord = chord;
+int PresetManager::GetPresetCount() const {
+    return presets.GetCount();
 }
 
-void HarmonyGenerator::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
+void PresetManager::RenamePreset(const String& oldName, const String& newName) {
+    for (auto& preset : presets) {
+        if (preset.name == oldName) {
+            preset.name = newName;
+            return;
+        }
     }
 }
 
-double HarmonyGenerator::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
+// FIRDesigner implementation
+FIRDesigner::FIRDesigner() {
+    // Initialize
 }
 
-// StyleTransferNet implementation
-StyleTransferNet::StyleTransferNet() {
-    parameters.Add("strength", 0.7);
-    parameters.Add("complexity", 0.5);
-    parameters.Add("smoothing", 0.3);
-}
-
-StyleTransferNet::~StyleTransferNet() {
-    // Clean up neural network resources
-}
-
-void StyleTransferNet::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // This is a simplified implementation of style transfer
-    // In a real implementation, this would use neural networks
+Vector<double> FIRDesigner::DesignLowPass(int order, double cutoffFreq, double sampleRate) {
+    Vector<double> coefficients;
+    coefficients.SetCount(order + 1);
     
-    double strength = parameters.Get("strength", 0.7);
+    double omega = 2.0 * M_PI * cutoffFreq / sampleRate;
     
-    for (int i = 0; i < sample_count; i++) {
-        // Apply simple transformation to simulate style transfer
-        // This is a placeholder - real neural processing would be much more complex
-        output[i] = input[i];
+    // Generate sinc function
+    for (int n = 0; n <= order; n++) {
+        int center = order / 2;
+        int shifted_n = n - center;
         
-        // Add some processing based on the style
-        if (style_type == VOCAL_STYLE) {
-            // Apply vocal-specific processing
-            output[i] = input[i] + (input[i] * strength * 0.1);
-        } else if (style_type == INSTRUMENT_STYLE) {
-            // Apply instrument-specific processing
-            output[i] = input[i] + (input[i] * strength * 0.05);
-        }
-        
-        // Keep within bounds
-        output[i] = max(-1.0, min(1.0, output[i]));
-    }
-}
-
-void StyleTransferNet::SetStyle(StyleType type, const String& style_name) {
-    style_type = type;
-    this->style_name = style_name;
-}
-
-void StyleTransferNet::Train(const Vector<double*>& training_data, int data_count) {
-    // Placeholder for neural network training
-    // In a real implementation, this would train the neural network
-}
-
-void StyleTransferNet::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double StyleTransferNet::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// VoiceEncoder implementation
-VoiceEncoder::VoiceEncoder() {
-    parameters.Add("compression_ratio", 0.5);
-    parameters.Add("quality", 0.8);
-    parameters.Add("algorithm_complexity", 0.7);
-}
-
-VoiceEncoder::~VoiceEncoder() {
-    // Clean up encoding resources
-}
-
-int VoiceEncoder::Encode(const double* input, int sample_count, double sample_rate, void* output_buffer, int buffer_size) {
-    // This is a simplified implementation of voice encoding
-    // In a real implementation, this would use actual encoding algorithms
-    
-    // In a real implementation, this would encode the input and write to output_buffer
-    // For now, we'll just return a placeholder encoded size
-    return min((int)(sample_count * sizeof(double) / 2), (int)buffer_size); // Simplified compression
-}
-
-void VoiceEncoder::SetEncodingType(EncodingType type) {
-    encoding_type = type;
-}
-
-void VoiceEncoder::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double VoiceEncoder::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// VoiceDecoder implementation
-VoiceDecoder::VoiceDecoder() {
-    parameters.Add("enhancement", 0.5);
-    parameters.Add("noise_reduction", 0.7);
-}
-
-VoiceDecoder::~VoiceDecoder() {
-    // Clean up decoding resources
-}
-
-int VoiceDecoder::Decode(const void* input_buffer, int buffer_size, double* output, int max_samples, double sample_rate) {
-    // This is a simplified implementation of voice decoding
-    // In a real implementation, this would decode the input buffer
-    
-    // For now, we'll just return a placeholder decoded count
-    return min((int)(buffer_size / sizeof(double) * 2), (int)max_samples); // Simplified decoding
-}
-
-void VoiceDecoder::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double VoiceDecoder::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// FormantMorpher implementation
-FormantMorpher::FormantMorpher() {
-    parameters.Add("morph_amount", 0.5);
-    parameters.Add("formant_shift", 1.0);
-    parameters.Add("preservation", 0.7);
-}
-
-FormantMorpher::~FormantMorpher() {
-    // Clean up
-}
-
-void FormantMorpher::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    double morph_amount = parameters.Get("morph_amount", 0.5);
-    
-    for (int i = 0; i < sample_count; i++) {
-        // Apply morphing effect - simplified implementation
-        output[i] = input[i] * (1.0 - morph_amount) + input[i] * morph_amount * parameters.Get("formant_shift", 1.0);
-    }
-    
-    // In a real implementation, this would perform proper formant analysis and morphing
-}
-
-void FormantMorpher::SetMorphTarget(const String& target_name) {
-    morph_target = target_name;
-}
-
-void FormantMorpher::SetMorphType(MorphType type) {
-    morph_type = type;
-}
-
-void FormantMorpher::SetAmount(double amount) {
-    amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    if (parameters.Find("morph_amount") >= 0) {
-        parameters.GetAdd("morph_amount") = amount;
-    } else {
-        parameters.Add("morph_amount", amount);
-    }
-}
-
-void FormantMorpher::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double FormantMorpher::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// LUFSMeter implementation
-LUFSMeter::LUFSMeter() {
-    integrated_loudness = -70.0;
-    range = 0.0;
-    true_peak = 0.0;
-    max_momentary = -70.0;
-    max_short_term = -70.0;
-    
-    // Initialize internal buffers for momentary and short-term measurements
-    int momentary_samples = (int)(400.0 * 44100.0 / 1000.0); // 400ms at 44.1kHz
-    int short_term_samples = (int)(3000.0 * 44100.0 / 1000.0); // 3s at 44.1kHz
-    
-    momentary_buffer.SetCount(momentary_samples);
-    short_term_buffer.SetCount(short_term_samples);
-    
-    for (int i = 0; i < momentary_buffer.GetCount(); i++) {
-        momentary_buffer[i] = -70.0; // Initialize with low level
-    }
-    for (int i = 0; i < short_term_buffer.GetCount(); i++) {
-        short_term_buffer[i] = -70.0; // Initialize with low level
-    }
-}
-
-LUFSMeter::~LUFSMeter() {
-    // Clean up
-}
-
-void LUFSMeter::Process(const double* input, int sample_count, double sample_rate) {
-    // Apply K-weighting filter to input signal (simplified)
-    Vector<double> k_weighted(sample_count);
-    for (int i = 0; i < sample_count; i++) {
-        k_weighted[i] = input[i];
-        // In a real implementation, we would apply the K-weighting curve here
-    }
-    
-    // Calculate instantaneous loudness for each sample
-    Vector<double> inst_loudness(sample_count);
-    for (int i = 0; i < sample_count; i++) {
-        double power = k_weighted[i] * k_weighted[i];
-        // Convert to loudness units (simplified)
-        inst_loudness[i] = 10.0 * log10(power + 1e-9); // Add small value to avoid log(0)
-    }
-    
-    // Update momentary (400ms) loudness buffer
-    for (int i = 0; i < sample_count; i++) {
-        momentary_buffer[momentary_pos] = inst_loudness[i];
-        momentary_pos = (momentary_pos + 1) % momentary_buffer.GetCount();
-    }
-    
-    // Calculate momentary loudness as average of current buffer
-    double momentary_sum = 0.0;
-    for (double val : momentary_buffer) {
-        momentary_sum += pow(10.0, val / 10.0); // Convert back to power, average, then back to dB
-    }
-    if (momentary_buffer.GetCount() > 0) {
-        double avg_power = momentary_sum / momentary_buffer.GetCount();
-        max_momentary = (avg_power > 0) ? 10.0 * log10(avg_power) : -70.0;
-    }
-    
-    // Update short-term (3s) loudness buffer
-    for (int i = 0; i < sample_count; i++) {
-        short_term_buffer[short_term_pos] = inst_loudness[i];
-        short_term_pos = (short_term_pos + 1) % short_term_buffer.GetCount();
-    }
-    
-    // Calculate short-term loudness as average of current buffer
-    double short_sum = 0.0;
-    for (double val : short_term_buffer) {
-        short_sum += pow(10.0, val / 10.0); // Convert back to power, average, then back to dB
-    }
-    if (short_term_buffer.GetCount() > 0) {
-        double avg_power = short_sum / short_term_buffer.GetCount();
-        max_short_term = (avg_power > 0) ? 10.0 * log10(avg_power) : -70.0;
-    }
-    
-    // Update integrated loudness (simplified)
-    for (double val : inst_loudness) {
-        integrated_loudness = (integrated_loudness + val) / 2.0; // Moving average approximation
-    }
-    
-    // Find true peak
-    for (int i = 0; i < sample_count; i++) {
-        if (abs(input[i]) > true_peak) {
-            true_peak = abs(input[i]);
-        }
-    }
-}
-
-double LUFSMeter::GetLoudness(MeterMode mode) const {
-    switch (mode) {
-        case MOMENTARY:
-            return max_momentary;
-        case SHORT_TERM:
-            return max_short_term;
-        case INTEGRATED:
-            return integrated_loudness;
-        case QUASI_PEAK:
-            return 20.0 * log10(true_peak);  // Convert true peak to dB
-        default:
-            return -70.0;  // Very low value for safety
-    }
-}
-
-double LUFSMeter::GetIntegratedLoudness() const {
-    return integrated_loudness;
-}
-
-double LUFSMeter::GetRange() const {
-    return range;
-}
-
-double LUFSMeter::GetTruePeak() const {
-    return true_peak;
-}
-
-double LUFSMeter::GetMaxMomentary() const {
-    return max_momentary;
-}
-
-double LUFSMeter::GetMaxShortTerm() const {
-    return max_short_term;
-}
-
-void LUFSMeter::Reset() {
-    integrated_loudness = -70.0;
-    range = 0.0;
-    true_peak = 0.0;
-    max_momentary = -70.0;
-    max_short_term = -70.0;
-    
-    for (int i = 0; i < momentary_buffer.GetCount(); i++) {
-        momentary_buffer[i] = -70.0;
-    }
-    for (int i = 0; i < short_term_buffer.GetCount(); i++) {
-        short_term_buffer[i] = -70.0;
-    }
-    
-    momentary_pos = 0;
-    short_term_pos = 0;
-}
-
-// ISPDetector implementation
-ISPDetector::ISPDetector() : max_isp(0.0), has_clipping(false) {
-    // Initialize ISP detector
-}
-
-ISPDetector::~ISPDetector() {
-    // Clean up
-}
-
-void ISPDetector::Process(const double* input, int sample_count, double sample_rate) {
-    // ISP (Inter-sample Peak) detection
-    // This requires oversampling or interpolation to detect peaks between samples
-    for (int i = 0; i < sample_count - 1; i++) {
-        // Detect potential peaks between samples using linear interpolation
-        // In a real implementation, we would upsample the signal
-        double mid_sample = (input[i] + input[i + 1]) / 2.0;
-        double current_isp = max(abs(input[i]), abs(mid_sample));
-        max_isp = max(max_isp, current_isp);
-        
-        // Check for clipping
-        if (abs(input[i]) >= 1.0) {
-            has_clipping = true;
-        }
-    }
-    
-    // Also check the last sample
-    if (sample_count > 0) {
-        if (abs(input[sample_count - 1]) >= 1.0) {
-            has_clipping = true;
-        }
-    }
-}
-
-double ISPDetector::GetISP() const {
-    return max_isp;
-}
-
-bool ISPDetector::HasClipping() const {
-    return has_clipping;
-}
-
-void ISPDetector::Reset() {
-    max_isp = 0.0;
-    has_clipping = false;
-}
-
-// AutoGainScheduler implementation
-AutoGainScheduler::AutoGainScheduler() : target_loudness(-16.0), 
-                                        attack_time_ms(10.0), release_time_ms(100.0),
-                                        current_gain(1.0) {
-    parameters.Add("target_loudness", -16.0);
-    parameters.Add("attack_time_ms", 10.0);
-    parameters.Add("release_time_ms", 100.0);
-}
-
-AutoGainScheduler::~AutoGainScheduler() {
-    // Clean up
-}
-
-void AutoGainScheduler::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Update parameters from the parameter set
-    target_loudness = parameters.Get("target_loudness", -16.0);
-    attack_time_ms = parameters.Get("attack_time_ms", 10.0);
-    release_time_ms = parameters.Get("release_time_ms", 100.0);
-    
-    // Calculate coefficients for gain smoothing
-    double attack_coeff = exp(-1.0 / (attack_time_ms * sample_rate / 1000.0));
-    double release_coeff = exp(-1.0 / (release_time_ms * sample_rate / 1000.0));
-    
-    // Calculate target gain based on input loudness
-    double input_power = 0.0;
-    for (int i = 0; i < sample_count; i++) {
-        input_power += input[i] * input[i];
-    }
-    input_power /= sample_count;
-    
-    if (input_power > 0) {
-        double input_loudness = 10.0 * log10(input_power);
-        double gain_db = target_loudness - input_loudness;
-        double target_gain = pow(10.0, gain_db / 20.0);
-        
-        // Apply smoothing based on whether gain is increasing or decreasing
-        if (target_gain > current_gain) {
-            // Attack (gain increasing)
-            current_gain = current_gain * attack_coeff + target_gain * (1.0 - attack_coeff);
+        if (shifted_n == 0) {
+            coefficients[n] = omega / M_PI;
         } else {
-            // Release (gain decreasing)
-            current_gain = current_gain * release_coeff + target_gain * (1.0 - release_coeff);
+            coefficients[n] = sin(omega * shifted_n) / (M_PI * shifted_n);
         }
     }
     
-    // Apply the gain to the output
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i] * current_gain;
-    }
-}
-
-void AutoGainScheduler::SetTargetLoudness(double lufs) {
-    target_loudness = lufs;
-    if (parameters.Find("target_loudness") >= 0) {
-        parameters.GetAdd("target_loudness") = lufs;
-    } else {
-        parameters.Add("target_loudness", lufs);
-    }
-}
-
-void AutoGainScheduler::SetAttackTime(double ms) {
-    attack_time_ms = ms;
-    if (parameters.Find("attack_time_ms") >= 0) {
-        parameters.GetAdd("attack_time_ms") = ms;
-    } else {
-        parameters.Add("attack_time_ms", ms);
-    }
-}
-
-void AutoGainScheduler::SetReleaseTime(double ms) {
-    release_time_ms = ms;
-    if (parameters.Find("release_time_ms") >= 0) {
-        parameters.GetAdd("release_time_ms") = ms;
-    } else {
-        parameters.Add("release_time_ms", ms);
-    }
-}
-
-double AutoGainScheduler::GetAppliedGain() const {
-    return current_gain;
-}
-
-void AutoGainScheduler::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double AutoGainScheduler::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// MasterAssistant implementation
-MasterAssistant::MasterAssistant() : mode(PRESET_BASED), preset_name("Balanced") {
-    parameters.Add("master_mode", (int)PRESET_BASED);
-    parameters.Add("target_lufs", -14.0);
-    parameters.Add("max_ceiling_db", -0.1);
-    parameters.Add("allow_limiter", 1.0);
-}
-
-MasterAssistant::~MasterAssistant() {
-    // Clean up
-}
-
-void MasterAssistant::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Get current parameters
-    int mode_int = (int)parameters.Get("master_mode", (int)PRESET_BASED);
-    mode = static_cast<MasterMode>(mode_int);
-    double target_lufs = parameters.Get("target_loudness", -14.0);
-    double max_ceiling_db = parameters.Get("max_ceiling_db", -0.1);
-    bool allow_limiter = parameters.Get("allow_limiter", 1.0) > 0.5;
+    // Apply windowing
+    ApplyWindow(coefficients, 1); // Hamming window by default
     
-    // Start with the input signal
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i];
+    return coefficients;
+}
+
+Vector<double> FIRDesigner::DesignHighPass(int order, double cutoffFreq, double sampleRate) {
+    // Start with lowpass and convert to highpass
+    Vector<double> lowpass = DesignLowPass(order, cutoffFreq, sampleRate);
+    Vector<double> coefficients = lowpass;
+    
+    // Convert to highpass by spectral inversion
+    for (int i = 0; i < coefficients.GetCount(); i++) {
+        if (i == order / 2) {
+            coefficients[i] = 1.0 - lowpass[i];
+        } else {
+            coefficients[i] = -lowpass[i];
+        }
     }
     
-    // Apply mastering processing based on mode
-    switch (mode) {
-        case PRESET_BASED: {
-            // Apply preset-based mastering
-            if (preset_name == "Balanced") {
-                // Apply gentle EQ and compression for balanced mastering
-                // This is a simplified version - real implementation would be more sophisticated
-                for (int i = 0; i < sample_count; i++) {
-                    output[i] *= 1.1; // Slight gain
-                }
-            } else if (preset_name == "Punchy") {
-                // Apply processing for a more punchy sound
-                for (int i = 0; i < sample_count; i++) {
-                    output[i] *= 1.2; // More gain
-                }
-            } else if (preset_name == "Loud") {
-                // Apply more aggressive processing for loudness
-                for (int i = 0; i < sample_count; i++) {
-                    output[i] *= 1.3; // Even more gain
-                }
-            }
+    return coefficients;
+}
+
+Vector<double> FIRDesigner::DesignBandPass(int order, double lowFreq, double highFreq, double sampleRate) {
+    // Design lowpass for high frequency
+    Vector<double> lowpassHigh = DesignLowPass(order, highFreq, sampleRate);
+    
+    // Design lowpass for low frequency
+    Vector<double> lowpassLow = DesignLowPass(order, lowFreq, sampleRate);
+    
+    // Subtract to get bandpass
+    Vector<double> coefficients;
+    coefficients.SetCount(order + 1);
+    
+    for (int i = 0; i < order + 1; i++) {
+        coefficients[i] = lowpassHigh[i] - lowpassLow[i];
+    }
+    
+    return coefficients;
+}
+
+Vector<double> FIRDesigner::DesignBandStop(int order, double lowFreq, double highFreq, double sampleRate) {
+    // Start with bandpass and convert to bandstop
+    Vector<double> bandpass = DesignBandPass(order, lowFreq, highFreq, sampleRate);
+    Vector<double> coefficients = bandpass;
+    
+    for (int i = 0; i < coefficients.GetCount(); i++) {
+        if (i == order / 2) {
+            coefficients[i] = 1.0 - bandpass[i];
+        } else {
+            coefficients[i] = -bandpass[i];
+        }
+    }
+    
+    return coefficients;
+}
+
+void FIRDesigner::ApplyWindow(Vector<double>& coefficients, int windowType) {
+    switch (windowType) {
+        case 0: // Rectangular
+            break; // No windowing
+        case 1: // Hamming
+            ApplyWindowHamming(coefficients);
             break;
-        }
-        case REFERENCE_BASED: {
-            // In a real implementation, analyze the reference track and match characteristics
+        case 2: // Hann
+            ApplyWindowHann(coefficients);
             break;
-        }
-        case LIVE_ADJUST: {
-            // Adjust based on real-time analysis
+        case 3: // Blackman
+            ApplyWindowBlackman(coefficients);
             break;
-        }
+    }
+}
+
+void FIRDesigner::ApplyWindowHamming(Vector<double>& coefficients) {
+    int length = coefficients.GetCount();
+    for (int i = 0; i < length; i++) {
+        double w = 0.54 - 0.46 * cos(2.0 * M_PI * i / (length - 1));
+        coefficients[i] *= w;
+    }
+}
+
+void FIRDesigner::ApplyWindowHann(Vector<double>& coefficients) {
+    int length = coefficients.GetCount();
+    for (int i = 0; i < length; i++) {
+        double w = 0.5 * (1.0 - cos(2.0 * M_PI * i / (length - 1)));
+        coefficients[i] *= w;
+    }
+}
+
+void FIRDesigner::ApplyWindowBlackman(Vector<double>& coefficients) {
+    int length = coefficients.GetCount();
+    for (int i = 0; i < length; i++) {
+        double w = 0.52 - 0.48 * cos(2.0 * M_PI * i / (length - 1)) + 0.08 * cos(4.0 * M_PI * i / (length - 1));
+        coefficients[i] *= w;
+    }
+}
+
+// IIRDesigner implementation
+IIRDesigner::IIRDesigner() : b0(1.0), b1(0.0), b2(0.0), a1(0.0), a2(0.0), x1(0.0), x2(0.0), y1(0.0), y2(0.0) {
+    // Initialize with unity gain coefficients
+}
+
+void IIRDesigner::DesignLowPass(double freq, double q, double sampleRate) {
+    // Biquad low-pass filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double alpha = sn / (2.0 * q);
+    
+    double scale = 1.0 / (1.0 + alpha);
+    
+    b0 = (1.0 - cs) * 0.5 * scale;
+    b1 = (1.0 - cs) * scale;
+    b2 = b0;  // same as b0
+    a1 = -2.0 * cs * scale;
+    a2 = (1.0 - alpha) * scale;
+}
+
+void IIRDesigner::DesignHighPass(double freq, double q, double sampleRate) {
+    // Biquad high-pass filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double alpha = sn / (2.0 * q);
+    
+    double scale = 1.0 / (1.0 + alpha);
+    
+    b0 = (1.0 + cs) * 0.5 * scale;
+    b1 = -(1.0 + cs) * scale;
+    b2 = b0;  // same as b0
+    a1 = -2.0 * cs * scale;
+    a2 = (1.0 - alpha) * scale;
+}
+
+void IIRDesigner::DesignBandPass(double freq, double q, double sampleRate) {
+    // Biquad band-pass filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double alpha = sn / (2.0 * q);
+    
+    double scale = 1.0 / (1.0 + alpha);
+    
+    b0 = alpha * scale;
+    b1 = 0.0;
+    b2 = -alpha * scale;
+    a1 = -2.0 * cs * scale;
+    a2 = (1.0 - alpha) * scale;
+}
+
+void IIRDesigner::DesignBandStop(double freq, double q, double sampleRate) {
+    // Biquad band-stop filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double alpha = sn / (2.0 * q);
+    
+    double scale = 1.0 / (1.0 + alpha);
+    
+    b0 = 1.0 * scale;
+    b1 = -2.0 * cs * scale;
+    b2 = 1.0 * scale;
+    a1 = -2.0 * cs * scale;
+    a2 = (1.0 - alpha) * scale;
+}
+
+void IIRDesigner::DesignPeakingEQ(double freq, double q, double gain, double sampleRate) {
+    // Biquad peaking EQ filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double A = pow(10.0, gain/40.0);
+    double alpha = sn / (2.0 * q);
+    
+    double scale = 1.0 / (1.0 + alpha/A);
+    
+    b0 = (1.0 + alpha * A) * scale;
+    b1 = (-2.0 * cs) * scale;
+    b2 = (1.0 - alpha * A) * scale;
+    a1 = (-2.0 * cs) * scale;
+    a2 = (1.0 - alpha / A) * scale;
+}
+
+void IIRDesigner::DesignLowShelf(double freq, double slope, double gain, double sampleRate) {
+    // Biquad low-shelf filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double A = pow(10.0, gain/40.0);
+    double beta = sqrt((A + 1.0/A) * (1.0/slope - 1.0) + 2.0);
+    
+    double scale = 1.0 / (A + 1.0 + (A - 1.0) * cs + beta * sn);
+    
+    b0 = A * ((A + 1.0) - (A - 1.0) * cs + beta * sn) * scale;
+    b1 = 2.0 * A * ((A - 1.0) - (A + 1.0) * cs) * scale;
+    b2 = A * ((A + 1.0) - (A - 1.0) * cs - beta * sn) * scale;
+    a1 = -2.0 * ((A - 1.0) + (A + 1.0) * cs) * scale;
+    a2 = ((A + 1.0) + (A - 1.0) * cs - beta * sn) * scale;
+}
+
+void IIRDesigner::DesignHighShelf(double freq, double slope, double gain, double sampleRate) {
+    // Biquad high-shelf filter design using bilinear transform
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double sn = sin(omega);
+    double cs = cos(omega);
+    double A = pow(10.0, gain/40.0);
+    double beta = sqrt((A + 1.0/A) * (1.0/slope - 1.0) + 2.0);
+    
+    double scale = 1.0 / (A + 1.0 - (A - 1.0) * cs + beta * sn);
+    
+    b0 = A * ((A + 1.0) + (A - 1.0) * cs + beta * sn) * scale;
+    b1 = -2.0 * A * ((A - 1.0) + (A + 1.0) * cs) * scale;
+    b2 = A * ((A + 1.0) + (A - 1.0) * cs - beta * sn) * scale;
+    a1 = 2.0 * ((A - 1.0) - (A + 1.0) * cs) * scale;
+    a2 = ((A + 1.0) - (A - 1.0) * cs - beta * sn) * scale;
+}
+
+ValueMap IIRDesigner::GetCoefficients() const {
+    ValueMap coeffs;
+    coeffs.Set("b0", b0);
+    coeffs.Set("b1", b1);
+    coeffs.Set("b2", b2);
+    coeffs.Set("a1", a1);
+    coeffs.Set("a2", a2);
+    return coeffs;
+}
+
+double IIRDesigner::ProcessSample(double input) {
+    // Direct Form II transposed implementation
+    double output = b0 * input + x1;
+    x1 = b1 * input - a1 * output + x2;
+    x2 = b2 * input - a2 * output;
+    
+    return output;
+}
+
+// AmbisonicsEncoder implementation
+AmbisonicsEncoder::AmbisonicsEncoder() : order(kFirstOrder), normalizationType(0) {
+    // Default to first-order SN3D
+}
+
+void AmbisonicsEncoder::SetOrder(AmbisonicOrder ord) {
+    order = ord;
+}
+
+void AmbisonicsEncoder::EncodeSignal(const AudioBuffer& input, Vector<AudioBuffer>& output, 
+                                     double azimuth, double elevation) {
+    // Calculate the number of required output channels
+    int channelCount = GetOutputChannelCount();
+    output.SetCount(channelCount);
+    
+    // Initialize output buffers
+    for (int i = 0; i < channelCount; i++) {
+        output[i].SetCount(input.GetCount());
     }
     
-    // Apply ceiling limit if needed
-    if (allow_limiter) {
-        double ceiling_linear = pow(10.0, max_ceiling_db / 20.0);
-        for (int i = 0; i < sample_count; i++) {
-            if (abs(output[i]) > ceiling_linear) {
-                output[i] = (output[i] > 0) ? ceiling_linear : -ceiling_linear;
-            }
-        }
-    }
-}
-
-void MasterAssistant::SetMasterMode(MasterMode mode) {
-    this->mode = mode;
-    if (parameters.Find("master_mode") >= 0) {
-        parameters.GetAdd("master_mode") = (int)mode;
-    } else {
-        parameters.Add("master_mode", (int)mode);
-    }
-}
-
-void MasterAssistant::SetReferenceTrack(const String& track_name) {
-    reference_track = track_name;
-}
-
-void MasterAssistant::SetPreset(const String& preset_name) {
-    this->preset_name = preset_name;
-}
-
-void MasterAssistant::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double MasterAssistant::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// Stabilizer implementation
-Stabilizer::Stabilizer() : threshold_db(-12.0), ratio(2.0), knee_db(2.0) {
-    parameters.Add("threshold_db", -12.0);
-    parameters.Add("ratio", 2.0);
-    parameters.Add("knee_db", 2.0);
-}
-
-Stabilizer::~Stabilizer() {
-    // Clean up
-}
-
-void Stabilizer::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Update parameters
-    threshold_db = parameters.Get("threshold_db", -12.0);
-    ratio = parameters.Get("ratio", 2.0);
-    knee_db = parameters.Get("knee_db", 2.0);
+    // Convert angles to radians
+    double az = azimuth * M_PI / 180.0;
+    double el = elevation * M_PI / 180.0;
     
-    // Convert threshold to linear
-    double threshold_linear = pow(10.0, threshold_db / 20.0);
-    
-    // Apply dynamics stabilization
-    for (int i = 0; i < sample_count; i++) {
-        double input_abs = abs(input[i]);
-        double gain = 1.0;
+    // For first-order ambisonics (W, X, Y, Z)
+    if (order >= kFirstOrder) {
+        // W (omni) - stays the same
+        output[0] = input;
         
-        if (input_abs > threshold_linear) {
-            // Calculate compression gain using soft knee
-            double over_threshold_db = 20.0 * log10(input_abs / threshold_linear);
-            if (over_threshold_db < -knee_db) {
-                // Below knee - no compression
-                gain = 1.0;
-            } else if (over_threshold_db < knee_db) {
-                // In knee region - gradually apply compression
-                double slope = (over_threshold_db + knee_db) / (2.0 * knee_db);
-                double compressed_db = slope * over_threshold_db / ratio;
-                gain = pow(10.0, (compressed_db - over_threshold_db) / 20.0);
+        // X (front-back) - cosine of azimuth
+        for (int i = 0; i < input.GetCount(); i++) {
+            output[1][i] = input[i] * cos(el) * cos(az);
+        }
+        
+        // Y (left-right) - sine of azimuth
+        for (int i = 0; i < input.GetCount(); i++) {
+            output[2][i] = input[i] * cos(el) * sin(az);
+        }
+        
+        // Z (up-down) - sine of elevation
+        for (int i = 0; i < input.GetCount(); i++) {
+            output[3][i] = input[i] * sin(el);
+        }
+    }
+    
+    // Add higher-order components for second and third order
+    if (order >= kSecondOrder) {
+        // Second-order components would go here
+    }
+    
+    if (order >= kThirdOrder) {
+        // Third-order components would go here
+    }
+}
+
+int AmbisonicsEncoder::GetOutputChannelCount() const {
+    // For Nth order: (N+1)² channels
+    int n = static_cast<int>(order);
+    return (n + 1) * (n + 1);
+}
+
+void AmbisonicsEncoder::SetNormalizationType(int type) {
+    normalizationType = max(0, min(2, type));
+}
+
+// BinauralRenderer implementation
+BinauralRenderer::BinauralRenderer() : hrtfLoaded(false), useITD(true), interpolationMethod(1) {
+    // Initialize default values
+}
+
+bool BinauralRenderer::LoadHRTF(const String& filePath) {
+    // In a real implementation, this would load HRTF data from file
+    // For now, just return true to indicate success
+    filePath = filePath; // Suppress unused parameter warning
+    hrtfLoaded = true;
+    return true;
+}
+
+void BinauralRenderer::Process(const AudioBuffer& input, AudioBuffer& leftOutput, AudioBuffer& rightOutput,
+                               double azimuth, double elevation) {
+    // In a real implementation, this would apply HRTF convolution
+    // For now, we'll implement a simple panning approach
+    
+    leftOutput.SetCount(input.GetCount());
+    rightOutput.SetCount(input.GetCount());
+    
+    // Simple azimuth panning
+    double leftGain = sqrt(0.5 * (1.0 - azimuth / 180.0));  // Convert azimuth (-180 to 180) to gain
+    double rightGain = sqrt(0.5 * (1.0 + azimuth / 180.0));
+    
+    for (int i = 0; i < input.GetCount(); i++) {
+        leftOutput[i] = input[i] * leftGain;
+        rightOutput[i] = input[i] * rightGain;
+    }
+    
+    // In a real implementation, elevation would affect HRTF selection
+    // and ITD would add sample delays
+    if (useITD) {
+        // Simple ITD implementation for center panned sounds
+        if (abs(azimuth) < 10.0) { // Only for center sounds
+            // Add a tiny delay for center position (in samples)
+            double delaySamples = 0.6; // About 0.6 samples at 44.1kHz ≈ 13.6 microseconds
+            if (delaySamples > 0.5) {
+                // Apply the delay by shifting samples
+                int delayInt = (int)delaySamples;
+                double delayFrac = delaySamples - delayInt;
+                
+                // This is a simplified implementation
+                for (int i = delayInt; i < leftOutput.GetCount(); i++) {
+                    leftOutput[i] += leftOutput[i - delayInt] * (1.0 - delayFrac);
+                }
+            }
+        }
+    }
+}
+
+void BinauralRenderer::SetITD(bool enabled) {
+    useITD = enabled;
+}
+
+void BinauralRenderer::SetInterpolationMethod(int method) {
+    interpolationMethod = max(0, min(2, method));
+}
+
+// SurroundMeterBridge implementation
+SurroundMeterBridge::SurroundMeterBridge() : integrationTime(300.0) { // 300ms integration time
+    // Initialize
+}
+
+void SurroundMeterBridge::SetChannelConfig(const String& config) {
+    channelConfig = config;
+    
+    // Set up channel levels based on configuration
+    if (config == "5.1") {
+        channelLevels.SetCount(6); // L, R, C, LFE, Ls, Rs
+    } else if (config == "7.1") {
+        channelLevels.SetCount(8); // L, R, C, LFE, Ls, Rs, Lrs, Rrs
+    } else if (config == "7.1.4") { // Dolby Atmos 7.1.4
+        channelLevels.SetCount(12); // 7.1 + 4 height channels
+    } else {
+        channelLevels.SetCount(2); // Default to stereo
+    }
+}
+
+ValueMap SurroundMeterBridge::ProcessWithMetering(const Vector<AudioBuffer>& input) {
+    ValueMap meterData;
+    
+    // Calculate RMS level for each channel
+    for (int ch = 0; ch < min(input.GetCount(), channelLevels.GetCount()); ch++) {
+        double sum = 0.0;
+        int count = 0;
+        
+        for (double sample : input[ch]) {
+            sum += sample * sample;
+            count++;
+        }
+        
+        if (count > 0) {
+            channelLevels[ch] = sqrt(sum / count);  // RMS
+            meterData.Set("ch" + IntStr(ch), channelLevels[ch]);
+        }
+    }
+    
+    return meterData;
+}
+
+double SurroundMeterBridge::GetChannelLevel(int channelIndex) const {
+    if (channelIndex >= 0 && channelIndex < channelLevels.GetCount()) {
+        return channelLevels[channelIndex];
+    }
+    return 0.0;
+}
+
+void SurroundMeterBridge::SetIntegrationTime(double ms) {
+    integrationTime = max(10.0, min(2000.0, ms)); // Clamp between 10ms and 2000ms
+}
+
+// RackHost implementation
+RackHost::RackHost() {
+    // Initialize the rack host
+}
+
+void RackHost::AddModule(const Module& module) {
+    modules.Add(module);
+    bypassStates.GetAdd(module.id) = false;  // Default to not bypassed
+}
+
+bool RackHost::RemoveModule(const String& id) {
+    for (int i = 0; i < modules.GetCount(); i++) {
+        if (modules[i].id == id) {
+            modules.Remove(i);
+            bypassStates.RemoveKey(id);
+            return true;
+        }
+    }
+    return false;
+}
+
+RackHost::Module* RackHost::GetModule(const String& id) {
+    for (auto& module : modules) {
+        if (module.id == id) {
+            return &module;
+        }
+    }
+    return nullptr;
+}
+
+void RackHost::Process(const AudioBuffer& input, AudioBuffer& output) {
+    output = input;  // Start with input as output
+    
+    // Process through each module in the rack
+    for (int i = 0; i < modules.GetCount(); i++) {
+        if (!bypassStates.Get(modules[i].id, false)) {
+            // In a real implementation, apply the module's processing here
+            // For now, we'll just pass through the audio
+        }
+    }
+}
+
+bool RackHost::SetBypass(const String& id, bool bypassed) {
+    if (bypassStates.Find(id)) {
+        bypassStates.Set(id, bypassed);
+        return true;
+    }
+    return false;
+}
+
+String RackHost::Serialize() const {
+    // In a real implementation, this would serialize the rack configuration to JSON
+    // For now, return a simple representation
+    String result = "[Rack Configuration]";
+    for (const auto& module : modules) {
+        result += "\nModule: " + module.name + " (" + module.id + ")";
+    }
+    return result;
+}
+
+bool RackHost::Deserialize(const String& config) {
+    // In a real implementation, this would deserialize the rack configuration from JSON
+    // For now, return true to indicate success
+    config = config; // Suppress unused parameter warning
+    return true;
+}
+
+// ChainNode implementation
+ChainNode::ChainNode() : type(kInputNode), input(nullptr) {
+    // Initialize default values
+}
+
+void ChainNode::Initialize(NodeType type, const String& name) {
+    this->type = type;
+    this->name = name;
+    outputs.Clear();
+    input = nullptr;
+}
+
+bool ChainNode::Connect(ChainNode* nextNode) {
+    if (!nextNode) return false;
+    
+    // Check if already connected
+    for (auto output : outputs) {
+        if (output == nextNode) return true;  // Already connected
+    }
+    
+    outputs.Add(nextNode);
+    nextNode->input = this;
+    return true;
+}
+
+void ChainNode::Disconnect(ChainNode* node) {
+    if (!node) return;
+    
+    for (int i = 0; i < outputs.GetCount(); i++) {
+        if (outputs[i] == node) {
+            outputs.Remove(i);
+            if (node->input == this) {
+                node->input = nullptr;
+            }
+            break;
+        }
+    }
+}
+
+void ChainNode::Process(const AudioBuffer& input, AudioBuffer& output) {
+    // Default implementation: pass through
+    output = input;
+    
+    // Process this node's specific function based on type
+    switch (type) {
+        case kEffectNode:
+            // Apply effect processing
+            break;
+        case kInstrumentNode:
+            // Generate audio from instrument
+            break;
+        case kMixerNode:
+            // In a real implementation, this would mix with other inputs
+            break;
+        default:
+            // For input/output nodes, just pass through
+            break;
+    }
+    
+    // Pass output to connected nodes
+    for (auto nextNode : outputs) {
+        AudioBuffer nextOutput;
+        nextNode->Process(output, nextOutput);
+    }
+}
+
+void ChainNode::SetParameter(const String& id, double value) {
+    parameters.Set(id, value);
+}
+
+double ChainNode::GetParameter(const String& id) const {
+    return parameters.Get(id, 0.0);
+}
+
+// MacroMapper implementation
+MacroMapper::MacroMapper() {
+    // Initialize
+}
+
+void MacroMapper::MapControl(const String& controlId, const String& paramId, 
+                             double min, double max, double defaultValue) {
+    Mapping mapping;
+    mapping.paramId = paramId;
+    mapping.min = min;
+    mapping.max = max;
+    mapping.defaultValue = defaultValue;
+    
+    singleMappings.GetAdd(controlId) = mapping;
+    currentValues.GetAdd(paramId) = defaultValue;
+}
+
+void MacroMapper::MapControlToMultiple(const String& controlId, 
+                                      const Vector< Tuple<String, double> >& paramMap) {
+    MultiMapping multiMap;
+    multiMap.paramMap = paramMap;
+    
+    multiMappings.GetAdd(controlId) = multiMap;
+    
+    // Initialize the parameters
+    for (const auto& pair : paramMap) {
+        currentValues.GetAdd(pair.a) = 0.0;  // Initialize with 0
+    }
+}
+
+void MacroMapper::UpdateParameter(const String& controlId, double controlValue) {
+    // Handle single mapping
+    if (singleMappings.Find(controlId)) {
+        const auto& mapping = singleMappings.Get(controlId);
+        // Map control value to parameter range
+        double paramValue = mapping.min + (controlValue * (mapping.max - mapping.min));
+        currentValues.Set(mapping.paramId, paramValue);
+    }
+    
+    // Handle multi mapping
+    if (multiMappings.Find(controlId)) {
+        const auto& multiMap = multiMappings.Get(controlId);
+        for (const auto& pair : multiMap.paramMap) {
+            // Apply weighted mapping
+            String paramId = pair.a;
+            double weight = pair.b;
+            double paramValue = controlValue * weight;
+            
+            double currentValue = currentValues.Get(paramId, 0.0);
+            currentValues.Set(paramId, currentValue + paramValue);
+        }
+    }
+}
+
+double MacroMapper::GetControlValue(const String& controlId) const {
+    // In a real implementation, this would reverse-map parameter values to control values
+    return 0.0;  // Placeholder
+}
+
+double MacroMapper::GetParameterValue(const String& paramId) const {
+    return currentValues.Get(paramId, 0.0);
+}
+
+void MacroMapper::ClearMapping(const String& controlId) {
+    singleMappings.RemoveKey(controlId);
+    multiMappings.RemoveKey(controlId);
+}
+
+// PresetBrowser implementation
+PresetBrowser::PresetBrowser() {
+    // Initialize default category
+    Category defaultCat;
+    defaultCat.name = "Default";
+    categories.Add(defaultCat);
+}
+
+void PresetBrowser::AddPreset(const String& category, const String& name, const ValueMap& parameters) {
+    int catIdx = -1;
+    
+    // Find or create category
+    for (int i = 0; i < categories.GetCount(); i++) {
+        if (categories[i].name == category) {
+            catIdx = i;
+            break;
+        }
+    }
+    
+    if (catIdx == -1) {
+        Category newCat;
+        newCat.name = category;
+        categories.Add(newCat);
+        catIdx = categories.GetCount() - 1;
+    }
+    
+    // Add preset to category
+    Preset preset;
+    preset.name = name;
+    preset.parameters = parameters;
+    categories[catIdx].presets.Add(preset);
+}
+
+ValueMap PresetBrowser::LoadPreset(const String& category, const String& name) const {
+    for (const auto& cat : categories) {
+        if (cat.name == category) {
+            for (const auto& preset : cat.presets) {
+                if (preset.name == name) {
+                    return preset.parameters;
+                }
+            }
+        }
+    }
+    return ValueMap(); // Empty if not found
+}
+
+Vector<String> PresetBrowser::GetCategories() const {
+    Vector<String> result;
+    for (const auto& cat : categories) {
+        result.Add(cat.name);
+    }
+    return result;
+}
+
+Vector<String> PresetBrowser::GetPresetsInCategory(const String& category) const {
+    Vector<String> result;
+    for (const auto& cat : categories) {
+        if (cat.name == category) {
+            for (const auto& preset : cat.presets) {
+                result.Add(preset.name);
+            }
+            break;
+        }
+    }
+    return result;
+}
+
+bool PresetBrowser::SavePresetToFile(const String& category, const String& name, const String& filePath) const {
+    // In a real implementation, this would save the preset to a file
+    return true; // Placeholder
+}
+
+bool PresetBrowser::LoadPresetFromFile(const String& filePath, String& category, String& name, ValueMap& params) {
+    // In a real implementation, this would load the preset from a file
+    return false; // Placeholder
+}
+
+bool PresetBrowser::DeletePreset(const String& category, const String& name) {
+    for (auto& cat : categories) {
+        if (cat.name == category) {
+            for (int i = 0; i < cat.presets.GetCount(); i++) {
+                if (cat.presets[i].name == name) {
+                    cat.presets.Remove(i);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+int PresetBrowser::GetPresetCount(const String& category) const {
+    for (const auto& cat : categories) {
+        if (cat.name == category) {
+            return cat.presets.GetCount();
+        }
+    }
+    return 0;
+}
+
+// LatencyManager implementation
+LatencyManager::LatencyManager() : totalLatency(0) {
+    // Initialize
+}
+
+void LatencyManager::RegisterComponent(const String& id, int latencySamples) {
+    componentLatencies.GetAdd(id) = latencySamples;
+    
+    // Update total latency
+    totalLatency = 0;
+    for (int i = 0; i < componentLatencies.GetCount(); i++) {
+        totalLatency += componentLatencies[i];
+    }
+}
+
+void LatencyManager::UnregisterComponent(const String& id) {
+    if (componentLatencies.Find(id)) {
+        int latencyToRemove = componentLatencies.Get(id);
+        componentLatencies.RemoveKey(id);
+        totalLatency -= latencyToRemove;
+    }
+}
+
+int LatencyManager::GetTotalLatency() const {
+    return totalLatency;
+}
+
+int LatencyManager::GetComponentLatency(const String& id) const {
+    return componentLatencies.Get(id, 0);
+}
+
+void LatencyManager::ApplyLatencyCompensation(AudioBuffer& buffer, int delaySamples) {
+    if (delaySamples <= 0) return;
+    
+    // Add delay to the buffer
+    AudioBuffer delayedBuffer;
+    delayedBuffer.SetCount(buffer.GetCount());
+    
+    for (int i = 0; i < buffer.GetCount(); i++) {
+        if (i >= delaySamples) {
+            delayedBuffer[i] = buffer[i - delaySamples];
+        } else {
+            delayedBuffer[i] = 0.0; // Zero for delayed samples
+        }
+    }
+    
+    buffer = delayedBuffer;
+}
+
+int LatencyManager::GetCompensationDelay() const {
+    return totalLatency;
+}
+
+void LatencyManager::Reset() {
+    componentLatencies.Clear();
+    totalLatency = 0;
+}
+
+// SessionManager implementation
+SessionManager::SessionManager() {
+    // Initialize with an empty session
+    currentSession.name = "Untitled";
+    sessionDirectory = "sessions/";
+}
+
+void SessionManager::CreateSession(const String& name) {
+    currentSession.name = name;
+    currentSession.description = "New session";
+    currentSession.rackStates.Clear();
+    currentSession.parameterSets.Clear();
+    currentSession.automationData.Clear();
+    currentSession.macroStates.Clear();
+}
+
+bool SessionManager::LoadSession(const String& name) {
+    String filePath = GetSessionFilePath(name);
+    currentSession = LoadSessionFromFile(filePath);
+    
+    if (!currentSession.name.IsEmpty()) {
+        return true;
+    }
+    return false;
+}
+
+bool SessionManager::SaveSession(const String& name) {
+    return SaveSessionWithDescription(name, currentSession.description);
+}
+
+bool SessionManager::SaveSessionWithDescription(const String& name, const String& description) {
+    currentSession.name = name;
+    currentSession.description = description;
+    
+    String filePath = GetSessionFilePath(name);
+    return SaveSessionToFile(currentSession, filePath);
+}
+
+Vector<String> SessionManager::GetAvailableSessions() const {
+    // In a real implementation, this would scan the session directory
+    // For now, return a placeholder list
+    Vector<String> sessions;
+    sessions.Add("Default Session");
+    sessions.Add("Studio Rack Mix");
+    sessions.Add("Synth Setup");
+    return sessions;
+}
+
+void SessionManager::ApplySession(const SessionData& session) {
+    currentSession = session;
+    // In a real implementation, we would apply the configuration to the actual system
+}
+
+SessionManager::SessionData SessionManager::GetCurrentSession() const {
+    return currentSession;
+}
+
+void SessionManager::CloseSession() {
+    currentSession.name = "";
+    currentSession.description = "";
+    currentSession.rackStates.Clear();
+    currentSession.parameterSets.Clear();
+    currentSession.automationData.Clear();
+    currentSession.macroStates.Clear();
+}
+
+String SessionManager::GetSessionDirectory() const {
+    return sessionDirectory;
+}
+
+void SessionManager::SetSessionDirectory(const String& dir) {
+    sessionDirectory = dir;
+}
+
+String SessionManager::GetSessionFilePath(const String& name) const {
+    return sessionDirectory + name + ".session";
+}
+
+bool SessionManager::SaveSessionToFile(const SessionData& session, const String& filePath) const {
+    // In a real implementation, this would serialize the session to a file
+    // For now, return true to indicate success
+    return true;
+}
+
+SessionManager::SessionData SessionManager::LoadSessionFromFile(const String& filePath) const {
+    // In a real implementation, this would deserialize the session from a file
+    // For now, return an empty session
+    SessionData emptySession;
+    return emptySession;
+}
+
+} // namespace DSP
+
+// NET namespace implementation
+namespace NET {
+
+TransportLayer::TransportLayer() : connType(kTCP), port(0), connected(false) {
+    // Initialize with default values
+}
+
+bool TransportLayer::Initialize(ConnectionType type, int port) {
+    this->connType = type;
+    this->port = port;
+    this->connected = true;  // For simulation purposes
+    
+    statistics.Set("bytes_sent", 0);
+    statistics.Set("bytes_received", 0);
+    statistics.Set("connection_time", 0);
+    
+    return true;
+}
+
+bool TransportLayer::Send(const String& data, const String& address) {
+    if (!connected) return false;
+    
+    // In a real implementation, this would send the data over the network
+    // Update statistics
+    int64 bytes = data.GetCount();
+    statistics.Set("bytes_sent", (int64)statistics.Get("bytes_sent", 0) + bytes);
+    
+    return true;
+}
+
+String TransportLayer::Receive() {
+    if (!connected) return "";
+    
+    // In a real implementation, this would receive data from the network
+    // Update statistics
+    statistics.Set("bytes_received", (int64)statistics.Get("bytes_received", 0) + 1024);
+    
+    return "dummy received data";
+}
+
+bool TransportLayer::IsConnected() const {
+    return connected;
+}
+
+void TransportLayer::Close() {
+    connected = false;
+}
+
+ValueMap TransportLayer::GetStats() const {
+    return statistics;
+}
+
+// AIRecommender implementation
+AIRecommender::AIRecommender() {
+    // Initialize with default style model
+}
+
+Vector<String> AIRecommender::GetChordRecommendations(const Context& context, int count) {
+    Vector<String> recommendations;
+    
+    // Simple algorithm to generate chord recommendations
+    // In a real implementation, this would use a trained model
+    if (context.currentChords.GetCount() > 0) {
+        // Use the last chord to suggest progressions
+        String lastChord = context.currentChords[context.currentChords.GetCount()-1];
+        
+        // Common progressions: vi-IV-I-V, ii-V-I, etc.
+        // This is a simplified approach
+        if (lastChord == "C" || lastChord == "Am") {
+            recommendations.Add("F");  // IV
+            recommendations.Add("G");  // V
+            recommendations.Add("Em"); // vi
+            recommendations.Add("Dm"); // ii
+        } else if (lastChord == "G") {
+            recommendations.Add("C");  // IV of G
+            recommendations.Add("D");  // V of G
+            recommendations.Add("Em"); // vi of G
+            recommendations.Add("Am"); // ii of G
+        } else {
+            // Default progressions
+            recommendations.Add("C");
+            recommendations.Add("Am");
+            recommendations.Add("F");
+            recommendations.Add("G");
+        }
+    } else {
+        // If no current chords, suggest common starting chords
+        recommendations.Add("C");
+        recommendations.Add("Am");
+        recommendations.Add("F");
+        recommendations.Add("G");
+    }
+    
+    // Limit to requested count
+    if (recommendations.GetCount() > count) {
+        recommendations.SetCount(count);
+    }
+    
+    return recommendations;
+}
+
+Vector<String> AIRecommender::GetMelodyRecommendations(const Context& context, int count) {
+    Vector<String> recommendations;
+    
+    // Simple algorithm to generate melody recommendations
+    // In a real implementation, this would use a trained model
+    if (context.currentMelody.GetCount() > 0) {
+        // Continue the melody based on current notes
+        String lastNote = context.currentMelody[context.currentMelody.GetCount()-1];
+        
+        // Generate some notes that would follow
+        recommendations.Add(lastNote + "#");  // A note above
+        recommendations.Add(lastNote);        // The same note
+        recommendations.Add(lastNote - "2");  // A note below (simplified)
+    } else {
+        // If no current melody, suggest starting notes
+        recommendations.Add("C4");
+        recommendations.Add("E4");
+        recommendations.Add("G4");
+        recommendations.Add("B4");
+    }
+    
+    // Limit to requested count
+    if (recommendations.GetCount() > count) {
+        recommendations.SetCount(count);
+    }
+    
+    return recommendations;
+}
+
+Vector<String> AIRecommender::GetBasslineRecommendations(const Context& context, int count) {
+    Vector<String> recommendations;
+    
+    // Simple algorithm to generate bassline recommendations
+    // Bass often follows root notes of chords
+    if (context.currentChords.GetCount() > 0) {
+        String currentChord = context.currentChords[context.currentChords.GetCount()-1];
+        recommendations.Add(currentChord + "2");  // Bass version of chord root
+        recommendations.Add(currentChord + "1");
+        
+        // Add some walking bass notes
+        recommendations.Add((currentChord[0] + 1) + "2");  // Next note in scale
+        recommendations.Add((currentChord[0] - 1) + "2");  // Previous note in scale
+    } else {
+        recommendations.Add("C2");
+        recommendations.Add("F2");
+        recommendations.Add("G2");
+        recommendations.Add("A2");
+    }
+    
+    // Limit to requested count
+    if (recommendations.GetCount() > count) {
+        recommendations.SetCount(count);
+    }
+    
+    return recommendations;
+}
+
+Vector<String> AIRecommender::GetDrumPatternRecommendations(const Context& context, int count) {
+    Vector<String> recommendations;
+    
+    // Generate simple drum patterns based on genre and tempo
+    String pattern;
+    
+    if (context.genre.Find("rock") >= 0) {
+        pattern = "Kick on 1 and 3, Snare on 2 and 4, Hi-hat on all beats";
+        recommendations.Add(pattern);
+        pattern = "Kick on 1, Snare on 2 and 4, Hi-hat pattern";
+        recommendations.Add(pattern);
+    } else if (context.genre.Find("electronic") >= 0) {
+        pattern = "Four-on-the-floor kick, syncopated snares";
+        recommendations.Add(pattern);
+        pattern = "Syncopated kick and snare pattern";
+        recommendations.Add(pattern);
+    } else {
+        // Default pattern
+        pattern = "Basic 4/4 pattern: Kick, Hi-hat, Snare, Hi-hat";
+        recommendations.Add(pattern);
+        pattern = "Kick on 1, Snare on 3";
+        recommendations.Add(pattern);
+    }
+    
+    // Limit to requested count
+    if (recommendations.GetCount() > count) {
+        recommendations.SetCount(count);
+    }
+    
+    return recommendations;
+}
+
+void AIRecommender::ProvideFeedback(const String& recommendation, bool liked) {
+    feedbackHistory.Add(Tuple<String, bool>(recommendation, liked));
+    
+    // In a real implementation, this feedback would be used to train the model
+    // For now, we just store it
+}
+
+bool AIRecommender::LoadStyleModel(const String& modelPath) {
+    // In a real implementation, this would load a trained model from file
+    // For now, return true to indicate success
+    return true;
+}
+
+double AIRecommender::GetRecommendationConfidence(const String& recommendation) const {
+    // In a real implementation, this would return the confidence of the recommendation
+    // For now, return a default value
+    return 0.85;  // 85% confidence as default
+}
+
+ValueMap AIRecommender::AnalyzeContext(const Context& context) {
+    ValueMap analysis;
+    
+    // Perform basic analysis of the context
+    analysis.Set("tempo", context.tempo);
+    analysis.Set("key", context.key);
+    analysis.Set("genre", context.genre);
+    analysis.Set("chord_count", (int)context.currentChords.GetCount());
+    
+    // Calculate some basic metrics
+    if (context.tempo < 100) {
+        analysis.Set("energy", "low");
+    } else if (context.tempo < 140) {
+        analysis.Set("energy", "medium");
+    } else {
+        analysis.Set("energy", "high");
+    }
+    
+    return analysis;
+}
+
+} // namespace NET
+
+#endif
+
+// Calibration namespace implementation
+namespace Calibration {
+
+MeasurementAnalyzer::MeasurementAnalyzer() {
+    // Initialize
+}
+
+ValueMap MeasurementAnalyzer::AnalyzeImpulseResponse(const AudioBuffer& impulse) {
+    ValueMap result;
+    
+    // Find peak in impulse response (for delay measurement)
+    double maxVal = 0.0;
+    int peakPos = 0;
+    
+    for (int i = 0; i < impulse.GetCount(); i++) {
+        if (abs(impulse[i]) > maxVal) {
+            maxVal = abs(impulse[i]);
+            peakPos = i;
+        }
+    }
+    
+    result.Set("peak_position", peakPos);
+    result.Set("peak_value", maxVal);
+    
+    // Calculate total energy
+    double energy = 0.0;
+    for (double sample : impulse) {
+        energy += sample * sample;
+    }
+    result.Set("energy", energy);
+    
+    // Calculate decay time (T60) - time to decay 60dB
+    double initialEnergy = impulse[0] * impulse[0];
+    double targetEnergy = initialEnergy * pow(10.0, -60.0/10.0);  // -60dB
+    
+    int t60Sample = 0;
+    for (int i = 0; i < impulse.GetCount(); i++) {
+        if (impulse[i] * impulse[i] <= targetEnergy) {
+            t60Sample = i;
+            break;
+        }
+    }
+    
+    result.Set("t60_sample", t60Sample);
+    
+    return result;
+}
+
+ValueMap MeasurementAnalyzer::AnalyzeFrequencyResponse(const AudioBuffer& stimulus, const AudioBuffer& response) {
+    ValueMap result;
+    
+    // In a real implementation, this would compute FFTs and calculate frequency response
+    // For now, we'll just return some placeholder values
+    
+    // Calculate correlation between signals
+    double correlation = 0.0;
+    int minSize = min(stimulus.GetCount(), response.GetCount());
+    
+    for (int i = 0; i < minSize; i++) {
+        correlation += stimulus[i] * response[i];
+    }
+    
+    result.Set("correlation", correlation / minSize);
+    
+    return result;
+}
+
+double MeasurementAnalyzer::MeasureTHDN(const AudioBuffer& signal, const AudioBuffer& fundamental) {
+    // Calculate fundamental power
+    double fundPower = 0.0;
+    for (double sample : fundamental) {
+        fundPower += sample * sample;
+    }
+    
+    // Calculate total signal power
+    double totalPower = 0.0;
+    for (double sample : signal) {
+        totalPower += sample * sample;
+    }
+    
+    // Calculate noise/distortion power
+    double noisePower = max(0.0, totalPower - fundPower);
+    
+    // Calculate THD+N ratio
+    if (fundPower > 0.0) {
+        double thdnRatio = sqrt(noisePower / fundPower);
+        return 20.0 * log10(thdnRatio); // Convert to dB
+    }
+    
+    return -999.0; // Very low value if fundamental power is zero
+}
+
+double MeasurementAnalyzer::MeasureIntermodulationDistortion(const AudioBuffer& signal) {
+    // This would require more complex analysis
+    // For now, return a placeholder value
+    return -60.0; // Typical IMD value in dB
+}
+
+double MeasurementAnalyzer::MeasureLatency(const AudioBuffer& stimulus, const AudioBuffer& response, double sampleRate) {
+    // Find the delay between stimulus and response
+    int maxDelay = min(stimulus.GetCount(), response.GetCount()) / 4; // reasonable maximum delay
+    double maxCorrelation = -1.0;
+    int bestDelay = 0;
+    
+    for (int delay = 0; delay < maxDelay; delay++) {
+        double correlation = 0.0;
+        int count = 0;
+        
+        for (int i = delay; i < stimulus.GetCount() && i - delay < response.GetCount(); i++) {
+            correlation += stimulus[i] * response[i - delay];
+            count++;
+        }
+        
+        if (count > 0) {
+            correlation /= count; // Normalize
+        }
+        
+        if (abs(correlation) > maxCorrelation) {
+            maxCorrelation = abs(correlation);
+            bestDelay = delay;
+        }
+    }
+    
+    // Convert samples to milliseconds
+    return (bestDelay / sampleRate) * 1000.0;
+}
+
+PhaseAnalyzer::PhaseAnalyzer() {
+    // Initialize
+}
+
+ValueMap PhaseAnalyzer::AnalyzePhase(const AudioBuffer& signal1, const AudioBuffer& signal2) {
+    ValueMap result;
+    
+    // Calculate phase difference over time
+    double avgPhaseDiff = 0.0;
+    int count = 0;
+    
+    int minSize = min(signal1.GetCount(), signal2.GetCount());
+    for (int i = 0; i < minSize; i++) {
+        // Approximate phase difference using Hilbert transform approach
+        double phaseDiff = atan2(signal2[i], signal1[i]);
+        avgPhaseDiff += phaseDiff;
+        count++;
+    }
+    
+    if (count > 0) {
+        avgPhaseDiff /= count;
+    }
+    
+    result.Set("avg_phase_difference", avgPhaseDiff);
+    
+    return result;
+}
+
+double PhaseAnalyzer::GetPhaseDifferenceAtFrequency(const AudioBuffer& signal1, const AudioBuffer& signal2, 
+                                                   double freq, double sampleRate) {
+    // Find FFT bin for the given frequency
+    int bin = (int)(freq * signal1.GetCount() / sampleRate);
+    if (bin >= signal1.GetCount()/2) bin = signal1.GetCount()/2 - 1;
+    
+    // Use a simple correlation approach for the specific frequency
+    double omega = 2.0 * M_PI * freq / sampleRate;
+    double cosSum = 0.0, sinSum = 0.0;
+    
+    for (int i = 0; i < signal1.GetCount() && i < signal2.GetCount(); i++) {
+        double phase = omega * i;
+        cosSum += (signal1[i] * cos(phase) + signal2[i] * sin(phase));
+        sinSum += (signal1[i] * sin(phase) - signal2[i] * cos(phase));
+    }
+    
+    return atan2(sinSum, cosSum);
+}
+
+bool PhaseAnalyzer::IsPhaseCoherent(const AudioBuffer& signal1, const AudioBuffer& signal2, 
+                                   double coherenceThreshold) {
+    // Calculate correlation coefficient
+    double sum1 = 0.0, sum2 = 0.0, sum12 = 0.0;
+    double mean1 = 0.0, mean2 = 0.0;
+    
+    int minSize = min(signal1.GetCount(), signal2.GetCount());
+    
+    // Calculate means
+    for (int i = 0; i < minSize; i++) {
+        mean1 += signal1[i];
+        mean2 += signal2[i];
+    }
+    mean1 /= minSize;
+    mean2 /= minSize;
+    
+    // Calculate correlation
+    for (int i = 0; i < minSize; i++) {
+        double diff1 = signal1[i] - mean1;
+        double diff2 = signal2[i] - mean2;
+        sum1 += diff1 * diff1;
+        sum2 += diff2 * diff2;
+        sum12 += diff1 * diff2;
+    }
+    
+    if (sum1 > 0 && sum2 > 0) {
+        double correlation = sum12 / sqrt(sum1 * sum2);
+        return abs(correlation) >= coherenceThreshold;
+    }
+    
+    return false;
+}
+
+ValueMap PhaseAnalyzer::GetPhaseCorrelationData(const AudioBuffer& signal1, const AudioBuffer& signal2) {
+    ValueMap result;
+    
+    // Calculate full phase correlation
+    double correlation = 0.0;
+    int minSize = min(signal1.GetCount(), signal2.GetCount());
+    
+    for (int i = 0; i < minSize; i++) {
+        correlation += signal1[i] * signal2[i];
+    }
+    
+    result.Set("correlation", correlation / minSize);
+    
+    return result;
+}
+
+DelaySolver::DelaySolver() : algorithm(0) {
+    // Default to cross-correlation
+}
+
+double DelaySolver::SolveDelay(const AudioBuffer& reference, const AudioBuffer& delayed, double sampleRate) {
+    if (algorithm == 0) { // Cross-correlation
+        int maxDelay = min(reference.GetCount(), delayed.GetCount()) / 4; // reasonable maximum delay
+        double maxCorrelation = -1.0;
+        int bestDelay = 0;
+        
+        for (int delay = -maxDelay; delay < maxDelay; delay++) {
+            double correlation = 0.0;
+            int count = 0;
+            
+            if (delay >= 0) {
+                for (int i = 0; i < reference.GetCount() - delay && i < delayed.GetCount(); i++) {
+                    correlation += reference[i + delay] * delayed[i];
+                    count++;
+                }
             } else {
-                // Above knee - full compression
-                double compressed_db = over_threshold_db / ratio;
-                gain = pow(10.0, (compressed_db - over_threshold_db) / 20.0);
-            }
-        }
-        
-        // Apply the calculated gain
-        output[i] = input[i] * gain;
-    }
-}
-
-void Stabilizer::SetThreshold(double db) {
-    threshold_db = db;
-    if (parameters.Find("threshold_db") >= 0) {
-        parameters.GetAdd("threshold_db") = db;
-    } else {
-        parameters.Add("threshold_db", db);
-    }
-}
-
-void Stabilizer::SetRatio(double ratio) {
-    this->ratio = ratio;
-    if (parameters.Find("ratio") >= 0) {
-        parameters.GetAdd("ratio") = ratio;
-    } else {
-        parameters.Add("ratio", ratio);
-    }
-}
-
-void Stabilizer::SetKnee(double db) {
-    knee_db = db;
-    if (parameters.Find("knee_db") >= 0) {
-        parameters.GetAdd("knee_db") = db;
-    } else {
-        parameters.Add("knee_db", db);
-    }
-}
-
-void Stabilizer::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double Stabilizer::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// ImpactShaper implementation
-ImpactShaper::ImpactShaper() : mode(ATTACK_ENHANCE), amount(0.5) {
-    if (parameters.Find("shape_mode") >= 0) {
-        parameters.GetAdd("shape_mode") = (int)ATTACK_ENHANCE;
-    } else {
-        parameters.Add("shape_mode", (int)ATTACK_ENHANCE);
-    }
-    if (parameters.Find("amount") >= 0) {
-        parameters.GetAdd("amount") = 0.5;
-    } else {
-        parameters.Add("amount", 0.5);
-    }
-    if (parameters.Find("attack_sensitivity") >= 0) {
-        parameters.GetAdd("attack_sensitivity") = 0.5;
-    } else {
-        parameters.Add("attack_sensitivity", 0.5);
-    }
-    if (parameters.Find("release_sensitivity") >= 0) {
-        parameters.GetAdd("release_sensitivity") = 0.5;
-    } else {
-        parameters.Add("release_sensitivity", 0.5);
-    }
-}
-
-ImpactShaper::~ImpactShaper() {
-    // Clean up
-}
-
-void ImpactShaper::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Update parameters
-    int mode_int = (int)parameters.Get("shape_mode", (int)ATTACK_ENHANCE);
-    mode = static_cast<ShapeMode>(mode_int);
-    amount = parameters.Get("amount", 0.5);
-    
-    // Copy input to output initially
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i];
-    }
-    
-    // Apply shaping based on mode
-    switch (mode) {
-        case ATTACK_ENHANCE: {
-            // Enhance attack transients
-            double sensitivity = parameters.Get("attack_sensitivity", 0.5);
-            for (int i = 1; i < sample_count; i++) {
-                double delta = abs(input[i] - input[i-1]);
-                if (delta > sensitivity) {
-                    output[i] *= (1.0 + amount);  // Boost the sample after a large change
+                for (int i = 0; i < delayed.GetCount() + delay && i < reference.GetCount(); i++) {
+                    correlation += reference[i] * delayed[i - delay];
+                    count++;
                 }
             }
-            break;
-        }
-        case DECAY_CONTROL: {
-            // Control decay characteristics
-            for (int i = 0; i < sample_count; i++) {
-                output[i] *= (1.0 - amount * 0.3);  // Simple decay control
+            
+            if (count > 0) {
+                correlation /= count; // Normalize
             }
-            break;
-        }
-        case TRANSIENT_SHAPER: {
-            // General transient shaping
-            for (int i = 0; i < sample_count; i++) {
-                output[i] *= (0.7 + amount * 0.6);  // Apply gain based on amount
-            }
-            break;
-        }
-    }
-}
-
-void ImpactShaper::SetShapeMode(ShapeMode mode) {
-    this->mode = mode;
-    if (parameters.Find("shape_mode") >= 0) {
-        parameters.GetAdd("shape_mode") = (int)mode;
-    } else {
-        parameters.Add("shape_mode", (int)mode);
-    }
-}
-
-void ImpactShaper::SetAmount(double amount) {
-    this->amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    if (parameters.Find("amount") >= 0) {
-        parameters.GetAdd("amount") = this->amount;
-    } else {
-        parameters.Add("amount", this->amount);
-    }
-}
-
-void ImpactShaper::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double ImpactShaper::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// PriorityAllocator implementation
-PriorityAllocator::PriorityAllocator() {
-    parameters.Add("frequency_resolution", 64.0);
-    parameters.Add("allocation_method", 0.0);  // 0=dynamic, 1=static
-}
-
-PriorityAllocator::~PriorityAllocator() {
-    // Clean up
-}
-
-void PriorityAllocator::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // For now, implement a basic version that just copies the input
-    // In a real implementation, this would analyze frequency content and
-    // apply band-limited processing based on priorities.
-    for (int i = 0; i < sample_count; i++) {
-        output[i] = input[i];
-    }
-    
-    // In a real implementation, we would:
-    // 1. Perform FFT on the input
-    // 2. Identify frequency bands based on crossover_freqs
-    // 3. Apply processing to each band based on band_priorities
-    // 4. Perform inverse FFT
-    // 5. Apply crossfading between bands based on priorities
-}
-
-void PriorityAllocator::SetPriorityBand(int band_index, double priority) {
-    priority = max(0.0, min(1.0, priority)); // Clamp to 0-1 range
-    
-    if (band_priorities.GetCount() <= band_index) {
-        band_priorities.SetCount(band_index + 1, 0.0);
-    }
-    band_priorities[band_index] = priority;
-}
-
-void PriorityAllocator::SetCrossoverFrequencies(const Vector<double>& freqs) {
-    crossover_freqs <<= freqs; // Deep copy using U++ operator
-}
-
-void PriorityAllocator::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double PriorityAllocator::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// DitherEngine implementation
-DitherEngine::DitherEngine() : dither_type(SHIBATA) {
-    parameters.Add("dither_type", (int)SHIBATA);
-    parameters.Add("dither_amount", 1.0);
-}
-
-DitherEngine::~DitherEngine() {
-    // Clean up
-}
-
-void DitherEngine::Process(float* samples, int count, int source_bits, int target_bits) {
-    int bits_to_reduce = source_bits - target_bits;
-    if (bits_to_reduce <= 0) return; // No reduction needed
-    
-    // Get dither type from parameters
-    int type_int = (int)parameters.Get("dither_type", (int)SHIBATA);
-    dither_type = static_cast<DitherType>(type_int);
-    double dither_amount = parameters.Get("dither_amount", 1.0);
-    
-    // Calculate quantization step
-    double step_size = 1.0 / (double)(1 << bits_to_reduce);
-    
-    // Apply dithering based on type
-    for (int i = 0; i < count; i++) {
-        float original = samples[i];
-        
-        // Add dither noise based on selected algorithm
-        double noise = 0.0;
-        switch (dither_type) {
-            case RECTANGULAR: {
-                // Simple rectangular dither
-                noise = (2.0 * rand() / RAND_MAX - 1.0) * step_size * 0.5 * dither_amount;
-                break;
-            }
-            case TRIANGULAR: {
-                // Triangular PDF dither (TPDF)
-                double r1 = rand() / (double)RAND_MAX;
-                double r2 = rand() / (double)RAND_MAX;
-                noise = (r1 + r2 - 1.0) * step_size * 0.5 * dither_amount;
-                break;
-            }
-            case SHIBATA: {
-                // Shiba's noise shaping approach (simplified)
-                noise = (2.0 * rand() / RAND_MAX - 1.0) * step_size * 0.5 * dither_amount;
-                break;
-            }
-            case POWERSUM: {
-                // Power-sum dither (simplified approach)
-                noise = (2.0 * rand() / RAND_MAX - 1.0) * step_size * 0.5 * dither_amount;
-                break;
+            
+            if (abs(correlation) > maxCorrelation) {
+                maxCorrelation = abs(correlation);
+                bestDelay = delay;
             }
         }
         
-        // Apply dither and quantize
-        float dithered = original + noise;
-        float quantized = round(dithered / step_size) * step_size;
-        
-        samples[i] = quantized;
-    }
-}
-
-void DitherEngine::SetDitherType(DitherType type) {
-    dither_type = type;
-    if (parameters.Find("dither_type") >= 0) {
-        parameters.GetAdd("dither_type") = (int)type;
-    } else {
-        parameters.Add("dither_type", (int)type);
-    }
-}
-
-void DitherEngine::SetParameter(const String& name, double value) {
-    if (parameters.Find(name) >= 0) {
-        parameters.GetAdd(name) = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double DitherEngine::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// MotionSequencer implementation
-MotionSequencer::MotionSequencer() : tempo_bpm(120.0), playback_rate(1.0), 
-                                   current_step(0), step_progress(0.0) {
-    // Create 8 default steps
-    for (int i = 0; i < 8; i++) {
-        Step step;
-        step.value = 0.5;  // Default to middle value
-        step.duration = 0.25;  // Quarter note
-        step.active = true;
-        steps.Add(step);
-    }
-    parameters.Add("tempo_bpm", 120.0);
-    parameters.Add("playback_rate", 1.0);
-    parameters.Add("current_step", 0.0);
-}
-
-MotionSequencer::~MotionSequencer() {
-    // Clean up
-}
-
-void MotionSequencer::Process(FrameContext& ctx) {
-    // Update parameters
-    tempo_bpm = parameters.Get("tempo_bpm", 120.0);
-    playback_rate = parameters.Get("playback_rate", 1.0);
-    
-    // Calculate step duration in samples (assuming 4 steps per beat at given BPM)
-    double samples_per_beat = (60.0 / tempo_bpm) * ctx.sample_rate;
-    double samples_per_step = samples_per_beat * 0.25; // Quarter note
-    
-    // Update step progress
-    step_progress += 1.0 / samples_per_step;
-    
-    if (step_progress >= 1.0) {
-        // Move to next step
-        step_progress = 0.0;
-        current_step = (current_step + 1) % steps.GetCount();
-        int idx = parameters.Find("current_step");
-        if (idx >= 0) {
-            parameters[idx] = (double)current_step;
-        } else {
-            parameters.Add("current_step", (double)current_step);
-        }
-    }
-}
-
-void MotionSequencer::SetSteps(const Vector<Step>& steps) {
-    this->steps <<= steps; // Deep copy
-}
-
-void MotionSequencer::SetTempo(double bpm) {
-    tempo_bpm = bpm;
-    int idx = parameters.Find("tempo_bpm");
-    if (idx >= 0) {
-        parameters[idx] = bpm;
-    } else {
-        parameters.Add("tempo_bpm", bpm);
-    }
-}
-
-void MotionSequencer::SetPlaybackRate(double rate) {
-    playback_rate = rate;
-    int idx = parameters.Find("playback_rate");
-    if (idx >= 0) {
-        parameters[idx] = rate;
-    } else {
-        parameters.Add("playback_rate", rate);
-    }
-}
-
-void MotionSequencer::SetParameter(const String& name, double value) {
-    int idx = parameters.Find(name);
-    if (idx >= 0) {
-        parameters[idx] = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double MotionSequencer::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// SceneMorph implementation
-SceneMorph::SceneMorph() : current_scene(0), morph_amount(0.0), crossfade_enabled(false) {
-    parameters.Add("current_scene", 0.0);
-    parameters.Add("morph_amount", 0.0);
-    parameters.Add("crossfade_enabled", 0.0);
-}
-
-SceneMorph::~SceneMorph() {
-    // Clean up
-}
-
-void SceneMorph::Process(FrameContext& ctx) {
-    // Update parameters
-    current_scene = (int)parameters.Get("current_scene", 0.0);
-    morph_amount = parameters.Get("morph_amount", 0.0);
-    crossfade_enabled = parameters.Get("crossfade_enabled", 0.0) > 0.5;
-    
-    // In a real implementation, this would interpolate between scenes
-    // based on the morph_amount and apply the resulting parameters
-}
-
-void SceneMorph::AddScene(const Scene& scene) {
-    scenes.Add(scene);
-}
-
-void SceneMorph::SetCurrentScene(int scene_index) {
-    if (scene_index >= 0 && scene_index < scenes.GetCount()) {
-        current_scene = scene_index;
-        int idx = parameters.Find("current_scene");
-        if (idx >= 0) {
-            parameters[idx] = (double)scene_index;
-        } else {
-            parameters.Add("current_scene", (double)scene_index);
-        }
-    }
-}
-
-void SceneMorph::SetMorphAmount(double amount) {
-    morph_amount = max(0.0, min(1.0, amount)); // Clamp to 0-1 range
-    int idx = parameters.Find("morph_amount");
-    if (idx >= 0) {
-        parameters[idx] = morph_amount;
-    } else {
-        parameters.Add("morph_amount", morph_amount);
-    }
-}
-
-void SceneMorph::SetCrossfadeEnabled(bool enabled) {
-    crossfade_enabled = enabled;
-    int idx = parameters.Find("crossfade_enabled");
-    if (idx >= 0) {
-        parameters[idx] = enabled ? 1.0 : 0.0;
-    } else {
-        parameters.Add("crossfade_enabled", enabled ? 1.0 : 0.0);
-    }
-}
-
-void SceneMorph::SetParameter(const String& name, double value) {
-    int idx = parameters.Find(name);
-    if (idx >= 0) {
-        parameters[idx] = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double SceneMorph::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// StepSequencer implementation
-StepSequencer::StepSequencer() : gate_mode(TRIGGER), tempo_bpm(120.0), 
-                               total_steps(16), current_step(0), octave_offset(0) {
-    // Initialize 16 steps with default values
-    step_values.SetCount(16);
-    step_gates.SetCount(16);
-    for (int i = 0; i < 16; i++) {
-        step_values[i] = 0.0;
-        step_gates[i] = (i % 4 == 0); // Gate every 4th step by default
-    }
-    parameters.Add("tempo_bpm", 120.0);
-    parameters.Add("current_step", 0.0);
-    parameters.Add("octave_offset", 0.0);
-}
-
-StepSequencer::~StepSequencer() {
-    // Clean up
-}
-
-void StepSequencer::Process(FrameContext& ctx) {
-    // Update parameters
-    tempo_bpm = parameters.Get("tempo_bpm", 120.0);
-    octave_offset = (int)parameters.Get("octave_offset", 0.0);
-    
-    // Calculate step duration in samples
-    double samples_per_beat = (60.0 / tempo_bpm) * ctx.sample_rate;
-    double samples_per_step = samples_per_beat * 0.25; // Quarter note
-    
-    // Update current step based on transport or clock
-    // This is a simplified version that advances based on sample count
-    static double step_counter = 0.0;
-    step_counter += 1.0;
-    
-    if (step_counter >= samples_per_step) {
-        step_counter = 0.0;
-        current_step = (current_step + 1) % total_steps;
-        int idx = parameters.Find("current_step");
-        if (idx >= 0) {
-            parameters[idx] = (double)current_step;
-        } else {
-            parameters.Add("current_step", (double)current_step);
-        }
-    }
-}
-
-void StepSequencer::SetStep(int index, double value, bool gate) {
-    if (index >= 0 && index < step_values.GetCount()) {
-        step_values[index] = value;
-        if (index < step_gates.GetCount()) {
-            step_gates[index] = gate;
-        }
-    }
-}
-
-void StepSequencer::SetGateMode(GateMode mode) {
-    gate_mode = mode;
-}
-
-void StepSequencer::SetTempo(double bpm) {
-    tempo_bpm = bpm;
-    int idx = parameters.Find("tempo_bpm");
-    if (idx >= 0) {
-        parameters[idx] = bpm;
-    } else {
-        parameters.Add("tempo_bpm", bpm);
-    }
-}
-
-void StepSequencer::SetSteps(int count) {
-    total_steps = count;
-    step_values.SetCount(count);
-    step_gates.SetCount(count);
-}
-
-void StepSequencer::SetOctave(int octave_offset) {
-    this->octave_offset = octave_offset;
-    int idx = parameters.Find("octave_offset");
-    if (idx >= 0) {
-        parameters[idx] = (double)octave_offset;
-    } else {
-        parameters.Add("octave_offset", (double)octave_offset);
-    }
-}
-
-void StepSequencer::SetParameter(const String& name, double value) {
-    int idx = parameters.Find(name);
-    if (idx >= 0) {
-        parameters[idx] = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double StepSequencer::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// ModuleSwitcher implementation
-ModuleSwitcher::ModuleSwitcher() : current_module(0), switch_mode(TOGGLE) {
-    parameters.Add("current_module", 0.0);
-    parameters.Add("switch_mode", (int)TOGGLE);
-}
-
-ModuleSwitcher::~ModuleSwitcher() {
-    // Clean up
-}
-
-void ModuleSwitcher::Process(const double* input, double* output, int sample_count, double sample_rate) {
-    // Update parameters
-    current_module = (int)parameters.Get("current_module", 0.0);
-    int mode_int = (int)parameters.Get("switch_mode", (int)TOGGLE);
-    switch_mode = static_cast<SwitchMode>(mode_int);
-    
-    // Make sure current module index is valid
-    if (current_module >= 0 && current_module < processors.GetCount()) {
-        // Process with the selected module
-        processors[current_module](input, output, sample_count, sample_rate);
-    } else {
-        // If invalid, just copy input to output
-        for (int i = 0; i < sample_count; i++) {
-            output[i] = input[i];
-        }
-    }
-}
-
-void ModuleSwitcher::AddModule(const String& name, Function<void(const double*, double*, int, double)> processor) {
-    module_names.Add(name);
-    processors.Add(processor);
-}
-
-void ModuleSwitcher::SetCurrentModule(int index) {
-    if (index >= 0 && index < module_names.GetCount()) {
-        current_module = index;
-        int idx = parameters.Find("current_module");
-        if (idx >= 0) {
-            parameters[idx] = (double)index;
-        } else {
-            parameters.Add("current_module", (double)index);
-        }
-    }
-}
-
-void ModuleSwitcher::SetCurrentModule(const String& name) {
-    int index = FindIndex(module_names, name);
-    if (index >= 0) {
-        current_module = index;
-        int idx = parameters.Find("current_module");
-        if (idx >= 0) {
-            parameters[idx] = (double)index;
-        } else {
-            parameters.Add("current_module", (double)index);
-        }
-    }
-}
-
-void ModuleSwitcher::SetSwitchMode(SwitchMode mode) {
-    switch_mode = mode;
-    int idx = parameters.Find("switch_mode");
-    if (idx >= 0) {
-        parameters[idx] = (int)mode;
-    } else {
-        parameters.Add("switch_mode", (int)mode);
-    }
-}
-
-void ModuleSwitcher::SetParameter(const String& name, double value) {
-    int idx = parameters.Find(name);
-    if (idx >= 0) {
-        parameters[idx] = value;
-    } else {
-        parameters.Add(name, value);
-    }
-}
-
-double ModuleSwitcher::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
-
-// MacroController implementation
-MacroController::MacroController() {
-    parameters.Add("active", 1.0);
-    parameters.Add("smooth_time", 0.05); // 50ms smoothing
-}
-
-MacroController::~MacroController() {
-    // Clean up
-}
-
-void MacroController::Process(FrameContext& ctx) {
-    // In a real implementation, this would process incoming MIDI or UI events
-    // and update the macro parameters accordingly
-    // For now, we'll just apply smoothing to the existing values
-}
-
-void MacroController::AddParameter(const String& macro_name, const MacroParameter& param) {
-    macro_params.GetAdd(macro_name).Add(param);
-    macro_values.GetAdd(macro_name) = param.default_value;
-}
-
-void MacroController::SetMacroValue(const String& macro_name, double value) {
-    value = max(0.0, min(1.0, value)); // Clamp to 0-1 range
-    
-    int idx = macro_values.Find(macro_name);
-    if (idx >= 0) {
-        macro_values[idx] = value;
-    } else {
-        macro_values.Add(macro_name, value);
+        return bestDelay;  // Return delay in samples
     }
     
-    // Update all parameters controlled by this macro
-    if (macro_params.Find(macro_name) >= 0) {
-        Vector<MacroParameter>& params = macro_params.GetAdd(macro_name);
-        for (int i = 0; i < params.GetCount(); i++) {
-            MacroParameter& p = params[i];
-            // Interpolate between min and max based on macro value
-            p.current_value = p.min_value + value * (p.max_value - p.min_value);
-        }
+    // Other algorithms would be implemented here
+    return 0.0;
+}
+
+Vector<double> DelaySolver::SolveDelays(const Vector<AudioBuffer>& referenceSignals, 
+                                       const Vector<AudioBuffer>& delayedSignals, double sampleRate) {
+    Vector<double> delays;
+    int minCount = min(referenceSignals.GetCount(), delayedSignals.GetCount());
+    
+    for (int i = 0; i < minCount; i++) {
+        delays.Add(SolveDelay(referenceSignals[i], delayedSignals[i], sampleRate));
     }
+    
+    return delays;
 }
 
-double MacroController::GetMacroValue(const String& macro_name) const {
-    return macro_values.Get(macro_name, 0.5); // Default to middle value
+double DelaySolver::CalculateDelayForDistance(double distanceMeters) {
+    // Speed of sound = 343 m/s
+    return distanceMeters / 343.0;  // Returns delay in seconds
 }
 
-void MacroController::SetParameter(const String& name, double value) {
-    int idx = parameters.Find(name);
-    if (idx >= 0) {
-        parameters[idx] = value;
-    } else {
-        parameters.Add(name, value);
-    }
+void DelaySolver::SetAlgorithm(int algo) {
+    algorithm = max(0, min(2, algo));
 }
 
-double MacroController::GetParameter(const String& name) const {
-    return parameters.Get(name, 0.0);
-}
+} // namespace Calibration
 
-}  // namespace DSP
-}  // namespace am
+#endif

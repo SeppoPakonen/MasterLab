@@ -68,7 +68,7 @@ void RackView::Refresh() {
     Refresh();
 }
 
-void RackView::SetPresetManager(DSP::PresetManager* presetMgr) {
+void RackView::SetPresetManager(AudioFX::PresetManager* presetMgr) {
     presetManager = presetMgr;
 }
 

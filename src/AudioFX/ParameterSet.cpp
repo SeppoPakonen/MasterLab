@@ -1,16 +1,16 @@
 #include "ParameterSet.h"
 
-namespace DSP {
+namespace AudioFX {
 
 ParameterValue ParameterSet::Get(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
-        return it->value;
+        return it->value.value;
     }
     return 0.0;  // Default value if parameter doesn't exist
 }
 
-void ParameterSet::AddParameter(const ParameterId& id, ParameterValue initial, 
+void ParameterSet::AddParameter(const ParameterId& id, ParameterValue initial,
                                 ParameterValue min, ParameterValue max,
                                 ParameterType type, const String& name) {
     ParameterInfo info;
@@ -27,8 +27,8 @@ bool ParameterSet::Set(const ParameterId& id, ParameterValue value) {
     auto it = parameters.Find(id);
     if (it) {
         // Clamp the value to min/max range
-        value = max(it->min, min(it->max, value));
-        it->value = value;
+        value = max(it->value.min, min(it->value.max, value));
+        it->value.value = value;
         return true;
     }
     return false;
@@ -38,9 +38,9 @@ bool ParameterSet::SetNormalized(const ParameterId& id, ParameterValue normalize
     auto it = parameters.Find(id);
     if (it) {
         // Convert normalized value (0.0 to 1.0) to parameter range
-        ParameterValue value = it->min + normalizedValue * (it->max - it->min);
-        value = max(it->min, min(it->max, value));
-        it->value = value;
+        ParameterValue value = it->value.min + normalizedValue * (it->value.max - it->value.min);
+        value = max(it->value.min, min(it->value.max, value));
+        it->value.value = value;
         return true;
     }
     return false;
@@ -50,8 +50,8 @@ ParameterValue ParameterSet::GetNormalized(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
         // Convert parameter value to normalized (0.0 to 1.0) range
-        if (it->max != it->min) {
-            return (it->value - it->min) / (it->max - it->min);
+        if (it->value.max != it->value.min) {
+            return (it->value.value - it->value.min) / (it->value.max - it->value.min);
         }
         return 0.0;
     }
@@ -61,7 +61,7 @@ ParameterValue ParameterSet::GetNormalized(const ParameterId& id) const {
 ParameterValue ParameterSet::GetMin(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
-        return it->min;
+        return it->value.min;
     }
     return 0.0;
 }
@@ -69,7 +69,7 @@ ParameterValue ParameterSet::GetMin(const ParameterId& id) const {
 ParameterValue ParameterSet::GetMax(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
-        return it->max;
+        return it->value.max;
     }
     return 1.0;
 }
@@ -77,7 +77,7 @@ ParameterValue ParameterSet::GetMax(const ParameterId& id) const {
 ParameterType ParameterSet::GetType(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
-        return it->type;
+        return it->value.type;
     }
     return ParameterType::kFloat;
 }
@@ -85,7 +85,7 @@ ParameterType ParameterSet::GetType(const ParameterId& id) const {
 String ParameterSet::GetName(const ParameterId& id) const {
     auto it = parameters.Find(id);
     if (it) {
-        return it->name;
+        return it->value.name;
     }
     return "";
 }
@@ -100,7 +100,7 @@ Vector<ParameterId> ParameterSet::GetParameterIds() const {
 
 void ParameterSet::ResetToInitial() {
     for (auto& param : parameters) {
-        param.value = param.initial;
+        param.value = param.value.initial;
     }
 }
 
@@ -108,4 +108,4 @@ ParameterSet::ParameterSet() {
     // Initialize with no parameters
 }
 
-} // namespace DSP
+} // namespace AudioFX

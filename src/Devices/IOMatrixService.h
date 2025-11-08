@@ -2,194 +2,137 @@
 #define _Devices_IOMatrixService_h_
 
 #include <Core/Core.h>
-#include <AudioCore/AudioCore.h>
+#include <CtrlLib/CtrlLib.h>
+#include <AudioCore/AudioCore.h> // For audio device management
+
 using namespace Upp;
 
-namespace am {
+namespace Devices {
 
-// Structure for representing connection points
-struct ConnectionPoint : public Moveable<ConnectionPoint> {
+// Structure representing an audio bus
+struct AudioBus {
     String name;
-    String id;
-    String deviceName;
-    String portName;
-    String speakers; // e.g., "Stereo", "Mono", "5.1"
-    double delayMs = 0.0;
-    double gainDb = 0.0;
-    bool isUsed = false;
-    bool hasClickOutput = false;
+    String speakerConfig;  // Mono, Stereo, 5.0, 5.1, etc.
+    String audioDevice;
+    Vector<String> devicePorts;  // Per channel when expanded
+    bool isExpanded;
     
-    // Add explicit constructors for U++ compatibility
-    ConnectionPoint() = default;
-    ConnectionPoint(const ConnectionPoint& other) = default;
-    ConnectionPoint& operator=(const ConnectionPoint& other) = default;
-    ConnectionPoint(ConnectionPoint&& other) = default;
-    ConnectionPoint& operator=(ConnectionPoint&& other) = default;
+    AudioBus() : isExpanded(false) {}
 };
 
-
-// Structure for external FX connections
-struct ExternalFxConnection : public Moveable<ExternalFxConnection> {
+// Structure for external FX
+struct ExternalFx {
     String name;
-    String id;
-    String audioDevice;
-    String inputPort;
-    String outputPort;
-    double delayMs = 0.0;
-    double sendGainDb = 0.0;
-    double returnGainDb = 0.0;
+    String sendConfig;
+    String returnConfig;
     String midiDevice;
-    bool isUsed = false;
+    double delayMs;
+    double sendGainDb;
+    double returnGainDb;
+    bool isUsed;
     
-    // Add explicit constructors for U++ compatibility
-    ExternalFxConnection() = default;
-    ExternalFxConnection(const ExternalFxConnection& other) = default;
-    ExternalFxConnection& operator=(const ExternalFxConnection& other) = default;
-    ExternalFxConnection(ExternalFxConnection&& other) = default;
-    ExternalFxConnection& operator=(ExternalFxConnection&& other) = default;
+    ExternalFx() : delayMs(0.0), sendGainDb(0.0), returnGainDb(0.0), isUsed(false) {}
 };
 
-
-// Structure for external instrument connections
-struct ExternalInstrumentConnection : public Moveable<ExternalInstrumentConnection> {
+// Structure for external instruments
+struct ExternalInstrument {
     String name;
-    String id;
-    String audioDevice;
-    String outputPort;
+    int monoReturnsCount;
+    int stereoReturnsCount;
     String midiDevice;
-    double delayMs = 0.0;
-    double returnGainDb = 0.0;
-    bool isUsed = false;
+    double delayMs;
+    double returnGainDb;
+    bool isUsed;
     
-    // Add explicit constructors for U++ compatibility
-    ExternalInstrumentConnection() = default;
-    ExternalInstrumentConnection(const ExternalInstrumentConnection& other) = default;
-    ExternalInstrumentConnection& operator=(const ExternalInstrumentConnection& other) = default;
-    ExternalInstrumentConnection(ExternalInstrumentConnection&& other) = default;
-    ExternalInstrumentConnection& operator=(ExternalInstrumentConnection&& other) = default;
+    ExternalInstrument() : monoReturnsCount(0), stereoReturnsCount(0), delayMs(0.0), returnGainDb(0.0), isUsed(false) {}
 };
 
-
-// Structure for groups/FX channels
-struct GroupFxConnection : public Moveable<GroupFxConnection> {
-    String name;
-    String id;
-    String speakers; // e.g., "Stereo", "Mono", "5.1"
-    String routeTo;  // Where this group routes to
-    String childRoutes; // Comma-separated string of child routes instead of Vector to enable copying
-    
-    // Add explicit constructors for U++ compatibility
-    GroupFxConnection() = default;
-    GroupFxConnection(const GroupFxConnection& other) = default;
-    GroupFxConnection& operator=(const GroupFxConnection& other) = default;
-    GroupFxConnection(GroupFxConnection&& other) = default;
-    GroupFxConnection& operator=(GroupFxConnection&& other) = default;
+// Enum for connection types
+enum ConnectionType {
+    INPUTS,
+    OUTPUTS,
+    GROUPS_FX,
+    EXTERNAL_FX,
+    EXTERNAL_INSTRUMENTS,
+    STUDIO
 };
 
-
-// Structure for studio connections
-struct StudioConnection : public Moveable<StudioConnection> {
-    String name;
-    String id;
-    String speakers; // e.g., "Stereo", "Mono", "5.1"
-    String audioDevice;
-    String devicePort;
-    bool controlRoomEnabled = false;
-    
-    // Add explicit constructors for U++ compatibility
-    StudioConnection() = default;
-    StudioConnection(const StudioConnection& other) = default;
-    StudioConnection& operator=(const StudioConnection& other) = default;
-    StudioConnection(StudioConnection&& other) = default;
-    StudioConnection& operator=(StudioConnection&& other) = default;
-};
-
-
-// Repository for managing connection presets
-class RoutingRepository {
-public:
-    RoutingRepository();
-    
-    // Preset management functions
-    bool SavePreset(const String& name, const Vector<ConnectionPoint>& connections);
-    bool LoadPreset(const String& name, Vector<ConnectionPoint>& connections);
-    bool DeletePreset(const String& name);
-    Vector<String> GetAvailablePresets() const;
-    
-    // CRUD operations for connections
-    bool SaveCurrentRouting(const String& name);
-    bool LoadRouting(const String& name);
-    bool DeleteRouting(const String& name);
-    
-private:
-    // Internal storage for routing presets
-    VectorMap<String, Vector<ConnectionPoint>> presets;
-    
-    void InitializeDefaultPresets();
-};
-
-// Service for managing the I/O matrix (routing of audio/MIDI)
+// Service class for managing I/O routing matrix
 class IOMatrixService {
 public:
     IOMatrixService();
     ~IOMatrixService();
     
-    // Input connections management
-    const Vector<ConnectionPoint>& GetInputs() const { return inputs; }
-    bool SetInput(const ConnectionPoint& input);
-    bool RemoveInput(const String& id);
+    // Core functionality
+    void Initialize();
+    void Shutdown();
     
-    // Output connections management
-    const Vector<ConnectionPoint>& GetOutputs() const { return outputs; }
-    bool SetOutput(const ConnectionPoint& output);
-    bool RemoveOutput(const String& id);
+    // Input management
+    Vector<AudioBus> GetInputs() const;
+    void AddInput(const AudioBus& bus);
+    void RemoveInput(int index);
+    void UpdateInput(int index, const AudioBus& bus);
     
-    // Groups/FX connections management
-    const Vector<GroupFxConnection>& GetGroupsFx() const { return groupsFxs; }
-    bool SetGroupFx(const GroupFxConnection& group);
-    bool RemoveGroupFx(const String& id);
+    // Output management
+    Vector<AudioBus> GetOutputs() const;
+    void AddOutput(const AudioBus& bus);
+    void RemoveOutput(int index);
+    void UpdateOutput(int index, const AudioBus& bus);
     
-    // External FX connections management
-    const Vector<ExternalFxConnection>& GetExternalFx() const { return externalFxs; }
-    bool SetExternalFx(const ExternalFxConnection& fx);
-    bool RemoveExternalFx(const String& id);
+    // Groups/FX management
+    Vector<AudioBus> GetGroupsFx() const;
+    void AddGroup(const AudioBus& bus);
+    void RemoveGroup(int index);
+    void UpdateGroup(int index, const AudioBus& bus);
+    void AddFxChannel(const AudioBus& bus);
+    void RemoveFxChannel(int index);
+    void UpdateFxChannel(int index, const AudioBus& bus);
     
-    // External Instrument connections management
-    const Vector<ExternalInstrumentConnection>& GetExternalInstruments() const { return externalInstruments; }
-    bool SetExternalInstrument(const ExternalInstrumentConnection& instrument);
-    bool RemoveExternalInstrument(const String& id);
+    // External FX management
+    Vector<ExternalFx> GetExternalFx() const;
+    void AddExternalFx(const ExternalFx& fx);
+    void RemoveExternalFx(int index);
+    void UpdateExternalFx(int index, const ExternalFx& fx);
     
-    // Studio connections management
-    const Vector<StudioConnection>& GetStudio() const { return studioConnections; }
-    bool SetStudio(const StudioConnection& studio);
-    bool RemoveStudio(const String& id);
+    // External Instruments management
+    Vector<ExternalInstrument> GetExternalInstruments() const;
+    void AddExternalInstrument(const ExternalInstrument& inst);
+    void RemoveExternalInstrument(int index);
+    void UpdateExternalInstrument(int index, const ExternalInstrument& inst);
     
-    // Apply changes to the actual audio system
+    // Studio (Control Room) management
+    Vector<AudioBus> GetStudio() const;
+    void AddStudioBus(const AudioBus& bus);
+    void RemoveStudioBus(int index);
+    void UpdateStudioBus(int index, const AudioBus& bus);
+    
+    // Preset management
+    void SavePreset(const String& name);
+    void LoadPreset(const String& name);
+    void DeletePreset(const String& name);
+    Vector<String> GetPresets() const;
+    
+    // Apply changes to the system
     void ApplyChanges();
     
-    // Access to the routing repository
-    RoutingRepository& GetRoutingRepository() { return routingRepo; }
-    
-    // Singleton access pattern
-    static IOMatrixService& GetInstance();
+    // Get snapshots of current state
+    ValueMap GetSnapshot(ConnectionType type) const;
+    void ApplySnapshot(ConnectionType type, const ValueMap& snapshot);
     
 private:
-    // Internal storage for all connection types
-    Vector<ConnectionPoint> inputs;
-    Vector<ConnectionPoint> outputs;
-    Vector<GroupFxConnection> groupsFxs;
-    Vector<ExternalFxConnection> externalFxs;
-    Vector<ExternalInstrumentConnection> externalInstruments;
-    Vector<StudioConnection> studioConnections;
+    Vector<AudioBus> inputs;
+    Vector<AudioBus> outputs;
+    Vector<AudioBus> groupsFx;  // Groups and FX channels mixed
+    Vector<ExternalFx> externalFx;
+    Vector<ExternalInstrument> externalInstruments;
+    Vector<AudioBus> studio;  // Control Room buses
     
-    RoutingRepository routingRepo;
+    Vector<String> presets;
     
-    // Singleton instance
-    static IOMatrixService* instance;
-    
-    void InitializeDefaultConnections();
+    // Private methods
+    void Reset();
 };
 
-}
+} // namespace Devices
 
 #endif

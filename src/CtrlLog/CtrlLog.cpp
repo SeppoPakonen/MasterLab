@@ -2,23 +2,26 @@
 
 CtrlLog::CtrlLog()
 {
-    // Initialize the RichTextCtrl
-    Add(editor.HSizePos().VSizePos());
+    // Initialize the TreeCtrl for the log
+    tree.AddColumn("Log Entries", 500);
+    tree.WhenBar = callback(this, &CtrlLog::OnTreeBar);
     
-    logText = "Log Entries:\n";
-    editor <<= logText;
+    // Add a simple context menu option to clear the log
+    tree.SetRoot("Log Entries", CtrlImg::smallright());
 }
 
 void CtrlLog::Log(const String& text)
 {
-    String current = ~editor;
-    if (!current.EndsWith("\n") && !current.IsEmpty()) {
-        current << "\n";
+    int pos = text.Find('\n');
+    if (pos >= 0) {
+        Log(text.Mid(0, pos));
+        Log(text.Mid(pos + 1));
+        return;
     }
-    current << text;
     
-    // Update the editor
-    editor <<= current;
+    // Add new entry to the tree
+    TreeCtrl::Node& n = tree.Add(CtrlImg::smallright(), text);
+    tree.ScrollTo(n);
     
     // Call any registered callback
     if(on_log)
@@ -32,11 +35,16 @@ void CtrlLog::Log(const char* text)
 
 void CtrlLog::Clear()
 {
-    logText = "Log Entries:\n";
-    editor <<= logText;
+    tree.Clear();
+    tree.SetRoot("Log Entries", CtrlImg::smallright());
 }
 
-void CtrlLog::Menu(Bar& bar)
+void CtrlLog::TreeMenu(Bar& bar)
 {
-    bar.Add("Clear", CtrlImg::smallright(), callback(this, &CtrlLog::Clear));
+    bar.Add("Clear", CtrlImg::smallright(), THISBACK(Clear));
+}
+
+void CtrlLog::OnTreeBar(Bar& bar)
+{
+    TreeMenu(bar);
 }

@@ -2,7 +2,7 @@
 #define _Devices_RoutingRepository_h_
 
 #include <Core/Core.h>
-#include <plugin/PluginManager/PluginManager.h>
+#include "PluginManager.h"
 
 using namespace Upp;
 

@@ -6,7 +6,7 @@
 
 using namespace Upp;
 
-namespace DSP {
+namespace AudioFX {
 
 using ParameterId = String;
 using ParameterValue = double;
@@ -23,31 +23,31 @@ enum class ParameterType {
 class ParameterSet {
 public:
     ParameterSet();
-    
+
     // Add a parameter with initial value and constraints
-    void AddParameter(const ParameterId& id, ParameterValue initial, 
+    void AddParameter(const ParameterId& id, ParameterValue initial,
                       ParameterValue min = 0.0, ParameterValue max = 1.0,
                       ParameterType type = ParameterType::kFloat,
                       const String& name = "");
-    
+
     // Get/set parameter values
     ParameterValue Get(const ParameterId& id) const;
     bool Set(const ParameterId& id, ParameterValue value);
     bool SetNormalized(const ParameterId& id, ParameterValue normalizedValue);
     ParameterValue GetNormalized(const ParameterId& id) const;
-    
+
     // Get parameter info
     ParameterValue GetMin(const ParameterId& id) const;
     ParameterValue GetMax(const ParameterId& id) const;
     ParameterType GetType(const ParameterId& id) const;
     String GetName(const ParameterId& id) const;
-    
+
     // Get all parameter IDs
     Vector<ParameterId> GetParameterIds() const;
-    
+
     // Reset to initial values
     void ResetToInitial();
-    
+
 private:
     struct ParameterInfo {
         ParameterValue value;
@@ -57,10 +57,10 @@ private:
         ParameterType type;
         String name;
     };
-    
-    HashMap<ParameterId, ParameterInfo> parameters;
+
+    Upp::VectorMap<ParameterId, ParameterInfo> parameters;
 };
 
-} // namespace DSP
+} // namespace AudioFX
 
 #endif

@@ -5,8 +5,10 @@
 #include <CtrlLib/CtrlLib.h>
 #include "../AudioFX/Analyzer.h"
 #include "../AudioFX/SignalBus.h"
+#include "../AudioCore/AudioCore.h"
 
 using namespace Upp;
+using namespace am;
 
 namespace DSP {
 

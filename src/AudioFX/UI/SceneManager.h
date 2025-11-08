@@ -16,7 +16,7 @@ public:
     virtual ~SceneManager();
     
     // Add a scene with parameters
-    void AddScene(const String& name, const DSP::ParameterSet& params);
+    void AddScene(const String& name, const AudioFX::ParameterSet& params);
     
     // Set current scene by name
     bool SetCurrentScene(const String& name);
@@ -37,7 +37,7 @@ public:
     void MorphScenes(int scene1, int scene2, double position);
     
     // Apply morphed parameters to target parameter set
-    void ApplyMorphedParams(DSP::ParameterSet& target) const;
+    void ApplyMorphedParams(AudioFX::ParameterSet& target) const;
     
     // Refresh the UI
     void Refresh();
@@ -49,7 +49,7 @@ protected:
 private:
     struct Scene {
         String name;
-        DSP::ParameterSet params;
+        AudioFX::ParameterSet params;
     };
     
     Vector<Scene> scenes;

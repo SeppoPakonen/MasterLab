@@ -1,134 +1,149 @@
 #ifndef _VSTConnections_VSTConnectionsCtrl_h_
 #define _VSTConnections_VSTConnectionsCtrl_h_
 
+#include <Core/Core.h>
 #include <CtrlLib/CtrlLib.h>
 #include <Docking/Docking.h>
-#include <AudioCore/AudioCore.h>
-#include <Devices/Devices.h>
+#include <GridCtrl/GridCtrl.h>
+#include "../Devices/IOMatrixService.h"  // Include the IOMatrixService
 
-NAMESPACE_UPP
+using namespace Upp;
 
-// Types of connection items
-enum ConnectionItemType {
-    CONNECTION_INPUT,
-    CONNECTION_OUTPUT,
-    CONNECTION_GROUP,
-    CONNECTION_FX_CHANNEL,
-    CONNECTION_EXTERNAL_FX,
-    CONNECTION_EXTERNAL_INSTRUMENT,
-    CONNECTION_STUDIO
-};
+namespace VSTConnections {
 
-// Data model for connection items
-struct ConnectionItem {
-    String name;
-    String speakers; // e.g., "Stereo", "Mono", "5.1"
-    String audioDevice;
-    String devicePort;
-    double delayMs;
-    double sendGainDb;
-    double returnGainDb;
-    String midiDevice;
-    bool isUsed;
-    bool hasClickOutput; // For outputs tab
-    String routeTo; // For Groups/FX tab
-
-    ConnectionItemType type;
-    Vector<ConnectionItem> children; // For tree structure
-    bool isExpanded;
-
-    ConnectionItem() : delayMs(0.0), sendGainDb(0.0), returnGainDb(0.0),
-                       isUsed(false), hasClickOutput(false), isExpanded(false), type(CONNECTION_INPUT) {}
-};
-
-// Toolbar for each tab
-class ConnectionToolbar : public ToolBar {
+// Base class for all tab panes in VST Connections
+class VSTTabPane : public Ctrl {
 public:
-    virtual void ToolMenu(Bar& bar);
+    VSTTabPane();
+    virtual ~VSTTabPane() {}
+    virtual void Refresh() = 0;
+    virtual void AddToolbar(ToolBar& toolBar) = 0;
 
-    // Event handlers
+protected:
+    ToolBar toolBar;
+    bool isTreeCtrl;
+    Devices::IOMatrixService* ioMatrixService;
+};
+
+// Tab pane for Inputs
+class InputTabPane : public VSTTabPane {
+public:
+    InputTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
+
+private:
+    TreeCtrl treeCtrl;
     void ExpandAll();
     void CollapseAll();
     void AddBus();
+    void SavePreset();
+    void DeletePreset();
+    void OnTreeSel();
+};
+
+// Tab pane for Outputs
+class OutputTabPane : public VSTTabPane {
+public:
+    OutputTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
+
+private:
+    TreeCtrl treeCtrl;
+    void ExpandAll();
+    void CollapseAll();
+    void AddBus();
+    void SavePreset();
+    void DeletePreset();
+    void OnTreeSel();
+};
+
+// Tab pane for Groups/FX
+class GroupsFxTabPane : public VSTTabPane {
+public:
+    GroupsFxTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
+
+private:
+    TreeCtrl treeCtrl;
+    void ExpandAll();
+    void CollapseAll();
     void AddGroup();
     void AddFxChannel();
+    void OnTreeSel();
+};
+
+// Tab pane for External FX
+class ExternalFxTabPane : public VSTTabPane {
+public:
+    ExternalFxTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
+
+private:
+    TreeCtrl treeCtrl;
+    void ExpandAll();
+    void CollapseAll();
     void AddExternalFx();
+    void OnTreeSel();
+};
+
+// Tab pane for External Instruments
+class ExternalInstrumentsTabPane : public VSTTabPane {
+public:
+    ExternalInstrumentsTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
+
+private:
+    TreeCtrl treeCtrl;
+    void ExpandAll();
+    void CollapseAll();
     void AddExternalInstrument();
-    void ToggleControlRoom();
-
-    Callback WhenAddBus;
-    Callback WhenAddGroup;
-    Callback WhenAddFxChannel;
-    Callback WhenAddExternalFx;
-    Callback WhenAddExternalInstrument;
-    Callback WhenToggleControlRoom;
-
-private:
-    bool controlRoomEnabled = true;
-    int currentTab = 0; // Track which tab this toolbar is for
+    void OnTreeSel();
 };
 
-// Custom TreeCtrl for connection items
-class ConnectionTreeCtrl : public TreeCtrl {
+// Tab pane for Studio (Control Room)
+class StudioTabPane : public VSTTabPane {
 public:
-    typedef ConnectionTreeCtrl CLASSNAME;
-
-    ConnectionTreeCtrl();
-    virtual ~ConnectionTreeCtrl();
-
-    void SetData(const Vector<ConnectionItem>& items);
-    void RefreshView();
-    void SetCurrentTab(int tab) { currentTab = tab; }
+    StudioTabPane();
+    void Refresh() override;
+    void AddToolbar(ToolBar& toolBar) override;
 
 private:
-    Vector<ConnectionItem> data;
-    int currentTab;
-
-    void RefreshNode(int node, const ConnectionItem& item);
-    virtual void RightClick(Point p, dword data) override;
-    virtual void LeftDouble(Point p, dword data) override;
+    TreeCtrl treeCtrl;
+    void ExpandAll();
+    void CollapseAll();
+    void AddBus();
+    void DisableControlRoom();
+    void SavePreset();
+    void DeletePreset();
+    void OnTreeSel();
 };
 
-// Main control for VST Connections
-class VSTConnectionsCtrl : public ParentCtrl {
+// Main VST Connections control
+class VSTConnectionsCtrl : public Ctrl {
 public:
-    typedef VSTConnectionsCtrl CLASSNAME;
-
     VSTConnectionsCtrl();
-    virtual ~VSTConnectionsCtrl();
-
-    void Layout();
     void Refresh();
-
-    // Getters for the individual tree controls
-    ConnectionTreeCtrl& GetInputTree() { return inputTree; }
-    ConnectionTreeCtrl& GetOutputTree() { return outputTree; }
-    ConnectionTreeCtrl& GetGroupsTree() { return groupsTree; }
-    ConnectionTreeCtrl& GetExtFxTree() { return extFxTree; }
-    ConnectionTreeCtrl& GetExtInstTree() { return extInstTree; }
-    ConnectionTreeCtrl& GetStudioTree() { return studioTree; }
-
+    
 private:
     TabCtrl tabCtrl;
-
-    // Individual tab controls
-    ConnectionToolbar inputToolbar, outputToolbar, groupsToolbar, extFxToolbar, extInstToolbar, studioToolbar;
-    ConnectionTreeCtrl inputTree, outputTree, groupsTree, extFxTree, extInstTree, studioTree;
-
-    // Tab contents
-    Ctrl inputTab, outputTab, groupsTab, extFxTab, extInstTab, studioTab;
-
-    // Initialize each tab
-    void InitInputTab();
-    void InitOutputTab();
-    void InitGroupsTab();
-    void InitExternalFxTab();
-    void InitExternalInstrumentTab();
-    void InitStudioTab();
-
-    void TabChanged();
+    InputTabPane inputTab;
+    OutputTabPane outputTab;
+    GroupsFxTabPane groupsFxTab;
+    ExternalFxTabPane externalFxTab;
+    ExternalInstrumentsTabPane externalInstrumentsTab;
+    StudioTabPane studioTab;
+    
+    Devices::IOMatrixService ioMatrixService;
+    
+    void RefreshTabs();
+    void InitializeTabServices();
 };
 
-END_UPP_NAMESPACE
+}
 
 #endif

@@ -1,13 +1,13 @@
 #include "SignalBus.h"
 
-namespace DSP {
+namespace AudioFX {
 
 // Implementation of SignalBus
 SignalBus::SignalBus() : channelCount(0), frameCount(0), maxFrames(0) {
     // Default constructor
 }
 
-SignalBus::SignalBus(int channels, int maxFrames) : 
+SignalBus::SignalBus(int channels, int maxFrames) :
     channelCount(channels), frameCount(0), maxFrames(maxFrames) {
     Resize(channels, maxFrames);
 }
@@ -57,4 +57,4 @@ void SignalBus::ProcessAudio() {
     }
 }
 
-} // namespace DSP
+} // namespace AudioFX

@@ -7,22 +7,22 @@
 
 using namespace Upp;
 
-namespace DSP {
+namespace AudioFX {
 
 // Analyzer for processing and analyzing audio signals
 class Analyzer {
 public:
     Analyzer();
-    
+
     // Analyze an audio buffer, returns analysis results
     ValueMap Analyze(const AudioBuffer& buffer);
-    
+
     // Get real-time analysis results
     ValueMap GetRealTimeAnalysis();
-    
+
     // Reset analysis state
     void Reset();
-    
+
 private:
     // Analysis data and state
     double rmsValue;
@@ -31,6 +31,6 @@ private:
     Vector<double> spectrum;
 };
 
-} // namespace DSP
+} // namespace AudioFX
 
 #endif

@@ -5,17 +5,23 @@
 
 using namespace Upp;
 
-struct CtrlLog : public Ctrl {
+#define LAYOUTFILE <CtrlLog/CtrlLog.lay>
+#include <CtrlCore/lay.h>
+
+#define IMAGECLASS CtrlLogImg
+#define IMAGEFILE <CtrlLog/CtrlLog.iml>
+#include <Draw/iml.h>
+
+struct CtrlLog : public WithCtrlLog<ParentCtrl> {
     CtrlLog();
     virtual void Log(const String& text);
     virtual void Log(const char* text);
     virtual void Clear();
     
 private:
-    void Menu(Bar& bar);
+    void TreeMenu(Bar& bar);
+    void OnTreeBar(Bar& bar);
     
-    RichTextCtrl editor;  // Using RichTextCtrl for log display
-    String logText;
     Callback1<String> on_log;
 };
 

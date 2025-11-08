@@ -1,6 +1,6 @@
 #include "PresetManager.h"
 
-namespace DSP {
+namespace AudioFX {
 
 PresetManager::PresetManager() {
     // Initialize with no presets
@@ -9,13 +9,13 @@ PresetManager::PresetManager() {
 void PresetManager::AddPreset(const ParameterSet& params, const String& name) {
     Preset preset;
     preset.name = name;
-    
+
     // Save current parameter values
     Vector<ParameterId> ids = params.GetParameterIds();
     for (const auto& id : ids) {
         preset.parameters.Set(id, params.Get(id));
     }
-    
+
     presets.Add(preset);
 }
 
@@ -38,7 +38,7 @@ void PresetManager::SavePreset(const ParameterSet& params, const String& name) {
         if (preset.name == name) {
             // Update existing preset
             preset.parameters.Clear();
-            
+
             Vector<ParameterId> ids = params.GetParameterIds();
             for (const auto& id : ids) {
                 preset.parameters.Set(id, params.Get(id));
@@ -46,7 +46,7 @@ void PresetManager::SavePreset(const ParameterSet& params, const String& name) {
             return;
         }
     }
-    
+
     // Add new preset if it doesn't exist
     AddPreset(params, name);
 }
@@ -88,4 +88,4 @@ void PresetManager::RenamePreset(const String& oldName, const String& newName) {
     }
 }
 
-} // namespace DSP
+} // namespace AudioFX

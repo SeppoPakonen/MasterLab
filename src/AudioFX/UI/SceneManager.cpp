@@ -11,7 +11,7 @@ SceneManager::~SceneManager() {
     // Clean up scenes
 }
 
-void SceneManager::AddScene(const String& name, const DSP::ParameterSet& params) {
+void SceneManager::AddScene(const String& name, const AudioFX::ParameterSet& params) {
     Scene scene;
     scene.name = name;
     scene.params = params;
@@ -76,11 +76,11 @@ void SceneManager::MorphScenes(int scene1, int scene2, double position) {
     }
 }
 
-void SceneManager::ApplyMorphedParams(DSP::ParameterSet& target) const {
+void SceneManager::ApplyMorphedParams(AudioFX::ParameterSet& target) const {
     // Apply the morphed parameters to the target
-    DSP::ParameterSet morphed = sceneMorph.GetMorphedParameters();
+    AudioFX::ParameterSet morphed = sceneMorph.GetMorphedParameters();
     
-    Vector<DSP::ParameterId> ids = morphed.GetParameterIds();
+    Vector<AudioFX::ParameterId> ids = morphed.GetParameterIds();
     for (const auto& id : ids) {
         target.Set(id, morphed.Get(id));
     }

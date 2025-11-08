@@ -26,7 +26,7 @@ public:
     void Refresh();
     
     // Set the preset manager for the rack
-    void SetPresetManager(DSP::PresetManager* presetMgr);
+    void SetPresetManager(AudioFX::PresetManager* presetMgr);
     
     // Load a preset
     void LoadPreset(const String& name);
@@ -52,7 +52,7 @@ private:
     };
     
     Vector<ModuleSlot> modules;
-    DSP::PresetManager* presetManager;
+    AudioFX::PresetManager* presetManager;
     
     void RefreshLayout();
     void ModuleAdded();

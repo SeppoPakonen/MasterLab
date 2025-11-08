@@ -2,11 +2,12 @@
 #define _AudioFX_DSP_h_
 
 #include <Core/Core.h>
-#include <AudioCore/AudioCore.h>
+#include <CtrlLib/CtrlLib.h>
+#include <AudioCore/AudioCore.h>  // For audio processing types
 
 using namespace Upp;
 
-namespace am {
+// DSP namespace for Digital Signal Processing infrastructure
 namespace DSP {
 
 // Forward declarations
@@ -17,706 +18,834 @@ class LatencyBuffer;
 class Analyzer;
 class PresetManager;
 
-// SignalBus - handles audio signal routing between processing modules
+// Type definitions for audio processing
+using Sample = double;
+using AudioBuffer = Vector<Sample>;
+using ParameterId = String;
+using ParameterValue = double;
+
+// Enum for parameter value types
+enum class ParameterType {
+    kFloat,
+    kInt,
+    kBool,
+    kString
+};
+
+// Enum for modulation sources
+enum class ModSource {
+    kLFO1,
+    kLFO2,
+    kEnvelope1,
+    kEnvelope2,
+    kVelocity,
+    kKeyTrack,
+    kMIDI_CC1,
+    kMIDI_CC2,
+    kMIDI_CC3,
+    kMIDI_CC4,
+    kModWheel,
+    kAftertouch,
+    kBend,
+    kRandom,
+    kUser1,
+    kUser2
+};
+
+// Enum for modulation destinations
+enum class ModDestination {
+    kOsc1Pitch,
+    kOsc2Pitch,
+    kOsc1Volume,
+    kOsc2Volume,
+    kFilterCutoff,
+    kFilterResonance,
+    kAmpGain,
+    kPan,
+    kLFO1Rate,
+    kLFO2Rate
+};
+
+// Simple structure for modulation mapping
+struct ModulationMapping {
+    ModSource source;
+    ModDestination destination;
+    ParameterValue amount;
+    
+    ModulationMapping(ModSource s, ModDestination d, ParameterValue a = 1.0) 
+        : source(s), destination(d), amount(a) {}
+};
+
+// Enum for signal bus types
+enum class BusType {
+    kAudio,
+    kControl,
+    kMIDI,
+    kSidechain
+};
+
+// Signal bus for audio data transport
 class SignalBus {
 public:
-	SignalBus(int channels = 2, int max_samples = 8192);
-	~SignalBus();
-	
-	void ResizeBuffers(int new_channels, int new_max_samples);
-	void Clear();
-	void MixTo(SignalBus& target, double gain = 1.0, int src_start = 0, int dest_start = 0, int sample_count = -1);
-	void CopyTo(SignalBus& target, int src_start = 0, int dest_start = 0, int sample_count = -1);
-	
-	// Audio buffer access
-	Vector<double*>& GetBuffers() { return buffers; }
-	double* GetChannelBuffer(int channel) { return buffers[channel]; }
-	const double* GetChannelBuffer(int channel) const { return buffers[channel]; }
-	
-	int GetChannelCount() const { return channel_count; }
-	int GetMaxSamples() const { return max_samples; }
-	
-	void SetSampleRate(double rate) { sample_rate = rate; }
-	double GetSampleRate() const { return sample_rate; }
-	
+    SignalBus();
+    SignalBus(int channels, int maxFrames);
+    
+    void Resize(int channels, int frames);
+    void Clear();
+    
+    // Access for reading/writing audio data
+    Sample* GetChannel(int channel);
+    const Sample* GetChannel(int channel) const;
+    
+    // Get/set number of channels and frames
+    int GetChannelCount() const { return channelCount; }
+    int GetFrameCount() const { return frameCount; }
+    void SetFrameCount(int frames) { frameCount = min(frames, maxFrames); }
+    
+    // Process audio through this bus
+    void ProcessAudio();
+    
 private:
-	Vector<double*> buffers;  // One buffer per channel
-	int channel_count;
-	int max_samples;
-	double sample_rate = 44100.0;  // Default sample rate
+    int channelCount;
+    int frameCount;
+    int maxFrames;
+    Vector<AudioBuffer> buffers;  // One buffer per channel
 };
 
-// ParameterSet - manages a collection of audio parameters
+// Parameter set for managing plugin/device parameters
 class ParameterSet {
 public:
-	struct Parameter {
-		String name;
-		double value = 0.0;
-		double min_value = 0.0;
-		double max_value = 1.0;
-		double default_value = 0.5;
-		String unit;  // e.g., "dB", "Hz", "%"
-		bool is_automatable = true;
-		
-		// UI display properties
-		String display_name;
-		int display_order = 0;
-	};
-	
-	ParameterSet();
-	void AddParameter(const String& id, const Parameter& param);
-	void RemoveParameter(const String& id);
-	
-	void SetValue(const String& id, double value);
-	double GetValue(const String& id) const;
-	void SetNormalizedValue(const String& id, double normalized_value);  // 0.0 to 1.0
-	double GetNormalizedValue(const String& id) const;  // 0.0 to 1.0
-	
-	const VectorMap<String, Parameter>& GetParameters() const { return parameters; }
-	
+    ParameterSet();
+    
+    // Add a parameter with initial value and constraints
+    void AddParameter(const ParameterId& id, ParameterValue initial, 
+                      ParameterValue min = 0.0, ParameterValue max = 1.0,
+                      ParameterType type = ParameterType::kFloat,
+                      const String& name = "");
+    
+    // Get/set parameter values
+    ParameterValue Get(const ParameterId& id) const;
+    bool Set(const ParameterId& id, ParameterValue value);
+    bool SetNormalized(const ParameterId& id, ParameterValue normalizedValue);
+    ParameterValue GetNormalized(const ParameterId& id) const;
+    
+    // Get parameter info
+    ParameterValue GetMin(const ParameterId& id) const;
+    ParameterValue GetMax(const ParameterId& id) const;
+    ParameterType GetType(const ParameterId& id) const;
+    String GetName(const ParameterId& id) const;
+    
+    // Get all parameter IDs
+    Vector<ParameterId> GetParameterIds() const;
+    
+    // Reset to initial values
+    void ResetToInitial();
+    
 private:
-	VectorMap<String, Parameter> parameters;
+    struct ParameterInfo {
+        ParameterValue value;
+        ParameterValue initial;
+        ParameterValue min;
+        ParameterValue max;
+        ParameterType type;
+        String name;
+    };
+    
+    HashMap<ParameterId, ParameterInfo> parameters;
 };
 
-// ModMatrix - modulation matrix for parameter modulation
+// Modulation matrix for routing modulation sources to destinations
 class ModMatrix {
 public:
-	struct ModSource {
-		enum Type {
-			LFO1, LFO2, 
-			ENVELOPE_FOLLOWER, 
-			KEY_TRACK, 
-			VELOCITY, 
-			AFTER_TOUCH, 
-			PITCH_BEND,
-			CC_CONTROLLER,
-			CUSTOM
-		};
-		
-		Type type;
-		String custom_name;
-		double intensity = 1.0;
-	};
-	
-	struct ModDestination {
-		String parameter_id;  // ID in ParameterSet
-		double amount = 0.0;  // Modulation amount
-	};
-	
-	struct ModConnection {
-		String source_id;      // Unique ID for the source
-		ModSource source;
-		String dest_id;        // Unique ID for the destination
-		ModDestination dest;
-		bool enabled = true;
-	};
-	
-	ModMatrix();
-	void AddConnection(const ModConnection& connection);
-	void RemoveConnection(const String& source_id, const String& dest_id);
-	
-	void Process(FrameContext& ctx);  // Called during audio processing
-	void SetSourceValue(const String& source_id, double value);
-	double GetSourceValue(const String& source_id) const;
-	
+    ModMatrix();
+    
+    // Add a modulation mapping
+    void AddMapping(ModSource source, ModDestination destination, ParameterValue amount = 1.0);
+    
+    // Remove a modulation mapping
+    void RemoveMapping(ModSource source, ModDestination destination);
+    
+    // Update the modulation matrix with current parameter values
+    void Process();
+    
+    // Get the modulation amount for a specific source/destination pair
+    ParameterValue GetModulationAmount(ModSource source, ModDestination destination) const;
+    
+    // Get all active mappings
+    Vector<ModulationMapping> GetMappings() const;
+    
+    // Clear all mappings
+    void Clear();
+    
 private:
-	VectorMap<String, ModConnection> connections;
-	VectorMap<String, double> source_values;
+    Vector<ModulationMapping> mappings;
 };
 
-// LatencyBuffer - handles latency compensation
+// Latency buffer for handling processing delays
 class LatencyBuffer {
 public:
-	LatencyBuffer();
-	~LatencyBuffer();
-	
-	void SetLatency(int samples);
-	int GetLatency() const { return latency_samples; }
-	
-	void Process(double** input, double** output, int channels, int sample_count);
-	void Process(float** input, float** output, int channels, int sample_count);
-	
+    LatencyBuffer();
+    explicit LatencyBuffer(int maxDelaySamples);
+    
+    // Set the delay amount in samples
+    void SetDelay(int samples);
+    
+    // Get the current delay amount
+    int GetDelay() const { return delaySamples; }
+    
+    // Process a sample with the specified delay
+    Sample Process(Sample input);
+    
+    // Process an audio buffer
+    void ProcessBuffer(const AudioBuffer& input, AudioBuffer& output);
+    
+    // Get latency in samples
+    int GetLatency() const { return delaySamples; }
+    
 private:
-	void ResizeBuffers(int channels, int sample_count);
-	
-	Vector<Vector<double>> delay_buffers;  // One buffer per channel
-	Vector<int> write_positions;          // Write position per channel
-	int latency_samples = 0;
-	int max_latency = 0;
+    int maxDelay;
+    int delaySamples;
+    Vector<Sample> delayLine;
+    int writeIndex;
 };
 
-// Analyzer - provides analysis services
+// Analyzer for processing and analyzing audio signals
 class Analyzer {
 public:
-	enum Type {
-		SPECTRUM,
-		WAVEFORM,
-		LEVEL_METER,
-		PHASE_METER,
-		THD_ANALYZER
-	};
-	
-	Analyzer(Type type);
-	~Analyzer();
-	
-	void Process(const double* const* input, int channels, int sample_count, double sample_rate);
-	void Process(const float* const* input, int channels, int sample_count, double sample_rate);
-	
-	// Get analysis results
-	Value GetResult();  // Returns appropriate analysis data based on Type
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    Analyzer();
+    
+    // Analyze an audio buffer, returns analysis results
+    ValueMap Analyze(const AudioBuffer& buffer);
+    
+    // Get real-time analysis results
+    ValueMap GetRealTimeAnalysis();
+    
+    // Reset analysis state
+    void Reset();
+    
 private:
-	Type analyzer_type;
-	Value results;  // Analysis results stored appropriately
-	
-	// Analysis-specific parameters
-	VectorMap<String, double> parameters;
+    // Analysis data and state
+    double rmsValue;
+    double peakValue;
+    double currentFrequency;
+    Vector<Sample> spectrum;
 };
 
-// PresetManager - manages presets with automation bridging
+// Preset manager for handling parameter presets
 class PresetManager {
 public:
-	struct Preset {
-		String name;
-		String category;
-		String description;
-		ValueMap parameter_values;  // Parameter ID to value mapping
-		ValueMap automation_data;   // Automation data if needed
-	};
-	
-	PresetManager();
-	~PresetManager();
-	
-	// Preset operations
-	void AddPreset(const Preset& preset);
-	void RemovePreset(const String& name);
-	void ApplyPreset(const String& name, ParameterSet& params);
-	void SavePreset(const String& name, const ParameterSet& params, const String& filepath);
-	void LoadPreset(const String& name, ParameterSet& params, const String& filepath);
-	
-	Vector<String> GetPresetNames() const;
-	Vector<String> GetPresetNamesByCategory(const String& category) const;
-	
-	// Automation bridging to UI::RackView - using void* to avoid circular dependency
-	void RegisterAutomationBridge(void* rack_view);
-	void UnregisterAutomationBridge(void* rack_view);
-	void NotifyParameterChange(const String& param_id, double new_value);
-	
+    PresetManager();
+    
+    // Add a preset with current parameters
+    void AddPreset(const ParameterSet& params, const String& name);
+    
+    // Load a preset by name
+    bool LoadPreset(const String& name, ParameterSet& params);
+    
+    // Save current parameters as a preset
+    void SavePreset(const ParameterSet& params, const String& name);
+    
+    // Delete a preset
+    void DeletePreset(const String& name);
+    
+    // Get list of available presets
+    Vector<String> GetPresetNames() const;
+    
+    // Get preset by index
+    String GetPresetName(int index) const;
+    
+    // Get number of presets
+    int GetPresetCount() const;
+    
+    // Rename a preset
+    void RenamePreset(const String& oldName, const String& newName);
+    
 private:
-	VectorMap<String, Preset> presets;
-	Vector<void*> rack_views;  // For automation bridging - using void* to avoid circular dependency
+    struct Preset {
+        String name;
+        ValueMap parameters;
+    };
+    
+    Vector<Preset> presets;
 };
 
-// VoiceFeatureExtractor - extracts features from voice signals
-class VoiceFeatureExtractor {
+// FIR filter designer
+class FIRDesigner {
 public:
-	enum FeatureType {
-		PITCH,
-		FORMANTS,
-		SPECTRAL_CENTROID,
-		ZERO_CROSSING_RATE,
-		MFCC,  // Mel-Frequency Cepstral Coefficients
-		CHROMA
-	};
-	
-	VoiceFeatureExtractor();
-	~VoiceFeatureExtractor();
-	
-	void Process(const double* input, int sample_count, double sample_rate);
-	Value GetFeature(FeatureType type) const;
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    FIRDesigner();
+    
+    // Design FIR filter based on specifications
+    Vector<double> DesignLowPass(int order, double cutoffFreq, double sampleRate);
+    Vector<double> DesignHighPass(int order, double cutoffFreq, double sampleRate);
+    Vector<double> DesignBandPass(int order, double lowFreq, double highFreq, double sampleRate);
+    Vector<double> DesignBandStop(int order, double lowFreq, double highFreq, double sampleRate);
+    
+    // Apply windowing to filter coefficients
+    void ApplyWindow(Vector<double>& coefficients, int windowType = 0); // 0=Rectangular, 1=Hamming, 2=Hann, 3=Blackman
+    
 private:
-	VectorMap<String, double> parameters;
-	ValueMap features;  // FeatureType to extracted feature value
+    // Internal design methods
+    Vector<double> GenerateSinc(double cutoff, int length);
+    void ApplyWindowHamming(Vector<double>& coefficients);
+    void ApplyWindowHann(Vector<double>& coefficients);
+    void ApplyWindowBlackman(Vector<double>& coefficients);
 };
 
-// HarmonyGenerator - generates harmonies based on input
-class HarmonyGenerator {
+// IIR filter designer
+class IIRDesigner {
 public:
-	enum HarmonyMode {
-		CHORD_FOLLOWING,
-		INTELLIGENT_VOICING,
-		FIXED_INTERVAL
-	};
-	
-	HarmonyGenerator();
-	~HarmonyGenerator();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetHarmonyMode(HarmonyMode mode);
-	void SetInterval(int semitones);  // For FIXED_INTERVAL mode
-	void SetChord(const String& chord);  // For CHORD_FOLLOWING mode
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    IIRDesigner();
+    
+    // Design IIR filter based on specifications
+    void DesignLowPass(double freq, double q, double sampleRate);
+    void DesignHighPass(double freq, double q, double sampleRate);
+    void DesignBandPass(double freq, double q, double sampleRate);
+    void DesignBandStop(double freq, double q, double sampleRate);
+    void DesignPeakingEQ(double freq, double q, double gain, double sampleRate);
+    void DesignLowShelf(double freq, double slope, double gain, double sampleRate);
+    void DesignHighShelf(double freq, double slope, double gain, double sampleRate);
+    
+    // Get the filter coefficients
+    ValueMap GetCoefficients() const;
+    
+    // Process a single sample
+    double ProcessSample(double input);
+    
 private:
-	HarmonyMode mode = CHORD_FOLLOWING;
-	int interval = 7;  // Fifth by default
-	String chord = "C";
-	VectorMap<String, double> parameters;
+    // Biquad filter coefficients
+    double b0, b1, b2;  // Numerator coefficients
+    double a1, a2;      // Denominator coefficients (a0 is always normalized to 1)
+    
+    // Filter state
+    double x1, x2;      // Input delay line
+    double y1, y2;      // Output delay line
+    
+    // Helper method to normalize coefficients
+    void NormalizeCoefficients();
 };
 
-// StyleTransferNet - neural network for style transfer
-class StyleTransferNet {
+// Ambisonics encoder for spatial audio
+class AmbisonicsEncoder {
 public:
-	enum StyleType {
-		VOCAL_STYLE,
-		INSTRUMENT_STYLE,
-		REVERB_STYLE,
-		COMPRESSION_STYLE
-	};
-	
-	StyleTransferNet();
-	~StyleTransferNet();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetStyle(StyleType type, const String& style_name);
-	void Train(const Vector<double*>& training_data, int data_count);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    AmbisonicsEncoder();
+    
+    enum AmbisonicOrder {
+        kFirstOrder = 1,
+        kSecondOrder = 2,
+        kThirdOrder = 3
+    };
+    
+    // Set the ambisonic order
+    void SetOrder(AmbisonicOrder order);
+    
+    // Encode a signal from a specific direction
+    void EncodeSignal(const AudioBuffer& input, Vector<AudioBuffer>& output, 
+                      double azimuth, double elevation);
+    
+    // Get the number of output channels for current order
+    int GetOutputChannelCount() const;
+    
+    // Set normalization type (SN3D, N3D, FuMa)
+    void SetNormalizationType(int type); // 0=SN3D, 1=N3D, 2=FuMa
+    
 private:
-	StyleType style_type = VOCAL_STYLE;
-	String style_name = "Pop";
-	VectorMap<String, double> parameters;
+    AmbisonicOrder order;
+    int normalizationType; // 0=SN3D, 1=N3D, 2=FuMa
 };
 
-// VoiceEncoder/Decoder - for voice processing and encoding
-class VoiceEncoder {
+// Binaural renderer for HRTF-based spatialization
+class BinauralRenderer {
 public:
-	enum EncodingType {
-		LPC,  // Linear Predictive Coding
-		CEPSTRAL,
-		FORMANT_BASED
-	};
-	
-	VoiceEncoder();
-	~VoiceEncoder();
-	
-	int Encode(const double* input, int sample_count, double sample_rate, void* output_buffer, int buffer_size);
-	void SetEncodingType(EncodingType type);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    BinauralRenderer();
+    
+    // Load HRTF data
+    bool LoadHRTF(const String& filePath);
+    
+    // Process audio with binaural rendering
+    void Process(const AudioBuffer& input, AudioBuffer& leftOutput, AudioBuffer& rightOutput,
+                 double azimuth, double elevation);
+    
+    // Set interaural time difference
+    void SetITD(bool enabled);
+    
+    // Set HRTF interpolation method
+    void SetInterpolationMethod(int method); // 0=Nearest, 1=Bilinear, 2=Cubic
+    
 private:
-	EncodingType encoding_type = LPC;
-	VectorMap<String, double> parameters;
+    // HRTF data storage
+    // In a real implementation, this would store impulse responses for different angles
+    bool hrtfLoaded;
+    bool useITD;
+    int interpolationMethod;
 };
 
-class VoiceDecoder {
+// Surround meter bridge for multi-channel metering
+class SurroundMeterBridge {
 public:
-	VoiceDecoder();
-	~VoiceDecoder();
-	
-	int Decode(const void* input_buffer, int buffer_size, double* output, int max_samples, double sample_rate);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    SurroundMeterBridge();
+    
+    // Set the channel configuration (e.g., "5.1", "7.1", "Dolby Atmos 7.1.4")
+    void SetChannelConfig(const String& config);
+    
+    // Process audio and get meter values for each channel
+    ValueMap ProcessWithMetering(const Vector<AudioBuffer>& input);
+    
+    // Get meter value for a specific channel
+    double GetChannelLevel(int channelIndex) const;
+    
+    // Set meter integration time (for RMS calculation)
+    void SetIntegrationTime(double ms);
+    
 private:
-	VectorMap<String, double> parameters;
+    String channelConfig;
+    Vector<double> channelLevels;
+    double integrationTime;
 };
 
-// FormantMorpher - morphs formants between different vocal characteristics
-class FormantMorpher {
+// Rack host for managing effect racks
+class RackHost {
 public:
-	enum MorphType {
-		PRESERVE_TIMBRE,
-		PRESERVE_PITCH,
-		BALANCED
-	};
-	
-	FormantMorpher();
-	~FormantMorpher();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetMorphTarget(const String& target_name);  // e.g., "male", "female", "child"
-	void SetMorphType(MorphType type);
-	void SetAmount(double amount);  // 0.0 to 1.0
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    RackHost();
+    
+    // Define a rack module
+    struct Module {
+        String id;
+        String name;
+        String type;  // "effect", "instrument", "utility"
+        ValueMap parameters;
+        Vector<Module> children;  // For nested racks
+    };
+    
+    // Add a module to the rack
+    void AddModule(const Module& module);
+    
+    // Remove a module by ID
+    bool RemoveModule(const String& id);
+    
+    // Get module by ID
+    Module* GetModule(const String& id);
+    
+    // Process audio through the rack
+    void Process(const AudioBuffer& input, AudioBuffer& output);
+    
+    // Get the module tree
+    const Vector<Module>& GetModules() const { return modules; }
+    
+    // Set bypass state for a module
+    bool SetBypass(const String& id, bool bypassed);
+    
+    // Serialize the rack configuration
+    String Serialize() const;
+    
+    // Deserialize the rack configuration
+    bool Deserialize(const String& config);
+    
 private:
-	String morph_target = "neutral";
-	MorphType morph_type = BALANCED;
-	double amount = 0.5;  // Default to 50% morph
-	VectorMap<String, double> parameters;
+    Vector<Module> modules;
+    ValueMap bypassStates;
 };
 
-// LUFSMeter - measures loudness according to LUFS standard
-class LUFSMeter {
+// Chain node for linking processing modules
+class ChainNode {
 public:
-	enum MeterMode {
-		MOMENTARY,   // 400ms window
-		SHORT_TERM,  // 3s window
-		INTEGRATED,  // Full program
-		QUASI_PEAK   // Quasi-peak measurement
-	};
-	
-	LUFSMeter();
-	~LUFSMeter();
-	
-	void Process(const double* input, int sample_count, double sample_rate);
-	double GetLoudness(MeterMode mode) const;
-	
-	// Get integrated loudness statistics
-	double GetIntegratedLoudness() const;
-	double GetRange() const;  // Loudness range
-	double GetTruePeak() const;
-	double GetMaxMomentary() const;
-	double GetMaxShortTerm() const;
-	
-	void Reset();
-	
+    ChainNode();
+    
+    // Define node types
+    enum NodeType {
+        kInputNode,
+        kOutputNode,
+        kEffectNode,
+        kInstrumentNode,
+        kMixerNode,
+        kRouterNode
+    };
+    
+    // Initialize the node
+    void Initialize(NodeType type, const String& name);
+    
+    // Connect this node's output to another node's input
+    bool Connect(ChainNode* nextNode);
+    
+    // Disconnect from a specific node
+    void Disconnect(ChainNode* node);
+    
+    // Process audio through this node
+    virtual void Process(const AudioBuffer& input, AudioBuffer& output);
+    
+    // Get node type
+    NodeType GetType() const { return type; }
+    
+    // Get node name
+    const String& GetName() const { return name; }
+    
+    // Get connected nodes
+    const Vector<ChainNode*>& GetOutputs() const { return outputs; }
+    ChainNode* GetInput() const { return input; }
+    
+    // Set processing parameters
+    virtual void SetParameter(const String& id, double value);
+    virtual double GetParameter(const String& id) const;
+    
 private:
-	double integrated_loudness = -70.0;  // Default low value
-	double range = 0.0;
-	double true_peak = 0.0;
-	double max_momentary = -70.0;
-	double max_short_term = -70.0;
-	
-	// Internal processing buffers
-	Vector<double> momentary_buffer;   // 400ms window
-	Vector<double> short_term_buffer;  // 3s window
-	int momentary_pos = 0;
-	int short_term_pos = 0;
-	int sample_rate = 44100;
+    NodeType type;
+    String name;
+    Vector<ChainNode*> outputs;
+    ChainNode* input;
+    ValueMap parameters;
 };
 
-// ISPDetector - inter-sample peak detector
-class ISPDetector {
+// Macro mapper for linking UI controls to parameters
+class MacroMapper {
 public:
-	ISPDetector();
-	~ISPDetector();
-	
-	void Process(const double* input, int sample_count, double sample_rate);
-	double GetISP() const;  // Get inter-sample peak value
-	bool HasClipping() const;
-	
-	void Reset();
-	
+    MacroMapper();
+    
+    // Map a UI control to parameters
+    void MapControl(const String& controlId, const String& paramId, 
+                   double min, double max, double defaultValue = 0.0);
+    
+    // Map a UI control to multiple parameters with weights
+    void MapControlToMultiple(const String& controlId, 
+                             const Vector< Tuple<String, double> >& paramMap);
+    
+    // Update parameter values based on UI control value
+    void UpdateParameter(const String& controlId, double controlValue);
+    
+    // Update UI control based on parameter value
+    double GetControlValue(const String& controlId) const;
+    
+    // Get mapped parameter value
+    double GetParameterValue(const String& paramId) const;
+    
+    // Clear mapping
+    void ClearMapping(const String& controlId);
+    
 private:
-	double max_isp = 0.0;
-	bool has_clipping = false;
+    struct Mapping {
+        String paramId;
+        double min, max;
+        double defaultValue;
+    };
+    
+    struct MultiMapping {
+        Vector< Tuple<String, double> > paramMap; // paramId, weight
+    };
+    
+    HashMap<String, Mapping> singleMappings;
+    HashMap<String, MultiMapping> multiMappings;
+    ValueMap currentValues;
 };
 
-// AutoGainScheduler - automatic gain control
-class AutoGainScheduler {
+// Preset browser for managing and selecting presets
+class PresetBrowser {
 public:
-	AutoGainScheduler();
-	~AutoGainScheduler();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetTargetLoudness(double lufs);  // Target loudness in LUFS
-	void SetAttackTime(double ms);
-	void SetReleaseTime(double ms);
-	
-	double GetAppliedGain() const;
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    PresetBrowser();
+    
+    // Define preset categories
+    struct PresetCategory {
+        String name;
+        Vector<String> presetNames;
+    };
+    
+    // Add a preset to a category
+    void AddPreset(const String& category, const String& name, const ValueMap& parameters);
+    
+    // Load a preset by name
+    ValueMap LoadPreset(const String& category, const String& name) const;
+    
+    // Get available categories
+    Vector<String> GetCategories() const;
+    
+    // Get presets in a category
+    Vector<String> GetPresetsInCategory(const String& category) const;
+    
+    // Save preset to file
+    bool SavePresetToFile(const String& category, const String& name, const String& filePath) const;
+    
+    // Load preset from file
+    bool LoadPresetFromFile(const String& filePath, String& category, String& name, ValueMap& params);
+    
+    // Delete a preset
+    bool DeletePreset(const String& category, const String& name);
+    
+    // Get preset count in category
+    int GetPresetCount(const String& category) const;
+    
 private:
-	double target_loudness = -16.0;  // Default -16 LUFS
-	double attack_time_ms = 10.0;
-	double release_time_ms = 100.0;
-	double current_gain = 1.0;
-	VectorMap<String, double> parameters;
+    struct Preset {
+        String name;
+        ValueMap parameters;
+    };
+    
+    struct Category {
+        String name;
+        Vector<Preset> presets;
+    };
+    
+    Vector<Category> categories;
 };
 
-// MasterAssistant - intelligent mastering assistant
-class MasterAssistant {
+// Latency manager for handling processing delays
+class LatencyManager {
 public:
-	enum MasterMode {
-		REFERENCE_BASED,
-		PRESET_BASED,
-		LIVE_ADJUST
-	};
-	
-	MasterAssistant();
-	~MasterAssistant();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetMasterMode(MasterMode mode);
-	void SetReferenceTrack(const String& track_name);  // For REFERENCE_BASED mode
-	void SetPreset(const String& preset_name);         // For PRESET_BASED mode
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    LatencyManager();
+    
+    // Register a component with its latency
+    void RegisterComponent(const String& id, int latencySamples);
+    
+    // Remove a component from management
+    void UnregisterComponent(const String& id);
+    
+    // Get total system latency
+    int GetTotalLatency() const;
+    
+    // Get latency for a specific component
+    int GetComponentLatency(const String& id) const;
+    
+    // Compensate for latency by applying delay
+    void ApplyLatencyCompensation(AudioBuffer& buffer, int delaySamples);
+    
+    // Get the compensation delay for the system
+    int GetCompensationDelay() const;
+    
+    // Reset the latency calculations
+    void Reset();
+    
 private:
-	MasterMode mode = PRESET_BASED;
-	String reference_track;
-	String preset_name = "Balanced";
-	VectorMap<String, double> parameters;
+    VectorMap<String, int> componentLatencies;
+    int totalLatency;
 };
 
-// Stabilizer - dynamic range stabilizer
-class Stabilizer {
+// Session manager for StudioRack/StudioVerse workflows
+class SessionManager {
 public:
-	Stabilizer();
-	~Stabilizer();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetThreshold(double db);
-	void SetRatio(double ratio);
-	void SetKnee(double db);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    SessionManager();
+    
+    // Session data structure
+    struct SessionData {
+        String name;
+        String description;
+        ValueMap rackStates;      // Rack configurations
+        ValueMap parameterSets;   // Parameter snapshots
+        ValueMap automationData;  // Automation curves
+        ValueMap macroStates;     // Macro controller states
+    };
+    
+    // Create a new session
+    void CreateSession(const String& name);
+    
+    // Load a session
+    bool LoadSession(const String& name);
+    
+    // Save current session
+    bool SaveSession(const String& name);
+    
+    // Save current session with description
+    bool SaveSessionWithDescription(const String& name, const String& description);
+    
+    // Get list of available sessions
+    Vector<String> GetAvailableSessions() const;
+    
+    // Apply session data to the system
+    void ApplySession(const SessionData& session);
+    
+    // Get current session data
+    SessionData GetCurrentSession() const;
+    
+    // Close current session
+    void CloseSession();
+    
+    // Get session directory
+    String GetSessionDirectory() const;
+    
+    // Set session directory
+    void SetSessionDirectory(const String& dir);
+    
 private:
-	double threshold_db = -12.0;
-	double ratio = 2.0;
-	double knee_db = 2.0;
-	VectorMap<String, double> parameters;
+    SessionData currentSession;
+    String sessionDirectory;
+    Vector<String> sessionList;
+    
+    // Helper methods
+    String GetSessionFilePath(const String& name) const;
+    bool SaveSessionToFile(const SessionData& session, const String& filePath) const;
+    SessionData LoadSessionFromFile(const String& filePath) const;
 };
 
-// ImpactShaper - impact and transience shaper
-class ImpactShaper {
+} // namespace DSP
+
+// AI Recommender for suggesting musical content
+class AIRecommender {
 public:
-	enum ShapeMode {
-		ATTACK_ENHANCE,
-		DECAY_CONTROL,
-		TRANSIENT_SHAPER
-	};
-	
-	ImpactShaper();
-	~ImpactShaper();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetShapeMode(ShapeMode mode);
-	void SetAmount(double amount);  // 0.0 to 1.0
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    AIRecommender();
+    
+    // Recommendation types
+    enum RecommendationType {
+        kChordProgression,
+        kMelody,
+        kBassline,
+        kDrumPattern,
+        kArrangement,
+        kParameterSetting
+    };
+    
+    // Context for making recommendations
+    struct Context {
+        String genre;
+        String mood;
+        double tempo;
+        String key;
+        Vector<String> currentChords;  // Current chord progression
+        Vector<String> currentMelody;  // Current melody notes
+        ValueMap stylePreferences;
+        
+        Context() : tempo(120.0) {}
+    };
+    
+    // Get recommendations based on context
+    Vector<String> GetChordRecommendations(const Context& context, int count = 4);
+    Vector<String> GetMelodyRecommendations(const Context& context, int count = 4);
+    Vector<String> GetBasslineRecommendations(const Context& context, int count = 4);
+    Vector<String> GetDrumPatternRecommendations(const Context& context, int count = 4);
+    
+    // Learn from user feedback
+    void ProvideFeedback(const String& recommendation, bool liked);
+    
+    // Load a music style model
+    bool LoadStyleModel(const String& modelPath);
+    
+    // Get the confidence level of a recommendation
+    double GetRecommendationConfidence(const String& recommendation) const;
+    
+    // Analyze current musical context
+    ValueMap AnalyzeContext(const Context& context);
+    
 private:
-	ShapeMode mode = ATTACK_ENHANCE;
-	double amount = 0.5;
-	VectorMap<String, double> parameters;
+    // Internal model data
+    ValueMap styleModel;
+    Vector< Tuple<String, bool> > feedbackHistory;  // recommendation, liked
 };
 
-// PriorityAllocator - frequency band priority allocator
-class PriorityAllocator {
+// NET namespace for network transport
+namespace NET {
+
+class TransportLayer {
 public:
-	PriorityAllocator();
-	~PriorityAllocator();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void SetPriorityBand(int band_index, double priority);  // 0.0 to 1.0
-	void SetCrossoverFrequencies(const Vector<double>& freqs);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    TransportLayer();
+    
+    // Connection types
+    enum ConnectionType {
+        kTCP,
+        kUDP,
+        kWebSocket,
+        kOSC
+    };
+    
+    // Initialize the transport layer
+    bool Initialize(ConnectionType type, int port);
+    
+    // Send data
+    bool Send(const String& data, const String& address = "");
+    
+    // Receive data
+    String Receive();
+    
+    // Check if connected
+    bool IsConnected() const;
+    
+    // Close connection
+    void Close();
+    
+    // Get connection statistics
+    ValueMap GetStats() const;
+    
 private:
-	Vector<double> band_priorities;
-	Vector<double> crossover_freqs;
-	VectorMap<String, double> parameters;
+    ConnectionType connType;
+    int port;
+    bool connected;
+    ValueMap statistics;
 };
 
-// DitherEngine - dithering engine for bit depth reduction
-class DitherEngine {
+} // namespace NET
+
+#endif
+
+// Calibration namespace for audio measurement and calibration
+namespace Calibration {
+
+// Measurement analyzer for audio system analysis
+class MeasurementAnalyzer {
 public:
-	enum DitherType {
-		RECTANGULAR,
-		TRIANGULAR,
-		SHIBATA,
-		POWERSUM
-	};
-	
-	DitherEngine();
-	~DitherEngine();
-	
-	void Process(float* samples, int count, int source_bits, int target_bits);
-	void SetDitherType(DitherType type);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    MeasurementAnalyzer();
+    
+    // Analyze an impulse response
+    ValueMap AnalyzeImpulseResponse(const AudioBuffer& impulse);
+    
+    // Measure frequency response
+    ValueMap AnalyzeFrequencyResponse(const AudioBuffer& stimulus, const AudioBuffer& response);
+    
+    // Measure THD+N (Total Harmonic Distortion + Noise)
+    double MeasureTHDN(const AudioBuffer& signal, const AudioBuffer& fundamental);
+    
+    // Measure intermodulation distortion
+    double MeasureIntermodulationDistortion(const AudioBuffer& signal);
+    
+    // Measure latency
+    double MeasureLatency(const AudioBuffer& stimulus, const AudioBuffer& response, double sampleRate);
+    
 private:
-	DitherType dither_type = SHIBATA;
-	VectorMap<String, double> parameters;
+    // Internal analysis methods
+    AudioBuffer ComputeFFT(const AudioBuffer& signal);
+    double ComputePower(const AudioBuffer& signal);
 };
 
-// MotionSequencer - creates evolving parameter sequences
-class MotionSequencer {
+// Phase analyzer for phase relationship analysis
+class PhaseAnalyzer {
 public:
-	struct Step {
-		double value = 0.0;
-		double duration = 0.25;  // In beats
-		bool active = true;
-	};
-	
-	MotionSequencer();
-	~MotionSequencer();
-	
-	void Process(FrameContext& ctx);
-	void SetSteps(const Vector<Step>& steps);
-	void SetTempo(double bpm);
-	void SetPlaybackRate(double rate);  // 1.0 = normal, 0.5 = half speed, etc.
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    PhaseAnalyzer();
+    
+    // Analyze phase relationship between two signals
+    ValueMap AnalyzePhase(const AudioBuffer& signal1, const AudioBuffer& signal2);
+    
+    // Measure phase difference at a specific frequency
+    double GetPhaseDifferenceAtFrequency(const AudioBuffer& signal1, const AudioBuffer& signal2, 
+                                        double freq, double sampleRate);
+    
+    // Check for phase coherence
+    bool IsPhaseCoherent(const AudioBuffer& signal1, const AudioBuffer& signal2, 
+                        double coherenceThreshold = 0.7);
+    
+    // Generate phase correlation meter data
+    ValueMap GetPhaseCorrelationData(const AudioBuffer& signal1, const AudioBuffer& signal2);
+    
 private:
-	Vector<Step> steps;
-	double tempo_bpm = 120.0;
-	double playback_rate = 1.0;
-	int current_step = 0;
-	double step_progress = 0.0;
-	VectorMap<String, double> parameters;
+    // Internal methods
+    double CalculatePhaseAtBin(const Complex& fft1, const Complex& fft2, int bin);
 };
 
-// SceneMorph - morphs between different parameter scenes
-class SceneMorph {
+// Delay solver for calculating optimal delay values
+class DelaySolver {
 public:
-	struct Scene : public Upp::Moveable<Scene> {
-		String name;
-		ValueMap parameters;  // Parameter ID to value mapping
-		
-		typedef Scene CLASSNAME;  // Make this struct compatible with U++ containers
-	};
-	
-	SceneMorph();
-	~SceneMorph();
-	
-	void Process(FrameContext& ctx);
-	void AddScene(const Scene& scene);
-	void SetCurrentScene(int scene_index);
-	void SetMorphAmount(double amount);  // 0.0 to 1.0 between current and next scene
-	void SetCrossfadeEnabled(bool enabled);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
+    DelaySolver();
+    
+    // Solve for delay between two signals
+    double SolveDelay(const AudioBuffer& reference, const AudioBuffer& delayed, double sampleRate);
+    
+    // Solve multiple delays for multichannel systems
+    Vector<double> SolveDelays(const Vector<AudioBuffer>& referenceSignals, 
+                              const Vector<AudioBuffer>& delayedSignals, double sampleRate);
+    
+    // Calculate delay for distance (speed of sound = 343 m/s)
+    double CalculateDelayForDistance(double distanceMeters);
+    
+    // Set the algorithm to use
+    void SetAlgorithm(int algo); // 0=Cross-correlation, 1=Phase-based, 2=Least-squares
+    
 private:
-	Vector<Scene> scenes;
-	int current_scene = 0;
-	double morph_amount = 0.0;
-	bool crossfade_enabled = false;
-	VectorMap<String, double> parameters;
+    int algorithm; // 0=Cross-correlation, 1=Phase-based, 2=Least-squares
 };
 
+} // namespace Calibration
 
-
-// StepSequencer - classic step sequencer
-class StepSequencer {
-public:
-	enum GateMode {
-		TRIGGER,
-		GATE,
-		CONTINUOUS
-	};
-	
-	StepSequencer();
-	~StepSequencer();
-	
-	void Process(FrameContext& ctx);
-	void SetStep(int index, double value, bool gate = true);
-	void SetGateMode(GateMode mode);
-	void SetTempo(double bpm);
-	void SetSteps(int count);
-	void SetOctave(int octave_offset);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
-private:
-	Vector<double> step_values;
-	Vector<bool> step_gates;
-	GateMode gate_mode = TRIGGER;
-	double tempo_bpm = 120.0;
-	int total_steps = 16;
-	int current_step = 0;
-	int octave_offset = 0;
-	VectorMap<String, double> parameters;
-};
-
-// ModuleSwitcher - switches between different processing modules
-class ModuleSwitcher {
-public:
-	enum SwitchMode {
-		TOGGLE,
-		CYCLE,
-		SELECT
-	};
-	
-	ModuleSwitcher();
-	~ModuleSwitcher();
-	
-	void Process(const double* input, double* output, int sample_count, double sample_rate);
-	void AddModule(const String& name, Function<void(const double*, double*, int, double)> processor);
-	void SetCurrentModule(int index);
-	void SetCurrentModule(const String& name);
-	void SetSwitchMode(SwitchMode mode);
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
-private:
-	Vector<String> module_names;
-	Vector<Function<void(const double*, double*, int, double)>> processors;
-	int current_module = 0;
-	SwitchMode switch_mode = TOGGLE;
-	VectorMap<String, double> parameters;
-};
-
-// MacroController - high-level parameter controller
-class MacroController {
-public:
-	struct MacroParameter : public Upp::Moveable<MacroParameter> {
-		String parameter_id;
-		double min_value = 0.0;
-		double max_value = 1.0;
-		double default_value = 0.5;
-		double current_value = 0.5;
-		
-		typedef MacroParameter CLASSNAME;  // Make this struct compatible with U++ containers
-	};
-	
-	MacroController();
-	~MacroController();
-	
-	void Process(FrameContext& ctx);
-	void AddParameter(const String& macro_name, const MacroParameter& param);
-	void SetMacroValue(const String& macro_name, double value);
-	double GetMacroValue(const String& macro_name) const;
-	
-	void SetParameter(const String& name, double value);
-	double GetParameter(const String& name) const;
-	
-private:
-	VectorMap<String, Vector<MacroParameter>> macro_params;
-	VectorMap<String, double> macro_values;
-	VectorMap<String, double> parameters;
-};
-
-
-
-}  // namespace DSP
-}  // namespace am
-
-
-
-// UI namespace forward declarations for UI::RackView
-namespace am {
-namespace UI {
-	class RackView;
-	class SceneManager;
-	class XYPAD;
-}
-}
+#endif
 
 #endif

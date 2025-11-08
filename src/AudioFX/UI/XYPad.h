@@ -16,7 +16,7 @@ public:
     virtual ~XYPad();
     
     // Set the parameter IDs for X and Y axes
-    void SetParameterIds(const DSP::ParameterId& xId, const DSP::ParameterId& yId);
+    void SetParameterIds(const AudioFX::ParameterId& xId, const AudioFX::ParameterId& yId);
     
     // Set the current position (0.0-1.0 for both axes)
     void SetPosition(double x, double y);
@@ -25,7 +25,7 @@ public:
     Point<double> GetPosition() const;
     
     // Set parameter set to control
-    void SetParameterSet(DSP::ParameterSet* params);
+    void SetParameterSet(AudioFX::ParameterSet* params);
     
     // Get the parameter values at current position
     ValueMap GetParameterValues() const;
@@ -44,8 +44,8 @@ protected:
     virtual void Layout() override;
     
 private:
-    DSP::ParameterId paramX, paramY;
-    DSP::ParameterSet* parameterSet;
+    AudioFX::ParameterId paramX, paramY;
+    AudioFX::ParameterSet* parameterSet;
     Point<double> position;
     Point<double> sensitivity;
     bool isDragging;

@@ -13,7 +13,7 @@ XYPad::~XYPad() {
     // Clean up
 }
 
-void XYPad::SetParameterIds(const DSP::ParameterId& xId, const DSP::ParameterId& yId) {
+void XYPad::SetParameterIds(const AudioFX::ParameterId& xId, const AudioFX::ParameterId& yId) {
     paramX = xId;
     paramY = yId;
     UpdateFromParameters();
@@ -30,7 +30,7 @@ Point<double> XYPad::GetPosition() const {
     return position;
 }
 
-void XYPad::SetParameterSet(DSP::ParameterSet* params) {
+void XYPad::SetParameterSet(AudioFX::ParameterSet* params) {
     parameterSet = params;
     UpdateFromParameters();
 }

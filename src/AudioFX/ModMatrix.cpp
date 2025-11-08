@@ -1,6 +1,6 @@
 #include "ModMatrix.h"
 
-namespace DSP {
+namespace AudioFX {
 
 ModMatrix::ModMatrix() {
     // Initialize with no mappings
@@ -49,4 +49,4 @@ void ModMatrix::Clear() {
     mappings.Clear();
 }
 
-} // namespace DSP
+} // namespace AudioFX

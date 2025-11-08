@@ -1,313 +1,280 @@
 #include "IOMatrixService.h"
 
-// Define the static instance variable
-am::IOMatrixService* am::IOMatrixService::instance = nullptr;
+namespace Devices {
 
-namespace am {
-
-// Implementation for RoutingRepository
-RoutingRepository::RoutingRepository() {
-    InitializeDefaultPresets();
-}
-
-void RoutingRepository::InitializeDefaultPresets() {
-    // Initialize with some default routing presets
-    Vector<ConnectionPoint> stereoInOut;
-    
-    // Add default stereo input
-    ConnectionPoint stereoIn;
-    stereoIn.name = "Stereo In";
-    stereoIn.id = "stereo_in_01";
-    stereoIn.deviceName = "ASIO4ALL v2";
-    stereoIn.portName = "1/2";
-    stereoIn.speakers = "Stereo";
-    stereoInOut.Add(stereoIn);
-    
-    // Add default stereo output
-    ConnectionPoint stereoOut;
-    stereoOut.name = "Stereo Out";
-    stereoOut.id = "stereo_out_01";
-    stereoOut.deviceName = "ASIO4ALL v2";
-    stereoOut.portName = "1/2";
-    stereoOut.speakers = "Stereo";
-    stereoInOut.Add(stereoOut);
-    
-    presets.GetAdd("Default Stereo") <<= stereoInOut;
-}
-
-bool RoutingRepository::SavePreset(const String& name, const Vector<ConnectionPoint>& connections) {
-    // Deep copy the vector using the U++ <<= operator
-    presets.GetAdd(name) <<= connections;
-    return true; // In a real implementation, this might involve file I/O
-}
-
-bool RoutingRepository::LoadPreset(const String& name, Vector<ConnectionPoint>& connections) {
-    int pos = presets.Find(name);
-    if (pos >= 0) {
-        connections <<= presets[pos];  // Use operator[] to access by index instead of Get
-        return true;
-    }
-    return false;
-}
-
-bool RoutingRepository::DeletePreset(const String& name) {
-    return presets.RemoveKey(name);
-}
-
-Vector<String> RoutingRepository::GetAvailablePresets() const {
-    Vector<String> result;
-    for (const auto& key : presets.GetKeys()) {
-        result.Add(key);
-    }
-    return result;
-}
-
-bool RoutingRepository::SaveCurrentRouting(const String& name) {
-    // In a real implementation, this would save the current system routing state
-    return true;
-}
-
-bool RoutingRepository::LoadRouting(const String& name) {
-    // In a real implementation, this would load a routing state and apply it to the system
-    return true;
-}
-
-bool RoutingRepository::DeleteRouting(const String& name) {
-    // In a real implementation, this would delete a saved routing state
-    return true;
-}
-
-// Implementation for IOMatrixService
 IOMatrixService::IOMatrixService() {
-    InitializeDefaultConnections();
+    Initialize();
 }
 
 IOMatrixService::~IOMatrixService() {
+    Shutdown();
 }
 
-void IOMatrixService::InitializeDefaultConnections() {
-    // Add default input connections
-    ConnectionPoint defaultIn;
-    defaultIn.name = "Input 1/2";
-    defaultIn.id = "input_01_02";
-    defaultIn.deviceName = "System Default";
-    defaultIn.portName = "1/2";
-    defaultIn.speakers = "Stereo";
-    inputs.Add(defaultIn);
+void IOMatrixService::Initialize() {
+    Reset();
     
-    // Add default output connections
-    ConnectionPoint defaultOut;
-    defaultOut.name = "Output 1/2";
-    defaultOut.id = "output_01_02";
-    defaultOut.deviceName = "System Default";
-    defaultOut.portName = "1/2";
-    defaultOut.speakers = "Stereo";
-    outputs.Add(defaultOut);
+    // Add default buses
+    AudioBus defaultInput;
+    defaultInput.name = "Stereo In";
+    defaultInput.speakerConfig = "Stereo";
+    defaultInput.audioDevice = "ASIO DirectX Full Duplex";
+    defaultInput.devicePorts.Add("Channel 1");
+    defaultInput.devicePorts.Add("Channel 2");
+    inputs.Add(defaultInput);
     
-    // Add default group/FX
-    GroupFxConnection defaultGroup;
+    AudioBus defaultOutput;
+    defaultOutput.name = "Stereo Out";
+    defaultOutput.speakerConfig = "Stereo";
+    defaultOutput.audioDevice = "ASIO DirectX Full Duplex";
+    defaultOutput.devicePorts.Add("Channel 1");
+    defaultOutput.devicePorts.Add("Channel 2");
+    outputs.Add(defaultOutput);
+    
+    // Add default group and FX
+    AudioBus defaultGroup;
     defaultGroup.name = "Group 1";
-    defaultGroup.id = "group_01";
-    defaultGroup.speakers = "Stereo";
-    defaultGroup.routeTo = "Main Out";
-    defaultGroup.childRoutes = "";  // Empty string
-    groupsFxs.Add(defaultGroup);
+    defaultGroup.speakerConfig = "Stereo";
+    groupsFx.Add(defaultGroup);
     
-    // Add default external FX
-    ExternalFxConnection defaultFx;
-    defaultFx.name = "Ext. FX 1";
-    defaultFx.id = "ext_fx_01";
-    defaultFx.audioDevice = "System Default";
-    defaultFx.inputPort = "3/4";
-    defaultFx.outputPort = "5/6";
-    defaultFx.sendGainDb = 0.0;
-    defaultFx.returnGainDb = 0.0;
-    externalFxs.Add(defaultFx);
+    ExternalFx defaultFx;
+    defaultFx.name = "External FX";
+    defaultFx.sendConfig = "Stereo/Stereo";
+    externalFx.Add(defaultFx);
     
-    // Add default external instrument
-    ExternalInstrumentConnection defaultInst;
-    defaultInst.name = "Ext. Instrument 1";
-    defaultInst.id = "ext_inst_01";
-    defaultInst.audioDevice = "System Default";
-    defaultInst.outputPort = "7/8";
-    defaultInst.midiDevice = "MIDI Device 1";
+    ExternalInstrument defaultInst;
+    defaultInst.name = "External Instrument";
+    defaultInst.monoReturnsCount = 0;
+    defaultInst.stereoReturnsCount = 0;
     externalInstruments.Add(defaultInst);
     
-    // Add default studio connection
-    StudioConnection defaultStudio;
-    defaultStudio.name = "Control Room";
-    defaultStudio.id = "studio_ctrl_room";
-    defaultStudio.speakers = "Stereo";
-    defaultStudio.audioDevice = "System Default";
-    defaultStudio.devicePort = "9/10";
-    studioConnections.Add(defaultStudio);
+    // Add default studio bus
+    AudioBus defaultStudio;
+    defaultStudio.name = "Monitor 1";
+    defaultStudio.speakerConfig = "Stereo";
+    studio.Add(defaultStudio);
 }
 
+void IOMatrixService::Shutdown() {
+    // Clean up resources if needed
+    Reset();
+}
 
-bool IOMatrixService::SetInput(const ConnectionPoint& input) {
-    // Check if input with this ID already exists
-    for (int i = 0; i < inputs.GetCount(); i++) {
-        if (inputs[i].id == input.id) {
-            inputs[i] = input;  // Update existing
-            return true;
-        }
+void IOMatrixService::Reset() {
+    inputs.Clear();
+    outputs.Clear();
+    groupsFx.Clear();
+    externalFx.Clear();
+    externalInstruments.Clear();
+    studio.Clear();
+    presets.Clear();
+}
+
+// Input management
+Vector<AudioBus> IOMatrixService::GetInputs() const {
+    return inputs;
+}
+
+void IOMatrixService::AddInput(const AudioBus& bus) {
+    inputs.Add(bus);
+}
+
+void IOMatrixService::RemoveInput(int index) {
+    if (index >= 0 && index < inputs.GetCount()) {
+        inputs.Remove(index);
     }
-    // If not found, add as new
-    inputs.Add(input);
-    return true;
 }
 
-bool IOMatrixService::RemoveInput(const String& id) {
-    for (int i = 0; i < inputs.GetCount(); i++) {
-        if (inputs[i].id == id) {
-            inputs.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateInput(int index, const AudioBus& bus) {
+    if (index >= 0 && index < inputs.GetCount()) {
+        inputs[index] = bus;
     }
-    return false;
 }
 
+// Output management
+Vector<AudioBus> IOMatrixService::GetOutputs() const {
+    return outputs;
+}
 
-bool IOMatrixService::SetOutput(const ConnectionPoint& output) {
-    // Check if output with this ID already exists
-    for (int i = 0; i < outputs.GetCount(); i++) {
-        if (outputs[i].id == output.id) {
-            outputs[i] = output;  // Update existing
-            return true;
-        }
+void IOMatrixService::AddOutput(const AudioBus& bus) {
+    outputs.Add(bus);
+}
+
+void IOMatrixService::RemoveOutput(int index) {
+    if (index >= 0 && index < outputs.GetCount()) {
+        outputs.Remove(index);
     }
-    // If not found, add as new
-    outputs.Add(output);
-    return true;
 }
 
-bool IOMatrixService::RemoveOutput(const String& id) {
-    for (int i = 0; i < outputs.GetCount(); i++) {
-        if (outputs[i].id == id) {
-            outputs.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateOutput(int index, const AudioBus& bus) {
+    if (index >= 0 && index < outputs.GetCount()) {
+        outputs[index] = bus;
     }
-    return false;
 }
 
+// Groups/FX management
+Vector<AudioBus> IOMatrixService::GetGroupsFx() const {
+    return groupsFx;
+}
 
-bool IOMatrixService::SetGroupFx(const GroupFxConnection& group) {
-    // Check if group with this ID already exists
-    for (int i = 0; i < groupsFxs.GetCount(); i++) {
-        if (groupsFxs[i].id == group.id) {
-            groupsFxs[i] = group;  // Update existing
-            return true;
-        }
+void IOMatrixService::AddGroup(const AudioBus& bus) {
+    groupsFx.Add(bus);
+}
+
+void IOMatrixService::RemoveGroup(int index) {
+    if (index >= 0 && index < groupsFx.GetCount()) {
+        groupsFx.Remove(index);
     }
-    // If not found, add as new
-    groupsFxs.Add(group);
-    return true;
 }
 
-bool IOMatrixService::RemoveGroupFx(const String& id) {
-    for (int i = 0; i < groupsFxs.GetCount(); i++) {
-        if (groupsFxs[i].id == id) {
-            groupsFxs.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateGroup(int index, const AudioBus& bus) {
+    if (index >= 0 && index < groupsFx.GetCount()) {
+        groupsFx[index] = bus;
     }
-    return false;
 }
 
+void IOMatrixService::AddFxChannel(const AudioBus& bus) {
+    groupsFx.Add(bus);
+}
 
-bool IOMatrixService::SetExternalFx(const ExternalFxConnection& fx) {
-    // Check if external FX with this ID already exists
-    for (int i = 0; i < externalFxs.GetCount(); i++) {
-        if (externalFxs[i].id == fx.id) {
-            externalFxs[i] = fx;  // Update existing
-            return true;
-        }
+void IOMatrixService::RemoveFxChannel(int index) {
+    if (index >= 0 && index < groupsFx.GetCount()) {
+        groupsFx.Remove(index);
     }
-    // If not found, add as new
-    externalFxs.Add(fx);
-    return true;
 }
 
-bool IOMatrixService::RemoveExternalFx(const String& id) {
-    for (int i = 0; i < externalFxs.GetCount(); i++) {
-        if (externalFxs[i].id == id) {
-            externalFxs.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateFxChannel(int index, const AudioBus& bus) {
+    if (index >= 0 && index < groupsFx.GetCount()) {
+        groupsFx[index] = bus;
     }
-    return false;
 }
 
+// External FX management
+Vector<ExternalFx> IOMatrixService::GetExternalFx() const {
+    return externalFx;
+}
 
-bool IOMatrixService::SetExternalInstrument(const ExternalInstrumentConnection& instrument) {
-    // Check if external instrument with this ID already exists
-    for (int i = 0; i < externalInstruments.GetCount(); i++) {
-        if (externalInstruments[i].id == instrument.id) {
-            externalInstruments[i] = instrument;  // Update existing
-            return true;
-        }
+void IOMatrixService::AddExternalFx(const ExternalFx& fx) {
+    externalFx.Add(fx);
+}
+
+void IOMatrixService::RemoveExternalFx(int index) {
+    if (index >= 0 && index < externalFx.GetCount()) {
+        externalFx.Remove(index);
     }
-    // If not found, add as new
-    externalInstruments.Add(instrument);
-    return true;
 }
 
-bool IOMatrixService::RemoveExternalInstrument(const String& id) {
-    for (int i = 0; i < externalInstruments.GetCount(); i++) {
-        if (externalInstruments[i].id == id) {
-            externalInstruments.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateExternalFx(int index, const ExternalFx& fx) {
+    if (index >= 0 && index < externalFx.GetCount()) {
+        externalFx[index] = fx;
     }
-    return false;
 }
 
+// External Instruments management
+Vector<ExternalInstrument> IOMatrixService::GetExternalInstruments() const {
+    return externalInstruments;
+}
 
-bool IOMatrixService::SetStudio(const StudioConnection& studio) {
-    // Check if studio connection with this ID already exists
-    for (int i = 0; i < studioConnections.GetCount(); i++) {
-        if (studioConnections[i].id == studio.id) {
-            studioConnections[i] = studio;  // Update existing
-            return true;
-        }
+void IOMatrixService::AddExternalInstrument(const ExternalInstrument& inst) {
+    externalInstruments.Add(inst);
+}
+
+void IOMatrixService::RemoveExternalInstrument(int index) {
+    if (index >= 0 && index < externalInstruments.GetCount()) {
+        externalInstruments.Remove(index);
     }
-    // If not found, add as new
-    studioConnections.Add(studio);
-    return true;
 }
 
-bool IOMatrixService::RemoveStudio(const String& id) {
-    for (int i = 0; i < studioConnections.GetCount(); i++) {
-        if (studioConnections[i].id == id) {
-            studioConnections.Remove(i);
-            return true;
-        }
+void IOMatrixService::UpdateExternalInstrument(int index, const ExternalInstrument& inst) {
+    if (index >= 0 && index < externalInstruments.GetCount()) {
+        externalInstruments[index] = inst;
     }
-    return false;
 }
 
-IOMatrixService& IOMatrixService::GetInstance() {
-    if (!instance) {
-        instance = new IOMatrixService();
+// Studio (Control Room) management
+Vector<AudioBus> IOMatrixService::GetStudio() const {
+    return studio;
+}
+
+void IOMatrixService::AddStudioBus(const AudioBus& bus) {
+    studio.Add(bus);
+}
+
+void IOMatrixService::RemoveStudioBus(int index) {
+    if (index >= 0 && index < studio.GetCount()) {
+        studio.Remove(index);
     }
-    return *instance;
 }
 
+void IOMatrixService::UpdateStudioBus(int index, const AudioBus& bus) {
+    if (index >= 0 && index < studio.GetCount()) {
+        studio[index] = bus;
+    }
+}
+
+// Preset management
+void IOMatrixService::SavePreset(const String& name) {
+    if (!presets.Find(name)) {
+        presets.Add(name);
+    }
+    // In a real implementation, we would save the current state to a file
+}
+
+void IOMatrixService::LoadPreset(const String& name) {
+    // In a real implementation, we would load the state from a file
+    // For now, just validate that preset exists
+    if (presets.Find(name) < 0) {
+        LOG("Preset " + name + " does not exist");
+    }
+}
+
+void IOMatrixService::DeletePreset(const String& name) {
+    int index = presets.Find(name);
+    if (index >= 0) {
+        presets.Remove(index);
+    }
+}
+
+Vector<String> IOMatrixService::GetPresets() const {
+    return presets;
+}
+
+// Apply changes to the system
 void IOMatrixService::ApplyChanges() {
-    // Apply changes to the audio system
-    // In a real implementation, this would update the actual audio routing
-    // based on the current state of all connection vectors
-    LOG("Applying I/O matrix changes to audio system");
-    
-    // For now, just log the changes
-    for (const auto& input : inputs) {
-        LOG("Input: " << input.name << " -> " << input.deviceName << " (" << input.portName << ")");
-    }
-    
-    for (const auto& output : outputs) {
-        LOG("Output: " << output.name << " <- " << output.deviceName << " (" << output.portName << ")");
-    }
+    // In a real implementation, this would apply all routing changes to the audio system
+    LOG("Applying I/O routing changes to the system");
 }
 
+// Get snapshots of current state
+ValueMap IOMatrixService::GetSnapshot(ConnectionType type) const {
+    ValueMap snapshot;
+    
+    switch (type) {
+        case INPUTS:
+            snapshot.Set("inputs", (int)inputs.GetCount());
+            break;
+        case OUTPUTS:
+            snapshot.Set("outputs", (int)outputs.GetCount());
+            break;
+        case GROUPS_FX:
+            snapshot.Set("groups_fx", (int)groupsFx.GetCount());
+            break;
+        case EXTERNAL_FX:
+            snapshot.Set("external_fx", (int)externalFx.GetCount());
+            break;
+        case EXTERNAL_INSTRUMENTS:
+            snapshot.Set("external_instruments", (int)externalInstruments.GetCount());
+            break;
+        case STUDIO:
+            snapshot.Set("studio", (int)studio.GetCount());
+            break;
+    }
+    
+    return snapshot;
 }
+
+void IOMatrixService::ApplySnapshot(ConnectionType type, const ValueMap& snapshot) {
+    // In a real implementation, this would restore the state from a snapshot
+    LOG("Applying snapshot for connection type: " << (int)type);
+}
+
+} // namespace Devices
