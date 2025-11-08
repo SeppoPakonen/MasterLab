@@ -1,7 +1,0 @@
-GUI_APP_MAIN
-
-#include "App.h"
-#include "Windowing/Windowing.h"
-#include "UIEngine/UIEngine.h"
-
-// Main application code for Windowing

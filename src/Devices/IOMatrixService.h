@@ -21,11 +21,12 @@ struct ConnectionPoint {
     
     // Add explicit constructors for U++ compatibility
     ConnectionPoint() = default;
-    ConnectionPoint(const ConnectionPoint& other) = delete;
-    ConnectionPoint& operator=(const ConnectionPoint& other) = delete;
+    ConnectionPoint(const ConnectionPoint& other) = default;
+    ConnectionPoint& operator=(const ConnectionPoint& other) = default;
     ConnectionPoint(ConnectionPoint&& other) = default;
     ConnectionPoint& operator=(ConnectionPoint&& other) = default;
 };
+
 
 // Structure for external FX connections
 struct ExternalFxConnection {
@@ -42,11 +43,12 @@ struct ExternalFxConnection {
     
     // Add explicit constructors for U++ compatibility
     ExternalFxConnection() = default;
-    ExternalFxConnection(const ExternalFxConnection& other) = delete;
-    ExternalFxConnection& operator=(const ExternalFxConnection& other) = delete;
+    ExternalFxConnection(const ExternalFxConnection& other) = default;
+    ExternalFxConnection& operator=(const ExternalFxConnection& other) = default;
     ExternalFxConnection(ExternalFxConnection&& other) = default;
     ExternalFxConnection& operator=(ExternalFxConnection&& other) = default;
 };
+
 
 // Structure for external instrument connections
 struct ExternalInstrumentConnection {
@@ -61,11 +63,12 @@ struct ExternalInstrumentConnection {
     
     // Add explicit constructors for U++ compatibility
     ExternalInstrumentConnection() = default;
-    ExternalInstrumentConnection(const ExternalInstrumentConnection& other) = delete;
-    ExternalInstrumentConnection& operator=(const ExternalInstrumentConnection& other) = delete;
+    ExternalInstrumentConnection(const ExternalInstrumentConnection& other) = default;
+    ExternalInstrumentConnection& operator=(const ExternalInstrumentConnection& other) = default;
     ExternalInstrumentConnection(ExternalInstrumentConnection&& other) = default;
     ExternalInstrumentConnection& operator=(ExternalInstrumentConnection&& other) = default;
 };
+
 
 // Structure for groups/FX channels
 struct GroupFxConnection {
@@ -73,15 +76,16 @@ struct GroupFxConnection {
     String id;
     String speakers; // e.g., "Stereo", "Mono", "5.1"
     String routeTo;  // Where this group routes to
-    Vector<String> childRoutes; // If this is a group with sub-elements
+    String childRoutes; // Comma-separated string of child routes instead of Vector to enable copying
     
     // Add explicit constructors for U++ compatibility
     GroupFxConnection() = default;
-    GroupFxConnection(const GroupFxConnection& other) = delete;
-    GroupFxConnection& operator=(const GroupFxConnection& other) = delete;
+    GroupFxConnection(const GroupFxConnection& other) = default;
+    GroupFxConnection& operator=(const GroupFxConnection& other) = default;
     GroupFxConnection(GroupFxConnection&& other) = default;
     GroupFxConnection& operator=(GroupFxConnection&& other) = default;
 };
+
 
 // Structure for studio connections
 struct StudioConnection {
@@ -94,11 +98,12 @@ struct StudioConnection {
     
     // Add explicit constructors for U++ compatibility
     StudioConnection() = default;
-    StudioConnection(const StudioConnection& other) = delete;
-    StudioConnection& operator=(const StudioConnection& other) = delete;
+    StudioConnection(const StudioConnection& other) = default;
+    StudioConnection& operator=(const StudioConnection& other) = default;
     StudioConnection(StudioConnection&& other) = default;
     StudioConnection& operator=(StudioConnection&& other) = default;
 };
+
 
 // Repository for managing connection presets
 class RoutingRepository {
@@ -118,7 +123,7 @@ public:
     
 private:
     // Internal storage for routing presets
-    HashMap<String, Vector<ConnectionPoint>> presets;
+    VectorMap<String, Vector<ConnectionPoint>> presets;
     
     void InitializeDefaultPresets();
 };
@@ -130,32 +135,32 @@ public:
     ~IOMatrixService();
     
     // Input connections management
-    Vector<ConnectionPoint> GetInputs() const;
+    const Vector<ConnectionPoint>& GetInputs() const { return inputs; }
     bool SetInput(const ConnectionPoint& input);
     bool RemoveInput(const String& id);
     
     // Output connections management
-    Vector<ConnectionPoint> GetOutputs() const;
+    const Vector<ConnectionPoint>& GetOutputs() const { return outputs; }
     bool SetOutput(const ConnectionPoint& output);
     bool RemoveOutput(const String& id);
     
     // Groups/FX connections management
-    Vector<GroupFxConnection> GetGroupsFx() const;
+    const Vector<GroupFxConnection>& GetGroupsFx() const { return groupsFxs; }
     bool SetGroupFx(const GroupFxConnection& group);
     bool RemoveGroupFx(const String& id);
     
     // External FX connections management
-    Vector<ExternalFxConnection> GetExternalFx() const;
+    const Vector<ExternalFxConnection>& GetExternalFx() const { return externalFxs; }
     bool SetExternalFx(const ExternalFxConnection& fx);
     bool RemoveExternalFx(const String& id);
     
     // External Instrument connections management
-    Vector<ExternalInstrumentConnection> GetExternalInstruments() const;
+    const Vector<ExternalInstrumentConnection>& GetExternalInstruments() const { return externalInstruments; }
     bool SetExternalInstrument(const ExternalInstrumentConnection& instrument);
     bool RemoveExternalInstrument(const String& id);
     
     // Studio connections management
-    Vector<StudioConnection> GetStudio() const;
+    const Vector<StudioConnection>& GetStudio() const { return studioConnections; }
     bool SetStudio(const StudioConnection& studio);
     bool RemoveStudio(const String& id);
     

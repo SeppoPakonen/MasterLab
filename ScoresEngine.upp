@@ -1,7 +1,0 @@
-GUI_APP_MAIN
-
-#include "App.h"
-#include "ScoresEngine/ScoresEngine.h"
-#include "Scores/Scores.h"
-
-// Main application code for Scores Engine

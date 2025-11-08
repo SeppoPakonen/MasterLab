@@ -1,7 +1,0 @@
-GUI_APP_MAIN
-
-#include "App.h"
-#include "Scores/Scores.h"
-#include "Editors/Editors.h"
-
-// Main application code for Scores

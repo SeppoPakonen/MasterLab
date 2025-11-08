@@ -1,7 +1,0 @@
-GUI_APP_MAIN
-
-#include "App.h"
-#include "Appearance/Appearance.h"
-#include "Theme/Theme.h"
-
-// Main application code for Appearance

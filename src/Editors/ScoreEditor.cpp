@@ -375,13 +375,8 @@ void ScoreEditor::SetData(void* data) {
     controller.SetScoreProject(scoreProject);
     controller.SetNotationDocument(&scoreProject->GetNotationModel());
 
-    // Connect to the project's command manager
-    if (scoreProject && scoreProject->GetProject()) {
-        controller.SetCommandManager(&scoreProject->GetProject()->GetCommandManager());
-    } else {
-        // Connect to external systems if not already done
-        ConnectToCommandManager();
-    }
+    // Connect to external systems if not already done
+    ConnectToCommandManager();
     ConnectToMidiPreview();
 }
 

@@ -36,13 +36,15 @@ void RoutingRepository::InitializeDefaultPresets() {
 }
 
 bool RoutingRepository::SavePreset(const String& name, const Vector<ConnectionPoint>& connections) {
-    presets.GetAdd(name) = connections;
+    // Use Add instead of direct assignment to avoid copy issues
+    presets.Add(name, connections);
     return true; // In a real implementation, this might involve file I/O
 }
 
 bool RoutingRepository::LoadPreset(const String& name, Vector<ConnectionPoint>& connections) {
-    if (presets.Find(name) >= 0) {
-        connections = presets.Get(name);
+    int pos = presets.Find(name);
+    if (pos >= 0) {
+        connections <<= presets.Get(pos);  // Use <<= operator to deep copy
         return true;
     }
     return false;
@@ -108,6 +110,7 @@ void IOMatrixService::InitializeDefaultConnections() {
     defaultGroup.id = "group_01";
     defaultGroup.speakers = "Stereo";
     defaultGroup.routeTo = "Main Out";
+    defaultGroup.childRoutes = "";  // Empty string
     groupsFxs.Add(defaultGroup);
     
     // Add default external FX
@@ -140,15 +143,12 @@ void IOMatrixService::InitializeDefaultConnections() {
     studioConnections.Add(defaultStudio);
 }
 
-Vector<ConnectionPoint> IOMatrixService::GetInputs() const {
-    return inputs;
-}
 
 bool IOMatrixService::SetInput(const ConnectionPoint& input) {
     // Check if input with this ID already exists
-    for (auto& existingInput : inputs) {
-        if (existingInput.id == input.id) {
-            existingInput = input;  // Update existing
+    for (int i = 0; i < inputs.GetCount(); i++) {
+        if (inputs[i].id == input.id) {
+            inputs[i] = input;  // Update existing
             return true;
         }
     }
@@ -167,15 +167,12 @@ bool IOMatrixService::RemoveInput(const String& id) {
     return false;
 }
 
-Vector<ConnectionPoint> IOMatrixService::GetOutputs() const {
-    return outputs;
-}
 
 bool IOMatrixService::SetOutput(const ConnectionPoint& output) {
     // Check if output with this ID already exists
-    for (auto& existingOutput : outputs) {
-        if (existingOutput.id == output.id) {
-            existingOutput = output;  // Update existing
+    for (int i = 0; i < outputs.GetCount(); i++) {
+        if (outputs[i].id == output.id) {
+            outputs[i] = output;  // Update existing
             return true;
         }
     }
@@ -194,15 +191,12 @@ bool IOMatrixService::RemoveOutput(const String& id) {
     return false;
 }
 
-Vector<GroupFxConnection> IOMatrixService::GetGroupsFx() const {
-    return groupsFxs;
-}
 
 bool IOMatrixService::SetGroupFx(const GroupFxConnection& group) {
     // Check if group with this ID already exists
-    for (auto& existingGroup : groupsFxs) {
-        if (existingGroup.id == group.id) {
-            existingGroup = group;  // Update existing
+    for (int i = 0; i < groupsFxs.GetCount(); i++) {
+        if (groupsFxs[i].id == group.id) {
+            groupsFxs[i] = group;  // Update existing
             return true;
         }
     }
@@ -221,15 +215,12 @@ bool IOMatrixService::RemoveGroupFx(const String& id) {
     return false;
 }
 
-Vector<ExternalFxConnection> IOMatrixService::GetExternalFx() const {
-    return externalFxs;
-}
 
 bool IOMatrixService::SetExternalFx(const ExternalFxConnection& fx) {
     // Check if external FX with this ID already exists
-    for (auto& existingFx : externalFxs) {
-        if (existingFx.id == fx.id) {
-            existingFx = fx;  // Update existing
+    for (int i = 0; i < externalFxs.GetCount(); i++) {
+        if (externalFxs[i].id == fx.id) {
+            externalFxs[i] = fx;  // Update existing
             return true;
         }
     }
@@ -248,15 +239,12 @@ bool IOMatrixService::RemoveExternalFx(const String& id) {
     return false;
 }
 
-Vector<ExternalInstrumentConnection> IOMatrixService::GetExternalInstruments() const {
-    return externalInstruments;
-}
 
 bool IOMatrixService::SetExternalInstrument(const ExternalInstrumentConnection& instrument) {
     // Check if external instrument with this ID already exists
-    for (auto& existingInstrument : externalInstruments) {
-        if (existingInstrument.id == instrument.id) {
-            existingInstrument = instrument;  // Update existing
+    for (int i = 0; i < externalInstruments.GetCount(); i++) {
+        if (externalInstruments[i].id == instrument.id) {
+            externalInstruments[i] = instrument;  // Update existing
             return true;
         }
     }
@@ -275,15 +263,12 @@ bool IOMatrixService::RemoveExternalInstrument(const String& id) {
     return false;
 }
 
-Vector<StudioConnection> IOMatrixService::GetStudio() const {
-    return studioConnections;
-}
 
 bool IOMatrixService::SetStudio(const StudioConnection& studio) {
     // Check if studio connection with this ID already exists
-    for (auto& existingStudio : studioConnections) {
-        if (existingStudio.id == studio.id) {
-            existingStudio = studio;  // Update existing
+    for (int i = 0; i < studioConnections.GetCount(); i++) {
+        if (studioConnections[i].id == studio.id) {
+            studioConnections[i] = studio;  // Update existing
             return true;
         }
     }

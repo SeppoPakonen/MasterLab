@@ -1,6 +1,0 @@
-GUI_APP_MAIN
-
-#include "App.h"
-#include "HelpAbout/HelpAbout.h"
-
-// Main application code for Help and About

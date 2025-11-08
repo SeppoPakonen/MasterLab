@@ -1,7 +1,0 @@
-GUI_APP_MAIN
-
-#include "src/App/App.h"
-#include "AudioEditing/AudioEditing.h"
-#include "AudioCore/AudioCore.h"
-
-// Main application code for Audio Editing
