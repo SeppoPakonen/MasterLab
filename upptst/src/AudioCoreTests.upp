@@ -1,0 +1,16 @@
+{
+	"Name": "AudioCoreTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"AudioCore"
+	],
+	"Src": [
+		"AudioCoreTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

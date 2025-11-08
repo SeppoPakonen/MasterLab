@@ -1,0 +1,17 @@
+{
+	"Name": "MidiEffectsTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"MIDI",
+		"PluginSDK"
+	],
+	"Src": [
+		"MidiEffectsTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

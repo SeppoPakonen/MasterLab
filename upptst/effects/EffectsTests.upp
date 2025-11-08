@@ -1,0 +1,17 @@
+{
+	"Name": "EffectsTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"AudioFX",
+		"PluginSDK"
+	],
+	"Src": [
+		"EffectsTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

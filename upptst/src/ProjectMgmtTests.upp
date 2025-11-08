@@ -1,0 +1,16 @@
+{
+	"Name": "ProjectMgmtTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"ProjectMgmt"
+	],
+	"Src": [
+		"ProjectMgmtTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

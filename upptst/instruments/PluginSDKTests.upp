@@ -1,0 +1,16 @@
+{
+	"Name": "PluginSDKTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"PluginSDK"
+	],
+	"Src": [
+		"PluginSDKTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

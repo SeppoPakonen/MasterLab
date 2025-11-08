@@ -1,0 +1,18 @@
+{
+	"Name": "MidiInstrumentsTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"MIDI",
+		"PluginSDK",
+		"AudioCore"
+	],
+	"Src": [
+		"MidiInstrumentsTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

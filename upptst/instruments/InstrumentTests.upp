@@ -1,0 +1,17 @@
+{
+	"Name": "InstrumentTests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"PluginSDK",
+		"AudioCore"
+	],
+	"Src": [
+		"InstrumentTest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}

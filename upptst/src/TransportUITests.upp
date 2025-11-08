@@ -1,0 +1,16 @@
+{
+	"Name": "TransportUITests",
+	"Type": 0,
+	"Version": 1,
+	"Uses": [
+		"Core",
+		"CtrlLib",
+		"TransportUI"
+	],
+	"Src": [
+		"TransportUITest.cpp"
+	],
+	"Precomp": "",
+	"Doc": "",
+	"Title": ""
+}
