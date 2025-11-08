@@ -8,7 +8,7 @@ using namespace Upp;
 namespace am {
 
 // Structure for representing connection points
-struct ConnectionPoint {
+struct ConnectionPoint : public Moveable<ConnectionPoint> {
     String name;
     String id;
     String deviceName;
@@ -29,7 +29,7 @@ struct ConnectionPoint {
 
 
 // Structure for external FX connections
-struct ExternalFxConnection {
+struct ExternalFxConnection : public Moveable<ExternalFxConnection> {
     String name;
     String id;
     String audioDevice;
@@ -51,7 +51,7 @@ struct ExternalFxConnection {
 
 
 // Structure for external instrument connections
-struct ExternalInstrumentConnection {
+struct ExternalInstrumentConnection : public Moveable<ExternalInstrumentConnection> {
     String name;
     String id;
     String audioDevice;
@@ -71,7 +71,7 @@ struct ExternalInstrumentConnection {
 
 
 // Structure for groups/FX channels
-struct GroupFxConnection {
+struct GroupFxConnection : public Moveable<GroupFxConnection> {
     String name;
     String id;
     String speakers; // e.g., "Stereo", "Mono", "5.1"
@@ -88,7 +88,7 @@ struct GroupFxConnection {
 
 
 // Structure for studio connections
-struct StudioConnection {
+struct StudioConnection : public Moveable<StudioConnection> {
     String name;
     String id;
     String speakers; // e.g., "Stereo", "Mono", "5.1"

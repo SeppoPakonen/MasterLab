@@ -32,19 +32,19 @@ void RoutingRepository::InitializeDefaultPresets() {
     stereoOut.speakers = "Stereo";
     stereoInOut.Add(stereoOut);
     
-    presets.Add("Default Stereo", stereoInOut);
+    presets.GetAdd("Default Stereo") <<= stereoInOut;
 }
 
 bool RoutingRepository::SavePreset(const String& name, const Vector<ConnectionPoint>& connections) {
-    // Use Add instead of direct assignment to avoid copy issues
-    presets.Add(name, connections);
+    // Deep copy the vector using the U++ <<= operator
+    presets.GetAdd(name) <<= connections;
     return true; // In a real implementation, this might involve file I/O
 }
 
 bool RoutingRepository::LoadPreset(const String& name, Vector<ConnectionPoint>& connections) {
     int pos = presets.Find(name);
     if (pos >= 0) {
-        connections <<= presets.Get(pos);  // Use <<= operator to deep copy
+        connections <<= presets[pos];  // Use operator[] to access by index instead of Get
         return true;
     }
     return false;
