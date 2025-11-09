@@ -23,8 +23,8 @@ bool PresetManager::LoadPreset(const String& name, ParameterSet& params) {
     for (const auto& preset : presets) {
         if (preset.name == name) {
             // Restore parameters from preset
-            for (const auto& param : preset.parameters) {
-                params.Set(param.key, (double)param.value);
+            for (int i = 0; i < preset.parameters.GetCount(); i++) {
+                params.Set(preset.parameters.GetKey(i), (double)preset.parameters[i]);
             }
             return true;
         }

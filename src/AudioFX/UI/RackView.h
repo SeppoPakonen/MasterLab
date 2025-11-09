@@ -49,6 +49,9 @@ private:
         String name;
         Ctrl* control;
         Rect bounds;
+        
+        ModuleSlot() : control(nullptr) {}
+        ModuleSlot(const String& n, Ctrl* c, const Rect& b) : name(n), control(c), bounds(b) {}
     };
     
     Vector<ModuleSlot> modules;

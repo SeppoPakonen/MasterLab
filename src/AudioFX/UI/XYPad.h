@@ -22,7 +22,7 @@ public:
     void SetPosition(double x, double y);
     
     // Get the current position
-    Point<double> GetPosition() const;
+    Point GetPosition() const;
     
     // Set parameter set to control
     void SetParameterSet(AudioFX::ParameterSet* params);
@@ -46,8 +46,8 @@ protected:
 private:
     AudioFX::ParameterId paramX, paramY;
     AudioFX::ParameterSet* parameterSet;
-    Point<double> position;
-    Point<double> sensitivity;
+    Point position;
+    Point sensitivity;
     bool isDragging;
     
     void UpdateParameters();

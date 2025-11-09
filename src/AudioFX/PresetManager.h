@@ -42,6 +42,35 @@ private:
     struct Preset {
         String name;
         ValueMap parameters;
+        
+        // Default constructor
+        Preset() {}
+        
+        // Constructor with parameters
+        Preset(const String& n) : name(n) {}
+        
+        // Copy constructor
+        Preset(const Preset& other) : name(other.name), parameters(other.parameters) {}
+        
+        // Assignment operator
+        Preset& operator=(const Preset& other) {
+            if (this != &other) {
+                name = other.name;
+                parameters = other.parameters;
+            }
+            return *this;
+        }
+        
+        // Support for U++ container operations
+        void  operator<<=(const Preset& s) { name = s.name; parameters = s.parameters; }
+        bool  operator==(const Preset& b) const { return name == b.name && parameters == b.parameters; }
+        int   Compare(const Preset& b) const { return name.Compare(b.name); }
+        
+        // U++ guest requirement
+        void  Guest() const {}
+        
+        // Support for U++ deep copy
+        void  Move(Preset& s) { *this = pick(s); }
     };
 
     Vector<Preset> presets;

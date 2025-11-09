@@ -56,6 +56,26 @@ private:
         ParameterValue max;
         ParameterType type;
         String name;
+        
+        ParameterInfo() : value(0.0), initial(0.0), min(0.0), max(1.0), type(ParameterType::kFloat) {}
+        ParameterInfo(ParameterValue v, ParameterValue init, ParameterValue mn, ParameterValue mx, ParameterType t, const String& n)
+            : value(v), initial(init), min(mn), max(mx), type(t), name(n) {}
+            
+        // Support for U++ container operations
+        void  operator<<=(const ParameterInfo& s) { 
+            value = s.value; initial = s.initial; min = s.min; max = s.max; type = s.type; name = s.name; 
+        }
+        bool  operator==(const ParameterInfo& b) const { 
+            return value == b.value && initial == b.initial && min == b.min && 
+                   max == b.max && type == b.type && name == b.name; 
+        }
+        int   Compare(const ParameterInfo& b) const { return name.Compare(b.name); }
+        
+        // U++ guest requirement
+        void  Guest() const {}
+        
+        // Support for U++ deep copy
+        void  Move(ParameterInfo& s) { *this = pick(s); }
     };
 
     Upp::VectorMap<ParameterId, ParameterInfo> parameters;

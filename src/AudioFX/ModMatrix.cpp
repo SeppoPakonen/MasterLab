@@ -42,7 +42,9 @@ ParameterValue ModMatrix::GetModulationAmount(ModSource source, ModDestination d
 }
 
 Vector<ModulationMapping> ModMatrix::GetMappings() const {
-    return mappings;
+    Vector<ModulationMapping> result;
+    result <<= mappings;  // Use <<= to deep copy
+    return result;
 }
 
 void ModMatrix::Clear() {

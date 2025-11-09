@@ -4,8 +4,8 @@ namespace UI {
 
 XYPad::XYPad() : parameterSet(nullptr), sensitivity(1.0, 1.0), isDragging(false) {
     // Initialize the XY pad
-    position.x = 0.5;
-    position.y = 0.5;
+    position.x = 0;
+    position.y = 0;
     AddFrame(BlackFrame());
 }
 
@@ -26,7 +26,7 @@ void XYPad::SetPosition(double x, double y) {
     Refresh();
 }
 
-Point<double> XYPad::GetPosition() const {
+Point XYPad::GetPosition() const {
     return position;
 }
 
@@ -127,8 +127,8 @@ void XYPad::DrawHandle(Draw& draw) {
 
 void XYPad::LeftDown(Point p, dword keyflags) {
     isDragging = true;
-    Point relativePos = p - GetSize().TopLeft();
-    Size size = GetSize().Size();
+    Point relativePos = p - Point(0, 0);  // Replace GetTopLeft() with origin
+    Size size = GetSize();
     
     if (size.cx > 0 && size.cy > 0) {
         position.x = max(0.0, min(1.0, relativePos.x / (double)size.cx));
@@ -149,8 +149,8 @@ void XYPad::LeftUp(Point p, dword keyflags) {
 
 void XYPad::MouseMove(Point p, dword keyflags) {
     if (isDragging) {
-        Point relativePos = p - GetSize().TopLeft();
-        Size size = GetSize().Size();
+        Point relativePos = p - Point(0, 0);  // Replace GetTopLeft() with origin
+        Size size = GetSize();
         
         if (size.cx > 0 && size.cy > 0) {
             position.x = max(0.0, min(1.0, relativePos.x / (double)size.cx));

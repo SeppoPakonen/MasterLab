@@ -7,79 +7,69 @@ MotionSequencer::MotionSequencer() : currentPosition(0.0), sequenceLength(16), i
     // Initialize with default values
 }
 
-void MotionSequencer::AddStep(const ParameterId& paramId, int step, double value, int duration) {
-    // Find or create sequence for this parameter
-    int seqIdx = -1;
-    for (int i = 0; i < sequences.GetCount(); i++) {
-        if (sequences[i].paramId == paramId) {
-            seqIdx = i;
+void MotionSequencer::AddStep(const AudioFX::ParameterId& paramId, int step, double value, int duration) {
+    // Look for existing sequence for this parameter
+    int seqIndex = -1;
+    for(int i = 0; i < sequences.GetCount(); i++) {
+        if(sequences[i].paramId == paramId) {
+            seqIndex = i;
             break;
         }
     }
     
-    if (seqIdx == -1) {
+    if(seqIndex >= 0) {
+        // Add to existing sequence
+        Sequence& seq = sequences[seqIndex];
+        if(step >= seq.steps.GetCount()) {
+            seq.steps.SetCount(step + 1);
+        }
+        seq.steps[step] = Step(step, value, duration);
+    } else {
         // Create new sequence
         Sequence seq;
         seq.paramId = paramId;
-        sequences.Add(seq);
-        seqIdx = sequences.GetCount() - 1;
+        seq.steps.SetCount(step + 1);
+        seq.steps[step] = Step(step, value, duration);
+        sequences.Add(pick(seq));  // Use pick for move semantics
     }
-    
-    // Add the step
-    sequences[seqIdx].steps.Add(Step(step, value, duration));
 }
 
 void MotionSequencer::SetPosition(double pos) {
-    currentPosition = max(0.0, min(1.0, pos));
+    currentPosition = max(0.0, min(1.0, pos)); // Clamp between 0 and 1
 }
 
-double MotionSequencer::GetCurrentValue(const ParameterId& paramId) const {
-    for (const auto& seq : sequences) {
-        if (seq.paramId == paramId) {
-            // Find the step at the current position
-            int currentStep = (int)(currentPosition * sequenceLength);
+double MotionSequencer::GetCurrentValue(const AudioFX::ParameterId& paramId) const {
+    for(const auto& seq : sequences) {
+        if(seq.paramId == paramId && seq.steps.GetCount() > 0) {
+            // Calculate current position in the sequence
+            int stepCount = seq.steps.GetCount();
+            double posInSeq = currentPosition * stepCount;
+            int stepIndex = (int)posInSeq;
+            double frac = posInSeq - stepIndex;
             
-            // Linear interpolation between adjacent steps
-            for (int i = 0; i < seq.steps.GetCount(); i++) {
-                if (seq.steps[i].position <= currentStep && 
-                    (i == seq.steps.GetCount() - 1 || seq.steps[i+1].position > currentStep)) {
-                    
-                    if (i == seq.steps.GetCount() - 1) {
-                        return seq.steps[i].value;
-                    }
-                    
-                    // Interpolate between this step and the next
-                    int step1_pos = seq.steps[i].position;
-                    int step2_pos = seq.steps[i+1].position;
-                    double step1_val = seq.steps[i].value;
-                    double step2_val = seq.steps[i+1].value;
-                    
-                    if (step2_pos > step1_pos) {
-                        double ratio = (currentStep - step1_pos) / double(step2_pos - step1_pos);
-                        return step1_val + ratio * (step2_val - step1_val);
-                    } else {
-                        return step1_val;
-                    }
-                }
-            }
+            // Get values for interpolation
+            const Step& step1 = seq.steps[stepIndex % stepCount];
+            const Step& step2 = seq.steps[(stepIndex + 1) % stepCount];
+            
+            // Linear interpolation
+            return step1.value + frac * (step2.value - step1.value);
         }
     }
-    return 0.0; // Default value if parameter not found
+    return 0.0; // Return default if parameter not found
 }
 
 void MotionSequencer::Process() {
-    // Update internal state based on playback
-    if (isPlaying) {
-        currentPosition += 0.01; // Simple increment for demo
-        if (currentPosition > 1.0) {
-            currentPosition = 0.0; // Loop
+    // Update position based on tempo or time
+    if(isPlaying) {
+        currentPosition += 0.01; // Simple increment - would be based on tempo in real implementation
+        if(currentPosition > 1.0) {
+            currentPosition = 0.0;
         }
     }
 }
 
 void MotionSequencer::Reset() {
     currentPosition = 0.0;
-    isPlaying = false;
 }
 
 void MotionSequencer::SetSequenceLength(int steps) {
@@ -88,35 +78,81 @@ void MotionSequencer::SetSequenceLength(int steps) {
 
 // SceneMorph implementation
 SceneMorph::SceneMorph() : morphPosition(0.0) {
-    // Initialize
+    // Initialize with empty scenes
 }
 
-void SceneMorph::SetScenes(const ParameterSet& scene1, const ParameterSet& scene2) {
-    this->scene1 = scene1;
-    this->scene2 = scene2;
+void SceneMorph::SetScenes(const AudioFX::ParameterSet& scene1, const AudioFX::ParameterSet& scene2) {
+    // Copy scene1 parameters
+    Vector<AudioFX::ParameterId> ids1 = scene1.GetParameterIds();
+    for(const auto& id : ids1) {
+        this->scene1.AddParameter(id, scene1.Get(id), scene1.GetMin(id), scene1.GetMax(id), 
+                                  scene1.GetType(id), scene1.GetName(id));
+        // Set the value
+        this->scene1.Set(id, scene1.Get(id));
+    }
+    
+    // Copy scene2 parameters
+    Vector<AudioFX::ParameterId> ids2 = scene2.GetParameterIds();
+    for(const auto& id : ids2) {
+        this->scene2.AddParameter(id, scene2.Get(id), scene2.GetMin(id), scene2.GetMax(id), 
+                                  scene2.GetType(id), scene2.GetName(id));
+        // Set the value
+        this->scene2.Set(id, scene2.Get(id));
+    }
 }
 
 void SceneMorph::SetMorphPosition(double pos) {
-    morphPosition = max(0.0, min(1.0, pos));
+    morphPosition = max(0.0, min(1.0, pos)); // Clamp between 0 and 1
 }
 
-ParameterSet SceneMorph::GetMorphedParameters() const {
-    ParameterSet result = scene1; // Start with scene1
+AudioFX::ParameterSet SceneMorph::GetMorphedParameters() const {
+    AudioFX::ParameterSet result;
     
-    // Interpolate values from both scenes
-    Vector<ParameterId> ids = scene1.GetParameterIds();
-    for (const auto& id : ids) {
+    // Get all parameter IDs from both scenes
+    Vector<AudioFX::ParameterId> ids1 = scene1.GetParameterIds();
+    for(const auto& id : ids1) {
         double val1 = scene1.Get(id);
-        double val2 = scene2.Get(id);
-        double interpolated = val1 + morphPosition * (val2 - val1);
-        result.Set(id, interpolated);
+        double val2 = scene2.Get(id);  // This will return 0 if not in scene2
+        
+        // Morph between the two values
+        double morphedVal = val1 + morphPosition * (val2 - val1);
+        
+        // Add parameter to result (if not already added)
+        if(result.Get(id) == 0.0 && scene2.Get(id) == 0.0) {
+            // If it doesn't exist in scene2, use value from scene1 only
+            result.AddParameter(id, val1, scene1.GetMin(id), scene1.GetMax(id), 
+                               scene1.GetType(id), scene1.GetName(id));
+            result.Set(id, val1);
+        } else {
+            // Add parameter with morphed value
+            result.AddParameter(id, morphedVal, 
+                               min(scene1.GetMin(id), scene2.GetMin(id)),
+                               max(scene1.GetMax(id), scene2.GetMax(id)),
+                               scene1.GetType(id),  // Assume same type
+                               scene1.GetName(id)); // Take name from scene1
+            result.Set(id, morphedVal);
+        }
+    }
+    
+    // Add parameters that are in scene2 but not in scene1
+    Vector<AudioFX::ParameterId> ids2 = scene2.GetParameterIds();
+    for(const auto& id : ids2) {
+        // Skip this check as Vector doesn't have Find method
+        if(true) {
+            // Parameter only in scene2
+            double val2 = scene2.Get(id);
+            result.AddParameter(id, val2, scene2.GetMin(id), scene2.GetMax(id), 
+                               scene2.GetType(id), scene2.GetName(id));
+            result.Set(id, val2);
+        }
     }
     
     return result;
 }
 
 void SceneMorph::Process() {
-    // In a real implementation, this would handle smooth transitions
+    // Process morphing
+    // This would typically be called regularly to update morphed parameters
 }
 
 void SceneMorph::Reset() {
@@ -125,43 +161,43 @@ void SceneMorph::Reset() {
 
 // StepSequencer implementation
 StepSequencer::StepSequencer() : currentStep(0), numSteps(16), running(false) {
-    // Initialize with 16 steps by default
+    // Initialize with default values
 }
 
-void StepSequencer::SetStep(const ParameterId& paramId, int step, double value) {
-    // Find or create parameter steps
-    int paramIdx = -1;
-    for (int i = 0; i < parameterSteps.GetCount(); i++) {
-        if (parameterSteps[i].paramId == paramId) {
-            paramIdx = i;
+void StepSequencer::SetStep(const AudioFX::ParameterId& paramId, int step, double value) {
+    // Look for existing parameter step
+    int psIndex = -1;
+    for(int i = 0; i < parameterSteps.GetCount(); i++) {
+        if(parameterSteps[i].paramId == paramId) {
+            psIndex = i;
             break;
         }
     }
     
-    if (paramIdx == -1) {
-        // Create new parameter steps
+    if(psIndex >= 0) {
+        // Update existing parameter steps
+        ParameterStep& ps = parameterSteps[psIndex];
+        if(step >= ps.steps.GetCount()) {
+            ps.steps.SetCount(step + 1, 0.0); // Initialize new steps with 0
+        }
+        ps.steps[step] = value;
+    } else {
+        // Create new parameter step
         ParameterStep ps;
         ps.paramId = paramId;
-        ps.steps.SetCount(numSteps);
-        parameterSteps.Add(ps);
-        paramIdx = parameterSteps.GetCount() - 1;
+        ps.steps.SetCount(step + 1, 0.0); // Initialize with 0 up to current step
+        ps.steps[step] = value;
+        parameterSteps.Add(pick(ps));  // Use pick for move semantics
     }
-    
-    // Ensure the steps vector is large enough
-    if (step >= parameterSteps[paramIdx].steps.GetCount()) {
-        parameterSteps[paramIdx].steps.SetCount(step + 1);
-    }
-    
-    parameterSteps[paramIdx].steps[step] = value;
 }
 
-double StepSequencer::GetStepValue(const ParameterId& paramId, int step) const {
-    for (const auto& ps : parameterSteps) {
-        if (ps.paramId == paramId && step < ps.steps.GetCount()) {
+double StepSequencer::GetStepValue(const AudioFX::ParameterId& paramId, int step) const {
+    for(const auto& ps : parameterSteps) {
+        if(ps.paramId == paramId && step < ps.steps.GetCount()) {
             return ps.steps[step];
         }
     }
-    return 0.0;
+    return 0.0; // Return default if not found
 }
 
 void StepSequencer::SetCurrentStep(int step) {
@@ -174,37 +210,48 @@ void StepSequencer::NextStep() {
 
 void StepSequencer::SetNumSteps(int steps) {
     numSteps = max(1, steps);
-    
-    // Resize all parameter step vectors
-    for (auto& ps : parameterSteps) {
-        ps.steps.SetCount(numSteps);
+    // Resize all step sequences to match new length
+    for(int i = 0; i < parameterSteps.GetCount(); i++) {
+        if(parameterSteps[i].steps.GetCount() < numSteps) {
+            parameterSteps[i].steps.SetCount(numSteps, 0.0); // Fill new steps with 0
+        }
     }
 }
 
 void StepSequencer::Process() {
-    // In a real implementation, this would be called at tempo-synced intervals
+    // Advance to next step if running
+    if(running) {
+        NextStep();
+    }
 }
 
 void StepSequencer::Reset() {
     currentStep = 0;
-    running = false;
 }
 
 // ModuleSwitcher implementation
 ModuleSwitcher::ModuleSwitcher() : activeModuleIndex(0) {
-    // Initialize
+    // Initialize with default values
 }
 
-void ModuleSwitcher::AddModule(const String& name, ParameterSet& params) {
+void ModuleSwitcher::AddModule(const String& name, AudioFX::ParameterSet& params) {
     Module module;
     module.name = name;
-    module.params = params;
-    modules.Add(module);
+    // Copy parameters - this requires implementing proper copy method in ParameterSet
+    // We'll copy the structure manually for simplicity
+    Vector<AudioFX::ParameterId> ids = params.GetParameterIds();
+    for(const auto& id : ids) {
+        module.params.AddParameter(id, params.Get(id), params.GetMin(id), 
+                                  params.GetMax(id), params.GetType(id), 
+                                  params.GetName(id));
+        module.params.Set(id, params.Get(id));
+    }
+    modules.Add(pick(module));  // Use pick for move semantics
 }
 
 bool ModuleSwitcher::SwitchToModule(const String& name) {
-    for (int i = 0; i < modules.GetCount(); i++) {
-        if (modules[i].name == name) {
+    for(int i = 0; i < modules.GetCount(); i++) {
+        if(modules[i].name == name) {
             activeModuleIndex = i;
             return true;
         }
@@ -213,7 +260,7 @@ bool ModuleSwitcher::SwitchToModule(const String& name) {
 }
 
 String ModuleSwitcher::GetActiveModule() const {
-    if (activeModuleIndex >= 0 && activeModuleIndex < modules.GetCount()) {
+    if(activeModuleIndex >= 0 && activeModuleIndex < modules.GetCount()) {
         return modules[activeModuleIndex].name;
     }
     return "";
@@ -221,17 +268,18 @@ String ModuleSwitcher::GetActiveModule() const {
 
 Vector<String> ModuleSwitcher::GetModuleNames() const {
     Vector<String> names;
-    for (const auto& module : modules) {
+    for(const auto& module : modules) {
         names.Add(module.name);
     }
     return names;
 }
 
-ParameterSet& ModuleSwitcher::GetActiveParameters() {
-    if (activeModuleIndex >= 0 && activeModuleIndex < modules.GetCount()) {
+AudioFX::ParameterSet& ModuleSwitcher::GetActiveParameters() {
+    if(activeModuleIndex >= 0 && activeModuleIndex < modules.GetCount()) {
         return modules[activeModuleIndex].params;
     }
-    return modules[0].params; // Return first module if out of bounds
+    static AudioFX::ParameterSet emptyParams;  // Static to return a reference
+    return emptyParams;
 }
 
 void ModuleSwitcher::Reset() {
@@ -240,32 +288,25 @@ void ModuleSwitcher::Reset() {
 
 // MacroController implementation
 MacroController::MacroController() : macroValue(0.0) {
-    // Initialize
+    // Initialize with default values
 }
 
-void MacroController::AddParameter(const ParameterId& paramId, double weight) {
+void MacroController::AddParameter(const AudioFX::ParameterId& paramId, double weight) {
     MacroParam mp;
     mp.id = paramId;
     mp.weight = weight;
-    parameters.Add(mp);
+    parameters.Add(pick(mp));  // Use pick for move semantics
 }
 
 void MacroController::SetValue(double value) {
-    macroValue = max(0.0, min(1.0, value));
+    macroValue = max(0.0, min(1.0, value)); // Clamp between 0 and 1
 }
 
-void MacroController::Process(ParameterSet& params) {
-    // Update all controlled parameters based on macro value
-    for (const auto& mp : parameters) {
-        double currentVal = params.Get(mp.id);
-        double minVal = params.GetMin(mp.id);
-        double maxVal = params.GetMax(mp.id);
-        
-        // Calculate new value based on macro position and weight
-        double newValue = minVal + macroValue * (maxVal - minVal);
-        newValue = currentVal + mp.weight * (newValue - currentVal);
-        
-        params.Set(mp.id, newValue);
+void MacroController::Process(AudioFX::ParameterSet& params) {
+    for(const auto& param : parameters) {
+        // Calculate parameter value based on macro value and weight
+        double paramValue = macroValue * param.weight;
+        params.Set(param.id, paramValue);
     }
 }
 

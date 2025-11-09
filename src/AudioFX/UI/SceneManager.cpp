@@ -14,11 +14,18 @@ SceneManager::~SceneManager() {
 void SceneManager::AddScene(const String& name, const AudioFX::ParameterSet& params) {
     Scene scene;
     scene.name = name;
-    scene.params = params;
-    scenes.Add(scene);
-    
+    // Copy parameters manually since ParameterSet can't be directly assigned
+    Vector<AudioFX::ParameterId> ids = params.GetParameterIds();
+    for(const auto& id : ids) {
+        scene.params.AddParameter(id, params.Get(id), params.GetMin(id), 
+                                  params.GetMax(id), params.GetType(id), 
+                                  params.GetName(id));
+        scene.params.Set(id, params.Get(id));
+    }
+    scenes.Add(pick(scene));  // Use pick for move semantics
+
     SceneAdded();
-    
+
     // If this is the first scene, make it current
     if (scenes.GetCount() == 1) {
         currentSceneIndex = 0;
@@ -67,9 +74,9 @@ Vector<String> SceneManager::GetSceneNames() const {
 }
 
 void SceneManager::MorphScenes(int scene1, int scene2, double position) {
-    if (scene1 >= 0 && scene1 < scenes.GetCount() && 
+    if (scene1 >= 0 && scene1 < scenes.GetCount() &&
         scene2 >= 0 && scene2 < scenes.GetCount()) {
-        
+
         sceneMorph.SetScenes(scenes[scene1].params, scenes[scene2].params);
         sceneMorph.SetMorphPosition(position);
         morphPosition = position;
@@ -79,7 +86,7 @@ void SceneManager::MorphScenes(int scene1, int scene2, double position) {
 void SceneManager::ApplyMorphedParams(AudioFX::ParameterSet& target) const {
     // Apply the morphed parameters to the target
     AudioFX::ParameterSet morphed = sceneMorph.GetMorphedParameters();
-    
+
     Vector<AudioFX::ParameterId> ids = morphed.GetParameterIds();
     for (const auto& id : ids) {
         target.Set(id, morphed.Get(id));
@@ -100,7 +107,7 @@ void SceneManager::SceneChanged() {
 
 void SceneManager::Paint(Draw& draw) {
     draw.DrawRect(GetSize(), SColorFace());
-    
+
     // Draw scene information
     Rect r = GetSize();
     if (currentSceneIndex >= 0 && currentSceneIndex < scenes.GetCount()) {
@@ -109,13 +116,13 @@ void SceneManager::Paint(Draw& draw) {
     } else {
         draw.DrawText(10, 10, "No Scene Selected", StdFont(), Red());
     }
-    
+
     // Draw morph position if morphing
     if (morphPosition > 0.0 && morphPosition < 1.0) {
         String morphText = "Morph: " + Upp::Format("%.2f", morphPosition);
         draw.DrawText(10, 30, morphText, StdFont(), Blue());
     }
-    
+
     // Draw scene list
     int y = 60;
     for (int i = 0; i < scenes.GetCount(); i++) {

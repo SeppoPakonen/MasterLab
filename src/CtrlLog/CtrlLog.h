@@ -12,7 +12,7 @@ using namespace Upp;
 #define IMAGEFILE <CtrlLog/CtrlLog.iml>
 #include <Draw/iml.h>
 
-struct CtrlLog : public WithCtrlLog<ParentCtrl> {
+struct CtrlLog : public ParentCtrl {
     CtrlLog();
     virtual void Log(const String& text);
     virtual void Log(const char* text);
@@ -22,6 +22,7 @@ private:
     void TreeMenu(Bar& bar);
     void OnTreeBar(Bar& bar);
     
+    TreeCtrl tree;
     Callback1<String> on_log;
 };
 

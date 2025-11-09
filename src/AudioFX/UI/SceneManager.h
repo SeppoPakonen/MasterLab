@@ -50,6 +50,9 @@ private:
     struct Scene {
         String name;
         AudioFX::ParameterSet params;
+        
+        Scene() {}
+        Scene(const String& n) : name(n) {}
     };
     
     Vector<Scene> scenes;

@@ -102,7 +102,7 @@ void RackView::Paint(Draw& draw) {
     
     // Draw module slots
     for (const auto& module : modules) {
-        draw.DrawRect(module.bounds, RGB(100, 100, 100));
+        draw.DrawRect(module.bounds, GrayColor());
         draw.DrawText(module.bounds.left + 10, module.bounds.top + 10, module.name, StdFont(), White());
     }
 }

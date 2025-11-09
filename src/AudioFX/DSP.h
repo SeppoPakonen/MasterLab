@@ -4,6 +4,7 @@
 #include <Core/Core.h>
 #include <CtrlLib/CtrlLib.h>
 #include <AudioCore/AudioCore.h>  // For audio processing types
+using am::AudioBuffer; // Make AudioCore's AudioBuffer available
 
 using namespace Upp;
 
@@ -151,7 +152,7 @@ private:
         String name;
     };
     
-    HashMap<ParameterId, ParameterInfo> parameters;
+    Upp::VectorMap<ParameterId, ParameterInfo> parameters;
 };
 
 // Modulation matrix for routing modulation sources to destinations
@@ -530,8 +531,8 @@ private:
         Vector< Tuple<String, double> > paramMap; // paramId, weight
     };
     
-    HashMap<String, Mapping> singleMappings;
-    HashMap<String, MultiMapping> multiMappings;
+    Upp::VectorMap<String, Mapping> singleMappings;
+    Upp::VectorMap<String, MultiMapping> multiMappings;
     ValueMap currentValues;
 };
 
@@ -846,6 +847,3 @@ private:
 
 } // namespace Calibration
 
-#endif
-
-#endif
