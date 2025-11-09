@@ -328,7 +328,16 @@ void IOMatrixService::UpdateStudioBus(int index, const AudioBus& bus) {
 
 // Preset management
 void IOMatrixService::SavePreset(const String& name) {
-    if (presets.Find(name) < 0) {  // Using Find instead
+    // Search for existing preset by name manually since U++ Vector doesn't have Find for string
+    bool presetExists = false;
+    for(int i = 0; i < presets.GetCount(); i++) {
+        if(presets[i] == name) {
+            presetExists = true;
+            break;
+        }
+    }
+    
+    if (!presetExists) {
         presets.Add(name);
     }
     // In a real implementation, we would save the current state to a file
@@ -337,13 +346,28 @@ void IOMatrixService::SavePreset(const String& name) {
 void IOMatrixService::LoadPreset(const String& name) {
     // In a real implementation, we would load the state from a file
     // For now, just validate that preset exists
-    if (presets.Find(name) < 0) {  // Using Find instead
+    bool presetExists = false;
+    for(int i = 0; i < presets.GetCount(); i++) {
+        if(presets[i] == name) {
+            presetExists = true;
+            break;
+        }
+    }
+    
+    if (!presetExists) {
         LOG("Preset " + name + " does not exist");
     }
 }
 
 void IOMatrixService::DeletePreset(const String& name) {
-    int index = presets.Find(name);  // Using Find instead
+    int index = -1;
+    for(int i = 0; i < presets.GetCount(); i++) {
+        if(presets[i] == name) {
+            index = i;
+            break;
+        }
+    }
+    
     if (index >= 0) {
         presets.Remove(index);
     }

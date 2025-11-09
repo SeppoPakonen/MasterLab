@@ -71,6 +71,11 @@ private:
         
         // Support for U++ deep copy
         void  Move(Preset& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("parameters", parameters);
+        }
     };
 
     Vector<Preset> presets;

@@ -75,6 +75,34 @@ struct ModulationMapping {
     
     ModulationMapping(ModSource s, ModDestination d, ParameterValue a = 1.0) 
         : source(s), destination(d), amount(a) {}
+    
+    // Support for U++ container operations
+    void  operator<<=(const ModulationMapping& s) {
+        source = s.source; destination = s.destination; amount = s.amount;
+    }
+    bool  operator==(const ModulationMapping& b) const {
+        return source == b.source && destination == b.destination && amount == b.amount;
+    }
+    int   Compare(const ModulationMapping& b) const { 
+        if (source != b.source) return (int)source - (int)b.source;
+        if (destination != b.destination) return (int)destination - (int)b.destination;
+        return amount < b.amount ? -1 : (amount > b.amount ? 1 : 0);
+    }
+
+    // U++ guest requirement
+    void  Guest() const {}
+
+    // Support for U++ deep copy
+    void  Move(ModulationMapping& s) { *this = pick(s); }
+    
+    // JSON serialization for guest type compatibility
+    void Jsonize(JsonIO& jio) {
+        int src = (int)source;
+        int dest = (int)destination;
+        jio("source", src)("destination", dest)("amount", amount);
+        source = (ModSource)src;
+        destination = (ModDestination)dest;
+    }
 };
 
 // Enum for signal bus types
@@ -150,6 +178,29 @@ private:
         ParameterValue max;
         ParameterType type;
         String name;
+
+        // Support for U++ container operations
+        void  operator<<=(const ParameterInfo& s) {
+            value = s.value; initial = s.initial; min = s.min; max = s.max; type = s.type; name = s.name;
+        }
+        bool  operator==(const ParameterInfo& b) const {
+            return value == b.value && initial == b.initial && min == b.min &&
+                   max == b.max && type == b.type && name == b.name;
+        }
+        int   Compare(const ParameterInfo& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(ParameterInfo& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(JsonIO& jio) {
+            int typ = (int)type;
+            jio("value", value)("initial", initial)("min", min)("max", max)("type", typ)("name", name);
+            type = (ParameterType)typ;
+        }
     };
     
     Upp::VectorMap<ParameterId, ParameterInfo> parameters;
@@ -265,6 +316,26 @@ private:
     struct Preset {
         String name;
         ValueMap parameters;
+
+        // Support for U++ container operations
+        void  operator<<=(const Preset& s) {
+            name = s.name; parameters = s.parameters;
+        }
+        bool  operator==(const Preset& b) const {
+            return name == b.name && parameters == b.parameters;
+        }
+        int   Compare(const Preset& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Preset& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("parameters", parameters);
+        }
     };
     
     Vector<Preset> presets;
@@ -415,6 +486,27 @@ public:
         String type;  // "effect", "instrument", "utility"
         ValueMap parameters;
         Vector<Module> children;  // For nested racks
+
+        // Support for U++ container operations
+        void  operator<<=(const Module& s) {
+            id = s.id; name = s.name; type = s.type; parameters = s.parameters; children <<= s.children;
+        }
+        bool  operator==(const Module& b) const {
+            return id == b.id && name == b.name && type == b.type && 
+                   parameters == b.parameters && children == b.children;
+        }
+        int   Compare(const Module& b) const { return id.Compare(b.id); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Module& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("id", id)("name", name)("type", type)("parameters", parameters)("children", children);
+        }
     };
     
     // Add a module to the rack
@@ -525,10 +617,59 @@ private:
         String paramId;
         double min, max;
         double defaultValue;
+
+        // Support for U++ container operations
+        void  operator<<=(const Mapping& s) {
+            paramId = s.paramId; min = s.min; max = s.max; defaultValue = s.defaultValue;
+        }
+        bool  operator==(const Mapping& b) const {
+            return paramId == b.paramId && min == b.min && max == b.max && defaultValue == b.defaultValue;
+        }
+        int   Compare(const Mapping& b) const { return paramId.Compare(b.paramId); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Mapping& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("paramId", paramId)("min", min)("max", max)("defaultValue", defaultValue);
+        }
     };
     
     struct MultiMapping {
         Vector< Tuple<String, double> > paramMap; // paramId, weight
+
+        // Support for U++ container operations
+        void  operator<<=(const MultiMapping& s) {
+            paramMap <<= s.paramMap;
+        }
+        bool  operator==(const MultiMapping& b) const {
+            return paramMap == b.paramMap;
+        }
+        int   Compare(const MultiMapping& b) const { 
+            if (paramMap.GetCount() < b.paramMap.GetCount()) return -1;
+            if (paramMap.GetCount() > b.paramMap.GetCount()) return 1;
+            for (int i = 0; i < paramMap.GetCount(); i++) {
+                if (paramMap[i].a != b.paramMap[i].a) return paramMap[i].a.Compare(b.paramMap[i].a);
+                if (paramMap[i].b < b.paramMap[i].b) return -1;
+                if (paramMap[i].b > b.paramMap[i].b) return 1;
+            }
+            return 0;
+        }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(MultiMapping& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("paramMap", paramMap);
+        }
     };
     
     Upp::VectorMap<String, Mapping> singleMappings;
@@ -575,11 +716,51 @@ private:
     struct Preset {
         String name;
         ValueMap parameters;
+
+        // Support for U++ container operations
+        void  operator<<=(const Preset& s) {
+            name = s.name; parameters = s.parameters;
+        }
+        bool  operator==(const Preset& b) const {
+            return name == b.name && parameters == b.parameters;
+        }
+        int   Compare(const Preset& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Preset& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("parameters", parameters);
+        }
     };
     
     struct Category {
         String name;
         Vector<Preset> presets;
+
+        // Support for U++ container operations
+        void  operator<<=(const Category& s) {
+            name = s.name; presets <<= s.presets;
+        }
+        bool  operator==(const Category& b) const {
+            return name == b.name && presets == b.presets;
+        }
+        int   Compare(const Category& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Category& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("presets", presets);
+        }
     };
     
     Vector<Category> categories;
@@ -700,6 +881,30 @@ public:
         ValueMap stylePreferences;
         
         Context() : tempo(120.0) {}
+        
+        // Support for U++ container operations
+        void  operator<<=(const Context& s) {
+            genre = s.genre; mood = s.mood; tempo = s.tempo; key = s.key;
+            currentChords <<= s.currentChords; currentMelody <<= s.currentMelody;
+            stylePreferences <<= s.stylePreferences;
+        }
+        bool  operator==(const Context& b) const {
+            return genre == b.genre && mood == b.mood && tempo == b.tempo && key == b.key &&
+                   currentChords == b.currentChords && currentMelody == b.currentMelody && stylePreferences == b.stylePreferences;
+        }
+        int   Compare(const Context& b) const { return genre.Compare(b.genre); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Context& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(JsonIO& jio) {
+            jio("genre", genre)("mood", mood)("tempo", tempo)("key", key)
+                ("currentChords", currentChords)("currentMelody", currentMelody)("stylePreferences", stylePreferences);
+        }
     };
     
     // Get recommendations based on context

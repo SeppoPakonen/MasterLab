@@ -52,6 +52,27 @@ private:
         
         ModuleSlot() : control(nullptr) {}
         ModuleSlot(const String& n, Ctrl* c, const Rect& b) : name(n), control(c), bounds(b) {}
+        
+        // Support for U++ container operations
+        void  operator<<=(const ModuleSlot& s) {
+            name = s.name; control = s.control; bounds = s.bounds;
+        }
+        bool  operator==(const ModuleSlot& b) const {
+            return name == b.name && control == b.control && bounds == b.bounds;
+        }
+        int   Compare(const ModuleSlot& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(ModuleSlot& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("bounds", bounds);
+            // Exclude pointer from serialization
+        }
     };
     
     Vector<ModuleSlot> modules;

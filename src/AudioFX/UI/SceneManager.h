@@ -53,6 +53,26 @@ private:
         
         Scene() {}
         Scene(const String& n) : name(n) {}
+        
+        // Support for U++ container operations
+        void  operator<<=(const Scene& s) {
+            name = s.name; params <<= s.params;
+        }
+        bool  operator==(const Scene& b) const {
+            return name == b.name && params == b.params;
+        }
+        int   Compare(const Scene& b) const { return name.Compare(b.name); }
+
+        // U++ guest requirement
+        void  Guest() const {}
+
+        // Support for U++ deep copy
+        void  Move(Scene& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name)("params", params);
+        }
     };
     
     Vector<Scene> scenes;

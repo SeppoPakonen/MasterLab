@@ -76,9 +76,40 @@ private:
         
         // Support for U++ deep copy
         void  Move(ParameterInfo& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(JsonIO& jio) {
+            int typ = (int)type;
+            jio("value", value)("initial", initial)("min", min)("max", max)("type", typ)("name", name);
+            type = (ParameterType)typ;
+        }
     };
 
     Upp::VectorMap<ParameterId, ParameterInfo> parameters;
+
+    // Support for U++ container operations
+    void  operator<<=(const ParameterSet& s) {
+        parameters <<= s.parameters;
+    }
+    bool  operator==(const ParameterSet& b) const {
+        return parameters == b.parameters;
+    }
+    int   Compare(const ParameterSet& b) const { 
+        if (parameters.GetCount() < b.parameters.GetCount()) return -1;
+        if (parameters.GetCount() > b.parameters.GetCount()) return 1;
+        return 0; // Basic comparison
+    }
+
+    // U++ guest requirement
+    void  Guest() const {}
+
+    // Support for U++ deep copy
+    void  Move(ParameterSet& s) { *this = pick(s); }
+    
+    // JSON serialization for guest type compatibility
+    void Jsonize(JsonIO& jio) {
+        jio("parameters", parameters);
+    }
 };
 
 } // namespace AudioFX

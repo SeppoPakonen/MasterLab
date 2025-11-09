@@ -71,6 +71,11 @@ private:
         
         // Support for U++ deep copy
         void  Move(Sequence& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("paramId", paramId)("steps", steps);
+        }
     };
 
     Vector<Sequence> sequences;
@@ -151,6 +156,11 @@ private:
         
         // Support for U++ deep copy
         void  Move(ParameterStep& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("paramId", paramId)("steps", steps);
+        }
     };
 
     Vector<ParameterStep> parameterSteps;
@@ -200,6 +210,11 @@ private:
         
         // Support for U++ deep copy
         void  Move(Module& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("name", name);
+        }
     };
 
     Vector<Module> modules;
@@ -244,6 +259,11 @@ private:
         
         // Support for U++ deep copy
         void  Move(MacroParam& s) { *this = pick(s); }
+        
+        // JSON serialization for guest type compatibility
+        void Jsonize(Json& jz) {
+            jz("id", id)("weight", weight);
+        }
     };
 
     Vector<MacroParam> parameters;
