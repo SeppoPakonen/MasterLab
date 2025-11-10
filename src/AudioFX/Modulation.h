@@ -34,7 +34,7 @@ public:
     void SetSequenceLength(int steps);
 
 private:
-    struct Step {
+    struct Step : Moveable<Step> {
         int position;
         double value;
         int duration;
@@ -45,6 +45,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const Step& s) { position = s.position; value = s.value; duration = s.duration; }
         bool  operator==(const Step& b) const { return position == b.position && value == b.value && duration == b.duration; }
+        bool  operator!=(const Step& b) const { return !(*this == b); }
         int   Compare(const Step& b) const { return position - b.position; }
         
         // U++ guest requirement
@@ -54,7 +55,7 @@ private:
         void  Move(Step& s) { *this = pick(s); }
     };
 
-    struct Sequence {
+    struct Sequence : Moveable<Sequence> {
         AudioFX::ParameterId paramId;
         Vector<Step> steps;
         
@@ -64,6 +65,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const Sequence& s) { paramId = s.paramId; steps <<= s.steps; }
         bool  operator==(const Sequence& b) const { return paramId == b.paramId && steps == b.steps; }
+        bool  operator!=(const Sequence& b) const { return !(*this == b); }
         int   Compare(const Sequence& b) const { return paramId.Compare(b.paramId); }
         
         // U++ guest requirement
@@ -139,7 +141,7 @@ public:
     void Reset();
 
 private:
-    struct ParameterStep {
+    struct ParameterStep : Moveable<ParameterStep> {
         AudioFX::ParameterId paramId;
         Vector<double> steps;
         
@@ -149,6 +151,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const ParameterStep& s) { paramId = s.paramId; steps <<= s.steps; }
         bool  operator==(const ParameterStep& b) const { return paramId == b.paramId && steps == b.steps; }
+        bool  operator!=(const ParameterStep& b) const { return !(*this == b); }
         int   Compare(const ParameterStep& b) const { return paramId.Compare(b.paramId); }
         
         // U++ guest requirement
@@ -193,7 +196,7 @@ public:
     void Reset();
 
 private:
-    struct Module {
+    struct Module : Moveable<Module> {
         String name;
         AudioFX::ParameterSet params;
         
@@ -203,6 +206,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const Module& s) { name = s.name; }
         bool  operator==(const Module& b) const { return name == b.name; }
+        bool  operator!=(const Module& b) const { return !(*this == b); }
         int   Compare(const Module& b) const { return name.Compare(b.name); }
         
         // U++ guest requirement
@@ -242,7 +246,7 @@ public:
     void Reset();
 
 private:
-    struct MacroParam {
+    struct MacroParam : Moveable<MacroParam> {
         AudioFX::ParameterId id;
         double weight;
         
@@ -252,6 +256,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const MacroParam& s) { id = s.id; weight = s.weight; }
         bool  operator==(const MacroParam& b) const { return id == b.id && weight == b.weight; }
+        bool  operator!=(const MacroParam& b) const { return !(*this == b); }
         int   Compare(const MacroParam& b) const { return id.Compare(b.id); }
         
         // U++ guest requirement
@@ -273,3 +278,4 @@ private:
 } // namespace DSP
 
 #endif
+

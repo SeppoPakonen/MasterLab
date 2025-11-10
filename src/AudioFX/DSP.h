@@ -490,9 +490,9 @@ public:
         // Support for U++ container operations
         void  operator<<=(const Module& s) {
             id = s.id; name = s.name; type = s.type; parameters = s.parameters;
-            // Clear and rebuild children to avoid deep copy recursion issues
+            // Use clear and add approach to avoid recursion issues
             children.Clear();
-            for(const Module& child : s.children) {
+            for (const Module& child : s.children) {
                 children.Add() <<= child;
             }
         }
@@ -511,7 +511,8 @@ public:
             name = pick(s.name); 
             type = pick(s.type); 
             parameters = pick(s.parameters); 
-            children.Pick(pick(s.children)); // Use Pick for vector to avoid recursion
+            // Use pick assignment for children to avoid recursion
+            children = pick(s.children);
         }
         
         // JSON serialization for guest type compatibility
@@ -868,20 +869,6 @@ private:
 
 // Register additional types as U++ guest types to solve relocation issues
 namespace Upp {
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Step> = true;
-
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Sequence> = true;
-
-    template<>
-    inline constexpr bool is_upp_guest<DSP::StepSequencer::ParameterStep> = true;
-
-    template<>
-    inline constexpr bool is_upp_guest<DSP::ModuleSwitcher::Module> = true;
-
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MacroController::MacroParam> = true;
 }
 
 // AI Recommender for suggesting musical content
@@ -915,7 +902,7 @@ public:
         void  operator<<=(const Context& s) {
             genre = s.genre; mood = s.mood; tempo = s.tempo; key = s.key;
             currentChords <<= s.currentChords; currentMelody <<= s.currentMelody;
-            stylePreferences <<= s.stylePreferences;
+            stylePreferences = s.stylePreferences;
         }
         bool  operator==(const Context& b) const {
             return genre == b.genre && mood == b.mood && tempo == b.tempo && key == b.key &&
@@ -1061,42 +1048,21 @@ private:
 class DelaySolver {
 public:
     DelaySolver();
-    
+
     // Solve for delay between two signals
     double SolveDelay(const AudioBuffer& reference, const AudioBuffer& delayed, double sampleRate);
-    
+
     // Solve multiple delays for multichannel systems
     Vector<double> SolveDelays(const Vector<AudioBuffer>& referenceSignals, 
                               const Vector<AudioBuffer>& delayedSignals, double sampleRate);
-    
+
     // Calculate delay for distance (speed of sound = 343 m/s)
     double CalculateDelayForDistance(double distanceMeters);
-    
+
     // Set the algorithm to use
     void SetAlgorithm(int algo); // 0=Cross-correlation, 1=Phase-based, 2=Least-squares
-    
+
 private:
     int algorithm; // 0=Cross-correlation, 1=Phase-based, 2=Least-squares
 };
-
-} // namespace Calibration
-
-
-
-// Additional guest types needed for compilation
-namespace Upp {
-    template<>
-    inline constexpr bool is_upp_guest<DSP::StepSequencer::ParameterStep> = true;
-    
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Sequence> = true;
-    
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Step> = true;
-    
-    template<>
-    inline constexpr bool is_upp_guest<DSP::ModuleSwitcher::Module> = true;
-    
-    template<>
-    inline constexpr bool is_upp_guest<DSP::MacroController::MacroParam> = true;
-}
+}; // namespace Calibration

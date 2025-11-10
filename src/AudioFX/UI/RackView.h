@@ -60,6 +60,9 @@ private:
         bool  operator==(const ModuleSlot& b) const {
             return name == b.name && control == b.control && bounds == b.bounds;
         }
+        bool  operator!=(const ModuleSlot& b) const {
+            return !(*this == b);
+        }
         int   Compare(const ModuleSlot& b) const { return name.Compare(b.name); }
 
         // U++ guest requirement

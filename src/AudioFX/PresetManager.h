@@ -64,6 +64,7 @@ private:
         // Support for U++ container operations
         void  operator<<=(const Preset& s) { name = s.name; parameters = s.parameters; }
         bool  operator==(const Preset& b) const { return name == b.name && parameters == b.parameters; }
+        bool  operator!=(const Preset& b) const { return !(*this == b); }
         int   Compare(const Preset& b) const { return name.Compare(b.name); }
         
         // U++ guest requirement
