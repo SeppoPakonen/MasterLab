@@ -480,7 +480,7 @@ public:
     RackHost();
     
     // Define a rack module
-    struct Module {
+    struct Module : Moveable<Module> {
         String id;
         String name;
         String type;  // "effect", "instrument", "utility"
@@ -489,7 +489,12 @@ public:
 
         // Support for U++ container operations
         void  operator<<=(const Module& s) {
-            id = s.id; name = s.name; type = s.type; parameters = s.parameters; children <<= s.children;
+            id = s.id; name = s.name; type = s.type; parameters = s.parameters;
+            // Clear and rebuild children to avoid deep copy recursion issues
+            children.Clear();
+            for(const Module& child : s.children) {
+                children.Add() <<= child;
+            }
         }
         bool  operator==(const Module& b) const {
             return id == b.id && name == b.name && type == b.type && 
@@ -501,7 +506,13 @@ public:
         void  Guest() const {}
 
         // Support for U++ deep copy
-        void  Move(Module& s) { *this = pick(s); }
+        void  Move(Module& s) { 
+            id = pick(s.id); 
+            name = pick(s.name); 
+            type = pick(s.type); 
+            parameters = pick(s.parameters); 
+            children.Pick(pick(s.children)); // Use Pick for vector to avoid recursion
+        }
         
         // JSON serialization for guest type compatibility
         void Jsonize(Json& jz) {
@@ -713,7 +724,7 @@ public:
     int GetPresetCount(const String& category) const;
     
 private:
-    struct Preset {
+    struct Preset : Moveable<Preset> {
         String name;
         ValueMap parameters;
 
@@ -738,7 +749,7 @@ private:
         }
     };
     
-    struct Category {
+    struct Category : Moveable<Category> {
         String name;
         Vector<Preset> presets;
 
@@ -854,6 +865,24 @@ private:
 };
 
 } // namespace DSP
+
+// Register additional types as U++ guest types to solve relocation issues
+namespace Upp {
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Step> = true;
+
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Sequence> = true;
+
+    template<>
+    inline constexpr bool is_upp_guest<DSP::StepSequencer::ParameterStep> = true;
+
+    template<>
+    inline constexpr bool is_upp_guest<DSP::ModuleSwitcher::Module> = true;
+
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MacroController::MacroParam> = true;
+}
 
 // AI Recommender for suggesting musical content
 class AIRecommender {
@@ -1052,3 +1081,22 @@ private:
 
 } // namespace Calibration
 
+
+
+// Additional guest types needed for compilation
+namespace Upp {
+    template<>
+    inline constexpr bool is_upp_guest<DSP::StepSequencer::ParameterStep> = true;
+    
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Sequence> = true;
+    
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MotionSequencer::Step> = true;
+    
+    template<>
+    inline constexpr bool is_upp_guest<DSP::ModuleSwitcher::Module> = true;
+    
+    template<>
+    inline constexpr bool is_upp_guest<DSP::MacroController::MacroParam> = true;
+}

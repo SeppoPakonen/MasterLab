@@ -49,7 +49,7 @@ public:
     void ResetToInitial();
 
 private:
-    struct ParameterInfo {
+    struct ParameterInfo : Moveable<ParameterInfo> {
         ParameterValue value;
         ParameterValue initial;
         ParameterValue min;
@@ -113,5 +113,11 @@ private:
 };
 
 } // namespace AudioFX
+
+// Register ParameterInfo as a U++ guest type
+namespace Upp {
+    template<>
+    inline constexpr bool is_upp_guest<AudioFX::ParameterSet::ParameterInfo> = true;
+}
 
 #endif

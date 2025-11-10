@@ -81,6 +81,13 @@ private:
     Vector<Preset> presets;
 };
 
+
 } // namespace AudioFX
+
+// Register AudioFX::PresetManager::Preset as a U++ guest type
+namespace Upp {
+    template<>
+    inline constexpr bool is_upp_guest<AudioFX::PresetManager::Preset> = true;
+}
 
 #endif

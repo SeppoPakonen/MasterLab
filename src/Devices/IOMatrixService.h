@@ -10,7 +10,7 @@ using namespace Upp;
 namespace Devices {
 
 // Structure representing an audio bus
-struct AudioBus {
+struct AudioBus : Moveable<AudioBus> {
     String name;
     String speakerConfig;  // Mono, Stereo, 5.0, 5.1, etc.
     String audioDevice;
@@ -21,7 +21,7 @@ struct AudioBus {
 };
 
 // Structure for external FX
-struct ExternalFx {
+struct ExternalFx : Moveable<ExternalFx> {
     String name;
     String sendConfig;
     String returnConfig;
@@ -35,7 +35,7 @@ struct ExternalFx {
 };
 
 // Structure for external instruments
-struct ExternalInstrument {
+struct ExternalInstrument : Moveable<ExternalInstrument> {
     String name;
     int monoReturnsCount;
     int stereoReturnsCount;
