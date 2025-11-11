@@ -41,3 +41,4 @@ file
 	KeyCommandsDlg.h,
 	KeyCommandsDlg.cpp,
 	WithPresetsLayout.h;
+

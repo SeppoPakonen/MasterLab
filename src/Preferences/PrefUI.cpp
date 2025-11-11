@@ -66,7 +66,7 @@ void Row::Add(Ctrl& ctrl, int proportion) {
 	proportions.Add(proportion);
 	
 	// Add the control as a child
-	AddChild(&ctrl);
+	Ctrl::Add(ctrl);
 	
 	// Update the layout
 	RefreshLayout();
@@ -101,8 +101,8 @@ Row::~Row() {
 LabelBox::LabelBox(const Upp::String& text) {
 	SetFrame(ThinInsetFrame());
 	label.SetLabel(text);
-	Add(label.TopPos(0, 20).LeftPos(0, 10));
-	Add(content.VSizePos(25).HSizePos());
+	Ctrl::Add(label.TopPos(0, 20).LeftPos(0, 10));
+	Ctrl::Add(content.VSizePos(25).HSizePos());
 }
 
 void LabelBox::Add(Ctrl& ctrl) {
