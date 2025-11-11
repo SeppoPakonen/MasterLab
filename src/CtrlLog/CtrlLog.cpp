@@ -1,5 +1,9 @@
 #include "CtrlLog.h"
 
+#define IMAGECLASS CtrlLogImg
+#define IMAGEFILE <CtrlLog/CtrlLog.iml>
+#include <Draw/iml_source.h>
+
 CtrlLog::CtrlLog()
 {
     // Add tree control to the CtrlLog

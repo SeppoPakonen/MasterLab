@@ -1,4 +1,4 @@
-description "CtrlLog package for logging UI controls";
+description "CtrlLog package for logging UI controls\377";
 
 uses
 	CtrlLib;
@@ -8,3 +8,4 @@ file
 	CtrlLog.cpp,
 	CtrlLog.lay,
 	CtrlLog.iml;
+

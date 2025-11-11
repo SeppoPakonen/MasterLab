@@ -10,7 +10,7 @@ using namespace Upp;
 
 #define IMAGECLASS CtrlLogImg
 #define IMAGEFILE <CtrlLog/CtrlLog.iml>
-#include <Draw/iml.h>
+#include <Draw/iml_header.h>
 
 struct CtrlLog : public ParentCtrl {
     CtrlLog();
