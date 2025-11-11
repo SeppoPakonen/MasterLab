@@ -39,12 +39,13 @@ public:
     void RenamePreset(const String& oldName, const String& newName);
 
 private:
-    struct Preset {
+    struct Preset : Moveable<Preset> {
         String name;
         ValueMap parameters;
         
         // Default constructor
         Preset() {}
+        Preset(Preset&& p) : name(p.name), parameters(p.parameters) {}
         
         // Constructor with parameters
         Preset(const String& n) : name(n) {}
@@ -62,7 +63,6 @@ private:
         }
         
         // Support for U++ container operations
-        void  operator<<=(const Preset& s) { name = s.name; parameters = s.parameters; }
         bool  operator==(const Preset& b) const { return name == b.name && parameters == b.parameters; }
         bool  operator!=(const Preset& b) const { return !(*this == b); }
         int   Compare(const Preset& b) const { return name.Compare(b.name); }
@@ -74,7 +74,7 @@ private:
         void  Move(Preset& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("parameters", parameters);
         }
     };

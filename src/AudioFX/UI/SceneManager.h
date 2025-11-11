@@ -47,7 +47,7 @@ protected:
     virtual void Layout() override;
     
 private:
-    struct Scene {
+    struct Scene : Moveable<Scene> {
         String name;
         AudioFX::ParameterSet params;
         
@@ -56,7 +56,8 @@ private:
         
         // Support for U++ container operations
         void  operator<<=(const Scene& s) {
-            name = s.name; params <<= s.params;
+            name = s.name;
+            params <<= s.params;
         }
         bool  operator==(const Scene& b) const {
             return name == b.name && params == b.params;
@@ -70,7 +71,7 @@ private:
         void  Move(Scene& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("params", params);
         }
     };

@@ -45,17 +45,19 @@ protected:
     virtual void Layout() override;
     
 private:
-    struct ModuleSlot {
+    struct ModuleSlot : Moveable<ModuleSlot> {
         String name;
-        Ctrl* control;
+        Ptr<Ctrl> control;
         Rect bounds;
         
         ModuleSlot() : control(nullptr) {}
         ModuleSlot(const String& n, Ctrl* c, const Rect& b) : name(n), control(c), bounds(b) {}
         
         // Support for U++ container operations
-        void  operator<<=(const ModuleSlot& s) {
-            name = s.name; control = s.control; bounds = s.bounds;
+        void  operator=(const ModuleSlot& s) {
+            name = s.name;
+            control = s.control;
+            bounds = s.bounds;
         }
         bool  operator==(const ModuleSlot& b) const {
             return name == b.name && control == b.control && bounds == b.bounds;
@@ -72,7 +74,7 @@ private:
         void  Move(ModuleSlot& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("bounds", bounds);
             // Exclude pointer from serialization
         }

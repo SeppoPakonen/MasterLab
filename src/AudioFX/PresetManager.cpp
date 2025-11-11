@@ -16,7 +16,7 @@ void PresetManager::AddPreset(const ParameterSet& params, const String& name) {
         preset.parameters.Set(id, params.Get(id));
     }
 
-    presets.Add(preset);
+    presets.Add(pick(preset));
 }
 
 bool PresetManager::LoadPreset(const String& name, ParameterSet& params) {

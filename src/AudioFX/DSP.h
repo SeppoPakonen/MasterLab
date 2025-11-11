@@ -171,7 +171,7 @@ public:
     void ResetToInitial();
     
 private:
-    struct ParameterInfo {
+    struct ParameterInfo : Moveable<ParameterInfo> {
         ParameterValue value;
         ParameterValue initial;
         ParameterValue min;
@@ -313,7 +313,7 @@ public:
     void RenamePreset(const String& oldName, const String& newName);
     
 private:
-    struct Preset {
+    struct Preset : Moveable<Preset> {
         String name;
         ValueMap parameters;
 
@@ -333,7 +333,7 @@ private:
         void  Move(Preset& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("parameters", parameters);
         }
     };
@@ -486,18 +486,21 @@ public:
         String type;  // "effect", "instrument", "utility"
         ValueMap parameters;
         Vector<Module> children;  // For nested racks
+        
+        Module() {}
+        Module(Module&& m) : id(m.id), name(m.name), type(m.type), parameters(m.parameters), children(pick(m.children)) {}
+        Module(const Module& m) {*this = m;}
 
         // Support for U++ container operations
-        void  operator<<=(const Module& s) {
-            id = s.id; name = s.name; type = s.type; parameters = s.parameters;
-            // Use clear and add approach to avoid recursion issues
-            children.Clear();
-            for (const Module& child : s.children) {
-                children.Add() <<= child;
-            }
+        void  operator=(const Module& s) {
+            id = s.id;
+            name = s.name;
+            type = s.type;
+            parameters = s.parameters;
+            children <<= s.children;
         }
         bool  operator==(const Module& b) const {
-            return id == b.id && name == b.name && type == b.type && 
+            return id == b.id && name == b.name && type == b.type &&
                    parameters == b.parameters && children == b.children;
         }
         int   Compare(const Module& b) const { return id.Compare(b.id); }
@@ -506,17 +509,17 @@ public:
         void  Guest() const {}
 
         // Support for U++ deep copy
-        void  Move(Module& s) { 
-            id = pick(s.id); 
-            name = pick(s.name); 
-            type = pick(s.type); 
-            parameters = pick(s.parameters); 
+        void  Move(Module& s) {
+            id = pick(s.id);
+            name = pick(s.name);
+            type = pick(s.type);
+            parameters = pick(s.parameters);
             // Use pick assignment for children to avoid recursion
             children = pick(s.children);
         }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("id", id)("name", name)("type", type)("parameters", parameters)("children", children);
         }
     };
@@ -625,7 +628,7 @@ public:
     void ClearMapping(const String& controlId);
     
 private:
-    struct Mapping {
+    struct Mapping : Moveable<Mapping> {
         String paramId;
         double min, max;
         double defaultValue;
@@ -646,12 +649,12 @@ private:
         void  Move(Mapping& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("paramId", paramId)("min", min)("max", max)("defaultValue", defaultValue);
         }
     };
     
-    struct MultiMapping {
+    struct MultiMapping : Moveable<MultiMapping> {
         Vector< Tuple<String, double> > paramMap; // paramId, weight
 
         // Support for U++ container operations
@@ -679,7 +682,7 @@ private:
         void  Move(MultiMapping& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("paramMap", paramMap);
         }
     };
@@ -745,7 +748,7 @@ private:
         void  Move(Preset& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("parameters", parameters);
         }
     };
@@ -753,10 +756,15 @@ private:
     struct Category : Moveable<Category> {
         String name;
         Vector<Preset> presets;
+        
+        Category() {}
+        Category(Category&& c) : name(c.name), presets(pick(c.presets)) {}
+        Category(const Category& c) {*this = c;}
 
         // Support for U++ container operations
-        void  operator<<=(const Category& s) {
-            name = s.name; presets <<= s.presets;
+        void  operator=(const Category& s) {
+            name = s.name;
+            presets <<= s.presets;
         }
         bool  operator==(const Category& b) const {
             return name == b.name && presets == b.presets;
@@ -770,7 +778,7 @@ private:
         void  Move(Category& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name)("presets", presets);
         }
     };

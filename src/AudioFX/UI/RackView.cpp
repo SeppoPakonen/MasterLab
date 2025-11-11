@@ -21,10 +21,10 @@ void RackView::AddModule(const String& name, Ctrl* control) {
     ModuleSlot slot;
     slot.name = name;
     slot.control = control;
-    modules.Add(slot);
+    modules.Add(pick(slot));
     
     if (control) {
-        AddChild(control);
+        Add(*control);
     }
     
     ModuleAdded();

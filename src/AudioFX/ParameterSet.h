@@ -87,12 +87,14 @@ private:
 
     Upp::VectorMap<ParameterId, ParameterInfo> parameters;
 
+public:
     // Support for U++ container operations
     void  operator<<=(const ParameterSet& s) {
         parameters <<= s.parameters;
     }
     bool  operator==(const ParameterSet& b) const {
-        return parameters == b.parameters;
+        return	IsEqualRange(parameters.GetKeys(),   b.parameters.GetKeys()) &&
+				IsEqualRange(parameters.GetValues(), b.parameters.GetValues());
     }
     int   Compare(const ParameterSet& b) const { 
         if (parameters.GetCount() < b.parameters.GetCount()) return -1;

@@ -53,6 +53,12 @@ private:
         
         // Support for U++ deep copy
         void  Move(Step& s) { *this = pick(s); }
+        
+        void Jsonize(JsonIO& jz) {
+            jz	("position", position)
+				("value", value)
+				("duration", duration);
+        }
     };
 
     struct Sequence : Moveable<Sequence> {
@@ -75,7 +81,7 @@ private:
         void  Move(Sequence& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("paramId", paramId)("steps", steps);
         }
     };
@@ -161,7 +167,7 @@ private:
         void  Move(ParameterStep& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("paramId", paramId)("steps", steps);
         }
     };
@@ -216,7 +222,7 @@ private:
         void  Move(Module& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("name", name);
         }
     };
@@ -266,7 +272,7 @@ private:
         void  Move(MacroParam& s) { *this = pick(s); }
         
         // JSON serialization for guest type compatibility
-        void Jsonize(Json& jz) {
+        void Jsonize(JsonIO& jz) {
             jz("id", id)("weight", weight);
         }
     };

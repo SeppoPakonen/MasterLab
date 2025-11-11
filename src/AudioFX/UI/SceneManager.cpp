@@ -17,8 +17,8 @@ void SceneManager::AddScene(const String& name, const AudioFX::ParameterSet& par
     // Copy parameters manually since ParameterSet can't be directly assigned
     Vector<AudioFX::ParameterId> ids = params.GetParameterIds();
     for(const auto& id : ids) {
-        scene.params.AddParameter(id, params.Get(id), params.GetMin(id), 
-                                  params.GetMax(id), params.GetType(id), 
+        scene.params.AddParameter(id, params.Get(id), params.GetMin(id),
+                                  params.GetMax(id), params.GetType(id),
                                   params.GetName(id));
         scene.params.Set(id, params.Get(id));
     }
