@@ -20,4 +20,7 @@ file
 	PostGraphView.h,
 	PostView.h,
 	UI.h,
-	UI.cpp;
+	UI.cpp,
+	PluginHost.h,
+	PluginHost.cpp;
+

@@ -8,6 +8,13 @@
 using namespace Upp;
 using namespace PluginSDK;
 
+// DSP Processor for PitchVocalSuite
+class PitchVocalProcessor : public PluginProcessor {
+public:
+	PitchVocalProcessor();
+	virtual void Process(ProcessContext& ctx) override;
+};
+
 // Custom control for pitch graph editing
 class PitchGraphEditor : public Ctrl {
 public:

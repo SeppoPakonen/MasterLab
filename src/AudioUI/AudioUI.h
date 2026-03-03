@@ -9,5 +9,6 @@ using namespace Upp;
 
 #include "UI.h"
 #include "GraphVisualizationCtrl.h"
+#include "PluginHost.h"
 
 #endif

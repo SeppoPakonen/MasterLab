@@ -19,6 +19,7 @@ public:
 	RackView();
 	virtual ~RackView();
 	
+	void AddPlugin(PluginSDK::PluginProcessor& processor, PluginSDK::PluginEditor& editor);
 	void AddModule(Ctrl& module_ctrl, const String& name);
 	void RemoveModule(const String& name);
 	void ConnectModules(const String& source, const String& destination);

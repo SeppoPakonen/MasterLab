@@ -1,5 +1,17 @@
 #include "PitchVocalSuite.h"
 
+// --- PitchVocalProcessor ---
+
+PitchVocalProcessor::PitchVocalProcessor()
+{
+	// Add parameters, etc.
+}
+
+void PitchVocalProcessor::Process(ProcessContext& ctx)
+{
+	// Skeleton pitch processing
+}
+
 // --- PitchVocalTopBar ---
 
 PitchVocalTopBar::PitchVocalTopBar()
@@ -71,7 +83,10 @@ PitchVocalEditor::PitchVocalEditor()
 
 GUI_APP_MAIN
 {
+	PitchVocalProcessor processor;
 	PitchVocalEditor editor;
+	editor.SetProcessor(&processor);
+	
 	PluginWindow win;
 	win.Title("PitchVocalSuite Standalone");
 	win.SetEditor(editor);

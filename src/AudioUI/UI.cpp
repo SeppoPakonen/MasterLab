@@ -1,4 +1,5 @@
 #include "UI.h"
+#include "PluginHost.h"
 
 namespace am {
 namespace UI {
@@ -27,6 +28,13 @@ void RackView::Init() {
 	// Initialize the RackView control
 	graphCtrl = nullptr;
 	showGraph = false;
+}
+
+void RackView::AddPlugin(PluginSDK::PluginProcessor& processor, PluginSDK::PluginEditor& editor) {
+	PluginHost* host = new PluginHost();
+	host->SetPlugin(processor, editor);
+	String name = "Plugin: " + (processor.Graph().nodes.GetCount() > 0 ? processor.Graph().nodes[0].label : "Unnamed");
+	AddModule(*host, name);
 }
 
 void RackView::AddModule(Ctrl& module_ctrl, const String& name) {
