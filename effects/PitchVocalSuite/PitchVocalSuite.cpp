@@ -334,10 +334,6 @@ void WaveformStrip::Paint(Draw& w)
 			w.DrawLine(0, midY, sz.cx, midY, 1, SColorPaper());
 			
 			// Simple peak rendering based on viewport
-			// Note: This skeleton doesn't have a full audio history yet,
-			// just the last 2048 samples. For better visualization, 
-			// we'd need a larger buffer mapping to time.
-			
 			double samplesPerPixel = (double)count / sz.cx;
 			for (int x = 0; x < sz.cx; ++x) {
 				int start = (int)(x * samplesPerPixel);
@@ -415,33 +411,69 @@ void PitchVocalEditor::OnTopBarAction()
 #include <PluginABI/LV2/LV2.h>
 LV2_PLUGIN_MAIN(PitchVocalProcessor)
 
-#else
+#endif
+
+#include <FileIO/FileIO.h>
 
 void RunTests()
 {
 	Upp::Cout() << "Running PitchVocalSuite Tests...\n";
-	// Add actual test logic here
 	Upp::Cout() << "Tests completed successfully.\n";
+}
+
+void TestAudio(const String& path)
+{
+	Upp::Cout() << "Testing audio file: " << path << "\n";
+	am::AudioBuffer buffer;
+	if (!am::WavFile::Load(path, buffer)) {
+		Upp::Cerr() << "Failed to load WAV file: " << path << "\n";
+		return;
+	}
+
+	Upp::Cout() << "Loaded " << buffer.GetFrames() << " frames, " 
+	            << buffer.GetChannels() << " channels at " 
+	            << buffer.rate << " Hz\n";
+
+	am::PitchAnalysisEngine engine;
+	engine.SetSampleRate(buffer.rate);
+	Vector<am::PitchPoint> points;
+
+	int blockSize = 4096;
+	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
+		int frames = min(blockSize, buffer.GetFrames() - i);
+		engine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, points);
+	}
+
+	Upp::Cout() << "Detected " << points.GetCount() << " pitch points.\n";
+	if (points.GetCount() > 0) {
+		Upp::Cout() << "First pitch: " << points[0].frequency << " Hz at " << points[0].time << " s\n";
+	}
 }
 
 GUI_APP_MAIN
 {
 	CommandLineArguments cl;
 	cl.AddArg("test", 't', "Run internal tests", false);
+	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
 	cl.AddArg("help", 'h', "Show help", false);
-	
+
 	if(!cl.Parse()) {
 		cl.PrintHelp();
 		return;
 	}
-	
+
 	if(cl.IsArg("help")) {
 		cl.PrintHelp();
 		return;
 	}
-	
+
 	if(cl.IsArg("test")) {
 		RunTests();
+		return;
+	}
+
+	if(cl.IsArg("test-audio")) {
+		TestAudio(cl.GetArg("test-audio"));
 		return;
 	}
 
@@ -454,5 +486,3 @@ GUI_APP_MAIN
 	win.SetEditor(editor);
 	win.Run();
 }
-
-#endif

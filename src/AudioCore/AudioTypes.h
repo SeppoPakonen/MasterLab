@@ -1,10 +1,14 @@
 #ifndef _AudioCore_AudioTypes_h_
 #define _AudioCore_AudioTypes_h_
 
+#include <Core/Core.h>
 
 namespace am {
-	
+
+using namespace Upp;
+
 using Sample = float;
+
 using SampleRate = int;
 using FrameIndex = int64;      // timeline frame index
 

@@ -8,6 +8,13 @@
 ## Summary
 Pitch-oriented processing; low-latency paths and high-quality formant handling are critical. Provide MIDI note integration where applicable.
 
+## Current Status (2026-03-03)
+- **Framework:** U++ with custom `PluginEditor` and `PluginHost` for DAW/Standalone integration.
+- **Pitch Detection:** Functional FFT-based Autocorrelation engine (Wiener-Khinchin theorem).
+- **UI:** Interactive Piano-Roll style `PitchGraphEditor` and real-time `WaveformStrip`.
+- **CLI:** Support for `--test` and `--test-audio <path>` for offline analysis.
+- **DSP:** Detection pipeline is functional; pitch-shifting correction is currently in development.
+
 ## Implementation Plan
 ### Antares Auto-Tune Pro
 - Category: pitch/time
@@ -23,11 +30,12 @@ Pitch-oriented processing; low-latency paths and high-quality formant handling a
   - Graph mode for manual pitch/time curves
   - Humanize/vibrato tools to keep sustained notes transparent
 - Core building blocks:
-  - DSP::PhaseVocoder, DSP::FormantFilter, DSP::TransientPreserver, DSP::TimelineWarp, DSP::PitchDetector, DSP::CorrectionCurve, DSP::FormantModel, DSP::LowLatencyBuffer
+  - DSP::PhaseVocoder (NEXT), DSP::FormantFilter, DSP::TransientPreserver, DSP::TimelineWarp, DSP::PitchDetector (DONE), DSP::CorrectionCurve, DSP::FormantModel, DSP::LowLatencyBuffer
 - Signal/voice flow: Input → Pitch detector → Correction curve / retune logic → Formant correction → Output
 - TODO:
-  - Wire PluginSDK parameter/route scaffolding to match the modules above
-  - Flesh out processing graph and automation surfaces per EFFECTS/INSTRUMENTS blueprint
+  - Implement Phase Vocoder or SOLA-based pitch shifter
+  - Connect manual note editing to the correction curve
+  - Implement formant preservation
 
 ### Antares AVOX Suite
 - Category: multi-effect

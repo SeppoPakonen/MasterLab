@@ -1,7 +1,7 @@
 #ifndef _AudioCore_AudioBuffer_h_
 #define _AudioCore_AudioBuffer_h_
 
-// Note: Requires AudioCore/AudioCore.h (for Sample, SampleRate) - included via main header in .cpp files
+#include "AudioTypes.h"
 
 namespace am {
 	
