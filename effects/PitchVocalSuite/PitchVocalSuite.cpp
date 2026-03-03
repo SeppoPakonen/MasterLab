@@ -239,6 +239,8 @@ void PitchGraphEditor::MouseWheel(Point p, int zdelta, dword keyflags)
 		viewport->scrollX += (p.x / oldZoom) - (p.x / viewport->zoomX);
 	} else if (keyflags & K_SHIFT) {
 		viewport->zoomY = max(2.0, viewport->zoomY * (zdelta > 0 ? 1.1 : 0.9));
+	} else if (keyflags & K_ALT) {
+		viewport->scrollY += (zdelta > 0 ? 1.0 : -1.0);
 	} else {
 		viewport->scrollX += (zdelta > 0 ? -1.0 : 1.0);
 	}
@@ -384,12 +386,13 @@ PitchVocalEditor::PitchVocalEditor()
 {
 	instance = this;
 	LayoutId("PitchVocalEditor");
-	int topH = 80, bottomH = 80, overviewH = 40, scrollH = 16;
+	int topH = 80, bottomH = 80, overviewH = 40, scrollH = 16, scrollW = 16;
 	Add(topBar.TopPos(0, topH).HSizePos());
-	Add(overviewStrip.BottomPos(scrollH, overviewH).HSizePos());
-	Add(scrollBar.BottomPos(0, scrollH).HSizePos());
-	Add(waveformStrip.BottomPos(scrollH + overviewH, bottomH).HSizePos());
-	Add(graphEditor.VSizePos(topH, scrollH + overviewH + bottomH).HSizePos());
+	Add(overviewStrip.BottomPos(scrollH, overviewH).HSizePos(0, scrollW));
+	Add(scrollBar.BottomPos(0, scrollH).HSizePos(0, scrollW));
+	Add(waveformStrip.BottomPos(scrollH + overviewH, bottomH).HSizePos(0, scrollW));
+	Add(scrollBarY.RightPos(0, scrollW).VSizePos(topH, scrollH + overviewH + bottomH));
+	Add(graphEditor.VSizePos(topH, scrollH + overviewH + bottomH).HSizePos(0, scrollW));
 	
 	overviewStrip.SetIsOverview(true);
 	graphEditor.SetViewport(&viewport);
@@ -398,6 +401,11 @@ PitchVocalEditor::PitchVocalEditor()
 
 	scrollBar.Set(0, 100, 10);
 	scrollBar.WhenScroll = [=] { OnScroll(); };
+	
+	scrollBarY.Set(0, 127, 10);
+	scrollBarY.Set(60);
+	scrollBarY.WhenScroll = [=] { viewport.scrollY = scrollBarY.Get(); Refresh(); };
+
 	overviewStrip.WhenSeek = [=](double t) { viewport.scrollX = t; scrollBar.Set((int)(t * 10)); Refresh(); };
 
 	topBar.WhenAction = [=] { OnTopBarAction(); };

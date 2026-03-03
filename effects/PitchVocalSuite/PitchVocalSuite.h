@@ -172,6 +172,7 @@ private:
 	WaveformStrip waveformStrip;
 	WaveformStrip overviewStrip;
 	ScrollBar scrollBar;
+	ScrollBar scrollBarY;
 	PitchVocalViewport viewport;
 	
 	String projectPath;
