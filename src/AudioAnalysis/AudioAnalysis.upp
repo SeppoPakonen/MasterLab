@@ -3,7 +3,8 @@ description "Audio analysis package\377255,127,80";
 uses
 	CtrlLib,
 	AudioCore,
-	AudioFX;
+	AudioFX,
+	Math;
 
 file
 	AudioAnalysis.h,
