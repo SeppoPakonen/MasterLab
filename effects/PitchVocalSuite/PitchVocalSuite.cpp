@@ -355,8 +355,16 @@ void WaveformStrip::Paint(Draw& w)
 
 // --- PitchVocalEditor ---
 
+PitchVocalEditor* PitchVocalEditor::instance = nullptr;
+
+void PitchVocalEditor::MainMenuWrapper(Bar& menu)
+{
+	if (instance) instance->MainMenu(menu);
+}
+
 PitchVocalEditor::PitchVocalEditor()
 {
+	instance = this;
 	int topHeight = 80;
 	int bottomHeight = 100;
 	
@@ -402,6 +410,90 @@ void PitchVocalEditor::SyncFromProcessor()
 void PitchVocalEditor::OnTopBarAction()
 {
 	SyncToProcessor();
+}
+
+void PitchVocalEditor::MainMenu(Bar& menu)
+{
+	menu.Add("File", THISBACK(FileMenu));
+}
+
+void PitchVocalEditor::FileMenu(Bar& menu)
+{
+	menu.Add("New", [=] { NewProject(); });
+	menu.Add("Open...", [=] { OpenProject(); });
+	menu.Add("Save", [=] { SaveProject(); });
+	menu.Add("Save As...", [=] { SaveProjectAs(); });
+	menu.Separator();
+	menu.Add("Exit", [=] { GetTopWindow()->Close(); });
+}
+
+void PitchVocalEditor::NewProject()
+{
+	if (processor) {
+		auto* pvp = dynamic_cast<PitchVocalProcessor*>(processor);
+		if(pvp) pvp->GetNotes().Clear();
+		audioPath = "";
+		projectPath = "";
+		Refresh();
+	}
+}
+
+void PitchVocalEditor::OpenProject()
+{
+	FileSel fs;
+	fs.Type("PitchVocal Project", "*.pvp");
+	if (fs.ExecuteOpen("Open Project")) {
+		projectPath = fs.Get();
+		String json = LoadFile(projectPath);
+		if (!json.IsEmpty()) {
+			LoadFromJson(*this, json);
+			if (!audioPath.IsEmpty())
+				LoadAudio(audioPath);
+		}
+	}
+}
+
+bool PitchVocalEditor::SaveProject()
+{
+	if (projectPath.IsEmpty()) {
+		SaveProjectAs();
+		return !projectPath.IsEmpty();
+	}
+	return SaveFile(projectPath, StoreAsJson(*this));
+}
+
+void PitchVocalEditor::SaveProjectAs()
+{
+	FileSel fs;
+	fs.Type("PitchVocal Project", "*.pvp");
+	if (fs.ExecuteSaveAs("Save Project As")) {
+		projectPath = fs.Get();
+		SaveProject();
+	}
+}
+
+void PitchVocalEditor::LoadAudio(const String& path)
+{
+	if (!processor) return;
+	
+	audioPath = path;
+	am::AudioBuffer buffer;
+	if (am::WavFile::Load(path, buffer)) {
+		SyncFromProcessor();
+		Refresh();
+	}
+}
+
+void PitchVocalEditor::Jsonize(JsonIO& jio)
+{
+	jio("audioPath", audioPath);
+	if (processor) {
+		auto* pvp = dynamic_cast<PitchVocalProcessor*>(processor);
+		if(pvp) {
+			Vector<PitchNote>& notes = pvp->GetNotes();
+			jio("notes", notes);
+		}
+	}
 }
 
 // --- Entry Points ---
@@ -455,6 +547,7 @@ GUI_APP_MAIN
 	CommandLineArguments cl;
 	cl.AddArg("test", 't', "Run internal tests", false);
 	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
+	cl.AddArg("project", 'p', "Open project file", true, "path");
 	cl.AddArg("help", 'h', "Show help", false);
 
 	if(!cl.Parse()) {
@@ -481,8 +574,17 @@ GUI_APP_MAIN
 	PitchVocalEditor editor;
 	editor.SetProcessor(dynamic_cast<PluginProcessor*>(&processor));
 	
+	if(cl.IsArg("project")) {
+		String projectPath = cl.GetArg("project");
+		String json = LoadFile(projectPath);
+		if (!json.IsEmpty()) {
+			LoadFromJson(editor, json);
+		}
+	}
+
 	PluginWindow win;
 	win.Title("PitchVocalSuite Standalone");
 	win.SetEditor(editor);
+	win.SetMenuBar(PitchVocalEditor::MainMenuWrapper);
 	win.Run();
 }

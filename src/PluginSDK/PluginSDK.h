@@ -309,6 +309,7 @@ public:
 	PluginWindow() {
 		Sizeable().Zoomable();
 		SetRect(0, 0, 800, 600);
+		AddFrame(menuBar);
 	}
 
 	void SetEditor(PluginEditor& e) {
@@ -316,9 +317,14 @@ public:
 		editor = &e;
 		Add(e.SizePos());
 	}
+	
+	void SetMenuBar(void (*menu)(Upp::Bar&)) {
+		menuBar.Set(menu);
+	}
 
 private:
 	PluginEditor* editor = nullptr;
+	Upp::MenuBar menuBar;
 };
 
 } // namespace PluginSDK

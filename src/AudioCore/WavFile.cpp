@@ -30,19 +30,11 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 		return false;
 	}
 
-	char riff[5], wave[5];
-	memcpy(riff, h.riff, 4); riff[4] = 0;
-	memcpy(wave, h.wave, 4); wave[4] = 0;
-	
-	Upp::Cout() << "RIFF ID: " << riff << ", WAVE ID: " << wave << "\n";
-
 	if (memcmp(h.riff, "RIFF", 4) != 0 || memcmp(h.wave, "WAVE", 4) != 0) {
 		Upp::Cerr() << "Not a valid RIFF/WAVE file\n";
 		return false;
 	}
 
-	// The header struct might have padding or the file might have JUNK chunks
-	// Re-seek to after "WAVE" which is at offset 12
 	in.Seek(12);
 
 	while (!in.IsEof()) {
@@ -52,10 +44,7 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 		chunkId[4] = 0;
 		if (in.Get(&chunkSize, 4) != 4) break;
 
-		Upp::Cout() << "Found chunk: " << chunkId << ", size: " << chunkSize << "\n";
-
 		if (memcmp(chunkId, "fmt ", 4) == 0) {
-			// Read fmt info manually to avoid struct padding issues
 			uint16_t format, channels, blockAlign, bitsPerSample;
 			uint32_t sampleRate, byteRate;
 			
@@ -71,8 +60,6 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 			h.sampleRate = sampleRate;
 			h.bitsPerSample = bitsPerSample;
 			
-			Upp::Cout() << "Format: " << format << ", Channels: " << channels << ", Rate: " << sampleRate << ", Bits: " << bitsPerSample << "\n";
-			
 			if (chunkSize > 16) in.SeekCur(chunkSize - 16);
 		} else if (memcmp(chunkId, "data", 4) == 0) {
 			int bytesPerSample = h.bitsPerSample / 8;
@@ -82,13 +69,11 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 			buffer.Resize(h.channels, frames);
 			buffer.rate = h.sampleRate;
 
-			Upp::Cout() << "Loading " << frames << " frames...\n";
-
 			if (h.bitsPerSample == 16) {
 				for (int i = 0; i < frames; ++i) {
 					for (int c = 0; c < h.channels; ++c) {
 						int16_t s;
-						if (in.Get(&s, 2) != 2) return true; // Partial read
+						if (in.Get(&s, 2) != 2) return true;
 						buffer.data[c].Add((float)s / 32768.0f);
 					}
 				}
@@ -106,7 +91,6 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 						for (int c = 0; c < h.channels; ++c) {
 							uint8_t b[3];
 							if (in.Get(b, 3) != 3) return true;
-							// 24-bit signed integer to float
 							int32_t val = (b[0] << 8) | (b[1] << 16) | (b[2] << 24);
 							buffer.data[c].Add((float)(val >> 8) / 8388608.0f);
 						}
@@ -117,8 +101,6 @@ bool WavFile::Load(const String& path, AudioBuffer& buffer)
 		} else {
 			in.SeekCur(chunkSize);
 		}
-		
-		// Ensure alignment
 		if (chunkSize % 2 != 0) in.SeekCur(1);
 	}
 

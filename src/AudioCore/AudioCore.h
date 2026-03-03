@@ -15,5 +15,6 @@ using namespace Upp;
 #include "Mixer.h"
 #include "Synth.h"
 #include "Project.h"
+#include "WavFile.h"
 
 #endif

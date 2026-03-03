@@ -15,6 +15,5 @@ using namespace Upp;
 #include "RecentFiles.h"
 #include "Backup.h"
 #include "Templates.h"
-#include "WavFile.h"
 
 #endif

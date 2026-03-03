@@ -18,9 +18,7 @@ file
 	MediaFormatRegistry.h,
 	MediaFormatRegistry.cpp,
 	RecentFiles.h,
-	RecentFiles.cpp,
-	WavFile.h,
-	WavFile.cpp;
+	RecentFiles.cpp;
 
 	Backup.h,
 	Backup.cpp,
