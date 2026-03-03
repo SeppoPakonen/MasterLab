@@ -40,12 +40,16 @@ public:
 
 	const Vector<am::PitchPoint>& GetPitchPoints() const { return pitchPoints; }
 	const Vector<float>& GetWaveformBuffer() const { return waveformBuffer; }
+	const Vector<float>& GetFullWaveform() const { return fullWaveform; }
 	Vector<PitchNote>& GetNotes() { return notes; }
+	
+	void LoadFullAudio(const am::AudioBuffer& buffer);
 
 private:
 	am::PitchAnalysisEngine pitchEngine;
 	Vector<am::PitchPoint> pitchPoints;
 	Vector<float> waveformBuffer;
+	Vector<float> fullWaveform; // Store decimated peaks for UI
 	Vector<PitchNote> notes;
 	int waveformBufferSize = 2048;
 };
@@ -66,6 +70,7 @@ public:
 	virtual void LeftDown(Point p, dword keyflags) override;
 	virtual void LeftUp(Point p, dword keyflags) override;
 	virtual bool Key(dword key, int count) override;
+	virtual bool Access(Visitor& v) override;
 
 private:
 	Rect GetNoteRect(const PitchNote& note, const Size& sz) const;
@@ -86,11 +91,18 @@ public:
 
 	void SetProcessor(PitchVocalProcessor* p) { processor = p; }
 	void SetViewport(PitchVocalViewport* v) { viewport = v; }
+	void SetIsOverview(bool b) { isOverview = b; }
 	virtual void Paint(Draw& w) override;
+	virtual void LeftDown(Point p, dword keyflags) override;
+	virtual void MouseMove(Point p, dword keyflags) override;
+	virtual bool Access(Visitor& v) override;
+
+	Event<double> WhenSeek;
 
 private:
 	PitchVocalProcessor* processor = nullptr;
 	PitchVocalViewport* viewport = nullptr;
+	bool isOverview = false;
 };
 
 // Top bar for global controls
@@ -100,6 +112,7 @@ public:
 	PitchVocalTopBar();
 
 	virtual void Paint(Draw& w) override;
+	virtual bool Access(Visitor& v) override;
 
 	Event<> WhenAction;
 
@@ -140,9 +153,13 @@ public:
 	
 	void LoadAudio(const String& path);
 	virtual void Jsonize(JsonIO& jio) override;
+	virtual bool Access(Visitor& v) override;
+
+	String GetAudioPath() const { return audioPath; }
 
 private:
 	void OnTopBarAction();
+	void OnScroll();
 	
 	// File operations
 	void NewProject();
@@ -153,6 +170,8 @@ private:
 	PitchVocalTopBar topBar;
 	PitchGraphEditor graphEditor;
 	WaveformStrip waveformStrip;
+	WaveformStrip overviewStrip;
+	ScrollBar scrollBar;
 	PitchVocalViewport viewport;
 	
 	String projectPath;

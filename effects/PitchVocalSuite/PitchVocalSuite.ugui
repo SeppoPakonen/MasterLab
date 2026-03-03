@@ -1,0 +1,21 @@
+# PitchVocalSuite GUI Constraints
+
+VISIBLE(PitchVocalEditor)
+VISIBLE(PitchVocalTopBar)
+VISIBLE(PitchGraphEditor)
+VISIBLE(WaveformStrip)
+
+# Layout hierarchy
+HAS_PARENT(PitchVocalTopBar, PitchVocalEditor)
+HAS_PARENT(PitchGraphEditor, PitchVocalEditor)
+HAS_PARENT(WaveformStrip, PitchVocalEditor)
+
+# Architectural Mandates
+NOT IS_SKINNED(PitchVocalEditor)
+NOT IS_SKINNED(PitchGraphEditor)
+NOT IS_SKINNED(WaveformStrip)
+
+# Specific Component properties
+VISIBLE(algorithm) and IS_TYPE(algorithm, DropList)
+VISIBLE(correctionSpeed) and IS_TYPE(correctionSpeed, SliderCtrl)
+VISIBLE(vibratoAmount) and IS_TYPE(vibratoAmount, SliderCtrl)

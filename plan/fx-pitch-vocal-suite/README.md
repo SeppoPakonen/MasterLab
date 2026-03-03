@@ -34,6 +34,14 @@ The goal is to create a feature-rich vocal processing plugin family, initially t
 ### 06-future-plugin-targets
 - Expanding support to other plugin formats (VST3, CLAP, LADSPA).
 
+### 07-audio-integration
+- Audio playback and file loading in standalone.
+- Basic pitch shifting DSP engine.
+
+### 08-gui-constraint-validation
+- Implementation of `.ugui` logical constraints.
+- Automated verification of GUI requirements and architectural mandates.
+
 ## Technical Direction
 
 - **Framework:** Ultimate++ (U++).
