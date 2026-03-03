@@ -55,6 +55,17 @@ public:
 
 	virtual void Paint(Draw& w) override;
 
+	Event<> WhenAction;
+
+	int GetAlgorithm() const { return algorithm.GetIndex(); }
+	void SetAlgorithm(int i) { algorithm.SetIndex(i); }
+
+	double GetSpeed() const { return correctionSpeed.GetData(); }
+	void SetSpeed(double v) { correctionSpeed.SetData(v); }
+
+	double GetVibrato() const { return vibratoAmount.GetData(); }
+	void SetVibrato(double v) { vibratoAmount.SetData(v); }
+
 private:
 	DropList algorithm;
 	SliderCtrl correctionSpeed;
@@ -72,8 +83,12 @@ public:
 	PitchVocalEditor();
 
 	virtual void SetProcessor(PluginProcessor* p) override;
+	virtual void SyncToProcessor() override;
+	virtual void SyncFromProcessor() override;
 
 private:
+	void OnTopBarAction();
+
 	PitchVocalTopBar topBar;
 	PitchGraphEditor graphEditor;
 	WaveformStrip waveformStrip;

@@ -4,7 +4,29 @@
 
 PitchVocalProcessor::PitchVocalProcessor()
 {
-	// Add parameters, etc.
+	ParameterDescriptor pAlg;
+	pAlg.id = "algorithm";
+	pAlg.name = "Algorithm";
+	pAlg.min = 0;
+	pAlg.max = 2;
+	pAlg.default_value = 0;
+	Parameters().Add(pAlg);
+	
+	ParameterDescriptor pSpeed;
+	pSpeed.id = "speed";
+	pSpeed.name = "Speed";
+	pSpeed.min = 0;
+	pSpeed.max = 100;
+	pSpeed.default_value = 50;
+	Parameters().Add(pSpeed);
+
+	ParameterDescriptor pVib;
+	pVib.id = "vibrato";
+	pVib.name = "Vibrato";
+	pVib.min = 0;
+	pVib.max = 100;
+	pVib.default_value = 0;
+	Parameters().Add(pVib);
 }
 
 Upp::String PitchVocalProcessor::GetURI() const
@@ -19,14 +41,13 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
+	// Read parameters (demonstration)
+	// double speed = Parameters().GetValueById("speed");
+	
 	// Skeleton pitch processing
 	if(ctx.input.frame_count > 0 && ctx.input.channels != nullptr) {
 		float* channel0 = ctx.input.GetChannel(0);
 		if(channel0) {
-			// In a real plugin, this might happen in a background thread 
-			// or be cached, but for the skeleton we just analyze the incoming block
-			// and keep a rolling buffer of points.
-			
 			double startTime = ctx.transport.position_beats; // Simplified time
 			pitchEngine.Analyze(channel0, ctx.input.frame_count, startTime, pitchPoints);
 			
@@ -48,18 +69,21 @@ PitchVocalTopBar::PitchVocalTopBar()
 	algorithm.Add("FFT / Phase Vocoder");
 	algorithm.Add("Neural (Mock)");
 	algorithm.SetIndex(0);
+	algorithm << [=] { WhenAction(); };
 	
 	Add(lblSpeed.LeftPos(270, 80).TopPos(10, 20));
 	Add(correctionSpeed.LeftPos(360, 150).TopPos(10, 20));
 	lblSpeed.SetLabel("Speed:");
 	correctionSpeed.MinMax(0, 100);
 	correctionSpeed.SetData(50);
+	correctionSpeed << [=] { WhenAction(); };
 	
 	Add(lblVibrato.LeftPos(530, 80).TopPos(10, 20));
 	Add(vibratoAmount.LeftPos(620, 150).TopPos(10, 20));
 	lblVibrato.SetLabel("Vibrato:");
 	vibratoAmount.MinMax(0, 100);
 	vibratoAmount.SetData(0);
+	vibratoAmount << [=] { WhenAction(); };
 }
 
 void PitchVocalTopBar::Paint(Draw& w)
@@ -146,12 +170,38 @@ PitchVocalEditor::PitchVocalEditor()
 	Add(topBar.TopPos(0, topHeight).HSizePos());
 	Add(waveformStrip.BottomPos(0, bottomHeight).HSizePos());
 	Add(graphEditor.VSizePos(topHeight, bottomHeight).HSizePos());
+	
+	topBar.WhenAction = [=] { OnTopBarAction(); };
 }
 
 void PitchVocalEditor::SetProcessor(PluginProcessor* p)
 {
 	PluginEditor::SetProcessor(p);
 	graphEditor.SetProcessor(dynamic_cast<PitchVocalProcessor*>(p));
+	SyncFromProcessor();
+}
+
+void PitchVocalEditor::SyncToProcessor()
+{
+	if(processor) {
+		processor->SetParameter("algorithm", topBar.GetAlgorithm());
+		processor->SetParameter("speed", topBar.GetSpeed());
+		processor->SetParameter("vibrato", topBar.GetVibrato());
+	}
+}
+
+void PitchVocalEditor::SyncFromProcessor()
+{
+	if(processor) {
+		topBar.SetAlgorithm((int)processor->GetParameter("algorithm"));
+		topBar.SetSpeed(processor->GetParameter("speed"));
+		topBar.SetVibrato(processor->GetParameter("vibrato"));
+	}
+}
+
+void PitchVocalEditor::OnTopBarAction()
+{
+	SyncToProcessor();
 }
 
 // --- Entry Points ---
