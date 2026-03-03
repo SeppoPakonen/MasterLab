@@ -3,6 +3,7 @@
 
 #include <CtrlLib/CtrlLib.h>
 #include <AudioUI/AudioUI.h>
+#include <AudioAnalysis/AudioAnalysis.h>
 #include <PluginSDK/PluginSDK.h>
 
 using namespace Upp;
@@ -13,6 +14,12 @@ class PitchVocalProcessor : public PluginProcessor {
 public:
 	PitchVocalProcessor();
 	virtual void Process(ProcessContext& ctx) override;
+
+	const Vector<am::PitchPoint>& GetPitchPoints() const { return pitchPoints; }
+
+private:
+	am::PitchAnalysisEngine pitchEngine;
+	Vector<am::PitchPoint> pitchPoints;
 };
 
 // Custom control for pitch graph editing
@@ -21,7 +28,11 @@ public:
 	typedef PitchGraphEditor CLASSNAME;
 	PitchGraphEditor();
 
+	void SetProcessor(PitchVocalProcessor* p) { processor = p; }
 	virtual void Paint(Draw& w) override;
+
+private:
+	PitchVocalProcessor* processor = nullptr;
 };
 
 // Custom control for waveform visualization
@@ -47,6 +58,8 @@ class PitchVocalEditor : public PluginEditor {
 public:
 	typedef PitchVocalEditor CLASSNAME;
 	PitchVocalEditor();
+
+	virtual void SetProcessor(PluginProcessor* p) override;
 
 private:
 	PitchVocalTopBar topBar;

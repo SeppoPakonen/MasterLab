@@ -10,6 +10,21 @@ PitchVocalProcessor::PitchVocalProcessor()
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
 	// Skeleton pitch processing
+	if(ctx.input.frame_count > 0 && ctx.input.channels != nullptr) {
+		float* channel0 = ctx.input.GetChannel(0);
+		if(channel0) {
+			// In a real plugin, this might happen in a background thread 
+			// or be cached, but for the skeleton we just analyze the incoming block
+			// and keep a rolling buffer of points.
+			
+			double startTime = ctx.transport.position_beats; // Simplified time
+			pitchEngine.Analyze(channel0, ctx.input.frame_count, startTime, pitchPoints);
+			
+			// Keep only last 1000 points for the skeleton visualization
+			if(pitchPoints.GetCount() > 1000)
+				pitchPoints.Remove(0, pitchPoints.GetCount() - 1000);
+		}
+	}
 }
 
 // --- PitchVocalTopBar ---
@@ -42,6 +57,32 @@ void PitchGraphEditor::Paint(Draw& w)
 		w.DrawLine(0, i, sz.cx, i, 1, SColorDisabled());
 	for(int i = step; i < sz.cx; i += step)
 		w.DrawLine(i, 0, i, sz.cy, 1, SColorDisabled());
+
+	if(processor) {
+		const Vector<am::PitchPoint>& points = processor->GetPitchPoints();
+		if(points.GetCount() > 1) {
+			for(int i = 1; i < points.GetCount(); i++) {
+				const am::PitchPoint& p1 = points[i-1];
+				const am::PitchPoint& p2 = points[i];
+				
+				// Very simplified mapping
+				int x1 = (int)((p1.time) * 100) % sz.cx;
+				int x2 = (int)((p2.time) * 100) % sz.cx;
+				
+				// Handle wrap-around for rolling buffer
+				if(x2 < x1) continue;
+				
+				double midi1 = am::PitchAnalysisEngine::FrequencyToMidi(p1.frequency);
+				double midi2 = am::PitchAnalysisEngine::FrequencyToMidi(p2.frequency);
+				
+				// MIDI range 40-80 roughly
+				int y1 = sz.cy - (int)((midi1 - 40) * (sz.cy / 40.0));
+				int y2 = sz.cy - (int)((midi2 - 40) * (sz.cy / 40.0));
+				
+				w.DrawLine(x1, y1, x2, y2, 2, Red());
+			}
+		}
+	}
 
 	w.DrawText(sz.cx / 2 - 100, sz.cy / 2 - 10, "Pitch Graph Editor (Custom Ctrl)", Arial(24), SColorText());
 }
@@ -79,13 +120,19 @@ PitchVocalEditor::PitchVocalEditor()
 	Add(graphEditor.VSizePos(topHeight, bottomHeight).HSizePos());
 }
 
+void PitchVocalEditor::SetProcessor(PluginProcessor* p)
+{
+	PluginEditor::SetProcessor(p);
+	graphEditor.SetProcessor(dynamic_cast<PitchVocalProcessor*>(p));
+}
+
 // --- Standalone Main ---
 
 GUI_APP_MAIN
 {
 	PitchVocalProcessor processor;
 	PitchVocalEditor editor;
-	editor.SetProcessor(&processor);
+	editor.SetProcessor(dynamic_cast<PluginProcessor*>(&processor));
 	
 	PluginWindow win;
 	win.Title("PitchVocalSuite Standalone");

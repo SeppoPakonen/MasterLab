@@ -6,5 +6,17 @@ uses
 	AudioFX;
 
 file
+	AudioAnalysis.h,
+	AudioAnalysis.cpp,
 	Loudness.h,
-	Loudness.cpp;
+	Loudness.cpp,
+	Spectrum.h,
+	Spectrum.cpp,
+	Statistics.h,
+	Statistics.cpp,
+	Hitpoints.h,
+	Hitpoints.cpp,
+	Warp.h,
+	Warp.cpp,
+	PitchAnalysis.h,
+	PitchAnalysis.cpp;

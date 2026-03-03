@@ -10,5 +10,6 @@ using namespace Upp;
 #include "Statistics.h"
 #include "Hitpoints.h"
 #include "Warp.h"
+#include "PitchAnalysis.h"
 
 #endif
