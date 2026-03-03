@@ -115,6 +115,7 @@ void PitchVocalTopBar::Paint(Draw& w)
 
 PitchGraphEditor::PitchGraphEditor()
 {
+	WantFocus();
 }
 
 Rect PitchGraphEditor::GetNoteRect(const PitchNote& note, const Size& sz) const
@@ -270,6 +271,21 @@ void PitchGraphEditor::LeftUp(Point p, dword keyflags)
 {
 	draggingNoteIndex = -1;
 	isResizing = false;
+}
+
+bool PitchGraphEditor::Key(dword key, int count)
+{
+	if (key == K_DELETE && processor) {
+		Vector<PitchNote>& notes = processor->GetNotes();
+		for (int i = 0; i < notes.GetCount(); ++i) {
+			if (notes[i].selected) {
+				notes.Remove(i);
+				Refresh();
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void PitchGraphEditor::MouseMove(Point p, dword keyflags)

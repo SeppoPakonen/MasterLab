@@ -61,6 +61,7 @@ public:
 	virtual void LeftDouble(Point p, dword keyflags) override;
 	virtual void LeftDown(Point p, dword keyflags) override;
 	virtual void LeftUp(Point p, dword keyflags) override;
+	virtual bool Key(dword key, int count) override;
 
 private:
 	Rect GetNoteRect(const PitchNote& note, const Size& sz) const;

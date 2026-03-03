@@ -8,27 +8,27 @@ To implement the "piano roll" style editing interface for manual pitch correctio
 
 ## Key Actions
 
-1.  **Define `PitchNote` Structure:**
+1.  **Define `PitchNote` Structure:** [DONE]
     -   `startTime`, `duration`, `midiNote`.
     -   Store in `PitchVocalProcessor` (or a separate `PitchModel`).
-2.  **Rendering:**
+2.  **Rendering:** [DONE]
     -   Draw rectangular blocks for each note in the `PitchGraphEditor`.
     -   Render notes with rounded corners and semi-transparent fills.
     -   Show note name labels on the blocks.
-3.  **Interaction:**
-    -   `LeftDoubleDown`: Create a new note at mouse position.
-    -   `LeftDown`: Select a note.
-    -   `LeftDrag`: Move note (pitch or time) or resize (duration).
-    -   `KeyDown` (Delete): Remove selected note.
-4.  **Processor Integration:**
+3.  **Interaction:** [DONE]
+    -   `LeftDoubleDown`: Create a new note at mouse position. [DONE - LeftDouble]
+    -   `LeftDown`: Select a note. [DONE]
+    -   `LeftDrag`: Move note (pitch or time) or resize (duration). [DONE - MouseMove with K_MOUSELEFT]
+    -   `KeyDown` (Delete): Remove selected note. [TODO - Keyboard support]
+4.  **Processor Integration:** [DONE]
     -   Ensure the list of notes is available to the audio thread for future correction logic.
 
 ## Acceptance Criteria
 
-1.  Notes can be created by double-clicking in the grid.
-2.  Notes can be moved and resized with the mouse.
-3.  Notes are correctly mapped to the musical pitch and time grid.
-4.  Selection state is visible.
+1.  Notes can be created by double-clicking in the grid. [DONE]
+2.  Notes can be moved and resized with the mouse. [DONE]
+3.  Notes are correctly mapped to the musical pitch and time grid. [DONE]
+4.  Selection state is visible. [DONE]
 
 ## Risks
 
