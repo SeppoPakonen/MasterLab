@@ -9,6 +9,13 @@
 using namespace Upp;
 using namespace PluginSDK;
 
+struct PitchVocalViewport {
+	double zoomX = 100.0; // pixels per second/beat
+	double scrollX = 0.0; // scroll offset in seconds/beats
+	double zoomY = 20.0;  // pixels per semitone
+	double scrollY = 60.0; // center MIDI note
+};
+
 // DSP Processor for PitchVocalSuite
 class PitchVocalProcessor : public PluginProcessor {
 public:
@@ -35,10 +42,16 @@ public:
 	PitchGraphEditor();
 
 	void SetProcessor(PitchVocalProcessor* p) { processor = p; }
+	void SetViewport(PitchVocalViewport* v) { viewport = v; }
 	virtual void Paint(Draw& w) override;
+	virtual void MouseWheel(Point p, int zdelta, dword keyflags) override;
+	virtual void MiddleDown(Point p, dword keyflags) override;
+	virtual void MouseMove(Point p, dword keyflags) override;
 
 private:
 	PitchVocalProcessor* processor = nullptr;
+	PitchVocalViewport* viewport = nullptr;
+	Point lastMousePos;
 };
 
 // Custom control for waveform visualization
@@ -48,10 +61,12 @@ public:
 	WaveformStrip();
 
 	void SetProcessor(PitchVocalProcessor* p) { processor = p; }
+	void SetViewport(PitchVocalViewport* v) { viewport = v; }
 	virtual void Paint(Draw& w) override;
 
 private:
 	PitchVocalProcessor* processor = nullptr;
+	PitchVocalViewport* viewport = nullptr;
 };
 
 // Top bar for global controls
@@ -99,6 +114,7 @@ private:
 	PitchVocalTopBar topBar;
 	PitchGraphEditor graphEditor;
 	WaveformStrip waveformStrip;
+	PitchVocalViewport viewport;
 };
 
 #endif

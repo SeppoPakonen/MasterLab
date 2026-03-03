@@ -122,12 +122,34 @@ void PitchGraphEditor::Paint(Draw& w)
 	Size sz = GetSize();
 	w.DrawRect(sz, SColorPaper());
 	
-	// Draw a simple grid
-	int step = 40;
-	for(int i = step; i < sz.cy; i += step)
-		w.DrawLine(0, i, sz.cx, i, 1, SColorDisabled());
-	for(int i = step; i < sz.cx; i += step)
-		w.DrawLine(i, 0, i, sz.cy, 1, SColorDisabled());
+	if (!viewport) return;
+
+	// Draw musical pitch grid
+	int startMidi = (int)(viewport->scrollY - (sz.cy / 2.0) / viewport->zoomY);
+	int endMidi = (int)(viewport->scrollY + (sz.cy / 2.0) / viewport->zoomY);
+	
+	for (int midi = startMidi; midi <= endMidi; ++midi) {
+		int y = sz.cy / 2 - (int)((midi - viewport->scrollY) * viewport->zoomY);
+		if (y < 0 || y >= sz.cy) continue;
+		
+		int noteInOctave = midi % 12;
+		bool isBlackKey = (noteInOctave == 1 || noteInOctave == 3 || noteInOctave == 6 || noteInOctave == 8 || noteInOctave == 10);
+		
+		Color lineCol = isBlackKey ? SColorDisabled() : SColorFace();
+		w.DrawLine(0, y, sz.cx, y, 1, lineCol);
+		
+		if (noteInOctave == 0) { // C note
+			w.DrawText(5, y - 12, Format("C%d", midi / 12 - 1), Arial(10), SColorText());
+		}
+	}
+
+	// Draw time grid (1 second intervals)
+	double startTime = viewport->scrollX;
+	double endTime = startTime + (double)sz.cx / viewport->zoomX;
+	for (int t = (int)startTime; t <= (int)endTime; ++t) {
+		int x = (int)((t - viewport->scrollX) * viewport->zoomX);
+		w.DrawLine(x, 0, x, sz.cy, 1, SColorFace());
+	}
 
 	if(processor) {
 		const Vector<am::PitchPoint>& points = processor->GetPitchPoints();
@@ -136,26 +158,62 @@ void PitchGraphEditor::Paint(Draw& w)
 				const am::PitchPoint& p1 = points[i-1];
 				const am::PitchPoint& p2 = points[i];
 				
-				// Very simplified mapping
-				int x1 = (int)((p1.time) * 100) % sz.cx;
-				int x2 = (int)((p2.time) * 100) % sz.cx;
+				int x1 = (int)((p1.time - viewport->scrollX) * viewport->zoomX);
+				int x2 = (int)((p2.time - viewport->scrollX) * viewport->zoomX);
 				
-				// Handle wrap-around for rolling buffer
-				if(x2 < x1) continue;
+				if (x2 < 0 || x1 >= sz.cx) continue;
 				
 				double midi1 = am::PitchAnalysisEngine::FrequencyToMidi(p1.frequency);
 				double midi2 = am::PitchAnalysisEngine::FrequencyToMidi(p2.frequency);
 				
-				// MIDI range 40-80 roughly
-				int y1 = sz.cy - (int)((midi1 - 40) * (sz.cy / 40.0));
-				int y2 = sz.cy - (int)((midi2 - 40) * (sz.cy / 40.0));
+				int y1 = sz.cy / 2 - (int)((midi1 - viewport->scrollY) * viewport->zoomY);
+				int y2 = sz.cy / 2 - (int)((midi2 - viewport->scrollY) * viewport->zoomY);
 				
 				w.DrawLine(x1, y1, x2, y2, 2, Red());
 			}
 		}
 	}
 
-	w.DrawText(sz.cx / 2 - 100, sz.cy / 2 - 10, "Pitch Graph Editor (Custom Ctrl)", Arial(24), SColorText());
+	w.DrawText(sz.cx / 2 - 100, 10, "Pitch Graph Editor", Arial(14).Bold(), SColorText());
+}
+
+void PitchGraphEditor::MouseWheel(Point p, int zdelta, dword keyflags)
+{
+	if (!viewport) return;
+	
+	if (keyflags & K_CTRL) {
+		// Horizontal zoom
+		double oldZoom = viewport->zoomX;
+		viewport->zoomX = max(10.0, viewport->zoomX * (zdelta > 0 ? 1.1 : 0.9));
+		// Adjust scroll to keep mouse position stable
+		viewport->scrollX += (p.x / oldZoom) - (p.x / viewport->zoomX);
+	} else if (keyflags & K_SHIFT) {
+		// Vertical zoom
+		viewport->zoomY = max(2.0, viewport->zoomY * (zdelta > 0 ? 1.1 : 0.9));
+	} else {
+		// Horizontal scroll
+		viewport->scrollX += (zdelta > 0 ? -1.0 : 1.0);
+	}
+	viewport->scrollX = max(0.0, viewport->scrollX);
+	Refresh();
+}
+
+void PitchGraphEditor::MiddleDown(Point p, dword keyflags)
+{
+	lastMousePos = p;
+}
+
+void PitchGraphEditor::MouseMove(Point p, dword keyflags)
+{
+	if (!viewport) return;
+	
+	if (keyflags & K_MOUSEMIDDLE) {
+		viewport->scrollX += (lastMousePos.x - p.x) / viewport->zoomX;
+		viewport->scrollY += (p.y - lastMousePos.y) / viewport->zoomY;
+		viewport->scrollX = max(0.0, viewport->scrollX);
+		lastMousePos = p;
+		Refresh();
+	}
 }
 
 // --- WaveformStrip ---
@@ -169,6 +227,8 @@ void WaveformStrip::Paint(Draw& w)
 	Size sz = GetSize();
 	w.DrawRect(sz, SColorShadow());
 	
+	if (!viewport) return;
+
 	if (processor) {
 		const Vector<float>& buffer = processor->GetWaveformBuffer();
 		int count = buffer.GetCount();
@@ -176,7 +236,11 @@ void WaveformStrip::Paint(Draw& w)
 			int midY = sz.cy / 2;
 			w.DrawLine(0, midY, sz.cx, midY, 1, SColorPaper());
 			
-			// Simple peak rendering
+			// Simple peak rendering based on viewport
+			// Note: This skeleton doesn't have a full audio history yet,
+			// just the last 2048 samples. For better visualization, 
+			// we'd need a larger buffer mapping to time.
+			
 			double samplesPerPixel = (double)count / sz.cx;
 			for (int x = 0; x < sz.cx; ++x) {
 				int start = (int)(x * samplesPerPixel);
@@ -207,6 +271,9 @@ PitchVocalEditor::PitchVocalEditor()
 	Add(waveformStrip.BottomPos(0, bottomHeight).HSizePos());
 	Add(graphEditor.VSizePos(topHeight, bottomHeight).HSizePos());
 	
+	graphEditor.SetViewport(&viewport);
+	waveformStrip.SetViewport(&viewport);
+
 	topBar.WhenAction = [=] { OnTopBarAction(); };
 	
 	SetTimeCallback(-40, [=] { Refresh(); });
