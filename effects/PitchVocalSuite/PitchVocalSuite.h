@@ -19,10 +19,13 @@ public:
 	virtual Upp::String GetName() const override;
 
 	const Vector<am::PitchPoint>& GetPitchPoints() const { return pitchPoints; }
+	const Vector<float>& GetWaveformBuffer() const { return waveformBuffer; }
 
 private:
 	am::PitchAnalysisEngine pitchEngine;
 	Vector<am::PitchPoint> pitchPoints;
+	Vector<float> waveformBuffer;
+	int waveformBufferSize = 2048;
 };
 
 // Custom control for pitch graph editing
@@ -44,7 +47,11 @@ public:
 	typedef WaveformStrip CLASSNAME;
 	WaveformStrip();
 
+	void SetProcessor(PitchVocalProcessor* p) { processor = p; }
 	virtual void Paint(Draw& w) override;
+
+private:
+	PitchVocalProcessor* processor = nullptr;
 };
 
 // Top bar for global controls

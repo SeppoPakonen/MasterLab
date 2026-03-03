@@ -54,6 +54,25 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 			// Keep only last 1000 points for the skeleton visualization
 			if(pitchPoints.GetCount() > 1000)
 				pitchPoints.Remove(0, pitchPoints.GetCount() - 1000);
+				
+			// Rolling waveform buffer
+			int framesToCopy = min((int)ctx.input.frame_count, waveformBufferSize);
+			if (waveformBuffer.GetCount() < waveformBufferSize) {
+				for(int i = 0; i < framesToCopy && waveformBuffer.GetCount() < waveformBufferSize; ++i)
+					waveformBuffer.Add(channel0[i]);
+			} else {
+				// Shift and append
+				int remaining = waveformBufferSize - framesToCopy;
+				if (remaining > 0) {
+					for(int i = 0; i < remaining; ++i)
+						waveformBuffer[i] = waveformBuffer[i + framesToCopy];
+					for(int i = 0; i < framesToCopy; ++i)
+						waveformBuffer[remaining + i] = channel0[i];
+				} else {
+					for(int i = 0; i < waveformBufferSize; ++i)
+						waveformBuffer[i] = channel0[i + (framesToCopy - waveformBufferSize)];
+				}
+			}
 		}
 	}
 }
@@ -150,14 +169,31 @@ void WaveformStrip::Paint(Draw& w)
 	Size sz = GetSize();
 	w.DrawRect(sz, SColorShadow());
 	
-	// Draw a dummy waveform
-	w.DrawLine(0, sz.cy / 2, sz.cx, sz.cy / 2, 2, SColorPaper());
-	for(int i = 0; i < sz.cx; i += 5) {
-		int h = (int)(sin(i * 0.1) * (sz.cy / 3));
-		w.DrawLine(i, sz.cy / 2 - h, i, sz.cy / 2 + h, 1, SColorText());
+	if (processor) {
+		const Vector<float>& buffer = processor->GetWaveformBuffer();
+		int count = buffer.GetCount();
+		if (count > 0) {
+			int midY = sz.cy / 2;
+			w.DrawLine(0, midY, sz.cx, midY, 1, SColorPaper());
+			
+			// Simple peak rendering
+			double samplesPerPixel = (double)count / sz.cx;
+			for (int x = 0; x < sz.cx; ++x) {
+				int start = (int)(x * samplesPerPixel);
+				int end = (int)((x + 1) * samplesPerPixel);
+				float minV = 0, maxV = 0;
+				for (int i = start; i < end && i < count; ++i) {
+					minV = min(minV, buffer[i]);
+					maxV = max(maxV, buffer[i]);
+				}
+				int y1 = midY + (int)(minV * (sz.cy / 2));
+				int y2 = midY + (int)(maxV * (sz.cy / 2));
+				w.DrawLine(x, y1, x, y2, 1, SColorText());
+			}
+		}
 	}
 
-	w.DrawText(10, 10, "Waveform Strip (Custom Ctrl)", Arial(20), SColorPaper());
+	w.DrawText(10, 10, "Waveform Strip", Arial(14), SColorPaper());
 }
 
 // --- PitchVocalEditor ---
@@ -172,12 +208,16 @@ PitchVocalEditor::PitchVocalEditor()
 	Add(graphEditor.VSizePos(topHeight, bottomHeight).HSizePos());
 	
 	topBar.WhenAction = [=] { OnTopBarAction(); };
+	
+	SetTimeCallback(-40, [=] { Refresh(); });
 }
 
 void PitchVocalEditor::SetProcessor(PluginProcessor* p)
 {
 	PluginEditor::SetProcessor(p);
-	graphEditor.SetProcessor(dynamic_cast<PitchVocalProcessor*>(p));
+	auto* pvp = dynamic_cast<PitchVocalProcessor*>(p);
+	graphEditor.SetProcessor(pvp);
+	waveformStrip.SetProcessor(pvp);
 	SyncFromProcessor();
 }
 
