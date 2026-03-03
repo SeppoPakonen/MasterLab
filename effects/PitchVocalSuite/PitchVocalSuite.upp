@@ -3,6 +3,7 @@ description "Effect Plugin: Pitch Vocal Suite\377200,200,200";
 uses
 	CtrlLib,
 	PluginSDK,
+	PluginABI/LV2,
 	AudioCore,
 	AudioAnalysis,
 	DSP,
@@ -14,5 +15,6 @@ file
 	PitchVocalSuite.cpp;
 
 mainconfig
-	"" = "GUI";
+	"Standalone" = "GUI",
+	"LV2" = "GUI DLL";
 

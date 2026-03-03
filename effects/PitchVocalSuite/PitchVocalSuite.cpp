@@ -154,7 +154,14 @@ void PitchVocalEditor::SetProcessor(PluginProcessor* p)
 	graphEditor.SetProcessor(dynamic_cast<PitchVocalProcessor*>(p));
 }
 
-// --- Standalone Main ---
+// --- Entry Points ---
+
+#ifdef flagDLL
+
+#include <PluginABI/LV2/LV2.h>
+LV2_PLUGIN_MAIN(PitchVocalProcessor)
+
+#else
 
 void RunTests()
 {
@@ -193,3 +200,5 @@ GUI_APP_MAIN
 	win.SetEditor(editor);
 	win.Run();
 }
+
+#endif
