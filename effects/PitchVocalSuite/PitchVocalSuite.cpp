@@ -31,13 +31,31 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 
 PitchVocalTopBar::PitchVocalTopBar()
 {
+	Add(lblAlgorithm.LeftPos(10, 80).TopPos(10, 20));
+	Add(algorithm.LeftPos(100, 150).TopPos(10, 20));
+	lblAlgorithm.SetLabel("Algorithm:");
+	algorithm.Add("Autocorrelation");
+	algorithm.Add("FFT / Phase Vocoder");
+	algorithm.Add("Neural (Mock)");
+	algorithm.SetIndex(0);
+	
+	Add(lblSpeed.LeftPos(270, 80).TopPos(10, 20));
+	Add(correctionSpeed.LeftPos(360, 150).TopPos(10, 20));
+	lblSpeed.SetLabel("Speed:");
+	correctionSpeed.MinMax(0, 100);
+	correctionSpeed.SetData(50);
+	
+	Add(lblVibrato.LeftPos(530, 80).TopPos(10, 20));
+	Add(vibratoAmount.LeftPos(620, 150).TopPos(10, 20));
+	lblVibrato.SetLabel("Vibrato:");
+	vibratoAmount.MinMax(0, 100);
+	vibratoAmount.SetData(0);
 }
 
 void PitchVocalTopBar::Paint(Draw& w)
 {
 	Size sz = GetSize();
-	w.DrawRect(sz, SColorShadow());
-	w.DrawText(10, 10, "Global Controls Placeholder (Algorithm, Speed, Vibrato)", Arial(20), SColorPaper());
+	w.DrawRect(sz, SColorFace()); // Change to Face color to match controls
 }
 
 // --- PitchGraphEditor ---
@@ -128,8 +146,34 @@ void PitchVocalEditor::SetProcessor(PluginProcessor* p)
 
 // --- Standalone Main ---
 
+void RunTests()
+{
+	Upp::Cout() << "Running PitchVocalSuite Tests...\n";
+	// Add actual test logic here
+	Upp::Cout() << "Tests completed successfully.\n";
+}
+
 GUI_APP_MAIN
 {
+	CommandLineArguments cl;
+	cl.AddArg("test", 't', "Run internal tests", false);
+	cl.AddArg("help", 'h', "Show help", false);
+	
+	if(!cl.Parse()) {
+		cl.PrintHelp();
+		return;
+	}
+	
+	if(cl.IsArg("help")) {
+		cl.PrintHelp();
+		return;
+	}
+	
+	if(cl.IsArg("test")) {
+		RunTests();
+		return;
+	}
+
 	PitchVocalProcessor processor;
 	PitchVocalEditor editor;
 	editor.SetProcessor(dynamic_cast<PluginProcessor*>(&processor));

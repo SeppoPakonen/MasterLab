@@ -51,6 +51,15 @@ public:
 	PitchVocalTopBar();
 
 	virtual void Paint(Draw& w) override;
+
+private:
+	DropList algorithm;
+	SliderCtrl correctionSpeed;
+	SliderCtrl vibratoAmount;
+	
+	Label lblAlgorithm;
+	Label lblSpeed;
+	Label lblVibrato;
 };
 
 // Main editor container
