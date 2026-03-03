@@ -16,8 +16,8 @@ To establish a data flow from raw audio samples to a pitch/time representation t
 3.  **Implement Data Store:**
     -   Store detected pitch points with timestamps.
     -   Support efficient range queries for UI rendering.
-4.  **Skeleton Implementation:**
-    -   A minimal "mock" or basic autocorrelation detector to prove the pipeline.
+4.  **Skeleton Implementation:** [DONE]
+    -   A minimal "mock" or basic autocorrelation detector to prove the pipeline. [COMPLETED WITH ZCR ESTIMATOR]
 
 ## Acceptance Criteria
 

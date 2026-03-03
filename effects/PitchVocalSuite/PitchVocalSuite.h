@@ -15,6 +15,9 @@ public:
 	PitchVocalProcessor();
 	virtual void Process(ProcessContext& ctx) override;
 
+	virtual Upp::String GetURI() const override;
+	virtual Upp::String GetName() const override;
+
 	const Vector<am::PitchPoint>& GetPitchPoints() const { return pitchPoints; }
 
 private:

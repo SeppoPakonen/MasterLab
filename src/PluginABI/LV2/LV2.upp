@@ -1,0 +1,10 @@
+description "LV2 Plugin ABI Host Framework\3770,128,255";
+
+uses
+	Core,
+	PluginSDK;
+
+file
+	LV2.h,
+	LV2.cpp,
+	LV2UI.cpp;

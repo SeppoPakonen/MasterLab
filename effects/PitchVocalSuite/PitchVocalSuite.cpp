@@ -7,6 +7,16 @@ PitchVocalProcessor::PitchVocalProcessor()
 	// Add parameters, etc.
 }
 
+Upp::String PitchVocalProcessor::GetURI() const
+{
+	return "https://masterlab.com/plugins/pitch-vocal-suite";
+}
+
+Upp::String PitchVocalProcessor::GetName() const
+{
+	return "Pitch Vocal Suite";
+}
+
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
 	// Skeleton pitch processing

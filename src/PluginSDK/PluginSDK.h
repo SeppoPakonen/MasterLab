@@ -232,6 +232,9 @@ public:
 
 	virtual void SetParameter(const Upp::String& id, double value);
 	virtual double GetParameter(const Upp::String& id) const;
+	
+	virtual Upp::String GetURI() const { return ""; }
+	virtual Upp::String GetName() const { return "Plugin"; }
 
 	ParameterSet& Parameters();
 	const ParameterSet& Parameters() const;
