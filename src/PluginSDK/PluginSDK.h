@@ -2,6 +2,7 @@
 #define _PluginSDK_PluginSDK_h_
 
 #include <Core/Core.h>
+#include <CtrlLib/CtrlLib.h>
 
 namespace PluginSDK {
 
@@ -283,6 +284,38 @@ public:
 
 protected:
 	virtual void GeneratePattern(ProcessContext& ctx, Upp::Vector<NoteEvent>& out_notes, Upp::Vector<ControlEvent>& out_controls) = 0;
+};
+
+class PluginEditor : public Upp::Ctrl {
+public:
+	typedef PluginEditor CLASSNAME;
+	PluginEditor() {}
+	virtual ~PluginEditor() {}
+
+	virtual void SetProcessor(PluginProcessor* p) { processor = p; }
+	virtual void SyncToProcessor() {}
+	virtual void SyncFromProcessor() {}
+
+protected:
+	PluginProcessor* processor = nullptr;
+};
+
+class PluginWindow : public Upp::TopWindow {
+public:
+	typedef PluginWindow CLASSNAME;
+	PluginWindow() {
+		Sizeable().Zoomable();
+		SetRect(0, 0, 800, 600);
+	}
+
+	void SetEditor(PluginEditor& e) {
+		if(editor) editor->Remove();
+		editor = &e;
+		Add(e.SizePos());
+	}
+
+private:
+	PluginEditor* editor = nullptr;
 };
 
 } // namespace PluginSDK

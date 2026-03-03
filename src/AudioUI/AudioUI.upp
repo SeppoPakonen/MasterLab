@@ -1,14 +1,12 @@
 description "Audio UI package\3770,255,0";
 
 uses
-	AudioCore,
-	AudioFX,
-	AudioGraph,
-	AudioMaster,
-	CtrlLib,
-	SubWindowCtrl,
-	PluginSDK;
-
+        AudioCore,
+        AudioFX,
+        AudioGraph,
+        CtrlLib,
+        SubWindowCtrl,
+        PluginSDK;
 file
 	AGENTS.md,
 	AudioUI.h,

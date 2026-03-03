@@ -1,13 +1,17 @@
 description "Effect Plugin: Pitch Vocal Suite\377200,200,200";
 
 uses
-	CtrlLib,
-	PluginSDK,
-	AudioCore,
-	DSP,
-	AudioUI;
+        CtrlLib,
+        PluginSDK,
+        AudioCore,
+        AudioAnalysis,
+        DSP,
+        AudioUI;
 
 file
-	AGENTS.md,
-	PitchVocalSuite.h,
-	PitchVocalSuite.cpp;
+        AGENTS.md,
+        PitchVocalSuite.h,
+        PitchVocalSuite.cpp;
+
+mainconfig
+        "" = "GUI";

@@ -1,102 +1,50 @@
-#ifndef _effects_pitchvocalsuite_pitchvocalsuite_h_
-#define _effects_pitchvocalsuite_pitchvocalsuite_h_
+#ifndef _PitchVocalSuite_PitchVocalSuite_h_
+#define _PitchVocalSuite_PitchVocalSuite_h_
 
+#include <CtrlLib/CtrlLib.h>
+#include <AudioUI/AudioUI.h>
 #include <PluginSDK/PluginSDK.h>
-#include <AudioCore/AudioCore.h>  // For DSP infrastructure
-#include <DSP/DSP.h>              // For DSP processing components
-#include <AudioUI/GraphVisualizationCtrl.h>  // For graph visualization
 
-namespace Effects {
+using namespace Upp;
+using namespace PluginSDK;
 
-// Graph Node Definition for signal routing
-struct GraphNode {
-	String nodeId;
-	String nodeType; // e.g., 'oscillator', 'filter', 'envelope', 'lfo', 'eq', 'compressor'
-	Vector<String> inputs;   // input node IDs
-	Vector<String> outputs;  // output node IDs
-	ValueMap parameters;     // node parameters
-	int order;               // processing order
+// Custom control for pitch graph editing
+class PitchGraphEditor : public Ctrl {
+public:
+	typedef PitchGraphEditor CLASSNAME;
+	PitchGraphEditor();
+
+	virtual void Paint(Draw& w) override;
 };
 
-// PitchVocalSuite Graph Visualization Extension
-class PitchVocalSuiteGraph : public PluginSDK::GraphVisualization {
+// Custom control for waveform visualization
+class WaveformStrip : public Ctrl {
 public:
-	PitchVocalSuiteGraph();
-	virtual ~PitchVocalSuiteGraph();
+	typedef WaveformStrip CLASSNAME;
+	WaveformStrip();
 
-	// Initialize the graph structure for this plugin
-	void InitializeGraph();
+	virtual void Paint(Draw& w) override;
+};
 
-	// Update graph based on current parameter state
-	void UpdateGraph();
+// Top bar for global controls
+class PitchVocalTopBar : public ParentCtrl {
+public:
+	typedef PitchVocalTopBar CLASSNAME;
+	PitchVocalTopBar();
 
-	// Get the visualization for UI components
-	const UI::GraphVisualizationCtrl& GetVisualizationCtrl() const;
+	virtual void Paint(Draw& w) override;
+};
+
+// Main editor container
+class PitchVocalEditor : public PluginEditor {
+public:
+	typedef PitchVocalEditor CLASSNAME;
+	PitchVocalEditor();
 
 private:
-	Vector<GraphNode> graph_nodes;
-	VectorMap<String, int> node_lookup;  // Maps node IDs to indices
-	UI::GraphVisualizationCtrl viz_ctrl;
+	PitchVocalTopBar topBar;
+	PitchGraphEditor graphEditor;
+	WaveformStrip waveformStrip;
 };
-
-// Parameter Definition for UI and automation
-enum ParameterId {
-	kParameter1 = 0,
-	kParameter2,
-	kParameter3,
-	kParameter4,
-	kParameter5,
-	kParameter6,
-	kParameter7,
-	kParameter8,
-	kParameterCount  // This will be customized per plugin
-};
-
-class PitchVocalSuite : public PluginSDK::PluginProcessor {
-public:
-	typedef PitchVocalSuite CLASSNAME;
-	PitchVocalSuite();
-	virtual ~PitchVocalSuite();
-
-	void Prepare(const PluginSDK::AudioConfig& cfg) override;
-	void Process(PluginSDK::ProcessContext& ctx) override;
-	void Reset() override;
-
-	// Graph Management Methods
-	void InitializeGraph();
-	void ProcessGraph(PluginSDK::ProcessContext& ctx);
-	void UpdateParameter(int index, double value);
-
-	// Parameter Access Methods
-	int GetNumParameters() const override;
-	double GetParameter(int index) const override;
-	void SetParameter(int index, double value) override;
-	String GetParameterName(int index) const override;
-	String GetParameterText(int index) const override;
-
-	// Graph Visualization Integration
-	PitchVocalSuiteGraph& GetGraph() { return graph; }
-	const PitchVocalSuiteGraph& GetGraph() const { return graph; }
-
-	// MIDI Processing Methods (if applicable)
-	void ProcessMidiEvents(const Upp::Vector<PluginSDK::MidiEvent>& events);
-	void RouteMidiEvent(const PluginSDK::MidiEvent& evt);
-
-private:
-	PluginSDK::RoutingMap routing;
-	Vector<GraphNode> graphNodes;      // Processing graph nodes
-	Vector<double> parameters;         // Parameter values
-	Vector<String> parameterNames;     // Parameter names for UI
-	Vector<String> parameterTexts;     // Parameter value texts
-	ValueMap graphMetadata;            // Graph metadata
-	PitchVocalSuiteGraph graph;           // Graph visualization interface
-
-	// Internal processing methods
-	void ProcessNode(const GraphNode& node, PluginSDK::ProcessContext& ctx);
-	void UpdateGraphRouting();
-	void UpdateVisualization();        // Update visualization when parameters change
-};
-
-} // namespace Effects
 
 #endif
