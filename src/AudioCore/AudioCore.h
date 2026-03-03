@@ -1,5 +1,5 @@
-#ifndef _AudioCore_AudioCore_h_
-#define _AudioCore_AudioCore_h_
+#ifndef _MasterLab_AudioCore_h_
+#define _MasterLab_AudioCore_h_
 
 #include <Core/Core.h>
 using namespace Upp;

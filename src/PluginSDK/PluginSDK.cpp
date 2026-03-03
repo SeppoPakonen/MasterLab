@@ -69,8 +69,8 @@ const Upp::Vector<ParameterDescriptor>& ParameterSet::Descriptors() const {
 
 void RoutingMap::Add(const Upp::String& source, const Upp::String& destination) {
 	Edge& e = edges.Add();
-	e.source = source;
-	e.destination = destination;
+	e.from = source;
+	e.to = destination;
 	e.active = true;
 }
 

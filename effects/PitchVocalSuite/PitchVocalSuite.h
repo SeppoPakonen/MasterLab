@@ -5,15 +5,16 @@
 #include <AudioUI/AudioUI.h>
 #include <AudioAnalysis/AudioAnalysis.h>
 #include <PluginSDK/PluginSDK.h>
+#include <CtrlLog/CtrlLog.h>
 
 using namespace Upp;
 using namespace PluginSDK;
 
 struct PitchVocalViewport {
-	double zoomX = 100.0; // pixels per second/beat
-	double scrollX = 0.0; // scroll offset in seconds/beats
-	double zoomY = 20.0;  // pixels per semitone
-	double scrollY = 60.0; // center MIDI note
+	double zoomX = 100.0;
+	double scrollX = 0.0;
+	double zoomY = 20.0;
+	double scrollY = 60.0;
 };
 
 struct PitchNote : public Moveable<PitchNote> {
@@ -45,12 +46,18 @@ public:
 	
 	void LoadFullAudio(const am::AudioBuffer& buffer);
 
+	Event<String> WhenLog;
+
 private:
+	void Log(const String& s) { WhenLog(s); }
+
 	am::PitchAnalysisEngine pitchEngine;
 	Vector<am::PitchPoint> pitchPoints;
 	Vector<float> waveformBuffer;
-	Vector<float> fullWaveform; // Store decimated peaks for UI
+	Vector<float> fullWaveform;
 	Vector<PitchNote> notes;
+	
+	am::AudioBuffer fullAudioBuffer;
 	int waveformBufferSize = 2048;
 };
 
@@ -174,6 +181,10 @@ private:
 	ScrollBar scrollBar;
 	ScrollBar scrollBarY;
 	PitchVocalViewport viewport;
+	
+	StaticRect editorArea;
+	One<CtrlLog> ctrlLog;
+	Splitter logSplitter;
 	
 	String projectPath;
 	String audioPath;

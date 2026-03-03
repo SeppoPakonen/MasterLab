@@ -6,15 +6,12 @@
 
 namespace PluginSDK {
 
-// Simple POD-like structs that are trivially relocatable
 struct AudioConfig : public Upp::Moveable<AudioConfig> {
 	int sample_rate = 44100;
-	int block_size = 0;
-	int input_channels = 0;
-	int output_channels = 0;
-	int sidechain_channels = 0;
+	int input_channels = 2;
+	int output_channels = 2;
+	int buffer_size = 512;
 	
-	// Add explicit constructors for U++ compatibility
 	AudioConfig() = default;
 	AudioConfig(const AudioConfig& other) = default;
 	AudioConfig(AudioConfig&& other) = default;
@@ -30,7 +27,6 @@ struct AudioBus : public Upp::Moveable<AudioBus> {
 	bool IsValid() const;
 	float* GetChannel(int index) const;
 	
-	// Add explicit constructors for U++ compatibility
 	AudioBus() = default;
 	AudioBus(const AudioBus& other) = default;
 	AudioBus(AudioBus&& other) = default;
@@ -39,12 +35,11 @@ struct AudioBus : public Upp::Moveable<AudioBus> {
 };
 
 struct TransportInfo : public Upp::Moveable<TransportInfo> {
-	double tempo = 120.0;
+	double bpm = 120.0;
 	double position_beats = 0.0;
 	bool playing = false;
 	bool recording = false;
 	
-	// Add explicit constructors for U++ compatibility
 	TransportInfo() = default;
 	TransportInfo(const TransportInfo& other) = default;
 	TransportInfo(TransportInfo&& other) = default;
@@ -58,9 +53,7 @@ struct ModulationBus : public Upp::Moveable<ModulationBus> {
 
 	void Clear();
 	
-	// Add explicit constructors for U++ compatibility
 	ModulationBus() = default;
-	// Note: Cannot have copy constructor because Vector<float*> has deleted copy constructor
 	ModulationBus(ModulationBus&& other) = default;
 	ModulationBus& operator=(ModulationBus&& other) = default;
 };
@@ -71,7 +64,6 @@ struct NoteEvent : public Upp::Moveable<NoteEvent> {
 	int channel = 0;
 	double time = 0.0;
 	
-	// Add explicit constructors for U++ compatibility
 	NoteEvent() = default;
 	NoteEvent(const NoteEvent& other) = default;
 	NoteEvent(NoteEvent&& other) = default;
@@ -85,7 +77,6 @@ struct ControlEvent : public Upp::Moveable<ControlEvent> {
 	int channel = 0;
 	double time = 0.0;
 	
-	// Add explicit constructors for U++ compatibility
 	ControlEvent() = default;
 	ControlEvent(const ControlEvent& other) = default;
 	ControlEvent(ControlEvent&& other) = default;
@@ -94,22 +85,59 @@ struct ControlEvent : public Upp::Moveable<ControlEvent> {
 };
 
 struct ProcessContext : public Upp::Moveable<ProcessContext> {
+	int frames = 0;
+	double sample_rate = 44100.0;
 	AudioBus input;
 	AudioBus output;
 	AudioBus sidechain;
 	TransportInfo transport;
-	ModulationBus* modulation = nullptr;
-	int frames = 0;
-	Upp::Vector<NoteEvent>* midi_input = nullptr;
-	Upp::Vector<NoteEvent>* midi_output = nullptr;
-	Upp::Vector<ControlEvent>* control_input = nullptr;
-	Upp::Vector<ControlEvent>* control_output = nullptr;
+	ModulationBus modulation;
 	
-	// Add explicit constructors for U++ compatibility
 	ProcessContext() = default;
-	// Note: Cannot have copy constructor because it contains pointers to Vector objects
+	ProcessContext(const ProcessContext& other) = delete; // ModulationBus has Vector<float*>
 	ProcessContext(ProcessContext&& other) = default;
+	ProcessContext& operator=(const ProcessContext& other) = delete;
 	ProcessContext& operator=(ProcessContext&& other) = default;
+};
+
+struct GraphNode : public Upp::Moveable<GraphNode> {
+	Upp::String id;
+	Upp::String label;
+	Upp::String group;
+	Upp::Point pos;
+	Upp::Color color;
+	
+	GraphNode() = default;
+	GraphNode(const GraphNode& other) = default;
+	GraphNode(GraphNode&& other) = default;
+	GraphNode& operator=(const GraphNode& other) = default;
+	GraphNode& operator=(GraphNode&& other) = default;
+};
+
+struct GraphEdge : public Upp::Moveable<GraphEdge> {
+	Upp::String from;
+	Upp::String to;
+	bool audio = true;
+	bool control = false;
+	
+	GraphEdge() = default;
+	GraphEdge(const GraphEdge& other) = default;
+	GraphEdge(GraphEdge&& other) = default;
+	GraphEdge& operator=(const GraphEdge& other) = default;
+	GraphEdge& operator=(GraphEdge&& other) = default;
+};
+
+struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
+	Upp::Vector<GraphNode> nodes;
+	Upp::Vector<GraphEdge> edges;
+	
+	void Clear();
+
+	GraphVisualization() = default;
+	GraphVisualization(const GraphVisualization& other) = delete;
+	GraphVisualization(GraphVisualization&& other) = default;
+	GraphVisualization& operator=(const GraphVisualization& other) = delete;
+	GraphVisualization& operator=(GraphVisualization&& other) = default;
 };
 
 struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
@@ -119,8 +147,7 @@ struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
 	double max = 1.0;
 	double default_value = 0.0;
 	bool automatable = true;
-	
-	// Add explicit constructors for U++ compatibility
+
 	ParameterDescriptor() = default;
 	ParameterDescriptor(const ParameterDescriptor& other) = default;
 	ParameterDescriptor& operator=(const ParameterDescriptor& other) = default;
@@ -131,12 +158,11 @@ struct ParameterDescriptor : public Upp::Moveable<ParameterDescriptor> {
 struct ParameterState : public Upp::Moveable<ParameterState> {
 	double value = 0.0;
 	double smoothing_ms = 0.0;
-	
-	// Add explicit constructors for U++ compatibility
+
 	ParameterState() = default;
 	ParameterState(const ParameterState& other) = default;
-	ParameterState(ParameterState&& other) = default;
 	ParameterState& operator=(const ParameterState& other) = default;
+	ParameterState(ParameterState&& other) = default;
 	ParameterState& operator=(ParameterState&& other) = default;
 };
 
@@ -158,14 +184,14 @@ private:
 class RoutingMap {
 public:
 	struct Edge : public Upp::Moveable<Edge> {
-		Upp::String source;
-		Upp::String destination;
+		Upp::String from;
+		Upp::String to;
 		bool active = true;
 		
-		// Add explicit constructors for U++ compatibility
 		Edge() = default;
-		// Note: Cannot have copy constructor because Upp::String has deleted copy constructor
+		Edge(const Edge& other) = default;
 		Edge(Edge&& other) = default;
+		Edge& operator=(const Edge& other) = default;
 		Edge& operator=(Edge&& other) = default;
 	};
 
@@ -174,52 +200,6 @@ public:
 
 private:
 	Upp::Vector<Edge> edges;
-};
-
-struct GraphNode : public Upp::Moveable<GraphNode> {
-	Upp::String id;
-	Upp::String label;
-	Upp::String group;
-	
-	// Add explicit constructors for U++ compatibility
-	GraphNode() = default;
-	GraphNode(const GraphNode& other) = default;  // Enable copy
-	GraphNode(GraphNode&& other) = default;
-	GraphNode& operator=(const GraphNode& other) = default;  // Enable copy assignment
-	GraphNode& operator=(GraphNode&& other) = default;
-};
-
-struct GraphEdge : public Upp::Moveable<GraphEdge> {
-	Upp::String from;
-	Upp::String to;
-	bool audio = false;
-	bool control = false;
-	bool active = true;
-	
-	// Add explicit constructors for U++ compatibility
-	GraphEdge() = default;
-	GraphEdge(const GraphEdge& other) = default;  // Enable copy
-	GraphEdge(GraphEdge&& other) = default;
-	GraphEdge& operator=(const GraphEdge& other) = default;  // Enable copy assignment
-	GraphEdge& operator=(GraphEdge&& other) = default;
-};
-
-struct GraphVisualization : public Upp::Moveable<GraphVisualization> {
-	Upp::Vector<GraphNode> nodes;
-	Upp::Vector<GraphEdge> edges;
-	
-	// Add explicit constructors for U++ compatibility
-	GraphVisualization() = default;
-	GraphVisualization(GraphVisualization&& other) = default;
-	GraphVisualization& operator=(GraphVisualization&& other) = default;
-	
-	void Clear();
-};
-
-class AnalyzerTap {
-public:
-	virtual ~AnalyzerTap() {}
-	virtual void PublishAnalysis(const ProcessContext& ctx) = 0;
 };
 
 class PluginProcessor {
@@ -245,48 +225,6 @@ protected:
 	ParameterSet parameter_set;
 	AudioConfig current_config;
 	GraphVisualization graph;
-};
-
-class InstrumentProcessor : public PluginProcessor {
-public:
-	void NoteOn(const NoteEvent& evt);
-	void NoteOff(const NoteEvent& evt);
-	void ControlChange(const ControlEvent& evt);
-	void AllNotesOff();
-};
-
-class MidiEffectProcessor {
-public:
-	virtual ~MidiEffectProcessor() {}
-
-	virtual void Prepare(const AudioConfig& cfg);
-	virtual void Reset();
-	virtual void Process(ProcessContext& ctx, Upp::Vector<NoteEvent>& in_notes, Upp::Vector<NoteEvent>& out_notes,
-		Upp::Vector<ControlEvent>& in_controls, Upp::Vector<ControlEvent>& out_controls) = 0;
-
-	void SetParameter(const Upp::String& id, double value);
-	double GetParameter(const Upp::String& id) const;
-
-	ParameterSet& Parameters();
-	const ParameterSet& Parameters() const;
-	GraphVisualization& Graph();
-	const GraphVisualization& Graph() const;
-
-protected:
-	ParameterSet parameter_set;
-	AudioConfig current_config;
-	GraphVisualization graph;
-};
-
-class MidiInstrumentProcessor : public MidiEffectProcessor {
-public:
-	void Prepare(const AudioConfig& cfg) override;
-	void Reset() override;
-	void Process(ProcessContext& ctx, Upp::Vector<NoteEvent>& in_notes, Upp::Vector<NoteEvent>& out_notes,
-		Upp::Vector<ControlEvent>& in_controls, Upp::Vector<ControlEvent>& out_controls) override;
-
-protected:
-	virtual void GeneratePattern(ProcessContext& ctx, Upp::Vector<NoteEvent>& out_notes, Upp::Vector<ControlEvent>& out_controls) = 0;
 };
 
 class PluginEditor : public Upp::Ctrl {
@@ -325,6 +263,48 @@ public:
 private:
 	PluginEditor* editor = nullptr;
 	Upp::MenuBar menuBar;
+};
+
+class InstrumentProcessor : public PluginProcessor {
+public:
+	virtual void NoteOn(const NoteEvent&);
+	virtual void NoteOff(const NoteEvent&);
+	virtual void ControlChange(const ControlEvent&);
+	virtual void AllNotesOff();
+};
+
+class MidiEffectProcessor {
+public:
+	virtual ~MidiEffectProcessor() {}
+	
+	virtual void Prepare(const AudioConfig& config);
+	virtual void Reset();
+	virtual void SetParameter(const Upp::String& id, double value);
+	virtual double GetParameter(const Upp::String& id) const;
+	
+	ParameterSet& Parameters();
+	const ParameterSet& Parameters() const;
+	GraphVisualization& Graph();
+	const GraphVisualization& Graph() const;
+
+	virtual void Process(ProcessContext& ctx, Upp::Vector<NoteEvent>& in_notes, Upp::Vector<NoteEvent>& out_notes, 
+	                     Upp::Vector<ControlEvent>& in_controls, Upp::Vector<ControlEvent>& out_controls) = 0;
+
+protected:
+	ParameterSet parameter_set;
+	AudioConfig current_config;
+	GraphVisualization graph;
+};
+
+class MidiInstrumentProcessor : public MidiEffectProcessor {
+public:
+	virtual void Prepare(const AudioConfig& cfg) override;
+	virtual void Reset() override;
+	virtual void Process(ProcessContext& ctx, Upp::Vector<NoteEvent>& in_notes, Upp::Vector<NoteEvent>& out_notes, 
+	                     Upp::Vector<ControlEvent>& in_controls, Upp::Vector<ControlEvent>& out_controls) override;
+
+protected:
+	virtual void GeneratePattern(ProcessContext& ctx, Upp::Vector<NoteEvent>& out_notes, Upp::Vector<ControlEvent>& out_controls) = 0;
 };
 
 } // namespace PluginSDK

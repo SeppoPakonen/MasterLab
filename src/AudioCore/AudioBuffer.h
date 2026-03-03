@@ -1,5 +1,5 @@
-#ifndef _AudioCore_AudioBuffer_h_
-#define _AudioCore_AudioBuffer_h_
+#ifndef _MasterLab_AudioBuffer_h_
+#define _MasterLab_AudioBuffer_h_
 
 #include "AudioTypes.h"
 

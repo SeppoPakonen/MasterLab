@@ -8,7 +8,9 @@ uses
 	AudioAnalysis,
 	DSP,
 	AudioUI,
-	AI/LogicGui;
+	AI/LogicGui,
+	CtrlLog,
+	SoftAudio;
 
 file
 	AGENTS.md,

@@ -1,11 +1,12 @@
 #include "PitchVocalSuite.h"
 #include <AI/LogicGui/LogicGui.h>
+#include <SoftAudio/SoftAudio.h>
 
 // --- PitchVocalProcessor ---
 
 PitchVocalProcessor::PitchVocalProcessor()
 {
-	ParameterDescriptor pAlg;
+	PluginSDK::ParameterDescriptor pAlg;
 	pAlg.id = "algorithm";
 	pAlg.name = "Algorithm";
 	pAlg.min = 0;
@@ -13,7 +14,7 @@ PitchVocalProcessor::PitchVocalProcessor()
 	pAlg.default_value = 0;
 	Parameters().Add(pAlg);
 	
-	ParameterDescriptor pSpeed;
+	PluginSDK::ParameterDescriptor pSpeed;
 	pSpeed.id = "speed";
 	pSpeed.name = "Speed";
 	pSpeed.min = 0;
@@ -21,7 +22,7 @@ PitchVocalProcessor::PitchVocalProcessor()
 	pSpeed.default_value = 50;
 	Parameters().Add(pSpeed);
 
-	ParameterDescriptor pVib;
+	PluginSDK::ParameterDescriptor pVib;
 	pVib.id = "vibrato";
 	pVib.name = "Vibrato";
 	pVib.min = 0;
@@ -37,6 +38,16 @@ void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer)
 	
 	if (buffer.GetFrames() == 0) return;
 	
+	fullAudioBuffer.Resize(buffer.GetChannels(), buffer.GetFrames());
+	fullAudioBuffer.rate = buffer.rate;
+	for(int c = 0; c < buffer.GetChannels(); ++c) {
+		for(int i = 0; i < buffer.GetFrames(); ++i) {
+			fullAudioBuffer.data[c][i] = buffer.data[c][i];
+		}
+	}
+
+	Log(Format("Loading full audio: %d frames", buffer.GetFrames()));
+	
 	int step = max(1, buffer.GetFrames() / 4000);
 	for (int i = 0; i < buffer.GetFrames(); i += step) {
 		float maxV = 0;
@@ -46,12 +57,14 @@ void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer)
 		fullWaveform.Add(maxV);
 	}
 	
+	Log("Performing offline pitch analysis...");
 	pitchEngine.SetSampleRate(buffer.rate);
 	int blockSize = 4096;
 	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
 		int frames = min(blockSize, buffer.GetFrames() - i);
 		pitchEngine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, pitchPoints);
 	}
+	Log(Format("Analysis complete. Detected %d pitch points.", pitchPoints.GetCount()));
 }
 
 Upp::String PitchVocalProcessor::GetURI() const
@@ -66,30 +79,43 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
-	if(ctx.input.frame_count > 0 && ctx.input.channels != nullptr) {
-		float* channel0 = ctx.input.GetChannel(0);
-		if(channel0) {
-			double startTime = ctx.transport.position_beats;
-			pitchEngine.Analyze(channel0, ctx.input.frame_count, startTime, pitchPoints);
-			
-			if(pitchPoints.GetCount() > 5000)
-				pitchPoints.Remove(0, pitchPoints.GetCount() - 1000);
-				
-			int framesToCopy = min((int)ctx.input.frame_count, waveformBufferSize);
-			if (waveformBuffer.GetCount() < waveformBufferSize) {
-				for(int i = 0; i < framesToCopy && waveformBuffer.GetCount() < waveformBufferSize; ++i)
-					waveformBuffer.Add(channel0[i]);
-			} else {
-				int remaining = waveformBufferSize - framesToCopy;
-				if (remaining > 0) {
-					for(int i = 0; i < remaining; ++i)
-						waveformBuffer[i] = waveformBuffer[i + framesToCopy];
-					for(int i = 0; i < framesToCopy; ++i)
-						waveformBuffer[remaining + i] = channel0[i];
+	if (fullAudioBuffer.GetFrames() > 0) {
+		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
+		for (int i = 0; i < ctx.frames; ++i) {
+			int64 frame = startFrame + i;
+			for (int c = 0; c < ctx.output.channel_count; ++c) {
+				if (frame >= 0 && frame < fullAudioBuffer.GetFrames()) {
+					int sourceChannel = c % fullAudioBuffer.GetChannels();
+					ctx.output.GetChannel(c)[i] = fullAudioBuffer.data[sourceChannel][(int)frame];
 				} else {
-					for(int i = 0; i < waveformBufferSize; ++i)
-						waveformBuffer[i] = channel0[i + (framesToCopy - waveformBufferSize)];
+					ctx.output.GetChannel(c)[i] = 0;
 				}
+			}
+		}
+	}
+
+	float* channel0 = ctx.output.GetChannel(0); 
+	if(channel0 && ctx.frames > 0) {
+		double startTime = ctx.transport.position_beats;
+		pitchEngine.Analyze(channel0, ctx.frames, startTime, pitchPoints);
+		
+		if(pitchPoints.GetCount() > 10000)
+			pitchPoints.Remove(0, 1000);
+			
+		int framesToCopy = min((int)ctx.frames, waveformBufferSize);
+		if (waveformBuffer.GetCount() < waveformBufferSize) {
+			for(int i = 0; i < framesToCopy && waveformBuffer.GetCount() < waveformBufferSize; ++i)
+				waveformBuffer.Add(channel0[i]);
+		} else {
+			int remaining = waveformBufferSize - framesToCopy;
+			if (remaining > 0) {
+				for(int i = 0; i < remaining; ++i)
+					waveformBuffer[i] = waveformBuffer[i + framesToCopy];
+				for(int i = 0; i < framesToCopy; ++i)
+					waveformBuffer[remaining + i] = channel0[i];
+			} else {
+				for(int i = 0; i < waveformBufferSize; ++i)
+					waveformBuffer[i] = channel0[i + (framesToCopy - waveformBufferSize)];
 			}
 		}
 	}
@@ -386,13 +412,25 @@ PitchVocalEditor::PitchVocalEditor()
 {
 	instance = this;
 	LayoutId("PitchVocalEditor");
+	
+	ctrlLog.Create();
+	
 	int topH = 80, bottomH = 80, overviewH = 40, scrollH = 16, scrollW = 16;
-	Add(topBar.TopPos(0, topH).HSizePos());
-	Add(overviewStrip.BottomPos(scrollH, overviewH).HSizePos(0, scrollW));
-	Add(scrollBar.BottomPos(0, scrollH).HSizePos(0, scrollW));
-	Add(waveformStrip.BottomPos(scrollH + overviewH, bottomH).HSizePos(0, scrollW));
-	Add(scrollBarY.RightPos(0, scrollW).VSizePos(topH, scrollH + overviewH + bottomH));
-	Add(graphEditor.VSizePos(topH, scrollH + overviewH + bottomH).HSizePos(0, scrollW));
+	
+	logSplitter.Vert();
+	
+	editorArea.Add(topBar.TopPos(0, topH).HSizePos());
+	editorArea.Add(overviewStrip.BottomPos(scrollH, overviewH).HSizePos(0, scrollW));
+	editorArea.Add(scrollBar.BottomPos(0, scrollH).HSizePos(0, scrollW));
+	editorArea.Add(waveformStrip.BottomPos(scrollH + overviewH, bottomH).HSizePos(0, scrollW));
+	editorArea.Add(scrollBarY.RightPos(0, scrollW).VSizePos(topH, scrollH + overviewH + bottomH));
+	editorArea.Add(graphEditor.VSizePos(topH, scrollH + overviewH + bottomH).HSizePos(0, scrollW));
+	
+	logSplitter.Add(editorArea);
+	logSplitter.Add(*ctrlLog);
+	logSplitter.SetPos(8000);
+	
+	Add(logSplitter.SizePos());
 	
 	overviewStrip.SetIsOverview(true);
 	graphEditor.SetViewport(&viewport);
@@ -421,6 +459,11 @@ void PitchVocalEditor::SetProcessor(PluginProcessor* p)
 	graphEditor.SetProcessor(pvp);
 	waveformStrip.SetProcessor(pvp);
 	overviewStrip.SetProcessor(pvp);
+	
+	if(pvp) {
+		pvp->WhenLog = [=](String s) { if(ctrlLog) ctrlLog->Log(s); };
+	}
+	
 	SyncFromProcessor();
 }
 
@@ -579,9 +622,47 @@ GUI_APP_MAIN
 		Ctrl::CheckConstraints();
 	}
 
+	Upp::Portaudio::AudioDeviceStream stream;
+	stream.OpenDefault(0, 2); 
+	
+	stream.WhenAction << [&](StreamCallbackArgs& args) {
+		ProcessContext ctx;
+		ctx.frames = (int)args.fpb;
+		ctx.sample_rate = stream.GetSampleRate();
+		
+		float* outputs[2];
+		float* out = (float*)args.output;
+		
+		static float bufferL[4096];
+		static float bufferR[4096];
+		outputs[0] = bufferL;
+		outputs[1] = bufferR;
+		
+		ctx.output.channels = outputs;
+		ctx.output.channel_count = 2;
+		ctx.output.frame_count = (int)args.fpb;
+		
+		static double pos = 0;
+		ctx.transport.position_beats = pos;
+		ctx.transport.bpm = 120.0;
+		pos += (double)args.fpb / ctx.sample_rate;
+		
+		processor.Process(ctx);
+		
+		for(int i = 0; i < (int)args.fpb; ++i) {
+			out[i * 2] = bufferL[i];
+			out[i * 2 + 1] = bufferR[i];
+		}
+	};
+	
+	stream.Start();
+
 	PluginWindow win;
 	win.Title("PitchVocalSuite Standalone");
 	win.SetEditor(editor);
 	win.SetMenuBar(PitchVocalEditor::MainMenuWrapper);
 	win.Run();
+	
+	stream.Stop();
+	stream.Close();
 }

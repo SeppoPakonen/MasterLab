@@ -1,5 +1,5 @@
-#ifndef _AudioCore_WavFile_h_
-#define _AudioCore_WavFile_h_
+#ifndef _MasterLab_WavFile_h_
+#define _MasterLab_WavFile_h_
 
 #include <Core/Core.h>
 #include "AudioBuffer.h"
