@@ -12,11 +12,14 @@ struct PitchPoint : public Moveable<PitchPoint> {
 	double time;
 	double frequency;
 	double confidence;
-	
+
 	PitchPoint() : time(0), frequency(0), confidence(0) {}
 	PitchPoint(double t, double f, double c) : time(t), frequency(f), confidence(c) {}
-};
 
+	void Jsonize(JsonIO& jio) {
+		jio("t", time)("f", frequency)("c", confidence);
+	}
+};
 class PitchAnalysisEngine {
 public:
 	PitchAnalysisEngine();

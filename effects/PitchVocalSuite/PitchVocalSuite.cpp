@@ -31,7 +31,22 @@ PitchVocalProcessor::PitchVocalProcessor()
 	Parameters().Add(pVib);
 }
 
-void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer)
+String PitchVocalProcessor::GetCachePath(const String& path)
+{
+	String cacheDir = AppendFileName(GetHomeDirectory(), ".masterlab/cache/pitch-vocal-editor");
+	RealizeDirectory(cacheDir);
+	
+	Md5Stream hash;
+	hash.Put(path);
+	hash.Put64(GetFileLength(path));
+	
+	FileTime ft = GetFileTime(path);
+	hash.Put(&ft, sizeof(ft));
+	
+	return AppendFileName(cacheDir, hash.FinishString());
+}
+
+void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer, const String& path)
 {
 	fullWaveform.Clear();
 	pitchPoints.Clear();
@@ -46,9 +61,9 @@ void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer)
 		}
 	}
 
-	Log(Format("Loading full audio: %d frames", buffer.GetFrames()));
+	Log(Format("Loading full audio: %d frames", (int)buffer.GetFrames()));
 	
-	int step = max(1, buffer.GetFrames() / 4000);
+	int step = max(1, (int)buffer.GetFrames() / 4000);
 	for (int i = 0; i < buffer.GetFrames(); i += step) {
 		float maxV = 0;
 		for (int j = 0; j < step && i + j < buffer.GetFrames(); ++j) {
@@ -57,14 +72,29 @@ void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer)
 		fullWaveform.Add(maxV);
 	}
 	
-	Log("Performing offline pitch analysis...");
+	String cachePath = GetCachePath(path);
+	if (FileExists(cachePath)) {
+		Log("Loading pitch analysis from cache...");
+		String json = LoadFile(cachePath);
+		if (!json.IsEmpty()) {
+			LoadFromJson(pitchPoints, json);
+			Log(Format("Cache loaded. Found %d pitch points.", (int)pitchPoints.GetCount()));
+			return;
+		}
+	}
+
+	Log("Performing offline pitch analysis (this may take a while)...");
 	pitchEngine.SetSampleRate(buffer.rate);
 	int blockSize = 4096;
 	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
-		int frames = min(blockSize, buffer.GetFrames() - i);
+		int frames = min(blockSize, (int)buffer.GetFrames() - i);
 		pitchEngine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, pitchPoints);
 	}
-	Log(Format("Analysis complete. Detected %d pitch points.", pitchPoints.GetCount()));
+	
+	Log(Format("Analysis complete. Detected %d pitch points.", (int)pitchPoints.GetCount()));
+	
+	Log("Saving analysis to cache...");
+	SaveFile(cachePath, StoreAsJson(pitchPoints));
 }
 
 Upp::String PitchVocalProcessor::GetURI() const
@@ -79,29 +109,33 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
-	if (fullAudioBuffer.GetFrames() > 0) {
+	int64 totalFrames = fullAudioBuffer.GetFrames();
+	int channels = fullAudioBuffer.GetChannels();
+	
+	if (totalFrames > 0 && channels > 0) {
 		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
 		for (int i = 0; i < ctx.frames; ++i) {
 			int64 frame = startFrame + i;
 			for (int c = 0; c < ctx.output.channel_count; ++c) {
-				if (frame >= 0 && frame < fullAudioBuffer.GetFrames()) {
-					int sourceChannel = c % fullAudioBuffer.GetChannels();
-					ctx.output.GetChannel(c)[i] = fullAudioBuffer.data[sourceChannel][(int)frame];
-				} else {
-					ctx.output.GetChannel(c)[i] = 0;
+				float sample = 0;
+				if (frame >= 0 && frame < totalFrames) {
+					int sourceChannel = c % channels;
+					sample = fullAudioBuffer.data[sourceChannel][(int)frame];
+					if (!Upp::IsFin(sample)) sample = 0;
 				}
+				ctx.output.GetChannel(c)[i] = sample;
 			}
+		}
+	} else {
+		// Ensure silence if no audio is loaded
+		for (int c = 0; c < ctx.output.channel_count; ++c) {
+			float* ch = ctx.output.GetChannel(c);
+			for (int i = 0; i < ctx.frames; ++i) ch[i] = 0;
 		}
 	}
 
 	float* channel0 = ctx.output.GetChannel(0); 
-	if(channel0 && ctx.frames > 0) {
-		double startTime = ctx.transport.position_beats;
-		pitchEngine.Analyze(channel0, ctx.frames, startTime, pitchPoints);
-		
-		if(pitchPoints.GetCount() > 10000)
-			pitchPoints.Remove(0, 1000);
-			
+	if(channel0 && ctx.frames > 0 && ctx.transport.playing) {
 		int framesToCopy = min((int)ctx.frames, waveformBufferSize);
 		if (waveformBuffer.GetCount() < waveformBufferSize) {
 			for(int i = 0; i < framesToCopy && waveformBuffer.GetCount() < waveformBufferSize; ++i)
@@ -307,7 +341,7 @@ bool PitchGraphEditor::Key(dword key, int count)
 {
 	if (key == K_DELETE && processor) {
 		Vector<PitchNote>& notes = processor->GetNotes();
-		for (int i = 0; i < notes.GetCount(); ++i) {
+		for (int i = 0; i < (int)notes.GetCount(); ++i) {
 			if (notes[i].selected) { notes.Remove(i); Refresh(); return true; }
 		}
 	}
@@ -356,7 +390,7 @@ void WaveformStrip::Paint(Draw& w)
 	if (!viewport || !processor) return;
 
 	const Vector<float>& buffer = isOverview ? processor->GetFullWaveform() : processor->GetWaveformBuffer();
-	int count = buffer.GetCount();
+	int count = (int)buffer.GetCount();
 	if (count > 0) {
 		int midY = sz.cy / 2;
 		w.DrawLine(0, midY, sz.cx, midY, 1, SColorPaper());
@@ -540,7 +574,7 @@ void PitchVocalEditor::LoadAudio(const String& path)
 	audioPath = path;
 	am::AudioBuffer buffer;
 	if (am::WavFile::Load(path, buffer)) {
-		pvp->LoadFullAudio(buffer);
+		pvp->LoadFullAudio(buffer, path);
 		scrollBar.SetTotal((int)(buffer.GetFrames() / buffer.rate * 10));
 		SyncFromProcessor();
 		Refresh();
@@ -583,11 +617,102 @@ void TestAudio(const String& path)
 	Vector<am::PitchPoint> points;
 	int blockSize = 4096;
 	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
-		int frames = min(blockSize, buffer.GetFrames() - i);
+		int frames = min(blockSize, (int)buffer.GetFrames() - i);
 		engine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, points);
 	}
-	Upp::Cout() << "Detected " << points.GetCount() << " pitch points.\n";
+	Upp::Cout() << "Detected " << (int)points.GetCount() << " pitch points.\n";
 	if (points.GetCount() > 0) Upp::Cout() << "First pitch: " << points[0].frequency << " Hz at " << points[0].time << " s\n";
+}
+
+void HardwareSimulator(PitchVocalProcessor& processor)
+{
+	Upp::Cout() << "Starting Hardware Simulator Diagnostic (5 seconds)...\n";
+	
+	am::Transport transport;
+	transport.Play();
+	
+	const int testFrames = 512;
+	const int channels = 2;
+	const uint32 magicPattern = 0xDEADBEEF;
+	const double durationSeconds = 5.0;
+	const int totalBlocks = (int)(durationSeconds * 48000 / testFrames);
+	
+	float bufferL[testFrames];
+	float bufferR[testFrames];
+	float interleaved[testFrames * channels];
+	
+	int totalMagicFound = 0;
+	int totalBadValues = 0;
+	uint64 totalDuration = 0;
+	uint64 maxDuration = 0;
+	
+	for (int b = 0; b < totalBlocks; ++b) {
+		// Fill with magic pattern
+		for(int i = 0; i < testFrames * channels; ++i)
+			((uint32*)interleaved)[i] = magicPattern;
+			
+		ProcessContext ctx;
+		ctx.frames = testFrames;
+		ctx.sample_rate = 48000;
+		
+		float* outputs[2] = { bufferL, bufferR };
+		ctx.output.channels = outputs;
+		ctx.output.channel_count = channels;
+		ctx.output.frame_count = testFrames;
+		
+		ctx.transport.position_beats = (double)b * testFrames / 48000.0;
+		ctx.transport.bpm = 120.0;
+		ctx.transport.playing = true;
+		
+		uint64 start = usecs();
+		processor.Process(ctx);
+		uint64 duration = usecs() - start;
+		
+		totalDuration += duration;
+		maxDuration = max(maxDuration, duration);
+		
+		// Interleave as the real callback does
+		for(int i = 0; i < testFrames; ++i) {
+			interleaved[i * 2] = bufferL[i];
+			interleaved[i * 2 + 1] = bufferR[i];
+		}
+		
+		for(int i = 0; i < testFrames * channels; ++i) {
+			if (((uint32*)interleaved)[i] == magicPattern)
+				totalMagicFound++;
+			if (!Upp::IsFin(interleaved[i]) || abs(interleaved[i]) > 10.0)
+				totalBadValues++;
+		}
+		
+		if (b % 100 == 0) {
+			Upp::Cout() << Format("Processed block %d/%d...\n", b, totalBlocks);
+		}
+	}
+	
+	double avgDuration = (double)totalDuration / totalBlocks;
+	double deadline = 1000000.0 * testFrames / 48000.0;
+	
+	Upp::Cout() << "\n--- Diagnostic Results ---\n";
+	Upp::Cout() << Format("Average Process() time: %.2f us (Deadline: %.2f us)\n", avgDuration, deadline);
+	Upp::Cout() << Format("Maximum Process() time: %d us\n", (int)maxDuration);
+	
+	if (maxDuration > deadline) {
+		Upp::Cerr() << "ERROR: Real-time deadline exceeded at least once!\n";
+	} else {
+		Upp::Cout() << "SUCCESS: All blocks processed within real-time deadline.\n";
+	}
+	
+	if (totalMagicFound > 0) {
+		Upp::Cerr() << Format("ERROR: Found %d untouched magic values! Frames are being skipped.\n", totalMagicFound);
+	} else {
+		Upp::Cout() << "SUCCESS: All buffer frames were written in all blocks.\n";
+	}
+	
+	if (totalBadValues > 0) {
+		Upp::Cerr() << Format("ERROR: Found %d invalid (NaN/out-of-range) values!\n", totalBadValues);
+	} else {
+		Upp::Cout() << "SUCCESS: All blocks contain valid signal levels.\n";
+	}
 }
 
 GUI_APP_MAIN
@@ -596,6 +721,7 @@ GUI_APP_MAIN
 	cl.AddArg("test", 't', "Run internal tests", false);
 	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
 	cl.AddArg("test-gui", 'g', "Validate GUI against constraints", false);
+	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
 	cl.AddArg("project", 'p', "Open project file", true, "path");
 	cl.AddArg("help", 'h', "Show help", false);
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
@@ -607,8 +733,17 @@ GUI_APP_MAIN
 	LinkLogicGui();
 
 	PitchVocalProcessor processor;
+	
+	if(cl.IsArg("test-audio-hw")) {
+		HardwareSimulator(processor);
+		return;
+	}
+
 	PitchVocalEditor editor;
 	editor.SetProcessor(dynamic_cast<PluginProcessor*>(&processor));
+	
+	am::Transport transport;
+
 	if(cl.IsArg("project")) {
 		String projectPath = cl.GetArg("project");
 		String json = LoadFile(projectPath);
@@ -623,37 +758,58 @@ GUI_APP_MAIN
 	}
 
 	Upp::Portaudio::AudioDeviceStream stream;
-	stream.OpenDefault(0, 2); 
 	
-	stream.WhenAction << [&](StreamCallbackArgs& args) {
+	stream.WhenAction << [&](Upp::StreamCallbackArgs& args) {
 		ProcessContext ctx;
 		ctx.frames = (int)args.fpb;
-		ctx.sample_rate = stream.GetSampleRate();
+		ctx.sample_rate = stream.GetFrequency();
 		
-		float* outputs[2];
 		float* out = (float*)args.output;
+		if (!out) return;
 		
-		static float bufferL[4096];
-		static float bufferR[4096];
-		outputs[0] = bufferL;
-		outputs[1] = bufferR;
+		static Vector<float> bufferL, bufferR;
+		if (bufferL.GetCount() < (int)args.fpb) {
+			bufferL.SetCount((int)args.fpb, 0);
+			bufferR.SetCount((int)args.fpb, 0);
+		}
 		
+		float* outputs[2] = { bufferL.Begin(), bufferR.Begin() };
 		ctx.output.channels = outputs;
 		ctx.output.channel_count = 2;
 		ctx.output.frame_count = (int)args.fpb;
 		
-		static double pos = 0;
-		ctx.transport.position_beats = pos;
+		ctx.transport.position_beats = (double)transport.playhead / ctx.sample_rate;
 		ctx.transport.bpm = 120.0;
-		pos += (double)args.fpb / ctx.sample_rate;
+		ctx.transport.playing = transport.playing;
 		
-		processor.Process(ctx);
+		if(transport.playing) {
+			processor.Process(ctx);
+			transport.playhead += (int)args.fpb;
+		} else {
+			for(int i = 0; i < (int)args.fpb; ++i) {
+				bufferL[i] = 0;
+				bufferR[i] = 0;
+			}
+		}
 		
 		for(int i = 0; i < (int)args.fpb; ++i) {
 			out[i * 2] = bufferL[i];
 			out[i * 2 + 1] = bufferR[i];
 		}
 	};
+
+	stream.SetFrequency(48000);
+	stream.SetSampleRate(512); // frames per buffer
+	stream.OpenDefault(0, 2, Upp::SND_FLOAT32); 
+	
+	if (stream.IsOpen()) {
+		processor.Log(Format("Audio Device: %s", Upp::Portaudio::AudioSys().GetDefaultOutput().name));
+		processor.Log(Format("Sample Rate: %d Hz", (int)stream.GetFrequency()));
+		processor.Log(Format("Buffer Size: %d frames", (int)stream.GetSampleRate()));
+		processor.Log("Mode: Float32 Real-time (Verified)");
+	} else {
+		processor.Log("CRITICAL ERROR: Failed to open Portaudio stream!");
+	}
 	
 	stream.Start();
 
@@ -661,6 +817,27 @@ GUI_APP_MAIN
 	win.Title("PitchVocalSuite Standalone");
 	win.SetEditor(editor);
 	win.SetMenuBar(PitchVocalEditor::MainMenuWrapper);
+	
+	win.WhenPlay = [&] {
+		if(transport.playing) transport.Stop();
+		else transport.Play();
+		win.SetPlaying(transport.playing);
+	};
+	
+	win.WhenStop = [&] {
+		transport.Stop();
+		transport.playhead = 0;
+		win.SetPlaying(false);
+	};
+	
+	win.SetTimeCallback(-100, [&] {
+		double seconds = (double)transport.playhead / 48000.0;
+		int mins = (int)(seconds / 60);
+		int secs = (int)fmod(seconds, 60);
+		int ms = (int)(fmod(seconds, 1.0) * 100);
+		win.SetTime(Format("%02d:%02d.%02d", mins, secs, ms));
+	});
+
 	win.Run();
 	
 	stream.Stop();

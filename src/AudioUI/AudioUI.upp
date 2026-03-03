@@ -22,5 +22,7 @@ file
 	UI.h,
 	UI.cpp,
 	PluginHost.h,
-	PluginHost.cpp;
+	PluginHost.cpp,
+	TransportBar.h,
+	TransportBar.cpp;
 

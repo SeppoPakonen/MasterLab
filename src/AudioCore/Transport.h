@@ -1,7 +1,7 @@
 #ifndef _AudioCore_Transport_h_
 #define _AudioCore_Transport_h_
 
-// Note: Requires AudioCore/AudioCore.h (for FrameIndex) - included via main header in .cpp files
+#include "AudioTypes.h"
 
 namespace am {
 

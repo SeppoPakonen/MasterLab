@@ -18,6 +18,5 @@ file
 	PitchVocalSuite.cpp;
 
 mainconfig
-	"Standalone" = "GUI",
-	"LV2" = "GUI DLL";
-
+	"Standalone" = "GUI BUILTIN_PORTAUDIO",
+	"LV2" = "GUI DLL BUILTIN_PORTAUDIO";

@@ -44,11 +44,12 @@ public:
 	const Vector<float>& GetFullWaveform() const { return fullWaveform; }
 	Vector<PitchNote>& GetNotes() { return notes; }
 	
-	void LoadFullAudio(const am::AudioBuffer& buffer);
+	void LoadFullAudio(const am::AudioBuffer& buffer, const String& path);
+	String GetCachePath(const String& path);
 
 	Event<String> WhenLog;
 
-private:
+public:
 	void Log(const String& s) { WhenLog(s); }
 
 	am::PitchAnalysisEngine pitchEngine;

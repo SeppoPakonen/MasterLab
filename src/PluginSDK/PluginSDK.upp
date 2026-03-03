@@ -1,7 +1,8 @@
 description "Plugin SDK package\37751,51,51";
 
 uses
-	Core;
+	Core,
+	CtrlLib;
 
 file
 	AGENTS.md,
