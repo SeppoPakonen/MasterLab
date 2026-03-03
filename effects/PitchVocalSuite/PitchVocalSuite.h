@@ -16,6 +16,15 @@ struct PitchVocalViewport {
 	double scrollY = 60.0; // center MIDI note
 };
 
+struct PitchNote : public Moveable<PitchNote> {
+	double startTime;
+	double duration;
+	int midiNote;
+	bool selected = false;
+	
+	PitchNote() : startTime(0), duration(1.0), midiNote(60) {}
+};
+
 // DSP Processor for PitchVocalSuite
 class PitchVocalProcessor : public PluginProcessor {
 public:
@@ -27,11 +36,13 @@ public:
 
 	const Vector<am::PitchPoint>& GetPitchPoints() const { return pitchPoints; }
 	const Vector<float>& GetWaveformBuffer() const { return waveformBuffer; }
+	Vector<PitchNote>& GetNotes() { return notes; }
 
 private:
 	am::PitchAnalysisEngine pitchEngine;
 	Vector<am::PitchPoint> pitchPoints;
 	Vector<float> waveformBuffer;
+	Vector<PitchNote> notes;
 	int waveformBufferSize = 2048;
 };
 
@@ -47,11 +58,19 @@ public:
 	virtual void MouseWheel(Point p, int zdelta, dword keyflags) override;
 	virtual void MiddleDown(Point p, dword keyflags) override;
 	virtual void MouseMove(Point p, dword keyflags) override;
+	virtual void LeftDouble(Point p, dword keyflags) override;
+	virtual void LeftDown(Point p, dword keyflags) override;
+	virtual void LeftUp(Point p, dword keyflags) override;
 
 private:
+	Rect GetNoteRect(const PitchNote& note, const Size& sz) const;
+	int HitTest(Point p) const;
+
 	PitchVocalProcessor* processor = nullptr;
 	PitchVocalViewport* viewport = nullptr;
 	Point lastMousePos;
+	int draggingNoteIndex = -1;
+	bool isResizing = false;
 };
 
 // Custom control for waveform visualization

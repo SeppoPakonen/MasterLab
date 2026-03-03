@@ -117,6 +117,27 @@ PitchGraphEditor::PitchGraphEditor()
 {
 }
 
+Rect PitchGraphEditor::GetNoteRect(const PitchNote& note, const Size& sz) const
+{
+	if (!viewport) return Rect(0,0,0,0);
+	int x = (int)((note.startTime - viewport->scrollX) * viewport->zoomX);
+	int w = (int)(note.duration * viewport->zoomX);
+	int y = sz.cy / 2 - (int)((note.midiNote - viewport->scrollY) * viewport->zoomY);
+	return RectC(x, y - (int)viewport->zoomY / 2, w, (int)viewport->zoomY);
+}
+
+int PitchGraphEditor::HitTest(Point p) const
+{
+	if (!processor) return -1;
+	Size sz = GetSize();
+	Vector<PitchNote>& notes = processor->GetNotes();
+	for (int i = 0; i < notes.GetCount(); ++i) {
+		if (GetNoteRect(notes[i], sz).Contains(p))
+			return i;
+	}
+	return -1;
+}
+
 void PitchGraphEditor::Paint(Draw& w)
 {
 	Size sz = GetSize();
@@ -152,6 +173,21 @@ void PitchGraphEditor::Paint(Draw& w)
 	}
 
 	if(processor) {
+		// Draw notes
+		Vector<PitchNote>& notes = processor->GetNotes();
+		for (int i = 0; i < notes.GetCount(); ++i) {
+			Rect r = GetNoteRect(notes[i], sz);
+			if (r.right < 0 || r.left >= sz.cx) continue;
+			
+			Color c = notes[i].selected ? Cyan() : Blue();
+			w.DrawRect(r, c);
+			w.DrawRect(r.left, r.top, r.GetWidth(), r.GetHeight(), SColorText()); // Border
+			
+			String name = Format("%d", notes[i].midiNote);
+			w.DrawText(r.left + 2, r.top + 2, name, Arial(10), White());
+		}
+
+		// Draw detected pitch
 		const Vector<am::PitchPoint>& points = processor->GetPitchPoints();
 		if(points.GetCount() > 1) {
 			for(int i = 1; i < points.GetCount(); i++) {
@@ -182,16 +218,12 @@ void PitchGraphEditor::MouseWheel(Point p, int zdelta, dword keyflags)
 	if (!viewport) return;
 	
 	if (keyflags & K_CTRL) {
-		// Horizontal zoom
 		double oldZoom = viewport->zoomX;
 		viewport->zoomX = max(10.0, viewport->zoomX * (zdelta > 0 ? 1.1 : 0.9));
-		// Adjust scroll to keep mouse position stable
 		viewport->scrollX += (p.x / oldZoom) - (p.x / viewport->zoomX);
 	} else if (keyflags & K_SHIFT) {
-		// Vertical zoom
 		viewport->zoomY = max(2.0, viewport->zoomY * (zdelta > 0 ? 1.1 : 0.9));
 	} else {
-		// Horizontal scroll
 		viewport->scrollX += (zdelta > 0 ? -1.0 : 1.0);
 	}
 	viewport->scrollX = max(0.0, viewport->scrollX);
@@ -203,6 +235,43 @@ void PitchGraphEditor::MiddleDown(Point p, dword keyflags)
 	lastMousePos = p;
 }
 
+void PitchGraphEditor::LeftDouble(Point p, dword keyflags)
+{
+	if (!processor || !viewport) return;
+	
+	PitchNote n;
+	n.startTime = viewport->scrollX + p.x / viewport->zoomX;
+	n.midiNote = (int)round(viewport->scrollY + (GetSize().cy / 2.0 - p.y) / viewport->zoomY);
+	n.duration = 1.0;
+	processor->GetNotes().Add(n);
+	Refresh();
+}
+
+void PitchGraphEditor::LeftDown(Point p, dword keyflags)
+{
+	if (!processor) return;
+	
+	Vector<PitchNote>& notes = processor->GetNotes();
+	draggingNoteIndex = HitTest(p);
+	
+	for (int i = 0; i < notes.GetCount(); ++i)
+		notes[i].selected = (i == draggingNoteIndex);
+	
+	if (draggingNoteIndex != -1) {
+		lastMousePos = p;
+		Rect r = GetNoteRect(notes[draggingNoteIndex], GetSize());
+		isResizing = (p.x > r.right - 10);
+	}
+	
+	Refresh();
+}
+
+void PitchGraphEditor::LeftUp(Point p, dword keyflags)
+{
+	draggingNoteIndex = -1;
+	isResizing = false;
+}
+
 void PitchGraphEditor::MouseMove(Point p, dword keyflags)
 {
 	if (!viewport) return;
@@ -211,6 +280,18 @@ void PitchGraphEditor::MouseMove(Point p, dword keyflags)
 		viewport->scrollX += (lastMousePos.x - p.x) / viewport->zoomX;
 		viewport->scrollY += (p.y - lastMousePos.y) / viewport->zoomY;
 		viewport->scrollX = max(0.0, viewport->scrollX);
+		lastMousePos = p;
+		Refresh();
+	} else if ((keyflags & K_MOUSELEFT) && draggingNoteIndex != -1 && processor) {
+		Vector<PitchNote>& notes = processor->GetNotes();
+		PitchNote& n = notes[draggingNoteIndex];
+		
+		if (isResizing) {
+			n.duration = max(0.1, n.duration + (p.x - lastMousePos.x) / viewport->zoomX);
+		} else {
+			n.startTime += (p.x - lastMousePos.x) / viewport->zoomX;
+			n.midiNote = (int)round(viewport->scrollY + (GetSize().cy / 2.0 - p.y) / viewport->zoomY);
+		}
 		lastMousePos = p;
 		Refresh();
 	}
