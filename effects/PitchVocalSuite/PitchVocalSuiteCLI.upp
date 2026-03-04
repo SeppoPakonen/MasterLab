@@ -5,7 +5,8 @@ uses
 	AudioCore,
 	AudioAnalysis,
 	DSP,
-	FileIO;
+	FileIO,
+	vorbis;
 
 uses(BUILTIN_PORTAUDIO) plugin/portaudio;
 	

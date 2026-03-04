@@ -1,8 +1,8 @@
 description "Audio core package\3770,0,139";
 
 uses
-	Core;
-
+	Core,
+	vorbis;
 file
 	AGENTS.md,
 	AudioCore.h,
@@ -25,4 +25,8 @@ file
 	Transport.h,
 	Transport.cpp,
 	WavFile.h,
-	WavFile.cpp;
+	WavFile.cpp,
+	OggFile.h,
+	OggFile.cpp,
+	AudioFile.h,
+	AudioFile.cpp;
