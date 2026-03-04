@@ -1,29 +1,23 @@
-acceptflags GUI;\ndescription "Audio UI package\3770,255,0";
+description "Audio UI classes\3770,0,139";
 
 uses
-        AudioCore,
-        AudioFX,
-        AudioGraph,
-        CtrlLib,
-        SubWindowCtrl,
-        PluginSDK;
+	Core,
+	CtrlLib,
+	AudioCore,
+	AudioFX,
+	PluginSDK;
+
+flags "GUI";
+	
 file
 	AGENTS.md,
 	AudioUI.h,
 	AudioUI.cpp,
-	Breadcrumb.h,
-	Breadcrumb.cpp,
-	GraphEditorWidgets.h,
-	GraphEditorWidgets.cpp,
 	GraphVisualizationCtrl.h,
 	GraphVisualizationCtrl.cpp,
-	PostGraphView.h,
-	PostView.h,
 	UI.h,
 	UI.cpp,
 	PluginHost.h,
 	PluginHost.cpp,
 	TransportBar.h,
 	TransportBar.cpp;
-
-mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

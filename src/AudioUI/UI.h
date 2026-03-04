@@ -4,6 +4,7 @@
 #include <CtrlLib/CtrlLib.h>
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
+#include <PluginSDK/PluginTypes.h> // Explicitly include PluginTypes.h
 #include <PluginSDK/PluginSDK.h>
 #include "GraphVisualizationCtrl.h"  // Include GraphVisualizationCtrl instead of forward declaration
 using namespace Upp;

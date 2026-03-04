@@ -2,6 +2,7 @@
 #define _AudioUI_PluginHost_h_
 
 #include <CtrlLib/CtrlLib.h>
+#include <PluginSDK/PluginTypes.h> // Explicitly include PluginTypes.h
 #include <PluginSDK/PluginSDK.h>
 
 namespace am {

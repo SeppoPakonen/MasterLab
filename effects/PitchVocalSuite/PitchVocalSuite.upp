@@ -2,17 +2,15 @@ description "Effect Plugin: Pitch Vocal Suite\377200,200,200";
 
 uses
 	PluginSDK,
-	PluginABI/LV2,
 	AudioCore,
 	AudioAnalysis,
 	DSP,
-	FileIO;
-
-uses CtrlLib;
-uses AudioUI;
-uses SoftAudio;
-uses AI/LogicGui;
-uses CtrlLog;
+	FileIO,
+	CtrlLib,
+	AudioUI,
+	SoftAudio,
+	AI/LogicGui,
+	CtrlLog;
 
 uses(BUILTIN_PORTAUDIO) plugin/portaudio;
 	
@@ -22,6 +20,4 @@ file
 	PitchVocalSuite.cpp;
 
 mainconfig
-	"Standalone" = "GUI BUILTIN_PORTAUDIO",
-	"Headless" = "BUILTIN_PORTAUDIO",
-	"LV2" = "GUI DLL BUILTIN_PORTAUDIO";
+	"Standalone" = "GUI BUILTIN_PORTAUDIO";
