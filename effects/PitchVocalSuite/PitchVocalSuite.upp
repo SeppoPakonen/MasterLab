@@ -23,5 +23,4 @@ file
 
 mainconfig
 	"Standalone" = "GUI BUILTIN_PORTAUDIO",
-	"Headless" = "BUILTIN_PORTAUDIO",
 	"LV2" = "GUI DLL BUILTIN_PORTAUDIO";
