@@ -24,6 +24,8 @@ file
 	CuteAudioConnect.h,
 	CuteAudioConnect.cpp,
 	CuteMidiConnect.h,
-	CuteMidiConnect.cpp;
+	CuteMidiConnect.cpp,
+	CuteNsmClient.h,
+	CuteNsmClient.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

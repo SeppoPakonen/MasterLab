@@ -8,6 +8,8 @@ using namespace Upp;
 
 #include "AudioAtomic.h"
 #include "CuteList.h"
+#include "CuteObserver.h"
+#include "CuteObserverWidget.h"
 #include "ToolModifiers.h"
 
 #endif

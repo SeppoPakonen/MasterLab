@@ -1,24 +1,29 @@
 #include "MIDI.h"
 
-class CuteMidiEventListView : public ArrayCtrl {
-public:
-    CuteMidiEventListView() {
-        AddColumn("Time");
-        AddColumn("Type");
-        AddColumn("Value");
-    }
-};
+CuteMidiEventListView::CuteMidiEventListView() {
+    AddColumn("Time");
+    AddColumn("Type");
+    AddColumn("Value");
+}
 
-class CuteMidiEventList : public TopWindow {
-public:
-    typedef CuteMidiEventList CLASSNAME;
+void CuteMidiEventListView::SetSequence(CuteMidiSequence* sequence) {
+    this->sequence = sequence;
+}
 
-    CuteMidiEventList() {
-        Title("Cute MIDI Events");
-        Add(list.SizePos());
-        SetRect(0, 0, 420, 300);
-    }
+CuteMidiSequence* CuteMidiEventListView::GetSequence() const {
+    return sequence;
+}
 
-private:
-    CuteMidiEventListView list;
-};
+CuteMidiEventList::CuteMidiEventList() {
+    Title("Cute MIDI Events");
+    Add(list_view.SizePos());
+    SetRect(0, 0, 420, 300);
+}
+
+void CuteMidiEventList::SetEditor(CuteMidiEditor* editor) {
+    this->editor = editor;
+}
+
+CuteMidiEditor* CuteMidiEventList::GetEditor() const {
+    return editor;
+}

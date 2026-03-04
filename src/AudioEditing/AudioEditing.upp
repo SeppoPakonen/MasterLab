@@ -23,4 +23,7 @@ file
 	CuteCurveSelect.cpp,
 	CuteEditRangeForm.h,
 	CuteEditRangeForm.cpp,
-	CuteEditRangeFormLayout.md;
+	CuteEditRangeFormLayout.md,
+	CutePasteRepeatForm.h,
+	CutePasteRepeatForm.cpp,
+	CutePasteRepeatFormLayout.md;

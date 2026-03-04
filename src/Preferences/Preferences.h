@@ -20,5 +20,8 @@ using namespace Upp;
 #include "KeyCommands.h"
 #include "Mapping.h"
 #include "KeyCommandsDlg.h"
+#include "CuteOptions.h"
+#include "CuteOptionsForm.h"
+#include "CutePaletteForm.h"
 
 #endif

@@ -8,6 +8,7 @@
 #include "RoutingRepository.h"
 #include "CuteAudioConnect.h"
 #include "CuteMidiConnect.h"
+#include "CuteNsmClient.h"
 
 using namespace Upp;
 

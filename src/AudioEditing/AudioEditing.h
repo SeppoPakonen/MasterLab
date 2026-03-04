@@ -19,6 +19,7 @@ using namespace Upp;
 #include "CuteClipForm.h"
 #include "CuteCurveSelect.h"
 #include "CuteEditRangeForm.h"
+#include "CutePasteRepeatForm.h"
 
 // Ensure VectorMap is available
 
