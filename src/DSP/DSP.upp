@@ -1,21 +1,9 @@
-description "DSP package\37775,0,130";
-
 uses
-	Core,
-	Draw,
-	CtrlCore,
-	CtrlLib,
 	AudioCore,
-	AudioGraph,
-	PluginSDK,
-	Math,
-	Devices,
-	AudioFX,
-	MIDI;
-
+	Math;
+	
 file
 	DSP.h,
-	DSP.cpp,
 	SignalBus.h,
 	SignalBus.cpp,
 	ParameterSet.h,
@@ -35,5 +23,10 @@ file
 	RackInfrastructure.h,
 	RackInfrastructure.cpp,
 	AIRecommender.h,
-	AIRecommender.cpp;
+	AIRecommender.cpp,
+	PhaseVocoder.h,
+	PhaseVocoder.cpp;
 
+mainconfig
+	"Standalone" = "GUI",
+	"Headless" = "";
