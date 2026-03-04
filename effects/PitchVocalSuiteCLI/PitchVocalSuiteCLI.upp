@@ -1,0 +1,14 @@
+description "Headless CLI for PitchVocalSuite";
+
+uses
+	PitchVocalSuiteCore,
+	FileIO;
+
+uses(BUILTIN_PORTAUDIO) plugin/portaudio;
+
+file
+	PitchVocalSuiteCLI.h,
+	PitchVocalSuiteCLI.cpp;
+
+mainconfig
+	"Headless" = "BUILTIN_PORTAUDIO";

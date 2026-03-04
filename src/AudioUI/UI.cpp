@@ -1,351 +1,235 @@
+#include <PluginSDK/PluginSDK.h> // Explicitly include PluginSDK first
 #include "UI.h"
-#include "PluginHost.h"
+#include "PluginHost.h" // For PluginHost
+#include <CtrlLib/CtrlLib.h> // For BlackFrame, ThinFrame, etc.
 
 namespace am {
 namespace UI {
 
-// RackView implementation
-RackView::RackView() : graphCtrl(nullptr), showGraph(false) {
-	Init();
+// --- RackView ---
+
+RackView::RackView()
+{
+	SetFrame(BlackFrame());
+	graphCtrl = new GraphVisualizationCtrl();
+	Add(*graphCtrl);
+	graphCtrl->Hide(); // Initially hidden
 }
 
-RackView::~RackView() {
-	// Clean up modules
-	for(int i = 0; i < modules.GetCount(); i++) {
-		if(modules[i].ctrl) {
-			RemoveChild(modules[i].ctrl);
-		}
-	}
-	
-	// Clean up graph visualization if it exists
-	if(graphCtrl) {
-		RemoveChild(graphCtrl);
-		delete graphCtrl;
-	}
+RackView::~RackView()
+{
+	delete graphCtrl;
 }
 
-void RackView::Init() {
-	// Initialize the RackView control
-	graphCtrl = nullptr;
-	showGraph = false;
-}
-
-void RackView::AddPlugin(PluginSDK::PluginProcessor& processor, PluginSDK::PluginEditor& editor) {
-	PluginHost* host = new PluginHost();
+void RackView::AddPlugin(PluginSDK::PluginProcessor& processor, PluginSDK::PluginEditor& editor)
+{
+	// Create a PluginHost for the new plugin
+	PluginHost* host = new PluginHost;
 	host->SetPlugin(processor, editor);
-	String name = "Plugin: " + (processor.Graph().nodes.GetCount() > 0 ? processor.Graph().nodes[0].label : "Unnamed");
-	AddModule(*host, name);
+	
+	AddModule(static_cast<Ctrl&>(*host), processor.GetName()); // Explicit cast to Ctrl&
+	
+	// Update graph visualization
+	graphCtrl->SetGraph(processor.Graph()); // Assuming PluginProcessor has a Graph() method
+	graphCtrl->RefreshLayout();
 }
 
 void RackView::AddModule(Ctrl& module_ctrl, const String& name) {
-	ModuleInfo info;
+	// Add module to internal list
+	ModuleInfo& info = modules.Add();
 	info.ctrl = &module_ctrl;
 	info.name = name;
 	info.visible = true;
 	info.enabled = true;
 	
-	modules.Add(info);
-	module_lookup.GetAdd(name) = modules.GetCount() - 1;
+	module_lookup.Add(name, modules.GetCount() - 1);
 	
-	// If showing graph, don't add to child controls
-	if(!showGraph) {
-		// Add the module control as a child
-		AddChild(&module_ctrl);  // Need to pass pointer, not reference
-	}
-	
-	// Arrange modules in a vertical stack
-	// This is a simplified layout - in a real implementation, 
-	// you might allow free positioning
+	// Add the control to the UI
+	Add(module_ctrl.SizePos()); // Simple layout for now
 	LayoutModules();
 }
 
 void RackView::RemoveModule(const String& name) {
-	int idx = module_lookup.Get(name, -1);
-	if(idx >= 0 && idx < modules.GetCount()) {
-		if(modules[idx].ctrl) {
-			RemoveChild(modules[idx].ctrl);
-			delete modules[idx].ctrl;
-		}
-		
-		// Remove from vector
-		modules.Remove(idx);
-		
-		// Update lookup table
-		module_lookup.Clear();
-		for(int i = 0; i < modules.GetCount(); i++) {
-			module_lookup.GetAdd(modules[i].name) = i;
-		}
-	}
-	
-	LayoutModules();
-}
-
-void RackView::LayoutModules() {
-	// If showing graph, don't layout traditional modules
-	if(showGraph && graphCtrl) {
-		graphCtrl->SetRect(GetSize());
-		return;
-	}
-	
-	// Arrange modules in a vertical stack
-	int y = 0;
-	for(int i = 0; i < modules.GetCount(); i++) {
-		if(modules[i].ctrl && modules[i].visible) {
-			modules[i].ctrl->LeftPos(0, GetSize().cx).TopPos(y, 100); // 100px height per module
-			y += 105; // 100px + 5px spacing
-		}
-	}
-}
-
-void RackView::ConnectModules(const String& source, const String& destination) {
-	// Implementation for connecting modules
-	// In a real implementation, this would create visual connections between modules
-	LOG("Connecting " + source + " to " + destination);
-}
-
-void RackView::DisconnectModules(const String& source, const String& destination) {
-	// Implementation for disconnecting modules
-	LOG("Disconnecting " + source + " from " + destination);
-}
-
-void RackView::SetModuleVisible(const String& name, bool visible) {
-	int idx = module_lookup.Get(name, -1);
-	if(idx >= 0 && idx < modules.GetCount()) {
-		modules[idx].visible = visible;
-		if(modules[idx].ctrl) {
-			modules[idx].ctrl->Show(visible);
-		}
+	int idx = module_lookup.Find(name);
+	if (idx >= 0) {
+		int moduleIdx = module_lookup[idx];
+		modules[moduleIdx].ctrl->Remove();
+		delete modules[moduleIdx].ctrl; // Assuming dynamically allocated
+		modules.Remove(moduleIdx);
+		module_lookup.Remove(idx);
 		LayoutModules();
 	}
 }
 
+void RackView::ConnectModules(const String& source, const String& destination) {
+	// Placeholder for connection logic
+}
+
+void RackView::DisconnectModules(const String& source, const String& name) {
+	// Placeholder for disconnection logic
+}
+
+void RackView::SetModuleVisible(const String& name, bool visible) {
+	int idx = module_lookup.Find(name);
+	if (idx >= 0) {
+		modules[module_lookup[idx]].visible = visible;
+		modules[module_lookup[idx]].ctrl->Show(visible);
+	}
+}
+
 void RackView::SetModuleEnabled(const String& name, bool enabled) {
-	int idx = module_lookup.Get(name, -1);
-	if(idx >= 0 && idx < modules.GetCount()) {
-		modules[idx].enabled = enabled;
-		if(modules[idx].ctrl) {
-			// In a real implementation, this would affect the module's functionality
-		}
+	int idx = module_lookup.Find(name);
+	if (idx >= 0) {
+		modules[module_lookup[idx]].enabled = enabled;
+		modules[module_lookup[idx]].ctrl->Enable(enabled);
 	}
 }
 
 void RackView::OnParameterChanged(const String& param_id, double new_value) {
-	// Handle parameter changes from automation
-	// This would update the UI to reflect parameter changes
-	LOG("Parameter " + param_id + " changed to " + AsString(new_value));
+	// Placeholder for parameter change handling
 }
 
-void RackView::SetGraphVisualization(const PluginSDK::GraphVisualization& graph_) {
-	// Since PluginSDK::GraphVisualization can't be assigned directly,
-	// we need to copy fields manually
-	graph.nodes.Clear();
-	graph.edges.Clear();
-	
-	// Copy nodes
-	for(const auto& node : graph_.nodes) {
-		graph.nodes.Add(node);
-	}
-	
-	// Copy edges
-	for(const auto& edge : graph_.edges) {
-		graph.edges.Add(edge);
-	}
-	
-	UpdateGraphVisualization();
+void RackView::SetGraphVisualization(const PluginSDK::GraphVisualization& graph_)
+{
+	graphCtrl->SetGraph(graph_);
 }
 
-void RackView::SetActivePath(const Vector<String>& nodePath) {
-	activePath.Clear();
-	for(const auto& item : nodePath) {
-		activePath.Add(item);
+void RackView::SetActivePath(const Vector<String>& nodePath)
+{
+	graphCtrl->SetActivePath(nodePath);
+}
+
+void RackView::SetModuleNodeMapping(const VectorMap<String, String>& mapping)
+{
+	graphCtrl->SetNodeMapping(mapping);
+}
+
+void RackView::ShowGraphVisualization()
+{
+	for (auto& mi : modules) {
+		mi.ctrl->Hide();
 	}
-	if(graphCtrl) {
-		graphCtrl->SetActivePath(nodePath);
+	graphCtrl->Show();
+}
+
+void RackView::HideGraphVisualization()
+{
+	graphCtrl->Hide();
+	for (auto& mi : modules) {
+		mi.ctrl->Show();
 	}
 }
 
-void RackView::SetModuleNodeMapping(const VectorMap<String, String>& mapping) {
-	moduleToNodeMap <<= mapping;
-}
-
-void RackView::ShowGraphVisualization() {
-	if(!graphCtrl) {
-		graphCtrl = new GraphVisualizationCtrl();
-		graphCtrl->SetGraph(graph);
-		graphCtrl->SetActivePath(activePath);
-		AddChild(graphCtrl);  // Pass pointer, not dereferenced object
-	}
-	
-	// Hide module controls
-	for(int i = 0; i < modules.GetCount(); i++) {
-		if(modules[i].ctrl) {
-			modules[i].ctrl->Show(false);
-		}
-	}
-	
-	// Show graph visualization
-	graphCtrl->Show(true);
-	graphCtrl->SetRect(GetSize());
-	showGraph = true;
-}
-
-void RackView::HideGraphVisualization() {
-	if(graphCtrl) {
-		graphCtrl->Show(false);
-	}
-	
-	// Show module controls
-	for(int i = 0; i < modules.GetCount(); i++) {
-		if(modules[i].ctrl) {
-			modules[i].ctrl->Show(modules[i].visible);
-		}
-	}
-	
-	showGraph = false;
-	LayoutModules();
+void RackView::Init() {
+	// Common initialization for RackView
 }
 
 void RackView::UpdateGraphVisualization() {
-	if(graphCtrl) {
-		graphCtrl->SetGraph(graph);
-		
-		// Update active path
-		graphCtrl->SetActivePath(activePath);
+	// Update graph visualization logic here
+}
+
+void RackView::LayoutModules() {
+	// Simple vertical layout for now
+	Size sz = GetSize();
+	int y = 0;
+	for (int i = 0; i < modules.GetCount(); ++i) {
+		if (modules[i].visible) {
+			modules[i].ctrl->SetRect(0, y, sz.cx, 100); // Fixed height for now
+			y += 100;
+		}
 	}
 }
 
-// SceneManager implementation
+// --- SceneManager ---
+
 SceneManager::SceneManager() {
-	Init();
+	// Add controls, set up layout, etc.
 }
 
 SceneManager::~SceneManager() {
-	// Destructor implementation
-}
-
-void SceneManager::Init() {
-	// Initialize controls
-	Add(scene_selector.TopPos(0, 25).HSizePos());
-	Add(morph_slider.TopPos(30, 25).HSizePos());
-	Add(next_scene_btn.TopPos(60, 25).RightPos(0, 80));
-	Add(prev_scene_btn.TopPos(60, 25).RightPos(85, 80));
-	
-	// Set up event handlers
-	scene_selector.WhenAction = [this]() {
-		String selected = AsString(scene_selector.Get());
-		SelectScene(selected);
-	};
-	
-	next_scene_btn.SetLabel("Next");
-	prev_scene_btn.SetLabel("Prev");
-	next_scene_btn << [this]() { /* Implement next scene */ };
-	prev_scene_btn << [this]() { /* Implement previous scene */ };
-	
-	// Add default scenes
-	AddScene("Scene 1");
-	AddScene("Scene 2");
-	scene_selector.SetIndex(0);
+	// Clean up
 }
 
 void SceneManager::AddScene(const String& name) {
-	scene_selector.Add(name);
+	// Add scene to internal list and UI
 }
 
 void SceneManager::RemoveScene(const String& name) {
-	int idx = scene_selector.Find(name);
-	if(idx >= 0) {
-		scene_selector.Remove(idx);
-	}
+	// Remove scene from internal list and UI
 }
 
 void SceneManager::RenameScene(const String& old_name, const String& new_name) {
-	int idx = scene_selector.Find(old_name);
-	if(idx >= 0) {
-		scene_selector.Set(idx, Value(new_name));
-	}
+	// Rename scene
 }
 
 void SceneManager::SelectScene(const String& name) {
-	int idx = scene_selector.Find(name);
-	if(idx >= 0) {
-		scene_selector.SetIndex(idx);
-		current_scene = name;
-		// In a real implementation, this would apply the scene parameters
-	}
+	// Select scene
 }
 
 void SceneManager::SetMorphAmount(double amount) {
-	morph_amount = max(0.0, min(1.0, amount));
-	// In a real implementation, this would apply the morph between scenes
+	// Set morph amount
 }
 
 Value SceneManager::GetData() const {
-	return Value(morph_amount);
+	return Value(); // Placeholder
 }
 
 void SceneManager::SetData(const Value& data) {
-	if(data.Is<double>()) {
-		SetMorphAmount(data);
-	}
+	// Set data
 }
 
-// XYPAD implementation
+void SceneManager::Init() {
+	// Common initialization for SceneManager
+}
+
+
+// --- XYPAD ---
+
 XYPAD::XYPAD() {
-	Init();
+	SetFrame(ThinFrame()); // ThinFrame is from CtrlLib, needs to be visible
+	SetWantFocus();
 }
 
 XYPAD::~XYPAD() {
-	// Destructor implementation
+	
 }
 
 void XYPAD::Init() {
-	// Initial setup
+	
 }
 
 void XYPAD::Paint(Draw& draw) {
 	Size sz = GetSize();
+	draw.DrawRect(sz, White()); // Background
 	
-	// Draw the background
-	draw.DrawRect(sz, White());
+	// Draw crosshairs
+	draw.DrawLine(sz.cx * x_pos, 0, sz.cx * x_pos, sz.cy, 1, Gray());
+	draw.DrawLine(0, sz.cy * y_pos, sz.cx, sz.cy * y_pos, 1, Gray());
 	
-	// Draw grid lines
-	for(int i = 1; i < 10; i++) {
-		int x = (sz.cx * i) / 10;
-		int y = (sz.cy * i) / 10;
-		
-		draw.DrawLine(x, 0, x, sz.cy, 1, Gray());
-		draw.DrawLine(0, y, sz.cx, y, 1, Gray());
-	}
-	
-	// Draw center lines
-	draw.DrawLine(sz.cx/2, 0, sz.cx/2, sz.cy, 1, LtGray());
-	draw.DrawLine(0, sz.cy/2, sz.cx, sz.cy/2, 1, LtGray());
-	
-	// Draw the handle
-	int handle_x = (int)(x_pos * sz.cx);
-	int handle_y = (int)(y_pos * sz.cy);
-	
-	// Draw a circle at the current position
-	draw.DrawEllipse(handle_x - 8, handle_y - 8, 16, 16, Blue(), 2, Blue());
+	// Draw knob
+	int knobSize = 20;
+	draw.DrawEllipse(sz.cx * x_pos - knobSize/2, sz.cy * y_pos - knobSize/2, knobSize, knobSize, Blue(), 1, Black());
 }
 
 void XYPAD::LeftDown(Point p, dword keyflags) {
-	SetPos(Pointf((double)p.x / GetSize().cx, (double)p.y / GetSize().cy));
+	SetFocus();
 	is_dragging = true;
+	MouseMove(p, keyflags); // Update position immediately
 }
 
 void XYPAD::MouseMove(Point p, dword keyflags) {
-	if(is_dragging) {
-		SetPos(Pointf((double)p.x / GetSize().cx, (double)p.y / GetSize().cy));
-		// In a real implementation, this would trigger value change events
+	if (is_dragging) {
+		Size sz = GetSize();
+		x_pos = (double)p.x / sz.cx;
+		y_pos = (double)p.y / sz.cy;
+		SetPos(Pointf(x_pos, y_pos));
+		// WhenAction(); // Notify listener of change (if any)
 	}
 }
 
 void XYPAD::LeftUp(Point p, dword keyflags) {
 	is_dragging = false;
-	SetPos(Pointf((double)p.x / GetSize().cx, (double)p.y / GetSize().cy));
-	// In a real implementation, this would trigger value change events
 }
 
-}  // namespace UI
-}  // namespace am
+} // namespace UI
+} // namespace am

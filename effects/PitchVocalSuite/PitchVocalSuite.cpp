@@ -1,5 +1,4 @@
 #include "PitchVocalSuite.h"
-#include <AudioCore/AudioFile.h>
 
 // --- PitchVocalTopBar ---
 

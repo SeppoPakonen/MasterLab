@@ -7,7 +7,7 @@ uses
 	AudioFX,
 	PluginSDK;
 
-flags "GUI";
+flags "GUI"; // Force GUI define for AudioUI to resolve PluginEditor errors
 	
 file
 	AGENTS.md,

@@ -1,0 +1,11 @@
+description "Core DSP for PitchVocalSuite";
+
+uses
+	PluginSDK,
+	AudioCore,
+	AudioAnalysis,
+	DSP;
+
+file
+	PitchVocalSuiteCore.h,
+	PitchVocalSuiteCore.cpp;
