@@ -3,8 +3,8 @@
 namespace {
 
 struct CuteBootConfig {
-	String title = "Cute";
-	String version;
+	String title = QTRACTOR_TITLE;
+	String version = "phase1";
 	String locale;
 	String style_theme;
 	String style_sheet;
@@ -54,9 +54,7 @@ bool LoadTranslationCatalog(const String& path, const String& lang) {
 	if(!FileExists(path))
 		return false;
 	String data = LoadFile(path);
-	if(data.IsEmpty())
-		return false;
-	return true;
+	return !data.IsEmpty();
 }
 
 void ApplyNamedPalette(const CuteBootConfig& cfg) {
@@ -122,35 +120,38 @@ void LoadTranslations(const CuteBootConfig& cfg) {
 
 CuteBootConfig BuildBootConfig() {
 	CuteBootConfig cfg;
-	cfg.version = "phase1";
 	cfg.locale = GetLanguageInfo(GetSystemLNG()).english_name;
 	return cfg;
 }
 
+void InstallCuteEnvironment(const CuteBootConfig& cfg) {
+	if(cfg.force_x11) {
+		// Phase 1 note: qtractor forced xcb when Wayland support was disabled.
+		// The Cute build script may later export backend-specific environment variables before launch.
+	}
+
+	if(!cfg.icons_theme.IsEmpty()) {
+		// Phase 1 note: qtractor adjusted fallback icon search paths here.
+	}
+
+	String plugin_dir = CutePluginDir();
+	if(!plugin_dir.IsEmpty()) {
+		// Phase 1 note: Qt plugin path extension belongs to Cute assembly startup and build integration.
+	}
 }
 
-class qtractorApplication {
-public:
-	qtractorApplication();
-	~qtractorApplication();
+}
 
-	void setMainWidget(Ctrl* widget);
-	Ctrl* mainWidget() const;
-	bool setup();
-	void clearServer();
-	void newConnectionSlot();
-	void readyReadSlot();
-	int Run();
-
-private:
+struct qtractorApplication::Data {
 	CuteBootConfig config;
 	Ptr<Ctrl> main_widget;
 	String unique_key;
 };
 
-qtractorApplication::qtractorApplication()
-	: config(BuildBootConfig()) {
-	LoadTranslations(config);
+qtractorApplication::qtractorApplication() {
+	data.Create();
+	data->config = BuildBootConfig();
+	LoadTranslations(data->config);
 }
 
 qtractorApplication::~qtractorApplication() {
@@ -158,29 +159,31 @@ qtractorApplication::~qtractorApplication() {
 }
 
 void qtractorApplication::setMainWidget(Ctrl* widget) {
-	main_widget = widget;
+	data->main_widget = widget;
 }
 
 Ctrl* qtractorApplication::mainWidget() const {
-	return main_widget;
+	return data ? ~data->main_widget : nullptr;
 }
 
 bool qtractorApplication::setup() {
-	InstallCrashHandlers(config);
-	if(!config.single_instance)
+	InstallCrashHandlers(data->config);
+	if(!data->config.single_instance)
 		return false;
-	unique_key = BuildUniqueInstanceKey(config);
-	return NotifyExistingInstance(unique_key);
+	data->unique_key = BuildUniqueInstanceKey(data->config);
+	return NotifyExistingInstance(data->unique_key);
 }
 
 void qtractorApplication::clearServer() {
-	unique_key.Clear();
+	if(data)
+		data->unique_key.Clear();
 }
 
 void qtractorApplication::newConnectionSlot() {
-	if(main_widget) {
-		main_widget->OpenMain();
-		main_widget->SetFocus();
+	Ctrl* widget = mainWidget();
+	if(widget) {
+		widget->OpenMain();
+		widget->SetFocus();
 	}
 }
 
@@ -192,30 +195,13 @@ int qtractorApplication::Run() {
 	if(setup())
 		return 2;
 
-	ApplyStyleChoices(config);
+	ApplyStyleChoices(data->config);
 
 	MainWindow w;
 	setMainWidget(&w);
 	w.OpenMain();
 	w.Run();
 	return 0;
-}
-
-void InstallCuteEnvironment(const CuteBootConfig& cfg) {
-	if(cfg.force_x11) {
-		// Phase 1 note: qtractor forced xcb when Wayland support was disabled.
-		// The Cute build script may later export backend-specific environment variables before launch.
-	}
-
-	String icon_theme = cfg.icons_theme;
-	if(!icon_theme.IsEmpty()) {
-		// Phase 1 note: qtractor adjusted fallback icon search paths here.
-	}
-
-	String plugin_dir = CutePluginDir();
-	if(!plugin_dir.IsEmpty()) {
-		// Phase 1 note: Qt plugin path extension belongs to Cute assembly startup and build integration.
-	}
 }
 
 int qtractor_main(const Vector<String>& args) {
@@ -243,7 +229,8 @@ int qtractor_main(const Vector<String>& args) {
 	InstallCuteEnvironment(cfg);
 
 	qtractorApplication app;
-	app.clearServer();
+	if(app.mainWidget()) {
+		// no-op placeholder to keep startup state observable while phase 1 remains non-compiling
+	}
 	return app.Run();
 }
-

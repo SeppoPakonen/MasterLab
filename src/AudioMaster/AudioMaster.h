@@ -21,6 +21,8 @@ using namespace Upp;
 #include <ProjectWindow/ProjectWindow.h>
 
 // Package files
+#include "qtractorAbout.h"
+#include "qtractor.h"
 #include "Views.h"
 #include "MainWindow.h"
 
