@@ -1,8 +1,8 @@
 description "Audio core package\3770,0,139";
 
 uses
-	Core,
-	vorbis;
+	Core;
+
 file
 	AGENTS.md,
 	AudioCore.h,
@@ -29,4 +29,6 @@ file
 	OggFile.h,
 	OggFile.cpp,
 	AudioFile.h,
-	AudioFile.cpp;
+	AudioFile.cpp,
+	stb_vorbis.h,
+	stb_vorbis_impl.cpp;

@@ -1,4 +1,4 @@
-description "Audio UI package\3770,255,0";
+acceptflags GUI;\ndescription "Audio UI package\3770,255,0";
 
 uses
         AudioCore,
@@ -26,3 +26,4 @@ file
 	TransportBar.h,
 	TransportBar.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

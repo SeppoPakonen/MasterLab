@@ -3,6 +3,7 @@
 
 #include <Core/Core.h>
 #include "AudioBuffer.h"
+#include "stb_vorbis.h" // Include stb_vorbis.h here
 
 namespace am {
 

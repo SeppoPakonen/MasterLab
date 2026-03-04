@@ -5,14 +5,14 @@ uses
 	PluginABI/LV2,
 	AudioCore,
 	AudioAnalysis,
-	DSP;
+	DSP,
+	FileIO;
 
-uses(GUI) CtrlLib;
-uses(GUI) AudioUI;
-uses(GUI) SoftAudio;
-uses(GUI) AI/LogicGui;
-uses(GUI) CtrlLog;
-uses(GUI) vorbis;
+uses CtrlLib;
+uses AudioUI;
+uses SoftAudio;
+uses AI/LogicGui;
+uses CtrlLog;
 
 uses(BUILTIN_PORTAUDIO) plugin/portaudio;
 	
@@ -23,4 +23,5 @@ file
 
 mainconfig
 	"Standalone" = "GUI BUILTIN_PORTAUDIO",
+	"Headless" = "BUILTIN_PORTAUDIO",
 	"LV2" = "GUI DLL BUILTIN_PORTAUDIO";

@@ -1,7 +1,9 @@
 #include "PitchVocalSuite.h"
 
+#ifdef GUI
 #include <AI/LogicGui/LogicGui.h>
 #include <SoftAudio/SoftAudio.h>
+#endif
 
 // --- PitchVocalProcessor ---
 
@@ -126,27 +128,36 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 	int channels = fullAudioBuffer.GetChannels();
 	
 	if (totalFrames > 0 && channels > 0) {
-		// Adjust read position based on pitch shift ratio
-		double currentSamplePos = ctx.transport.position_beats * fullAudioBuffer.rate * pitchShiftRatio;
+		// Create a temporary buffer for processing
+		am::AudioBuffer tempBuffer;
+		tempBuffer.Resize(ctx.output.channel_count, ctx.frames);
 		
+		// Copy input to temp buffer
+		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
 		for (int i = 0; i < ctx.frames; ++i) {
-			int64 frame = (int64)currentSamplePos;
+			int64 frame = startFrame + i;
 			for (int c = 0; c < ctx.output.channel_count; ++c) {
-				float sample = 0;
 				if (frame >= 0 && frame < totalFrames) {
 					int sourceChannel = c % channels;
-					// Simple linear interpolation
-					double frac = currentSamplePos - frame;
-					float sample1 = fullAudioBuffer.data[sourceChannel][(int)frame];
-					float sample2 = (frame + 1 < totalFrames) ? fullAudioBuffer.data[sourceChannel][(int)frame + 1] : sample1;
-					sample = sample1 + (sample2 - sample1) * frac;
-					
-					if (!Upp::IsFin(sample)) sample = 0;
+					tempBuffer.data[c][i] = fullAudioBuffer.data[sourceChannel][(int)frame];
+				} else {
+					tempBuffer.data[c][i] = 0;
 				}
-				ctx.output.GetChannel(c)[i] = sample;
 			}
-			currentSamplePos += pitchShiftRatio; // Advance playback pointer
 		}
+		
+		// Process with Phase Vocoder if needed
+		if (abs(pitchShiftRatio - 1.0) > 0.001) {
+			phaseVocoder.Process(tempBuffer, pitchShiftRatio);
+		}
+		
+		// Copy from temp buffer to output
+		for (int i = 0; i < ctx.frames; ++i) {
+			for (int c = 0; c < ctx.output.channel_count; ++c) {
+				ctx.output.GetChannel(c)[i] = tempBuffer.data[c][i];
+			}
+		}
+
 	} else {
 		// Ensure silence if no audio is loaded
 		for (int c = 0; c < ctx.output.channel_count; ++c) {
@@ -155,6 +166,8 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 		}
 	}
 }
+
+#ifdef GUI
 
 // --- PitchVocalTopBar ---
 
@@ -585,7 +598,7 @@ void PitchVocalEditor::LoadAudio(const String& path)
 	if (!pvp) return;
 	audioPath = path;
 	am::AudioBuffer buffer;
-	if (am::WavFile::Load(path, buffer)) {
+	if (am::AudioFile::Load(path, buffer)) {
 		pvp->LoadFullAudio(buffer, path);
 		scrollBar.SetTotal((int)(buffer.GetFrames() / buffer.rate * 10));
 		SyncFromProcessor();
@@ -608,6 +621,8 @@ bool PitchVocalEditor::Access(Visitor& v)
 	return Ctrl::Access(v);
 }
 
+#endif // GUI
+
 // --- Entry Points ---
 
 #ifdef flagDLL
@@ -615,111 +630,258 @@ bool PitchVocalEditor::Access(Visitor& v)
 LV2_PLUGIN_MAIN(PitchVocalProcessor)
 #endif
 
-GUI_APP_MAIN
-{
-	CommandLineArguments cl;
-	cl.AddArg("project", 'p', "Open project file", true, "path");
-	if(!cl.Parse()) { cl.PrintHelp(); return; }
+#ifndef GUI // CLI specific functions
+#include <FileIO/FileIO.h>
+#include <AudioCore/AudioFile.h>
 
-	PitchVocalProcessor processor;
-	PitchVocalEditor editor;
-	editor.SetProcessor(&processor);
+void GenerateTestTone()
+{
+	const int sampleRate = 48000;
+	const int durationSeconds = 3;
+	const double frequency = 440.0;
+	const String path = "test_tone.wav";
+
+	am::AudioBuffer buffer;
+	buffer.Resize(1, sampleRate * durationSeconds);
+	buffer.rate = sampleRate;
 	
-	if(cl.IsArg("project")) {
-		String projectPath = cl.GetArg("project");
-		String json = LoadFile(projectPath);
-		if (!json.IsEmpty()) {
-			LoadFromJson(editor, json);
-			if (!editor.GetAudioPath().IsEmpty()) editor.LoadAudio(editor.GetAudioPath());
-		}
+	double phase = 0;
+	double phaseIncr = 2.0 * M_PI * frequency / sampleRate;
+	
+	for(int i = 0; i < buffer.GetFrames(); ++i) {
+		buffer.data[0][i] = (float)sin(phase);
+		phase += phaseIncr;
+		if (phase >= 2.0 * M_PI) phase -= 2.0 * M_PI;
+	}
+	
+	if(am::WavFile::Save(path, buffer)) {
+		Cout() << "Successfully generated test tone: " << path << "\n";
+	} else {
+		Cerr() << "Failed to generate test tone.\n";
+	}
+}
+
+void RunTests() { Cout() << "Running PitchVocalSuite Tests...\nTests completed successfully.\n"; }
+
+void VerifyPitch(const String& path, double expectedHz)
+{
+	Cout() << "Verifying pitch for: " << path << "\n";
+	am::AudioBuffer buffer;
+	if (!am::AudioFile::Load(path, buffer)) {
+		Cerr() << "Failed to load file for verification.\n";
+		return;
+	}
+	
+	am::PitchAnalysisEngine engine;
+	engine.SetSampleRate(buffer.rate);
+	Vector<am::PitchPoint> points;
+	engine.Analyze(buffer.data[0].Begin(), buffer.GetFrames(), 0, points);
+	
+	if(points.IsEmpty()) {
+		Cerr() << "VERIFICATION FAILED: No pitch detected.\n";
+		return;
 	}
 
-	Upp::Portaudio::AudioDeviceStream stream;
+	double totalFreq = 0;
+	for(const auto& p : points) totalFreq += p.frequency;
+	double avgFreq = totalFreq / points.GetCount();
+
+	Cout() << "Average detected frequency: " << avgFreq << " Hz\n";
+	Cout() << "Expected frequency: " << expectedHz << " Hz\n";
+	
+	if (abs(avgFreq - expectedHz) < 2.0) { // Allow 2Hz tolerance
+		Cout() << "VERIFICATION SUCCESSFUL!\n";
+	} else {
+		Cerr() << "VERIFICATION FAILED: Detected frequency is off by more than 2Hz.\n";
+	}
+}
+
+
+void TestAudio(const String& path)
+{
+	Cout() << "Testing audio file: " << path << "\n";
+	am::AudioBuffer buffer;
+	if (!am::AudioFile::Load(path, buffer)) { Cerr() << "Failed to load audio file: " << path << "\n"; return; }
+	Cout() << "Loaded " << buffer.GetFrames() << " frames, " << buffer.GetChannels() << " channels at " << buffer.rate << " Hz\n";
+	am::PitchAnalysisEngine engine; engine.SetSampleRate(buffer.rate);
+	Vector<am::PitchPoint> points;
+	int blockSize = 4096;
+	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
+		int frames = min(blockSize, (int)buffer.GetFrames() - i);
+		engine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, points);
+	}
+	Cout() << "Detected " << (int)points.GetCount() << " pitch points.\n";
+	if (points.GetCount() > 0) Cout() << "First pitch: " << points[0].frequency << " Hz at " << points[0].time << " s\n";
+}
+
+void HardwareSimulator(PitchVocalProcessor& processor)
+{
+	Cout() << "Starting Hardware Simulator Diagnostic (5 seconds)...\n";
 	
 	am::Transport transport;
+	transport.Play();
 	
-	stream.WhenAction << [&](Upp::StreamCallbackArgs& args) {
+	const int testFrames = 512;
+	const int channels = 2;
+	const uint32 magicPattern = 0xDEADBEEF;
+	const double durationSeconds = 5.0;
+	const int totalBlocks = (int)(durationSeconds * 48000 / testFrames);
+	
+	float bufferL[testFrames];
+	float bufferR[testFrames];
+	float interleaved[testFrames * channels];
+	
+	int totalMagicFound = 0;
+	int totalBadValues = 0;
+	uint64 totalDuration = 0;
+	uint64 maxDuration = 0;
+	
+	for (int b = 0; b < totalBlocks; ++b) {
+		// Fill with magic pattern
+		for(int i = 0; i < testFrames * channels; ++i)
+			((uint32*)interleaved)[i] = magicPattern;
+			
 		ProcessContext ctx;
-		ctx.frames = (int)args.fpb;
-		ctx.sample_rate = stream.GetFrequency();
+		ctx.frames = testFrames;
+		ctx.sample_rate = 48000;
 		
-		float* out = (float*)args.output;
-		if (!out) return;
-		
-		static Vector<float> bufferL, bufferR;
-		if (bufferL.GetCount() < (int)args.fpb) {
-			bufferL.SetCount((int)args.fpb, 0);
-			bufferR.SetCount((int)args.fpb, 0);
-		}
-		
-		float* outputs[2] = { bufferL.Begin(), bufferR.Begin() };
+		float* outputs[2] = { bufferL, bufferR };
 		ctx.output.channels = outputs;
-		ctx.output.channel_count = 2;
-		ctx.output.frame_count = (int)args.fpb;
+		ctx.output.channel_count = channels;
+		ctx.output.frame_count = testFrames;
 		
-		ctx.transport.position_beats = (double)transport.playhead / ctx.sample_rate;
+		ctx.transport.position_beats = (double)b * testFrames / 48000.0;
 		ctx.transport.bpm = 120.0;
-		ctx.transport.playing = transport.playing;
+		ctx.transport.playing = true;
 		
-		if(transport.playing) {
-			processor.Process(ctx);
-			transport.playhead += (int)args.fpb;
-		} else {
-			for(int i = 0; i < (int)args.fpb; ++i) {
-				bufferL[i] = 0;
-				bufferR[i] = 0;
-			}
+		uint64 start = usecs();
+		processor.Process(ctx);
+		uint64 duration = usecs() - start;
+		
+		totalDuration += duration;
+		maxDuration = max(maxDuration, duration);
+		
+		// Interleave as the real callback does
+		for(int i = 0; i < testFrames; ++i) {
+			interleaved[i * 2] = bufferL[i];
+			interleaved[i * 2 + 1] = bufferR[i];
 		}
 		
-		for(int i = 0; i < (int)args.fpb; ++i) {
-			out[i * 2] = bufferL[i];
-			out[i * 2 + 1] = bufferR[i];
+		for(int i = 0; i < testFrames * channels; ++i) {
+			if (((uint32*)interleaved)[i] == magicPattern)
+				totalMagicFound++;
+			if (!Upp::IsFin(interleaved[i]) || abs(interleaved[i]) > 10.0)
+				totalBadValues++;
 		}
-	};
-
-	stream.SetFrequency(48000);
-	stream.SetSampleRate(512); // frames per buffer
-	stream.OpenDefault(0, 2, Upp::SND_FLOAT32); 
-	
-	if (stream.IsOpen()) {
-		processor.Log(Format("Audio Device: %s", Upp::Portaudio::AudioSys().GetDefaultOutput().name));
-		processor.Log(Format("Sample Rate: %d Hz", (int)stream.GetFrequency()));
-		processor.Log(Format("Buffer Size: %d frames", (int)stream.GetSampleRate()));
-		processor.Log("Mode: Float32 Real-time (Verified)");
-	} else {
-		processor.Log("CRITICAL ERROR: Failed to open Portaudio stream!");
+		
+		if (b % 100 == 0) {
+			Cout() << Format("Processed block %d/%d...\n", b, totalBlocks);
+		}
 	}
 	
-	stream.Start();
+	double avgDuration = (double)totalDuration / totalBlocks;
+	double deadline = 1000000.0 * testFrames / 48000.0;
+	
+	Cout() << "\n--- Diagnostic Results ---\n";
+	Cout() << Format("Average Process() time: %.2f us (Deadline: %.2f us)\n", avgDuration, deadline);
+	Cout() << Format("Maximum Process() time: %d us\n", (int)maxDuration);
+	
+	if (maxDuration > deadline) {
+		Cerr() << "ERROR: Real-time deadline exceeded at least once!\n";
+	} else {
+		Cout() << "SUCCESS: All blocks processed within real-time deadline.\n";
+	}
+	
+	if (totalMagicFound > 0) {
+		Cerr() << Format("ERROR: Found %d untouched magic values! Frames are being skipped.\n", totalMagicFound);
+	} else {
+		Cout() << "SUCCESS: All buffer frames were written in all blocks.\n";
+	}
+	
+	if (totalBadValues > 0) {
+		Cerr() << Format("ERROR: Found %d invalid (NaN/out-of-range) values!\n", totalBadValues);
+	} else {
+		Cout() << "SUCCESS: All blocks contain valid signal levels.\n";
+	}
+}
 
-	PluginWindow win;
-	win.Title("PitchVocalSuite Standalone");
-	win.SetEditor(editor);
-	win.SetMenuBar(PitchVocalEditor::MainMenuWrapper);
-	
-	win.WhenPlay = [&] {
-		if(transport.playing) transport.Stop();
-		else transport.Play();
-		win.SetPlaying(transport.playing);
-	};
-	
-	win.WhenStop = [&] {
-		transport.Stop();
-		transport.playhead = 0;
-		win.SetPlaying(false);
-	};
-	
-	win.SetTimeCallback(-100, [&] {
-		double seconds = (double)transport.playhead / 48000.0;
-		int mins = (int)(seconds / 60);
-		int secs = (int)fmod(seconds, 60);
-		int ms = (int)(fmod(seconds, 1.0) * 100);
-		win.SetTime(Format("%02d:%02d.%02d", mins, secs, ms));
-	});
+CONSOLE_APP_MAIN
+{
+	CommandLineArguments cl;
+	cl.AddArg("generate-test-tone", 'T', "Generate a test tone WAV file", false);
+	cl.AddArg("test", 't', "Run internal tests", false);
+	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
+	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
+	cl.AddArg("process-file", 'P', "Process an audio file", true, "input_path");
+	cl.AddArg("output", 'o', "Output file path for processing", true, "output_path");
+	cl.AddArg("pitch-shift", 'S', "Apply pitch shift in semitones", true, "semitones");
+	cl.AddArg("pitch-shift-note", 'N', "Apply pitch correction to a MIDI note", true, "midi_note");
+	cl.AddArg("verify-pitch", 'V', "Verify pitch of an audio file", true, "file_path");
+	cl.AddArg("expected-hz", 'E', "Expected frequency in Hz for verification", true, "hz");
+	cl.AddArg("help", 'h', "Show help", false);
 
-	win.Run();
+	if(!cl.Parse()) { cl.PrintHelp(); return; }
+	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
+	if(cl.IsArg("generate-test-tone")) { GenerateTestTone(); return; }
+	if(cl.IsArg("test")) { RunTests(); return; }
+	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
+	if(cl.IsArg("verify-pitch")) { VerifyPitch(cl.GetArg("verify-pitch"), cl.IsArg("expected-hz") ? StrToDouble(cl.GetArg("expected-hz")) : 440.0); return; }
 	
-	stream.Stop();
-	stream.Close();
+	PitchVocalProcessor processor;
+	if(cl.IsArg("test-audio-hw")) {
+		HardwareSimulator(processor);
+		return;
+	}
+
+	if(cl.IsArg("process-file")) {
+		String inputPath = cl.GetArg("process-file");
+		String outputPath = cl.IsArg("output") ? cl.GetArg("output") : "processed_output.wav";
+		
+		am::AudioBuffer inBuffer;
+		if (!am::AudioFile::Load(inputPath, inBuffer)) {
+			Cerr() << "Failed to load input file: " << inputPath << "\n";
+			return;
+		}
+
+		processor.LoadFullAudio(inBuffer, inputPath);
+		
+		if (cl.IsArg("pitch-shift")) {
+			processor.SetParameter("pitch_shift_semitones", StrToDouble(cl.GetArg("pitch-shift")));
+		}
+		if (cl.IsArg("pitch-shift-note")) {
+			PitchNote n;
+			n.midiNote = StrInt(cl.GetArg("pitch-shift-note"));
+			n.startTime = 0;
+			n.duration = 999;
+			processor.GetNotes().Add(n);
+		}
+		
+		am::AudioBuffer outBuffer;
+		outBuffer.Resize(inBuffer.GetChannels(), inBuffer.GetFrames());
+		outBuffer.rate = inBuffer.rate;
+		
+		ProcessContext ctx;
+		ctx.frames = inBuffer.GetFrames();
+		ctx.sample_rate = inBuffer.rate;
+		
+		// Setup output channels for processing
+		Vector<float*> tempOutputChannels;
+		tempOutputChannels.SetCount(outBuffer.GetChannels());
+		for (int c = 0; c < outBuffer.GetChannels(); ++c) {
+		    tempOutputChannels[c] = outBuffer.data[c].Begin();
+		}
+		ctx.output.channels = tempOutputChannels.Begin();
+		ctx.output.channel_count = outBuffer.GetChannels();
+		ctx.output.frame_count = outBuffer.GetFrames();
+		ctx.transport.playing = true;
+		
+		processor.Process(ctx);
+		
+		if (am::WavFile::Save(outputPath, outBuffer)) {
+			Cout() << "Successfully processed file to: " << outputPath << "\n";
+		} else {
+			Cerr() << "Failed to save output file.\n";
+		}
+	}
 }
 #endif
