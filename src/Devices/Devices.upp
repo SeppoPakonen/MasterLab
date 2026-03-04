@@ -1,4 +1,4 @@
-description "Devices package\377128,128,128";
+acceptflags GUI;\ndescription "Devices package\377128,128,128";
 
 uses
 	CtrlLib,
@@ -20,5 +20,8 @@ file
 	VideoDevice.h,
 	VideoDevice.cpp,
 	IOMatrixService.h,
-	IOMatrixService.cpp;
+	IOMatrixService.cpp,
+	CuteAudioConnect.h,
+	CuteAudioConnect.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

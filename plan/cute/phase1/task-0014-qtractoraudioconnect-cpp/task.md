@@ -1,5 +1,5 @@
 # Task: Convert `qtractorAudioConnect.cpp` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorAudioConnect.cpp` and convert it into MasterLab U++ conventions without attempting to compile.
@@ -19,8 +19,11 @@ Manually read `tmp/q/src/qtractorAudioConnect.cpp` and convert it into MasterLab
 - Reuse existing stub types or packages when they already express the same responsibility.
 - Follow `plan/cute/phase1/CONVERSION_RULES.md` and `docs/cute-phase1-investigation.md`.
 
+## Output
+- `src/Devices/CuteAudioConnect.cpp`
+
 ## Definition of Done
-- [ ] Source file has been read manually.
-- [ ] U++-style converted output has been written to the target package or Cute assembly notes.
-- [ ] Any required `.upp` manifest additions are recorded for later package updates.
-- [ ] No compile/build work was attempted as part of this task.
+- [x] Source file has been read manually.
+- [x] U++-style converted output has been written to the target package or Cute assembly notes.
+- [x] Any required `.upp` manifest additions are recorded for later package updates.
+- [x] No compile/build work was attempted as part of this task.

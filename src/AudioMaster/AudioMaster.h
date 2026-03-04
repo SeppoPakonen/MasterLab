@@ -23,6 +23,7 @@ using namespace Upp;
 // Package files
 #include "CuteAbout.h"
 #include "CuteApplication.h"
+#include "CuteActionControl.h"
 #include "Views.h"
 #include "MainWindow.h"
 

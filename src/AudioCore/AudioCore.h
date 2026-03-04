@@ -6,6 +6,8 @@ using namespace Upp;
 
 #include "AudioTypes.h"
 #include "AudioBuffer.h"
+#include "CuteAudioBuffer.h"
+#include "CuteAudioClip.h"
 #include "IIdentified.h"
 #include "Clip.h"
 #include "Timeline.h"

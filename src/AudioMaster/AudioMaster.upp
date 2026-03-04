@@ -13,6 +13,8 @@ file
 	CuteAbout.h,
 	CuteApplication.h,
 	CuteApplication.cpp,
+	CuteActionControl.h,
+	CuteActionControl.cpp,
 	AudioMaster.h,
 	AudioMaster.cpp,
 	MainWindow.h,

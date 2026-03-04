@@ -6,6 +6,7 @@
 #include <Editors/Editors.h>
 using namespace Upp;
 
+#include "AudioAtomic.h"
 #include "ToolModifiers.h"
 
 #endif

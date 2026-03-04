@@ -6,6 +6,7 @@
 #include "PluginManager.h"
 #include "IOMatrixService.h"
 #include "RoutingRepository.h"
+#include "CuteAudioConnect.h"
 
 using namespace Upp;
 
