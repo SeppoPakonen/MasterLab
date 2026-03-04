@@ -65,6 +65,9 @@ public:
 	
 	am::AudioBuffer fullAudioBuffer;
 	int waveformBufferSize = 2048;
+	
+	// New parameter for pitch shifting
+	double pitch_shift_semitones = 0.0;
 };
 
 #ifdef GUI

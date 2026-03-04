@@ -32,6 +32,14 @@ PitchVocalProcessor::PitchVocalProcessor()
 	pVib.max = 100;
 	pVib.default_value = 0;
 	Parameters().Add(pVib);
+	
+	PluginSDK::ParameterDescriptor pPitchShift;
+	pPitchShift.id = "pitch_shift_semitones";
+	pPitchShift.name = "Pitch Shift (Semitones)";
+	pPitchShift.min = -12.0;
+	pPitchShift.max = 12.0;
+	pPitchShift.default_value = 0.0;
+	Parameters().Add(pPitchShift);
 }
 
 String PitchVocalProcessor::GetCachePath(const String& path)
@@ -112,22 +120,34 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
+	// Get pitch shift parameter
+	pitch_shift_semitones = GetParameter("pitch_shift_semitones");
+	double pitchShiftRatio = pow(2.0, pitch_shift_semitones / 12.0);
+
 	int64 totalFrames = fullAudioBuffer.GetFrames();
 	int channels = fullAudioBuffer.GetChannels();
 	
 	if (totalFrames > 0 && channels > 0) {
-		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
+		// Adjust read position based on pitch shift ratio
+		double currentSamplePos = ctx.transport.position_beats * fullAudioBuffer.rate * pitchShiftRatio;
+		
 		for (int i = 0; i < ctx.frames; ++i) {
-			int64 frame = startFrame + i;
+			int64 frame = (int64)currentSamplePos;
 			for (int c = 0; c < ctx.output.channel_count; ++c) {
 				float sample = 0;
 				if (frame >= 0 && frame < totalFrames) {
 					int sourceChannel = c % channels;
-					sample = fullAudioBuffer.data[sourceChannel][(int)frame];
+					// Simple linear interpolation
+					double frac = currentSamplePos - frame;
+					float sample1 = fullAudioBuffer.data[sourceChannel][(int)frame];
+					float sample2 = (frame + 1 < totalFrames) ? fullAudioBuffer.data[sourceChannel][(int)frame + 1] : sample1;
+					sample = sample1 + (sample2 - sample1) * frac;
+					
 					if (!Upp::IsFin(sample)) sample = 0;
 				}
 				ctx.output.GetChannel(c)[i] = sample;
 			}
+			currentSamplePos += pitchShiftRatio; // Advance playback pointer
 		}
 	} else {
 		// Ensure silence if no audio is loaded
@@ -186,10 +206,19 @@ PitchVocalTopBar::PitchVocalTopBar()
 	vibratoAmount.MinMax(0, 100);
 	vibratoAmount.SetData(0);
 	vibratoAmount << [=] { WhenAction(); };
+	
+	Add(lblPitchShift.LeftPos(10, 80).TopPos(40, 20));
+	Add(pitchShift.LeftPos(100, 150).TopPos(40, 20));
+	lblPitchShift.SetLabel("Pitch Shift:");
+	pitchShift.MinMax(-12, 12);
+	pitchShift.SetData(0);
+	pitchShift << [=] { WhenAction(); };
+
 
 	algorithm.LayoutId("algorithm");
 	correctionSpeed.LayoutId("correctionSpeed");
 	vibratoAmount.LayoutId("vibratoAmount");
+	pitchShift.LayoutId("pitchShift");
 }
 
 void PitchVocalTopBar::Paint(Draw& w)
@@ -512,6 +541,7 @@ void PitchVocalEditor::SyncToProcessor()
 		processor->SetParameter("algorithm", topBar.GetAlgorithm());
 		processor->SetParameter("speed", topBar.GetSpeed());
 		processor->SetParameter("vibrato", topBar.GetVibrato());
+		processor->SetParameter("pitch_shift_semitones", topBar.GetPitchShift());
 	}
 }
 
@@ -521,6 +551,7 @@ void PitchVocalEditor::SyncFromProcessor()
 		topBar.SetAlgorithm((int)processor->GetParameter("algorithm"));
 		topBar.SetSpeed(processor->GetParameter("speed"));
 		topBar.SetVibrato(processor->GetParameter("vibrato"));
+		topBar.SetPitchShift(processor->GetParameter("pitch_shift_semitones"));
 	}
 }
 
@@ -870,7 +901,7 @@ GUI_APP_MAIN
 	win.SetTimeCallback(-100, [&] {
 		double seconds = (double)transport.playhead / 48000.0;
 		int mins = (int)(seconds / 60);
-		int secs = (int)fmod(seconds, 60);
+		int secs = (int)(fmod(seconds, 60));
 		int ms = (int)(fmod(seconds, 1.0) * 100);
 		win.SetTime(Format("%02d:%02d.%02d", mins, secs, ms));
 	});
@@ -890,6 +921,7 @@ CONSOLE_APP_MAIN
 	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
 	cl.AddArg("process-file", 'P', "Process an audio file", true, "input_path");
 	cl.AddArg("output", 'o', "Output file path for processing", true, "output_path");
+	cl.AddArg("pitch-shift", 'S', "Apply pitch shift in semitones (e.g., 2.0 for +2 semitones)", true, "semitones");
 	cl.AddArg("help", 'h', "Show help", false);
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
 	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
@@ -915,6 +947,11 @@ CONSOLE_APP_MAIN
 
 		processor.LoadFullAudio(inBuffer, inputPath);
 		
+		if (cl.IsArg("pitch-shift")) {
+			double semitones = StrToDouble(cl.GetArg("pitch-shift"));
+			processor.SetParameter("pitch_shift_semitones", semitones);
+		}
+		
 		am::AudioBuffer outBuffer;
 		outBuffer.Resize(inBuffer.GetChannels(), inBuffer.GetFrames());
 		outBuffer.rate = inBuffer.rate;
@@ -922,7 +959,14 @@ CONSOLE_APP_MAIN
 		ProcessContext ctx;
 		ctx.frames = inBuffer.GetFrames();
 		ctx.sample_rate = inBuffer.rate;
-		ctx.output.channels = outBuffer.data.Begin();
+		
+		// Setup output channels for processing
+		Vector<float*> tempOutputChannels;
+		tempOutputChannels.SetCount(outBuffer.GetChannels());
+		for (int c = 0; c < outBuffer.GetChannels(); ++c) {
+		    tempOutputChannels[c] = outBuffer.data[c].Begin();
+		}
+		ctx.output.channels = tempOutputChannels.Begin();
 		ctx.output.channel_count = outBuffer.GetChannels();
 		ctx.output.frame_count = outBuffer.GetFrames();
 		ctx.transport.playing = true;
