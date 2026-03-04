@@ -11,6 +11,7 @@ using namespace Upp;
 class WavFile {
 public:
 	static bool Load(const String& path, AudioBuffer& buffer);
+	static bool Save(const String& path, const AudioBuffer& buffer, int bitsPerSample = 16);
 };
 
 }

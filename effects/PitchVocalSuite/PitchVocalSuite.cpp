@@ -612,6 +612,33 @@ LV2_PLUGIN_MAIN(PitchVocalProcessor)
 
 #include <FileIO/FileIO.h>
 
+void GenerateTestTone()
+{
+	const int sampleRate = 48000;
+	const int durationSeconds = 3;
+	const double frequency = 440.0;
+	const String path = "test_tone.wav";
+
+	am::AudioBuffer buffer;
+	buffer.Resize(1, sampleRate * durationSeconds);
+	buffer.rate = sampleRate;
+	
+	double phase = 0;
+	double phaseIncr = 2.0 * M_PI * frequency / sampleRate;
+	
+	for(int i = 0; i < buffer.GetFrames(); ++i) {
+		buffer.data[0][i] = (float)sin(phase);
+		phase += phaseIncr;
+		if (phase >= 2.0 * M_PI) phase -= 2.0 * M_PI;
+	}
+	
+	if(am::WavFile::Save(path, buffer)) {
+		Upp::Cout() << "Successfully generated test tone: " << path << "\n";
+	} else {
+		Upp::Cerr() << "Failed to generate test tone.\n";
+	}
+}
+
 void RunTests() { Upp::Cout() << "Running PitchVocalSuite Tests...\nTests completed successfully.\n"; }
 
 void TestAudio(const String& path)
@@ -726,6 +753,7 @@ void HardwareSimulator(PitchVocalProcessor& processor)
 GUI_APP_MAIN
 {
 	CommandLineArguments cl;
+	cl.AddArg("generate-test-tone", 'T', "Generate a test tone WAV file", false);
 	cl.AddArg("test", 't', "Run internal tests", false);
 	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
 	cl.AddArg("test-gui", 'g', "Validate GUI against constraints", false);
@@ -734,6 +762,7 @@ GUI_APP_MAIN
 	cl.AddArg("help", 'h', "Show help", false);
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
 	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
+	if(cl.IsArg("generate-test-tone")) { GenerateTestTone(); return; }
 	if(cl.IsArg("test")) { RunTests(); return; }
 	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
 
@@ -855,12 +884,16 @@ GUI_APP_MAIN
 CONSOLE_APP_MAIN
 {
 	CommandLineArguments cl;
+	cl.AddArg("generate-test-tone", 'T', "Generate a test tone WAV file", false);
 	cl.AddArg("test", 't', "Run internal tests", false);
 	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
 	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
+	cl.AddArg("process-file", 'P', "Process an audio file", true, "input_path");
+	cl.AddArg("output", 'o', "Output file path for processing", true, "output_path");
 	cl.AddArg("help", 'h', "Show help", false);
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
 	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
+	if(cl.IsArg("generate-test-tone")) { GenerateTestTone(); return; }
 	if(cl.IsArg("test")) { RunTests(); return; }
 	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
 
@@ -868,6 +901,39 @@ CONSOLE_APP_MAIN
 	if(cl.IsArg("test-audio-hw")) {
 		HardwareSimulator(processor);
 		return;
+	}
+
+	if(cl.IsArg("process-file")) {
+		String inputPath = cl.GetArg("process-file");
+		String outputPath = cl.IsArg("output") ? cl.GetArg("output") : "processed_output.wav";
+		
+		am::AudioBuffer inBuffer;
+		if (!am::WavFile::Load(inputPath, inBuffer)) {
+			Cerr() << "Failed to load input file: " << inputPath << "\n";
+			return;
+		}
+
+		processor.LoadFullAudio(inBuffer, inputPath);
+		
+		am::AudioBuffer outBuffer;
+		outBuffer.Resize(inBuffer.GetChannels(), inBuffer.GetFrames());
+		outBuffer.rate = inBuffer.rate;
+		
+		ProcessContext ctx;
+		ctx.frames = inBuffer.GetFrames();
+		ctx.sample_rate = inBuffer.rate;
+		ctx.output.channels = outBuffer.data.Begin();
+		ctx.output.channel_count = outBuffer.GetChannels();
+		ctx.output.frame_count = outBuffer.GetFrames();
+		ctx.transport.playing = true;
+		
+		processor.Process(ctx);
+		
+		if (am::WavFile::Save(outputPath, outBuffer)) {
+			Cout() << "Successfully processed file to: " << outputPath << "\n";
+		} else {
+			Cerr() << "Failed to save output file.\n";
+		}
 	}
 }
 #endif

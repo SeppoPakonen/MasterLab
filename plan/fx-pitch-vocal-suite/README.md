@@ -46,5 +46,10 @@ The goal is to create a feature-rich vocal processing plugin family, initially t
 
 - **Framework:** Ultimate++ (U++).
 - **GUI:** `CtrlLib`-style native-like controls; no bitmap skinning.
+- **Verification (GAN Style):** Adopting a generative-adversarial approach:
+    1.  **Generate** audio clips with known pitches.
+    2.  **Modify** pitches via project CLI.
+    3.  **Process** via headless engine and **re-analyze** to verify DSP accuracy.
+- **Headless Support:** Decoupling processor from GUI to allow CLI-based processing and automated verification (no `CtrlCore` dependency).
 - **Platform:** Primary development on Gentoo Linux.
 - **Milestones:** Standalone-first, then LV2, then others.
