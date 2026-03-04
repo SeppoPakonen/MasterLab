@@ -1,0 +1,26 @@
+# Task: Convert `config.h.cmake` to U++
+# Status: TODO
+
+## Objective
+Manually read `tmp/q/src/config.h.cmake` and convert it into MasterLab U++ conventions without attempting to compile.
+
+## Source
+- `tmp/q/src/config.h.cmake`
+
+## Target
+- Cute assembly anchor: `src/Cute`
+- Suggested package: `Cute`
+- Suggested output root: `src/Cute`
+- Package rationale: Assembly entrypoint or phase-level integration artifact for the new Cute application root.
+
+## Conversion Notes
+- Translate this artifact into Cute assembly/package metadata or conversion notes instead of copying build-system syntax directly.
+- Preserve the original main classes/functions and roughly similar code volume.
+- Reuse existing stub types or packages when they already express the same responsibility.
+- Follow `plan/cute/phase1/CONVERSION_RULES.md` and `docs/cute-phase1-investigation.md`.
+
+## Definition of Done
+- [ ] Source file has been read manually.
+- [ ] U++-style converted output has been written to the target package or Cute assembly notes.
+- [ ] Any required `.upp` manifest additions are recorded for later package updates.
+- [ ] No compile/build work was attempted as part of this task.
