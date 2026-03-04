@@ -1,168 +1,5 @@
 #include "PitchVocalSuite.h"
-#include <AI/LogicGui/LogicGui.h>
-#include <SoftAudio/SoftAudio.h>
-
-// --- PitchVocalProcessor ---
-
-PitchVocalProcessor::PitchVocalProcessor()
-{
-	PluginSDK::ParameterDescriptor pAlg;
-	pAlg.id = "algorithm";
-	pAlg.name = "Algorithm";
-	pAlg.min = 0;
-	pAlg.max = 2;
-	pAlg.default_value = 0;
-	Parameters().Add(pAlg);
-	
-	PluginSDK::ParameterDescriptor pSpeed;
-	pSpeed.id = "speed";
-	pSpeed.name = "Speed";
-	pSpeed.min = 0;
-	pSpeed.max = 100;
-	pSpeed.default_value = 50;
-	Parameters().Add(pSpeed);
-
-	PluginSDK::ParameterDescriptor pVib;
-	pVib.id = "vibrato";
-	pVib.name = "Vibrato";
-	pVib.min = 0;
-	pVib.max = 100;
-	pVib.default_value = 0;
-	Parameters().Add(pVib);
-	
-	PluginSDK::ParameterDescriptor pPitchShift;
-	pPitchShift.id = "pitch_shift_semitones";
-	pPitchShift.name = "Pitch Shift (Semitones)";
-	pPitchShift.min = -12.0;
-	pPitchShift.max = 12.0;
-	pPitchShift.default_value = 0.0;
-	Parameters().Add(pPitchShift);
-}
-
-String PitchVocalProcessor::GetCachePath(const String& path)
-{
-	String cacheDir = AppendFileName(GetHomeDirectory(), ".masterlab/cache/pitch-vocal-editor");
-	RealizeDirectory(cacheDir);
-	
-	Md5Stream hash;
-	hash.Put(path);
-	hash.Put64(GetFileLength(path));
-	
-	FileTime ft = GetFileTime(path);
-	hash.Put(&ft, sizeof(ft));
-	
-	return AppendFileName(cacheDir, hash.FinishString());
-}
-
-void PitchVocalProcessor::LoadFullAudio(const am::AudioBuffer& buffer, const String& path)
-{
-	fullWaveform.Clear();
-	pitchPoints.Clear();
-	
-	if (buffer.GetFrames() == 0) return;
-	
-	fullAudioBuffer.Resize(buffer.GetChannels(), buffer.GetFrames());
-	fullAudioBuffer.rate = buffer.rate;
-	for(int c = 0; c < buffer.GetChannels(); ++c) {
-		for(int i = 0; i < buffer.GetFrames(); ++i) {
-			fullAudioBuffer.data[c][i] = buffer.data[c][i];
-		}
-	}
-
-	Log(Format("Loading full audio: %d frames", (int)buffer.GetFrames()));
-	
-	int step = max(1, (int)buffer.GetFrames() / 4000);
-	for (int i = 0; i < buffer.GetFrames(); i += step) {
-		float maxV = 0;
-		for (int j = 0; j < step && i + j < buffer.GetFrames(); ++j) {
-			maxV = max(maxV, abs(buffer.data[0][i + j]));
-		}
-		fullWaveform.Add(maxV);
-	}
-	
-	String cachePath = GetCachePath(path);
-	if (FileExists(cachePath)) {
-		Log("Loading pitch analysis from cache...");
-		String json = LoadFile(cachePath);
-		if (!json.IsEmpty()) {
-			LoadFromJson(pitchPoints, json);
-			Log(Format("Cache loaded. Found %d pitch points.", (int)pitchPoints.GetCount()));
-			return;
-		}
-	}
-
-	Log("Performing offline pitch analysis (this may take a while)...");
-	pitchEngine.SetSampleRate(buffer.rate);
-	int blockSize = 4096;
-	for (int i = 0; i < buffer.GetFrames(); i += blockSize) {
-		int frames = min(blockSize, (int)buffer.GetFrames() - i);
-		pitchEngine.Analyze(buffer.data[0].Begin() + i, frames, (double)i / buffer.rate, pitchPoints);
-	}
-	
-	Log(Format("Analysis complete. Detected %d pitch points.", (int)pitchPoints.GetCount()));
-	
-	Log("Saving analysis to cache...");
-	SaveFile(cachePath, StoreAsJson(pitchPoints));
-}
-
-Upp::String PitchVocalProcessor::GetURI() const
-{
-	return "https://masterlab.com/plugins/pitch-vocal-suite";
-}
-
-Upp::String PitchVocalProcessor::GetName() const
-{
-	return "Pitch Vocal Suite";
-}
-
-void PitchVocalProcessor::Process(ProcessContext& ctx)
-{
-	// Get pitch shift parameter
-	pitch_shift_semitones = GetParameter("pitch_shift_semitones");
-	double pitchShiftRatio = pow(2.0, pitch_shift_semitones / 12.0);
-
-	int64 totalFrames = fullAudioBuffer.GetFrames();
-	int channels = fullAudioBuffer.GetChannels();
-	
-	if (totalFrames > 0 && channels > 0) {
-		// Create a temporary buffer for processing
-		am::AudioBuffer tempBuffer;
-		tempBuffer.Resize(ctx.output.channel_count, ctx.frames);
-		
-		// Copy input to temp buffer
-		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
-		for (int i = 0; i < ctx.frames; ++i) {
-			int64 frame = startFrame + i;
-			for (int c = 0; c < ctx.output.channel_count; ++c) {
-				if (frame >= 0 && frame < totalFrames) {
-					int sourceChannel = c % channels;
-					tempBuffer.data[c][i] = fullAudioBuffer.data[sourceChannel][(int)frame];
-				} else {
-					tempBuffer.data[c][i] = 0;
-				}
-			}
-		}
-		
-		// Process with Phase Vocoder if needed
-		if (abs(pitchShiftRatio - 1.0) > 0.001) {
-			phaseVocoder.Process(tempBuffer, pitchShiftRatio);
-		}
-		
-		// Copy from temp buffer to output
-		for (int i = 0; i < ctx.frames; ++i) {
-			for (int c = 0; c < ctx.output.channel_count; ++c) {
-				ctx.output.GetChannel(c)[i] = tempBuffer.data[c][i];
-			}
-		}
-
-	} else {
-		// Ensure silence if no audio is loaded
-		for (int c = 0; c < ctx.output.channel_count; ++c) {
-			float* ch = ctx.output.GetChannel(c);
-			for (int i = 0; i < ctx.frames; ++i) ch[i] = 0;
-		}
-	}
-}
+#include <AudioCore/AudioFile.h>
 
 // --- PitchVocalTopBar ---
 
@@ -465,7 +302,7 @@ PitchVocalEditor::PitchVocalEditor()
 	instance = this;
 	LayoutId("PitchVocalEditor");
 	
-	ctrlLog.Create();
+	ctrlLog = new CtrlLog;
 	
 	int topH = 80, bottomH = 80, overviewH = 40, scrollH = 16, scrollW = 16;
 	
@@ -504,7 +341,7 @@ PitchVocalEditor::PitchVocalEditor()
 
 void PitchVocalEditor::OnScroll() { viewport.scrollX = scrollBar.Get() / 10.0; Refresh(); }
 
-void PitchVocalEditor::SetProcessor(PluginProcessor* p)
+void PitchVocalEditor::SetProcessor(PluginSDK::PluginProcessor* p)
 {
 	PluginEditor::SetProcessor(p);
 	auto* pvp = dynamic_cast<PitchVocalProcessor*>(p);
@@ -593,7 +430,7 @@ void PitchVocalEditor::LoadAudio(const String& path)
 	if (!pvp) return;
 	audioPath = path;
 	am::AudioBuffer buffer;
-	if (am::WavFile::Load(path, buffer)) { // This should be AudioFile::Load
+	if (am::AudioFile::Load(path, buffer)) {
 		pvp->LoadFullAudio(buffer, path);
 		scrollBar.SetTotal((int)(buffer.GetFrames() / buffer.rate * 10));
 		SyncFromProcessor();
@@ -616,10 +453,6 @@ bool PitchVocalEditor::Access(Visitor& v)
 	return Ctrl::Access(v);
 }
 
-#ifdef flagDLL
-#include <PluginABI/LV2/LV2.h>
-LV2_PLUGIN_MAIN(PitchVocalProcessor)
-#endif
 
 GUI_APP_MAIN
 {
@@ -656,7 +489,7 @@ GUI_APP_MAIN
 	Upp::Portaudio::AudioDeviceStream stream;
 	
 	stream.WhenAction << [&](Upp::StreamCallbackArgs& args) {
-		ProcessContext ctx;
+		PluginSDK::ProcessContext ctx;
 		ctx.frames = (int)args.fpb;
 		ctx.sample_rate = stream.GetFrequency();
 		

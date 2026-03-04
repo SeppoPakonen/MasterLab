@@ -6,7 +6,8 @@
 #include <AudioFX/AudioFX.h>
 #include <PluginSDK/PluginTypes.h> // Explicitly include PluginTypes.h
 #include <PluginSDK/PluginSDK.h>
-#include "GraphVisualizationCtrl.h"  // Include GraphVisualizationCtrl instead of forward declaration
+#include "GraphVisualizationCtrl.h"
+
 using namespace Upp;
 
 namespace am {
