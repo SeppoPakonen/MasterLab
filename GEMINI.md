@@ -1,7 +1,20 @@
-# MasterLab Project Rules
-
-## GUI Development and Constraints
-- **MANDATORY**: All GUI development in MasterLab MUST implement and utilize the `.ugui` logical constraint system for architectural and functional verification during development and testing.
-- All new packages MUST include a `.ugui` file defining mandatory components, layout hierarchy, and architectural mandates (e.g., no bitmap skinning).
-- Verification via `--test-gui` or equivalent should be part of the standard testing workflow.
-- Refer to `docs/Gui-Constraints.md` for system details and syntax.
+- The manual refinement phase of the knowledge base is complete with 246 files in the 'processed/' directory. The next phase is converting spreadsheets to Python scripts.
+- Successfully ported convert_orchestrator.py to C++ as part of Maestro package. New classes: InventoryGenerator, ConversionMemory, ConversionPlanner, ConversionOrchestrator. New CLI command: 'convert' with subcommands inventory, plan, run, validate. AI integration via CliMaestroEngine (Gemini) is functional in 'convert run'.
+- Successfully ported playbook_manager.py and evidence_pack.py to C++ as part of Maestro package. Integrated with MaestroCLI via 'convert playbook' and 'evidence' commands. Verified basic functionality.
+- Ported semantic_integrity.py to C++ as part of Maestro package. Integrated with ConversionOrchestrator::Run to perform heuristic semantic checks after each conversion task. Updated MaestroCLI.
+- Synchronized MaestroCLI surface with legacy Python CLI. Added aliases (r, b, c, pl, s) and implemented/stubbed all main subcommands for repo, make, convert, and wsession. Build verified.
+- Completed Phase 5 porting: PipelineRuntime and RegressionReplay logic integrated into Maestro package and MaestroCLI. Added 'runs' and 'replay' subcommands to 'convert'. Verified build.
+- The project uses a classical Windows desktop program interface (Windows XP / year 2003 style), characterized by heavy use of menus, toolbars, status bars, and standard dialog patterns (OK/Cancel/Apply).
+- DeepCFRPerfTest now supports scientific metrics (--analyze), matched hands (--matched <seed>), and iteration filtering (--last <n>, --step <s>). Found and fixed a bug where win messages were only sent in verbose mode.
+- DeepCFRPerfTest now supports configurable player count (--players <n>, default 4, min 2, max 10).
+- DeepCFRPerfTest now supports artificial bluffing logic (--bluff-weak, --bluff-avoid-fold, --bluff-threshold) and bot aggression reduction (--disable-all-in). Fixed a major issue where all bots were using the tested agent's backend.
+- DeepCFRPerfTest RHS calculation improved with rank-sum heuristic for preflop. Fixed a crash in distributePot for side pots. Bluffing metrics correctly implemented.
+- Performance metrics now distinguish between folded losses and weak showdown losses. Fixed a bug where bluff settings weren't correctly reflected in summary statistics due to verbose flags.
+- Refactored PokerThBotPlayer to use setMyAction consistently. Implemented special action code -1 for avoided folds to ensure they are captured in scientific metrics.
+- Successfully ported the core of Tesseract-Sauerbraten command/variable system to U++. Verified registration, get/set, and aliasing in the Engine package. Ready for executor implementation.
+- All GUI development in MasterLab must adhere to .ugui logical constraints to ensure architectural integrity and functional verification. Documentation is in docs/Gui-Constraints.md.
+- MANDATORY: All GUI development in MasterLab MUST implement and utilize the .ugui logical constraint system for verification during development and testing. New packages MUST adhere to this rule. Documentation is in docs/Gui-Constraints.md.
+- **PitchVocalSuite GAN-Style Verification Workflow:**
+    - **Generate (CLI):** Created a `--generate-test-tone` CLI flag to produce `test_tone.wav` (3s, 440Hz sine wave).
+    - **Modify (CLI):** Implemented `--process-file` to run audio through PitchVocalProcessor in headless mode.
+    - **Verify (CLI):** Next step is to implement pitch manipulation via CLI and re-analyze the output.

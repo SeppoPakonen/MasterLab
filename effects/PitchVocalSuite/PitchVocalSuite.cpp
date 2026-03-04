@@ -901,7 +901,7 @@ GUI_APP_MAIN
 	win.SetTimeCallback(-100, [&] {
 		double seconds = (double)transport.playhead / 48000.0;
 		int mins = (int)(seconds / 60);
-		int secs = (int)(fmod(seconds, 60));
+		int secs = (int)fmod(seconds, 60);
 		int ms = (int)(fmod(seconds, 1.0) * 100);
 		win.SetTime(Format("%02d:%02d.%02d", mins, secs, ms));
 	});
