@@ -5,6 +5,7 @@
 #include <Draw/Draw.h>
 #include <AudioAnalysis/PitchAnalysis.h>
 #include <PluginSDK/PluginSDK.h>
+#include <DSP/PhaseVocoder.h>
 
 #ifdef GUI
 #include <CtrlLib/CtrlLib.h>
@@ -68,6 +69,8 @@ public:
 	
 	// New parameter for pitch shifting
 	double pitch_shift_semitones = 0.0;
+	
+	DSP::PhaseVocoder phaseVocoder;
 };
 
 #ifdef GUI

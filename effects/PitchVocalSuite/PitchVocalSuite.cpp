@@ -120,87 +120,49 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
-	// Get global pitch shift parameter
-	pitch_shift_semitones = GetParameter("pitch_shift_semitones");
-	double pitchShiftRatio = pow(2.0, pitch_shift_semitones / 12.0);
-
 	int64 totalFrames = fullAudioBuffer.GetFrames();
 	int channels = fullAudioBuffer.GetChannels();
-	
-	if (totalFrames > 0 && channels > 0) {
-		double currentSamplePos = ctx.transport.position_beats * fullAudioBuffer.rate;
 
+	if (totalFrames > 0 && channels > 0) {
+		// Create a temporary buffer for processing
+		am::AudioBuffer tempBuffer;
+		tempBuffer.Resize(ctx.output.channel_count, ctx.frames);
+		
+		// Copy input to temp buffer
+		int64 startFrame = (int64)(ctx.transport.position_beats * fullAudioBuffer.rate);
 		for (int i = 0; i < ctx.frames; ++i) {
-			double time = currentSamplePos / fullAudioBuffer.rate;
-			
-			// Note-based correction
-			double noteRatio = 1.0;
-			bool noteActive = false;
-			for(const auto& note : notes) {
-				if (time >= note.startTime && time < (note.startTime + note.duration)) {
-					double targetFreq = am::PitchAnalysisEngine::MidiToFrequency(note.midiNote);
-					// Find original pitch at this time from pitchPoints
-					// (This is a simplified lookup)
-					double originalFreq = 0;
-					for(const auto& p : pitchPoints) {
-						if (p.time >= time) {
-							originalFreq = p.frequency;
-							break;
-						}
-					}
-					
-					if (originalFreq > 0) {
-						noteRatio = targetFreq / originalFreq;
-					}
-					noteActive = true;
-					break;
-				}
-			}
-			
-			double finalRatio = noteActive ? noteRatio : pitchShiftRatio;
-			
-			int64 frame = (int64)currentSamplePos;
+			int64 frame = startFrame + i;
 			for (int c = 0; c < ctx.output.channel_count; ++c) {
-				float sample = 0;
 				if (frame >= 0 && frame < totalFrames) {
 					int sourceChannel = c % channels;
-					// Simple linear interpolation
-					double frac = currentSamplePos - frame;
-					float sample1 = fullAudioBuffer.data[sourceChannel][(int)frame];
-					float sample2 = (frame + 1 < totalFrames) ? fullAudioBuffer.data[sourceChannel][(int)frame + 1] : sample1;
-					sample = sample1 + (sample2 - sample1) * frac;
-					
-					if (!Upp::IsFin(sample)) sample = 0;
+					tempBuffer.data[c][i] = fullAudioBuffer.data[sourceChannel][(int)frame];
+				} else {
+					tempBuffer.data[c][i] = 0;
 				}
-				ctx.output.GetChannel(c)[i] = sample;
 			}
-			currentSamplePos += finalRatio; // Advance playback pointer
 		}
+		
+		// Get pitch shift parameter
+		pitch_shift_semitones = GetParameter("pitch_shift_semitones");
+		double pitchShiftRatio = pow(2.0, pitch_shift_semitones / 12.0);
+
+		// Process with Phase Vocoder if needed
+		if (abs(pitchShiftRatio - 1.0) > 0.001) {
+			phaseVocoder.Process(tempBuffer, pitchShiftRatio);
+		}
+		
+		// Copy from temp buffer to output
+		for (int i = 0; i < ctx.frames; ++i) {
+			for (int c = 0; c < ctx.output.channel_count; ++c) {
+				ctx.output.GetChannel(c)[i] = tempBuffer.data[c][i];
+			}
+		}
+
 	} else {
 		// Ensure silence if no audio is loaded
 		for (int c = 0; c < ctx.output.channel_count; ++c) {
 			float* ch = ctx.output.GetChannel(c);
 			for (int i = 0; i < ctx.frames; ++i) ch[i] = 0;
-		}
-	}
-
-	float* channel0 = ctx.output.GetChannel(0); 
-	if(channel0 && ctx.frames > 0 && ctx.transport.playing) {
-		int framesToCopy = min((int)ctx.frames, waveformBufferSize);
-		if (waveformBuffer.GetCount() < waveformBufferSize) {
-			for(int i = 0; i < framesToCopy && waveformBuffer.GetCount() < waveformBufferSize; ++i)
-				waveformBuffer.Add(channel0[i]);
-		} else {
-			int remaining = waveformBufferSize - framesToCopy;
-			if (remaining > 0) {
-				for(int i = 0; i < remaining; ++i)
-					waveformBuffer[i] = waveformBuffer[i + framesToCopy];
-				for(int i = 0; i < framesToCopy; ++i)
-					waveformBuffer[remaining + i] = channel0[i];
-			} else {
-				for(int i = 0; i < waveformBufferSize; ++i)
-					waveformBuffer[i] = channel0[i + (framesToCopy - waveformBufferSize)];
-			}
 		}
 	}
 }
