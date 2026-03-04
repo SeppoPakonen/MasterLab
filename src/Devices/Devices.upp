@@ -22,6 +22,8 @@ file
 	IOMatrixService.h,
 	IOMatrixService.cpp,
 	CuteAudioConnect.h,
-	CuteAudioConnect.cpp;
+	CuteAudioConnect.cpp,
+	CuteMidiConnect.h,
+	CuteMidiConnect.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

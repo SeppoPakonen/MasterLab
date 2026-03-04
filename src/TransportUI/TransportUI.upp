@@ -1,4 +1,4 @@
-description "Transport UI package\377255,99,71";
+acceptflags GUI;\ndescription "Transport UI package\377255,99,71";
 
 uses
 	CtrlLib,
@@ -15,6 +15,9 @@ file
 	CycleRange.cpp,
 	PrePostRoll.h,
 	PrePostRoll.cpp,
+	CuteMeter.h,
+	CuteMeter.cpp,
 	TransportWindow.h,
 	TransportWindow.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

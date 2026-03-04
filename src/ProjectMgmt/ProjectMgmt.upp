@@ -27,6 +27,10 @@ file
 	CuteCurveCommand.h,
 	CuteCurveCommand.cpp,
 	CuteEngineCommand.h,
-	CuteEngineCommand.cpp;
+	CuteEngineCommand.cpp,
+	CuteMidiControlCommand.h,
+	CuteMidiControlCommand.cpp,
+	CuteMidiEditCommand.h,
+	CuteMidiEditCommand.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

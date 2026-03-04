@@ -7,6 +7,7 @@
 #include "IOMatrixService.h"
 #include "RoutingRepository.h"
 #include "CuteAudioConnect.h"
+#include "CuteMidiConnect.h"
 
 using namespace Upp;
 

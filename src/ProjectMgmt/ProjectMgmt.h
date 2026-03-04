@@ -17,6 +17,8 @@ using namespace Upp;
 #include "CuteClipCommand.h"
 #include "CuteCommand.h"
 #include "CuteEngineCommand.h"
+#include "CuteMidiControlCommand.h"
+#include "CuteMidiEditCommand.h"
 
 // Provide ProjectMgmt namespace for compatibility with editor modules
 namespace ProjectMgmt {
