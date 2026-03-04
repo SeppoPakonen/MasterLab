@@ -30,63 +30,76 @@ void ProjectSetupDialog::BuildLayout() {
 	int left = 16;
 	int labelWidth = 120;
 
-	Label startLabel;
 	startLabel.SetText("Start:");
+	startLabel.LayoutId("Start");
 	Add(startLabel.TopPos(16, 20).LeftPos(left, labelWidth));
 	Add(startField.TopPos(16, 20).LeftPos(left + labelWidth, 160));
+	startField.LayoutId("startField");
 
-	Label lengthLabel;
 	lengthLabel.SetText("Length:");
+	lengthLabel.LayoutId("Length");
 	Add(lengthLabel.TopPos(44, 20).LeftPos(left, labelWidth));
 	Add(lengthField.TopPos(44, 20).LeftPos(left + labelWidth, 160));
+	lengthField.LayoutId("lengthField");
 
-	Label frameRateLabel;
 	frameRateLabel.SetText("Frame Rate:");
+	frameRateLabel.LayoutId("Frame Rate");
 	Add(frameRateLabel.TopPos(84, 20).LeftPos(left, labelWidth));
 	Add(frameRateDrop.TopPos(84, 20).LeftPos(left + labelWidth, 160));
+	frameRateDrop.LayoutId("frameRateDrop");
 
-	Label displayFormatLabel;
 	displayFormatLabel.SetText("Display Format:");
+	displayFormatLabel.LayoutId("Display Format");
 	Add(displayFormatLabel.TopPos(112, 20).LeftPos(left, labelWidth));
 	Add(displayFormatDrop.TopPos(112, 20).LeftPos(left + labelWidth, 160));
+	displayFormatDrop.LayoutId("displayFormatDrop");
 
-	Label displayOffsetLabel;
 	displayOffsetLabel.SetText("Display Offset:");
+	displayOffsetLabel.LayoutId("Display Offset");
 	Add(displayOffsetLabel.TopPos(140, 20).LeftPos(left, labelWidth));
 	Add(displayOffsetField.TopPos(140, 20).LeftPos(left + labelWidth, 160));
+	displayOffsetField.LayoutId("displayOffsetField");
 
-	Label barOffsetLabel;
 	barOffsetLabel.SetText("Bar Offset:");
+	barOffsetLabel.LayoutId("Bar Offset");
 	Add(barOffsetLabel.TopPos(168, 20).LeftPos(left, labelWidth));
 	Add(barOffsetField.TopPos(168, 20).LeftPos(left + labelWidth, 80));
+	barOffsetField.LayoutId("barOffsetField");
 
-	Label sampleRateLabel;
 	sampleRateLabel.SetText("Sample Rate:");
+	sampleRateLabel.LayoutId("Sample Rate");
 	Add(sampleRateLabel.TopPos(208, 20).LeftPos(left, labelWidth));
 	Add(sampleRateDrop.TopPos(208, 20).LeftPos(left + labelWidth, 160));
+	sampleRateDrop.LayoutId("sampleRateDrop");
 
-	Label recordBitDepthLabel;
-	recordBitDepthLabel.SetText("Record Bit Depth:");
+	recordBitDepthLabel.SetText("Record Format:");
+	recordBitDepthLabel.LayoutId("Record Format");
 	Add(recordBitDepthLabel.TopPos(236, 20).LeftPos(left, labelWidth));
 	Add(recordBitDepthDrop.TopPos(236, 20).LeftPos(left + labelWidth, 160));
+	recordBitDepthDrop.LayoutId("recordBitDepthDrop");
 
-	Label recordFileTypeLabel;
+	recordFileTypeLabel.LayoutId("Record File Type");
 	recordFileTypeLabel.SetText("Record File Type:");
 	Add(recordFileTypeLabel.TopPos(264, 20).LeftPos(left, labelWidth));
 	Add(recordFileTypeDrop.TopPos(264, 20).LeftPos(left + labelWidth, 160));
+	recordFileTypeDrop.LayoutId("recordFileTypeDrop");
 
-	Label stereoPanLawLabel;
+	stereoPanLawLabel.LayoutId("Stereo Pan Law");
 	stereoPanLawLabel.SetText("Stereo Pan Law:");
 	Add(stereoPanLawLabel.TopPos(292, 20).LeftPos(left, labelWidth));
 	Add(panLawDrop.TopPos(292, 20).LeftPos(left + labelWidth, 160));
+	panLawDrop.LayoutId("panLawDrop");
 
 	helpButton.SetLabel("Help");
+	helpButton.LayoutId("Help");
 	Add(helpButton.BottomPos(12, 24).LeftPos(left, 80));
 
 	okButton.SetLabel("OK");
+	okButton.LayoutId("OK");
 	Add(okButton.BottomPos(12, 24).RightPos(108, 80));
 
 	cancelButton.SetLabel("Cancel");
+	cancelButton.LayoutId("Cancel");
 	Add(cancelButton.BottomPos(12, 24).RightPos(16, 80));
 }
 

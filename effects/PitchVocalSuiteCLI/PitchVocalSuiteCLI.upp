@@ -1,8 +1,7 @@
 description "Headless CLI for PitchVocalSuite";
 
 uses
-	PitchVocalSuiteCore,
-	FileIO;
+	PitchVocalSuiteCore;
 
 uses(BUILTIN_PORTAUDIO) plugin/portaudio;
 

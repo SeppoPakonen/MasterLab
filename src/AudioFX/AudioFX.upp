@@ -1,7 +1,7 @@
-description "Audio effects package\377255,127,80";
+acceptflags
+	GUI;
 
 uses
-	CtrlLib,
 	AudioCore;
 
 file
@@ -27,4 +27,8 @@ file
 	UI/SceneManager.cpp,
 	UI/XYPad.h,
 	UI/XYPad.cpp;
+
+mainconfig
+	"Standalone" = "GUI",
+	"Headless" = "!GUI";
 

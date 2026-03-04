@@ -2,25 +2,30 @@
 #define _FileIO_FileIO_h_
 
 #include <Core/Core.h>
-#ifdef flagGUI
-#include <CtrlCore/CtrlCore.h>
-#include <CtrlLib/CtrlLib.h>
-#endif
-#include <AudioCore/AudioCore.h>
-#include <AudioFX/AudioFX.h>
-#include <AudioGraph/AudioGraph.h>
-using namespace Upp;
+#include <CtrlLib/CtrlLib.h> // For FileSel
 
-#include "Import.h"
-#include "Export.h"
+// Core File IO classes
+#include "CuteDocument.h"
 #include "MediaFormatRegistry.h"
 #include "RecentFiles.h"
-#include "CuteDocument.h"
+#include "Import.h"
+#include "Export.h"
 #include "CuteFileList.h"
+
+#ifdef GUI
+// GUI-dependent File IO classes
 #include "CuteFileListView.h"
 #include "CuteFileSystem.h"
 #include "CuteFiles.h"
-#include "Backup.h"
-#include "Templates.h"
+#endif
+
+namespace am {
+namespace FileIO {
+
+// Global functions/classes not GUI-dependent
+// ...
+
+} // namespace FileIO
+} // namespace am
 
 #endif

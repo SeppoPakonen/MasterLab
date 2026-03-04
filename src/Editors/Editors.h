@@ -1,7 +1,7 @@
 #ifndef _Editors_Editors_h_
 #define _Editors_Editors_h_
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 #include <Draw/Draw.h>

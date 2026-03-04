@@ -1,7 +1,4 @@
 #include "PitchVocalSuiteCLI.h"
-#include <PitchVocalSuite/PitchVocalSuite.h> // Include the main header for PitchVocalProcessor
-#include <FileIO/FileIO.h>
-#include <AudioCore/AudioFile.h>
 
 // These functions are now part of the PitchVocalSuiteCLI package
 void GenerateTestTone()

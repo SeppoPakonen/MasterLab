@@ -1,23 +1,16 @@
-acceptflags
-	GUI;
+description "Basic File IO utilities";
 
 uses
 	Core,
-	AudioCore,
-	AudioFX,
-	AudioGraph;
+	FileSel,
+	AudioCore; // FileIO depends on AudioCore
 
+uses(GUI) CtrlLib;
+	
 file
+	AGENTS.md,
 	FileIO.h,
 	FileIO.cpp,
-	Import.h,
-	Import.cpp,
-	Export.h,
-	Export.cpp,
-	MediaFormatRegistry.h,
-	MediaFormatRegistry.cpp,
-	RecentFiles.h,
-	RecentFiles.cpp,
 	CuteDocument.h,
 	CuteDocument.cpp,
 	CuteFileList.h,
@@ -27,8 +20,14 @@ file
 	CuteFileSystem.h,
 	CuteFileSystem.cpp,
 	CuteFiles.h,
-	CuteFiles.cpp;
-
-mainconfig
-	"Standalone" = "GUI",
-	"Headless" = "!GUI";
+	CuteFiles.cpp,
+	MediaFormatRegistry.h,
+	MediaFormatRegistry.cpp,
+	RecentFiles.h,
+	RecentFiles.cpp,
+	Import.h,
+	Import.cpp,
+	Export.h,
+	Export.cpp,
+	CuteClip.cpp, // Moved from AudioCore
+	CuteCurveFile.cpp; // Moved from AudioCore

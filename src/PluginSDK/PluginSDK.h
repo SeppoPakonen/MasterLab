@@ -3,7 +3,7 @@
 
 #include "PluginTypes.h"
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 
@@ -34,7 +34,7 @@ protected:
 	GraphVisualization graph; // Add GraphVisualization member
 };
 
-#ifdef GUI
+#ifdef flagGUI
 
 class PluginEditor : public Upp::Ctrl {
 public:

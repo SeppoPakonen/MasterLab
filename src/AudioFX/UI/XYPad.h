@@ -3,7 +3,7 @@
 
 #include <Core/Core.h>
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 
@@ -13,7 +13,7 @@ using namespace Upp;
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 // XY pad for controlling two parameters simultaneously
 class XYPad : public Ctrl {

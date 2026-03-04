@@ -3,9 +3,9 @@
 
 class CuteAudioFile {
 public:
-    enum Mode { None = 0, Read = 1, Write = 2 };
+    enum Mode { None = 0, ReadMode = 1, WriteMode = 2 };
     virtual ~CuteAudioFile() {}
-    virtual bool Open(const String& file_name, int mode = Read) = 0;
+    virtual bool Open(const String& file_name, int mode = ReadMode) = 0;
     virtual int Read(float** frames, unsigned int frame_count) = 0;
     virtual int Write(float** frames, unsigned int frame_count) = 0;
     virtual bool Seek(unsigned long offset) = 0;

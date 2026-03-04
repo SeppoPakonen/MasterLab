@@ -48,6 +48,7 @@ public:
 	void InitView(MainView& v, Ptr<SubWindow>& win);
 	
 private:
+	void InitAutomationStrip();
 	void Menu(Bar& bar);
 	void OnFile(Bar& bar);
 	void OnEdit(Bar& bar);
@@ -517,6 +518,25 @@ private:
 
 	MenuBar menu;
 	StatusBar status;
+	ParentCtrl automationStrip;
+	Button transportBtn;
+	Button rewindBtn;
+	Button fastForwardBtn;
+	Option cycleToggle;
+	Button stopBtn;
+	Button playBtn;
+	Button recordBtn;
+	Option metronomeToggle;
+	Button tempoBtn;
+	Option syncToggle;
+	Option punchInToggle;
+	Option punchOutToggle;
+	Option inspectorToggle;
+	Option poolToggle;
+	Option mixerToggle;
+	Option automationToggle;
+	Option snapToggle;
+	Option quantizeToggle;
 	SubWindows workspace;
 	Ptr<Ctrl> currentView;
 	Splitter mainSplitter;
@@ -529,6 +549,8 @@ private:
 	CombinedView combinedView;
 	PostViewWrapper postView;
 	PostGraphViewWrapper postGraphView;
+	KeyEditorView keyEditorView;
+	ScoreEditorView scoreEditorView;
 	
 	// SubWindow instances to view
 	Ptr<SubWindow> masteringWin;
@@ -538,6 +560,8 @@ private:
 	Ptr<SubWindow> combinedWin;
 	Ptr<SubWindow> postWin;
 	Ptr<SubWindow> postGraphWin;
+	Ptr<SubWindow> keyEditorWin;
+	Ptr<SubWindow> scoreEditorWin;
 
 	One<am::PoolWindow> poolWindow;
 	One<am::ProjectWindowHost> projectWindowHost;

@@ -1,4 +1,4 @@
-description "CtrlLog package for logging UI controls\377";
+acceptflags GUI;\ndescription "CtrlLog package for logging UI controls\377";
 
 uses
 	CtrlLib;
@@ -9,3 +9,4 @@ file
 	CtrlLog.lay,
 	CtrlLog.iml;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

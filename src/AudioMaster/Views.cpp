@@ -89,3 +89,53 @@ void PostGraphViewWrapper::InitLayout() {
 	// Add(postGraphView->SizePos());
 	
 }
+
+KeyEditorView::KeyEditorView() {
+	InitLayout();
+}
+
+void KeyEditorView::InitLayout() {
+	if(built)
+		return;
+	built = true;
+
+	SetLabel("Key Editor Workspace");
+	header.SetLabel("Key Editor Workspace - Piano Roll");
+	header.SetFrame(InsetFrame());
+	Add(header.TopPos(0, 24).HSizePos());
+
+	noteGrid.AddColumn("Pitch");
+	noteGrid.AddColumn("Position");
+	noteGrid.AddColumn("Length");
+	noteGrid.Add("C3", "1.1.1.0", "1/4");
+	noteGrid.Add("E3", "1.1.2.0", "1/4");
+	noteGrid.Add("G3", "1.1.3.0", "1/4");
+	noteGrid.Add("B3", "1.1.4.0", "1/4");
+	noteGrid.SetFrame(InsetFrame());
+	Add(noteGrid.VSizePos(24, 0).HSizePos());
+}
+
+ScoreEditorView::ScoreEditorView() {
+	InitLayout();
+}
+
+void ScoreEditorView::InitLayout() {
+	if(built)
+		return;
+	built = true;
+
+	SetLabel("Score Editor Workspace");
+	header.SetLabel("Score Editor Workspace - Notation");
+	header.SetFrame(InsetFrame());
+	Add(header.TopPos(0, 24).HSizePos());
+
+	symbolGrid.AddColumn("Bar");
+	symbolGrid.AddColumn("Beat");
+	symbolGrid.AddColumn("Symbol");
+	symbolGrid.Add("1", "1", "Treble Clef");
+	symbolGrid.Add("1", "1.5", "C4 Quarter");
+	symbolGrid.Add("1", "2", "E4 Quarter");
+	symbolGrid.Add("1", "2.5", "G4 Quarter");
+	symbolGrid.SetFrame(InsetFrame());
+	Add(symbolGrid.VSizePos(24, 0).HSizePos());
+}

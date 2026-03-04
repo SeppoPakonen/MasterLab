@@ -43,6 +43,17 @@ private:
 	void OnCancel();
 	void OnDisplayFormatChange();
 
+	Label startLabel;
+	Label lengthLabel;
+	Label frameRateLabel;
+	Label displayFormatLabel;
+	Label displayOffsetLabel;
+	Label barOffsetLabel;
+	Label sampleRateLabel;
+	Label recordBitDepthLabel;
+	Label recordFileTypeLabel;
+	Label stereoPanLawLabel;
+
 	EditString startField;
 	EditString lengthField;
 	DropList frameRateDrop;

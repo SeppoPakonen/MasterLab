@@ -1,4 +1,4 @@
-description "Windowing package\377226,212,0";
+acceptflags GUI;\ndescription "Windowing package\377226,212,0";
 
 uses
 	CtrlLib;
@@ -11,3 +11,4 @@ file
 	WindowRegistry.h,
 	WindowRegistry.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

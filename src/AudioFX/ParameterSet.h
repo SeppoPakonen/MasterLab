@@ -2,7 +2,7 @@
 #define _AudioFX_ParameterSet_h_
 
 #include <Core/Core.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 

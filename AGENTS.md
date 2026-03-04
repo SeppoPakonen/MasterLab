@@ -40,6 +40,51 @@ Codex acts as a commentary and assistant system to:
 - Suggest test cases in `unittst/`  
 - Create initial source file templates  
 
+## GUI Automation Planning
+
+For GUI automation initiatives in this repository, use a phased planning structure:
+
+```
+plan/<track>/<task>/*.md
+```
+
+Example track:
+- `plan/gui-automation/`
+
+Required phase policy for DAW GUI automation:
+
+1. **Phase 1: Analyze and prove one example**
+   - Analyze reference patterns (including `../ai-upp/uppsrc/MaestroHub`).
+   - Analyze DAW GUI surface/code locations.
+   - Execute one concrete GUI automation proof for `daw` using Maestro/MaestroHub style artifacts.
+   - Write findings/proof in `docs/*.md`.
+   - Update this `AGENTS.md` after phase-1 documentation is written.
+
+2. **Phase 2: Expand task backlog**
+   - Initially add only one task: generate all remaining phase-2 GUI tasks.
+   - That task must produce the full feature/codefile task list for GUI coverage.
+
+Current phase artifacts in this repository:
+- Phase 1 track: `plan/gui-automation/track-phase-1-analysis-and-proof/`
+- Phase 2 track: `plan/gui-automation/track-phase-2-task-expansion/`
+- Active phase-2 seed task:
+  - `plan/gui-automation/track-phase-2-task-expansion/task-001-generate-phase2-gui-task-backlog/task.md`
+  - `plan/gui-automation/track-phase-2-task-expansion/task-001-generate-phase2-gui-task-backlog/runbook.md`
+- Generated phase-2 backlog index:
+  - `plan/gui-automation/track-phase-2-task-expansion/BACKLOG.md`
+- Next implementation task in phase 2:
+  - `plan/gui-automation/track-phase-2-task-expansion/task-002-main-window-and-transport-hardening/task.md`
+
+Modeling requirements:
+- Represent phases as dedicated tracks (e.g. `track-phase-1-*`, `track-phase-2-*`) under `plan/gui-automation/`.
+- Keep task status machine-readable with `# Status: ...` values.
+- Use runbook-like step modeling (actor/action/expected) and evidence outputs, aligned with MaestroHub automation and UX evaluation patterns.
+- Do not base GUI automation planning on external desktop-driver assumptions; use Maestro/MaestroHub automation semantics first.
+- DAW GUI automation scripts must be Python files under `src/daw/tests/*.py` and executed via DAW test mode:
+  - `./bin/daw --test src/daw/tests/<script>.py`
+
+Phase-1 and phase-2 artifacts must remain explicit, auditable markdown files under the plan tree and `docs/`.
+
 
 
 ## Ultimate++ Package Conventions

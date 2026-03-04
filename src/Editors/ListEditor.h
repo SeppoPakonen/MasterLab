@@ -1,7 +1,7 @@
 #ifndef _Editors_ListEditor_h_
 #define _Editors_ListEditor_h_
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 using namespace Upp;
 

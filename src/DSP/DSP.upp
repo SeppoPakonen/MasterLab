@@ -1,7 +1,7 @@
 uses
 	AudioCore,
 	Math;
-	
+
 file
 	DSP.h,
 	SignalBus.h,
@@ -30,3 +30,4 @@ file
 mainconfig
 	"Standalone" = "GUI",
 	"Headless" = "";
+

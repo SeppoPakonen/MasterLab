@@ -87,4 +87,28 @@ private:
 	void InitLayout() override;
 };
 
+class KeyEditorView : public MainView {
+public:
+	KeyEditorView();
+
+private:
+	void InitLayout() override;
+
+	Label header;
+	ArrayCtrl noteGrid;
+	bool built = false;
+};
+
+class ScoreEditorView : public MainView {
+public:
+	ScoreEditorView();
+
+private:
+	void InitLayout() override;
+
+	Label header;
+	ArrayCtrl symbolGrid;
+	bool built = false;
+};
+
 #endif

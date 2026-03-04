@@ -3,7 +3,7 @@
 
 #include <Core/Core.h>
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 
@@ -13,7 +13,7 @@ using namespace Upp;
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 // Scene manager for managing and switching between different parameter scenes
 class SceneManager : public Ctrl {

@@ -2,7 +2,7 @@
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 XYPad::XYPad() : parameterSet(nullptr), isDragging(false) {
 	position = Point(50, 50); // Center by default

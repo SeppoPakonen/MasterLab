@@ -1,4 +1,4 @@
-description "Media pool package\377255,127,80";
+acceptflags GUI;\ndescription "Media pool package\377255,127,80";
 
 uses
 	CtrlLib,
@@ -24,3 +24,4 @@ file
 	MediaSettings.cpp,
 	Sample.h,
 	Sample.cpp;
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

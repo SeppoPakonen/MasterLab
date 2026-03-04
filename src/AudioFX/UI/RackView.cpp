@@ -2,7 +2,7 @@
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 RackView::RackView() : presetManager(nullptr) {
 }

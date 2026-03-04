@@ -3,7 +3,7 @@
 
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 using namespace Upp;

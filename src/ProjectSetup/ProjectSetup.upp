@@ -1,4 +1,4 @@
-description "Project setup package\377255,69,0";
+acceptflags GUI;\ndescription "Project setup package\377255,69,0";
 
 uses
 	CtrlLib,
@@ -10,3 +10,4 @@ file
 	PLAN.md,
 	ProjectSetup.h,
 	ProjectSetup.cpp;
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

@@ -52,7 +52,8 @@ SubWindow::SubWindow() : stored_rect(0,0,0,0) {
 	resizing = false;
 	resize_mode = 0;
 	
-	Add(decor.SizePos());
+	// Decoration is a title bar; keep it at top so it does not cover content.
+	Add(decor.HSizePos().TopPos(0, 24));
 	
 	close.SetImage(SubWindowsImg::close());
 	maximize.SetImage(SubWindowsImg::maximize());

@@ -1,4 +1,4 @@
-description "Scores package\377127,255,0";
+acceptflags GUI;\ndescription "Scores package\377127,255,0";
 
 uses
 	CtrlLib,
@@ -15,4 +15,4 @@ file
 	Functions.h,
 	Functions.cpp,
 	ScoreProject.h,
-	ScoreProject.cpp;
+	ScoreProject.cpp;mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

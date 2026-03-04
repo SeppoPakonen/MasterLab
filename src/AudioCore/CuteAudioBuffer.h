@@ -31,7 +31,7 @@ private:
 class CuteAudioBuffer {
 public:
 	enum SyncFlag {
-		InitSync = 1,
+		InitSyncFlag = 1,
 		ReadSync = 2,
 		WaitSync = 4,
 		CloseSync = 8,

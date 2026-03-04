@@ -1,4 +1,6 @@
 #include "LV2.h"
+
+#ifdef flagGUI
 #include <X11/Xlib.h>
 
 namespace PluginABI {
@@ -61,3 +63,5 @@ static void UI_port_event(
 
 } // namespace LV2
 } // namespace PluginABI
+
+#endif // GUI

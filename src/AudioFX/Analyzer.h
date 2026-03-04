@@ -2,7 +2,7 @@
 #define _AudioFX_Analyzer_h_
 
 #include <Core/Core.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 #include "SignalBus.h"

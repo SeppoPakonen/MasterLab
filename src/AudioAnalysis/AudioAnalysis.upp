@@ -1,11 +1,10 @@
-description "Audio analysis package\377255,127,80";
+acceptflags
+	GUI;
 
 uses
 	AudioCore,
 	AudioFX,
 	Math;
-
-uses(GUI) CtrlLib;
 
 file
 	AudioAnalysis.h,
@@ -22,3 +21,8 @@ file
 	Warp.cpp,
 	PitchAnalysis.h,
 	PitchAnalysis.cpp;
+
+mainconfig
+	"Standalone" = "GUI",
+	"Headless" = "!GUI";
+

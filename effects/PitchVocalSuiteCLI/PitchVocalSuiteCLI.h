@@ -4,4 +4,9 @@
 // This file is part of the PitchVocalSuiteCLI package.
 // It can be used for declarations specific to the CLI.
 
+#include <FileIO/FileIO.h>
+#include <AudioCore/AudioFile.h>
+#include <AudioAnalysis/AudioAnalysis.h>
+
+
 #endif

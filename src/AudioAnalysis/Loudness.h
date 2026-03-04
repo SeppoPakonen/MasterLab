@@ -2,7 +2,7 @@
 #define _AudioAnalysis_Loudness_h_
 
 #include <Core/Core.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 #include "../AudioFX/Analyzer.h"

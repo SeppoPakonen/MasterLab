@@ -346,35 +346,32 @@ void ExportAudioMixdownDialog::BuildLayout() {
 	contentSplit.Horz(leftPane, configPane);
 	contentSplit.SetPos(2600);
 
-	leftPane.Add(batchExportButton.TopPos(0, 28).HSizePos());
+	outputChannelsLabel.SetLabel("Output Channels");
+	leftPane.Add(outputChannelsLabel.TopPos(0, 20).HSizePos());
+	leftPane.Add(batchExportButton.TopPos(20, 28).HSizePos());
 	batchExportButton.SetLabel("Channel Batch Export");
-	leftPane.Add(channelPane.VSizePos(28, 0).HSizePos());
+	leftPane.Add(channelPane.VSizePos(48, 0).HSizePos());
 
-	Label filenameLabel;
 	filenameLabel.SetText("Filename:");
 	configPane.Add(filenameLabel.TopPos(0, 20).LeftPos(0, 100));
 	configPane.Add(filenameEdit.TopPos(0, 20).LeftPos(104, 220));
 
-	Label pathLabel;
 	pathLabel.SetText("Path:");
 	configPane.Add(pathLabel.TopPos(28, 20).LeftPos(0, 100));
 	configPane.Add(pathEdit.TopPos(28, 20).LeftPos(104, 220));
 	browseButton.SetLabel("Browse...");
 	configPane.Add(browseButton.TopPos(28, 20).RightPos(0, 100));
 
-	Label fileTypeLabel;
 	fileTypeLabel.SetText("File Type:");
 	configPane.Add(fileTypeLabel.TopPos(56, 20).LeftPos(0, 100));
 	configPane.Add(fileType.TopPos(56, 20).LeftPos(104, 220));
 
 	configPane.Add(codecPane.TopPos(84, 150).HSizePos());
 
-	Label sampleRateLabel;
 	sampleRateLabel.SetText("Sample Rate:");
 	configPane.Add(sampleRateLabel.TopPos(242, 20).LeftPos(0, 100));
 	configPane.Add(sampleRate.TopPos(242, 20).LeftPos(104, 140));
 
-	Label bitDepthLabel;
 	bitDepthLabel.SetText("Bit Depth:");
 	configPane.Add(bitDepthLabel.TopPos(270, 20).LeftPos(0, 100));
 	configPane.Add(bitDepth.TopPos(270, 20).LeftPos(104, 140));

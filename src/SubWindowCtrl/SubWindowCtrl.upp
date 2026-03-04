@@ -1,4 +1,4 @@
-description "Floating window manager inside a Ctrl.\3770,0,128";
+acceptflags GUI;\ndescription "Floating window manager inside a Ctrl.\3770,0,128";
 
 uses
 	CtrlLib;
@@ -14,3 +14,4 @@ mainconfig
 	"" = "GUI MT",
 	"" = "GUI";
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

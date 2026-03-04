@@ -1,7 +1,7 @@
 #ifndef _Editors_DrumEditor_h_
 #define _Editors_DrumEditor_h_
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 using namespace Upp;
 

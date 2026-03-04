@@ -2,12 +2,12 @@
 #define _AudioCore_CuteClip_h_
 
 class CuteTrack;
-class CuteClip {
+class CuteTrackClip {
 public:
     enum FadeMode { FadeIn = 0, FadeOut = 1 };
 
-    CuteClip();
-    virtual ~CuteClip();
+    CuteTrackClip();
+    virtual ~CuteTrackClip();
     void SetTrack(CuteTrack* track);
     CuteTrack* GetTrack() const;
     void SetName(const String& name);

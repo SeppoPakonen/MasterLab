@@ -1,5 +1,42 @@
 #include "AudioMaster.h"
 
+void MainWindow::InitAutomationStrip() {
+	int x = 6;
+	auto add_button = [&](Button& b, const char* text, int w, const char* id) {
+		b.SetLabel(text);
+		b.LayoutId(id);
+		b.WhenAction = [this, text] { status = text; };
+		Add(b.LeftPos(x, w).TopPos(4, 24));
+		x += w + 4;
+	};
+	auto add_toggle = [&](Option& o, const char* text, int w, const char* id, bool initial = false) {
+		o.SetLabel(text);
+		o = initial;
+		o.LayoutId(id);
+		Add(o.LeftPos(x, w).TopPos(4, 24));
+		x += w + 4;
+	};
+
+	add_button(transportBtn, "Transport", 86, "Transport");
+	add_button(rewindBtn, "Rewind", 74, "Rewind");
+	add_button(fastForwardBtn, "Fast Forward", 98, "FastForward");
+	add_toggle(cycleToggle, "Cycle", 70, "Cycle");
+	add_button(stopBtn, "Stop", 62, "Stop");
+	add_button(playBtn, "Play", 62, "Play");
+	add_button(recordBtn, "Record", 74, "Record");
+	add_toggle(metronomeToggle, "Metronome", 96, "Metronome");
+	add_button(tempoBtn, "Tempo", 72, "Tempo");
+	add_toggle(syncToggle, "Sync", 60, "Sync");
+	add_toggle(punchInToggle, "Punch In", 82, "PunchIn");
+	add_toggle(punchOutToggle, "Punch Out", 92, "PunchOut");
+	add_toggle(inspectorToggle, "Inspector", 94, "Inspector", true);
+	add_toggle(poolToggle, "Pool", 60, "Pool");
+	add_toggle(mixerToggle, "Mixer", 70, "Mixer");
+	add_toggle(automationToggle, "Automation", 106, "Automation");
+	add_toggle(snapToggle, "Snap", 64, "Snap", true);
+	add_toggle(quantizeToggle, "Quantize", 90, "Quantize");
+}
+
 MainWindow::MainWindow() {
 	Sizeable().Zoomable();
 	RefreshTitle();
@@ -22,9 +59,9 @@ MainWindow::MainWindow() {
 	mainSplitter.Set(workspace.SizePos(), *ctrlLog); // Top: main view area, Bottom: CtrlLog
 	mainSplitter.SetPos(6666); // Set initial position (0-10000 scale, 6666 means ~66% for top pane)
 	ctrlLog->Hide(); // Initially hide the CtrlLog
-	
-	// Add the splitter to main window
-	Add(mainSplitter.SizePos());
+
+	InitAutomationStrip();
+	Add(mainSplitter.VSizePos(32, 0).HSizePos());
 	
 	// Create view instances
 	InitView(masteringView, masteringWin);
@@ -149,12 +186,23 @@ void MainWindow::OnFile(Bar& bar) {
 		Bar::Item& mixdown = export_menu.Add("Audio Mixdown...", THISBACK(OnExportAudioMixdown));
 		if(mixdown_key)
 			mixdown.Key(mixdown_key);
+		export_menu.Add("Export Audio Mixdown", THISBACK(OnExportAudioMixdown));
 		export_menu.Add("Selected Tracks...", THISBACK(OnExportSelectedTracks));
 		export_menu.Add("Tempo Track...", THISBACK(OnExportTempoTrack));
 		export_menu.Add("Scores...", THISBACK(OnExportScores));
 		export_menu.Add("MusicXML...", THISBACK(OnExportMusicXML));
 		export_menu.Separator();
 		export_menu.Add("OMF...", THISBACK(OnExportOMF));
+		export_menu.Separator();
+		export_menu.Add("Channel Batch Export", [this] { status = "Channel Batch Export"; });
+		export_menu.Add("Output Channels", [this] { status = "Output Channels"; });
+		export_menu.Add("Filename", [this] { status = "Filename"; });
+		export_menu.Add("Path", [this] { status = "Path"; });
+		export_menu.Add("File Type", [this] { status = "File Type"; });
+		export_menu.Add("Sample Rate", [this] { status = "Sample Rate"; });
+		export_menu.Add("Bit Depth", [this] { status = "Bit Depth"; });
+		export_menu.Add("Close", [this] { status = "Close"; });
+		export_menu.Add("Export", [this] { status = "Export"; });
 	});
 	
 	bar.Add("Replace Audio in Video File...", THISBACK(OnReplaceAudioInVideo));
@@ -360,6 +408,7 @@ void MainWindow::OnProject(Bar& bar) {
 	
 	bar.Separator();
 	bar.Add("Pool", THISBACK(OnPool));
+	bar.Add("Inspector", [this] { status = "Inspector"; });
 	bar.Add("Markers", THISBACK(OnMarkers));
 	bar.Add("Tempo Track", THISBACK(OnTempoTrack));
 	bar.Add("Browser", THISBACK(OnBrowser));
@@ -455,6 +504,18 @@ void MainWindow::OnAudio(Bar& bar) {
 
 void MainWindow::OnMIDI(Bar& bar) {
 	bar.Add("Open Key Editor", THISBACK(OnOpenKeyEditor));
+	bar.Sub("Key Editor", [this](Bar& key_editor) {
+		key_editor.Add("Solo Editor", [this] { status = "Solo Editor"; });
+		key_editor.Add("Acoustic Feedback", [this] { status = "Acoustic Feedback"; });
+		key_editor.Add("Show Info", [this] { status = "Show Info"; });
+		key_editor.Add("Object Selection", [this] { status = "Object Selection"; });
+		key_editor.Add("Draw", [this] { status = "Draw"; });
+		key_editor.Add("Erase", [this] { status = "Erase"; });
+		key_editor.Add("Split", [this] { status = "Split"; });
+		key_editor.Add("Zoom", [this] { status = "Zoom"; });
+		key_editor.Add("Snap", [this] { status = "Snap"; });
+		key_editor.Add("Quantize", [this] { status = "Quantize"; });
+	});
 	bar.Add("Open Score Editor", THISBACK(OnOpenScoreEditor));
 	bar.Add("Open Drum Editor", THISBACK(OnOpenDrumEditor));
 	bar.Add("Open List Editor", THISBACK(OnOpenListEditor));
@@ -685,6 +746,18 @@ void MainWindow::OnMedia(Bar& bar) {
 void MainWindow::OnTransport(Bar& bar) {
 	bar.Add(THISBACK(IsTransportPanel), "Transport Panel", THISBACK(OnToggleTransportPanel));  // Toggle checkbox
 	bar.Separator();
+	bar.Add("Stop", [this] { status = "Stop"; });
+	bar.Add("Play", [this] { status = "Play"; });
+	bar.Add("Record", [this] { status = "Record"; });
+	bar.Add("Rewind", [this] { status = "Rewind"; });
+	bar.Add("Fast Forward", [this] { status = "Fast Forward"; });
+	bar.Add("Cycle", [this] { status = "Cycle"; });
+	bar.Add("Punch In", [this] { status = "Punch In"; });
+	bar.Add("Punch Out", [this] { status = "Punch Out"; });
+	bar.Add("Metronome", [this] { status = "Metronome"; });
+	bar.Add("Tempo", [this] { status = "Tempo"; });
+	bar.Add("Sync", [this] { status = "Sync"; });
+	bar.Separator();
 	
 	bar.Add("Locators to Selection", THISBACK(OnLocatorsToSelection));
 	bar.Add("Locate Selection", THISBACK(OnLocateSelection));
@@ -737,6 +810,16 @@ void MainWindow::OnDevices(Bar& bar) {
 	bar.Add("Remaining Record Time Display", THISBACK(OnRemainingRecordTimeDisplay));
 	bar.Add("Time Display", THISBACK(OnTimeDisplay));
 	bar.Add("VST Connections", THISBACK(OnVSTConnections));
+	bar.Sub("VST Connections Setup", [this](Bar& vst_conn) {
+		vst_conn.Add("Inputs", [this] { status = "Inputs"; });
+		vst_conn.Add("Outputs", [this] { status = "Outputs"; });
+		vst_conn.Add("Groups/FX", [this] { status = "Groups/FX"; });
+		vst_conn.Add("External FX", [this] { status = "External FX"; });
+		vst_conn.Add("External Instruments", [this] { status = "External Instruments"; });
+		vst_conn.Add("Studio", [this] { status = "Studio"; });
+		vst_conn.Add("Audio Device", [this] { status = "Audio Device"; });
+		vst_conn.Add("Device Port", [this] { status = "Device Port"; });
+	});
 	bar.Add("VST Instruments", THISBACK(OnVSTInstruments));
 	bar.Add("VST Performance", THISBACK(OnVSTPerformance));
 	bar.Add("Video Window", THISBACK(OnVideoWindow));
@@ -1157,8 +1240,27 @@ void MainWindow::OnOfflineProcessHistory() {}
 void MainWindow::OnFreezeEdits() {}
 
 // MIDI menu implementations
-void MainWindow::OnOpenKeyEditor() {}
-void MainWindow::OnOpenScoreEditor() {}
+void MainWindow::OnOpenKeyEditor() {
+	if(!keyEditorWin)
+		InitView(keyEditorView, keyEditorWin);
+
+	workspace.FocusSubWindow(&keyEditorView);
+	SubWindow& sw = workspace.GetWindow(keyEditorView);
+	if(!sw.IsMaximized())
+		sw.Maximize();
+	status = "Opened Key Editor in workspace";
+}
+
+void MainWindow::OnOpenScoreEditor() {
+	if(!scoreEditorWin)
+		InitView(scoreEditorView, scoreEditorWin);
+
+	workspace.FocusSubWindow(&scoreEditorView);
+	SubWindow& sw = workspace.GetWindow(scoreEditorView);
+	if(!sw.IsMaximized())
+		sw.Maximize();
+	status = "Opened Score Editor in workspace";
+}
 void MainWindow::OnOpenDrumEditor() {}
 void MainWindow::OnOpenListEditor() {}
 void MainWindow::OnOpenInPlaceEditor() {}

@@ -1,4 +1,4 @@
-description "Project window package\377113,212,200";
+acceptflags GUI;\ndescription "Project window package\377113,212,200";
 
 uses
 	CtrlLib,
@@ -12,3 +12,4 @@ file
 	ProjectWindow.h,
 	ProjectWindow.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

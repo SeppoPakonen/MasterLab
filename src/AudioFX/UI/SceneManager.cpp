@@ -2,7 +2,7 @@
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 SceneManager::SceneManager() : currentSceneIndex(-1), morphPosition(0.0) {
 }

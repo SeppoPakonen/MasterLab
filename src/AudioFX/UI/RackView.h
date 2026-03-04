@@ -3,7 +3,7 @@
 
 #include <Core/Core.h>
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 
@@ -14,7 +14,7 @@ using namespace Upp;
 
 namespace UI {
 
-#ifdef GUI
+#ifdef flagGUI
 
 // Rack view for displaying and controlling audio processing modules
 class RackView : public Ctrl {

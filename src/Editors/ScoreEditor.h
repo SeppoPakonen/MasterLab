@@ -1,7 +1,7 @@
 #ifndef _Editors_ScoreEditor_h_
 #define _Editors_ScoreEditor_h_
 
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #endif
 
@@ -25,7 +25,7 @@ namespace am {
 // Forward declarations
 class ScoreProjectData;
 
-#ifdef GUI
+#ifdef flagGUI
 
 // Control interface for the Score Editor with toolbar and InfoBar
 class ScoreEditorCtrl : public Ctrl {

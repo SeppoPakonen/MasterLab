@@ -1,4 +1,4 @@
-description "Help and about package\377255,192,203";
+acceptflags GUI;\ndescription "Help and about package\377255,192,203";
 
 uses
 	CtrlLib;
@@ -13,3 +13,4 @@ file
 	WebLinks.h,
 	WebLinks.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

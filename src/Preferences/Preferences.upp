@@ -1,4 +1,4 @@
-description "Preferences package\377238,130,238";
+acceptflags GUI;\ndescription "Preferences package\377238,130,238";
 
 uses
 	CtrlLib,
@@ -42,3 +42,4 @@ file
 	KeyCommandsDlg.cpp,
 	WithPresetsLayout.h;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI";
