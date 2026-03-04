@@ -17,6 +17,8 @@ using namespace Upp;
 #include "FadeBehavior.h"
 #include "CuteClipSelect.h"
 #include "CuteClipForm.h"
+#include "CuteCurveSelect.h"
+#include "CuteEditRangeForm.h"
 
 // Ensure VectorMap is available
 

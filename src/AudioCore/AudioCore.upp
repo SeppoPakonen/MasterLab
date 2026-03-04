@@ -55,4 +55,8 @@ file
 	CuteClip.h,
 	CuteClip.cpp,
 	CuteCurve.h,
-	CuteCurve.cpp;
+	CuteCurve.cpp,
+	CuteCurveFile.h,
+	CuteCurveFile.cpp,
+	CuteEngine.h,
+	CuteEngine.cpp;

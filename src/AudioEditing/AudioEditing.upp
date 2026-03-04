@@ -18,4 +18,9 @@ file
 	CuteClipForm.cpp,
 	CuteClipFormLayout.md,
 	CuteClipSelect.h,
-	CuteClipSelect.cpp;
+	CuteClipSelect.cpp,
+	CuteCurveSelect.h,
+	CuteCurveSelect.cpp,
+	CuteEditRangeForm.h,
+	CuteEditRangeForm.cpp,
+	CuteEditRangeFormLayout.md;

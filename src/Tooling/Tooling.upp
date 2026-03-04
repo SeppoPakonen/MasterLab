@@ -8,6 +8,6 @@ file
 	Tooling.h,
 	Tooling.cpp,
 	AudioAtomic.h,
+	CuteList.h,
 	ToolModifiers.h,
 	ToolModifiers.cpp;
-

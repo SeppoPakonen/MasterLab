@@ -2,7 +2,7 @@
 #define _FileIO_FileIO_h_
 
 #include <Core/Core.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlCore/CtrlCore.h>
 #include <CtrlLib/CtrlLib.h>
 #endif
@@ -15,6 +15,11 @@ using namespace Upp;
 #include "Export.h"
 #include "MediaFormatRegistry.h"
 #include "RecentFiles.h"
+#include "CuteDocument.h"
+#include "CuteFileList.h"
+#include "CuteFileListView.h"
+#include "CuteFileSystem.h"
+#include "CuteFiles.h"
 #include "Backup.h"
 #include "Templates.h"
 

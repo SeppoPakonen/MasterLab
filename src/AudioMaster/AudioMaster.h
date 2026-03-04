@@ -19,11 +19,18 @@ using namespace Upp;
 #include <ExportAudioMixdown/ExportAudioMixdown.h>
 #include <ProjectSetup/ProjectSetup.h>
 #include <ProjectWindow/ProjectWindow.h>
+#include <FileIO/FileIO.h>
+#include <VSTConnections/VSTConnections.h>
+#include <MIDI/MIDI.h>
 
 // Package files
 #include "CuteAbout.h"
 #include "CuteApplication.h"
 #include "CuteActionControl.h"
+#include "CuteMessageBox.h"
+#include "CuteMessageList.h"
+#include "CuteMessages.h"
+#include "CuteMainForm.h"
 #include "Views.h"
 #include "MainWindow.h"
 

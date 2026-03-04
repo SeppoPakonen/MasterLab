@@ -17,4 +17,11 @@ file
 	MidiDisplay.cpp,
 	MidiFilePrefs.h,
 	MidiFilePrefs.cpp,
-	CuteCtlEvent.h;
+	CuteCtlEvent.h,
+	CuteInstrument.h,
+	CuteInstrument.cpp,
+	CuteInstrumentForm.h,
+	CuteInstrumentForm.cpp,
+	CuteInstrumentFormLayout.md,
+	CuteInstrumentMenu.h,
+	CuteInstrumentMenu.cpp;

@@ -29,4 +29,6 @@ using namespace Upp;
 #include "CuteAudioVorbisFile.h"
 #include "CuteClip.h"
 #include "CuteCurve.h"
+#include "CuteCurveFile.h"
+#include "CuteEngine.h"
 #endif

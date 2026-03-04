@@ -188,14 +188,20 @@ private:
 	Splitter contentSplit;
 	ParentCtrl leftPane;
 	ChannelTreePane channelPane;
+	Label outputChannelsLabel;
 	ParentCtrl configPane;
 	Button batchExportButton;
+	Label filenameLabel;
 	EditString filenameEdit;
+	Label pathLabel;
 	EditString pathEdit;
 	Button browseButton;
+	Label fileTypeLabel;
 	DropList fileType;
 	CodecOptionsPane codecPane;
+	Label sampleRateLabel;
 	DropList sampleRate;
+	Label bitDepthLabel;
 	DropList bitDepth;
 	Option monoExport;
 	Option realTimeExport;
@@ -211,5 +217,7 @@ private:
 };
 
 }
+
+#include "CuteExportForm.h"
 
 #endif

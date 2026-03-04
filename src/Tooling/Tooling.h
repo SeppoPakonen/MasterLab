@@ -7,6 +7,7 @@
 using namespace Upp;
 
 #include "AudioAtomic.h"
+#include "CuteList.h"
 #include "ToolModifiers.h"
 
 #endif

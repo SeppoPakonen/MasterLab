@@ -16,6 +16,7 @@ using namespace Upp;
 #include "CuteCurveCommand.h"
 #include "CuteClipCommand.h"
 #include "CuteCommand.h"
+#include "CuteEngineCommand.h"
 
 // Provide ProjectMgmt namespace for compatibility with editor modules
 namespace ProjectMgmt {

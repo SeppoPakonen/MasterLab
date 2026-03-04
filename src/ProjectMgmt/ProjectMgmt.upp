@@ -25,6 +25,8 @@ file
 	CuteClipCommand.h,
 	CuteClipCommand.cpp,
 	CuteCurveCommand.h,
-	CuteCurveCommand.cpp;
+	CuteCurveCommand.cpp,
+	CuteEngineCommand.h,
+	CuteEngineCommand.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

@@ -1,9 +1,8 @@
-description "File I/O package\37764,224,208";
+acceptflags
+	GUI;
 
 uses
 	Core,
-	CtrlCore,
-	CtrlLib,
 	AudioCore,
 	AudioFX,
 	AudioGraph;
@@ -18,9 +17,18 @@ file
 	MediaFormatRegistry.h,
 	MediaFormatRegistry.cpp,
 	RecentFiles.h,
-	RecentFiles.cpp;
+	RecentFiles.cpp,
+	CuteDocument.h,
+	CuteDocument.cpp,
+	CuteFileList.h,
+	CuteFileList.cpp,
+	CuteFileListView.h,
+	CuteFileListView.cpp,
+	CuteFileSystem.h,
+	CuteFileSystem.cpp,
+	CuteFiles.h,
+	CuteFiles.cpp;
 
-	Backup.h,
-	Backup.cpp,
-	Templates.h,
-	Templates.cpp;
+mainconfig
+	"Standalone" = "GUI",
+	"Headless" = "!GUI";

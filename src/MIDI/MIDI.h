@@ -11,5 +11,8 @@ using namespace Upp;
 #include "MidiFilePrefs.h"
 #include "Groove.h"
 #include "CuteCtlEvent.h"
+#include "CuteInstrument.h"
+#include "CuteInstrumentForm.h"
+#include "CuteInstrumentMenu.h"
 
 #endif

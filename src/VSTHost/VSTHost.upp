@@ -10,4 +10,14 @@ file
 	VstHostPrefs.cpp,
 	VSTHost.h,
 	CuteClapPlugin.h,
-	CuteClapPlugin.cpp;
+	CuteClapPlugin.cpp,
+	CuteDssiPlugin.h,
+	CuteDssiPlugin.cpp,
+	CuteInsertPlugin.h,
+	CuteInsertPlugin.cpp,
+	CuteLadspaPlugin.h,
+	CuteLadspaPlugin.cpp,
+	CuteLv2Gtk2Plugin.h,
+	CuteLv2Gtk2Plugin.cpp,
+	CuteLv2Plugin.h,
+	CuteLv2Plugin.cpp;
