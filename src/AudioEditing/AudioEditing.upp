@@ -26,4 +26,12 @@ file
 	CuteEditRangeFormLayout.md,
 	CutePasteRepeatForm.h,
 	CutePasteRepeatForm.cpp,
-	CutePasteRepeatFormLayout.md;
+	CutePasteRepeatFormLayout.md,
+	CuteTakeRangeForm.h,
+	CuteTakeRangeForm.cpp,
+	CuteTakeRangeFormLayout.md,
+	CuteTempoAdjustForm.h,
+	CuteTempoAdjustForm.cpp,
+	CuteTempoAdjustFormLayout.md,
+	CuteTimeStretcher.h,
+	CuteTimeStretcher.cpp;

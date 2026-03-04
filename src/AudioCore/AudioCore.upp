@@ -44,6 +44,13 @@ file
 	CuteAudioVorbisFile.cpp,
 	CuteCurve.cpp,
 	CuteEngine.cpp,
+	CuteSession.h,
+	CuteSession.cpp,
+	CuteSessionCursor.h,
+	CuteSessionCursor.cpp,
+	CuteSessionForm.h,
+	CuteSessionForm.cpp,
+	CuteSessionFormLayout.md,
 	CuteMonitor.h,
 	CuteMixer.h,
 	CuteMixer.cpp;

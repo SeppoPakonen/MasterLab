@@ -20,6 +20,9 @@ using namespace Upp;
 #include "CuteCurveSelect.h"
 #include "CuteEditRangeForm.h"
 #include "CutePasteRepeatForm.h"
+#include "CuteTakeRangeForm.h"
+#include "CuteTempoAdjustForm.h"
+#include "CuteTimeStretcher.h"
 
 // Ensure VectorMap is available
 

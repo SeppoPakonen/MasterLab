@@ -10,6 +10,7 @@ using namespace Upp;
 #include "CuteList.h"
 #include "CuteObserver.h"
 #include "CuteObserverWidget.h"
+#include "CuteRingBuffer.h"
 #include "ToolModifiers.h"
 
 #endif

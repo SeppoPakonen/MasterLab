@@ -170,4 +170,7 @@ private:
 
 }
 
+#include "CuteRubberBand.h"
+#include "CuteScrollView.h"
+
 #endif

@@ -31,6 +31,11 @@ file
 	CuteMidiControlCommand.h,
 	CuteMidiControlCommand.cpp,
 	CuteMidiEditCommand.h,
-	CuteMidiEditCommand.cpp;
+	CuteMidiEditCommand.cpp,
+	CutePropertyCommand.h,
+	CuteTimeScaleCommand.h,
+	CuteTimeScaleCommand.cpp,
+	CuteSessionCommand.h,
+	CuteSessionCommand.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

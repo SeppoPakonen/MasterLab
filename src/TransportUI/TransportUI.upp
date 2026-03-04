@@ -18,6 +18,13 @@ file
 	CuteMeter.h,
 	CuteMeter.cpp,
 	TransportWindow.h,
-	TransportWindow.cpp;
+	TransportWindow.cpp,
+	CuteSpinBox.h,
+	CuteSpinBox.cpp,
+	CuteTimeScale.h,
+	CuteTimeScale.cpp,
+	CuteTimeScaleForm.h,
+	CuteTimeScaleForm.cpp,
+	CuteTimeScaleFormLayout.md;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

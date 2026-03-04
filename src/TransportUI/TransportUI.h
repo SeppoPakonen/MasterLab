@@ -10,5 +10,8 @@ using namespace Upp;
 #include "PrePostRoll.h"
 #include "CuteMeter.h"
 #include "TransportWindow.h"
+#include "CuteSpinBox.h"
+#include "CuteTimeScale.h"
+#include "CuteTimeScaleForm.h"
 
 #endif

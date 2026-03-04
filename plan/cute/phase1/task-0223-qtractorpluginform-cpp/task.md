@@ -1,5 +1,5 @@
 # Task: Convert `qtractorPluginForm.cpp` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorPluginForm.cpp` and convert it into MasterLab U++ conventions without attempting to compile.

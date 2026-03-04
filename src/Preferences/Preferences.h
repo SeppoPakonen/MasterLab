@@ -23,5 +23,6 @@ using namespace Upp;
 #include "CuteOptions.h"
 #include "CuteOptionsForm.h"
 #include "CutePaletteForm.h"
+#include "CuteShortcutForm.h"
 
 #endif

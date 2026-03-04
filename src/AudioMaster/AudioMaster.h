@@ -30,6 +30,7 @@ using namespace Upp;
 #include "CuteMessageBox.h"
 #include "CuteMessageList.h"
 #include "CuteMessages.h"
+#include "CuteThumbView.h"
 #include "CuteMainForm.h"
 #include "Views.h"
 #include "MainWindow.h"

@@ -1,5 +1,5 @@
 # Task: Convert `qtractorTimeScaleForm.ui` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorTimeScaleForm.ui` and convert it into MasterLab U++ conventions without attempting to compile.

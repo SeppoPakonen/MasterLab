@@ -19,6 +19,9 @@ using namespace Upp;
 #include "CuteEngineCommand.h"
 #include "CuteMidiControlCommand.h"
 #include "CuteMidiEditCommand.h"
+#include "CutePropertyCommand.h"
+#include "CuteTimeScaleCommand.h"
+#include "CuteSessionCommand.h"
 
 // Provide ProjectMgmt namespace for compatibility with editor modules
 namespace ProjectMgmt {

@@ -24,6 +24,8 @@ file
 	CuteMessageList.cpp,
 	CuteMessages.h,
 	CuteMessages.cpp,
+	CuteThumbView.h,
+	CuteThumbView.cpp,
 	CuteMainForm.h,
 	CuteMainForm.cpp,
 	CuteMainFormLayout.md,

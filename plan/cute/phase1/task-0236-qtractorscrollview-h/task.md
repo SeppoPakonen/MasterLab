@@ -1,5 +1,5 @@
 # Task: Convert `qtractorScrollView.h` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorScrollView.h` and convert it into MasterLab U++ conventions without attempting to compile.

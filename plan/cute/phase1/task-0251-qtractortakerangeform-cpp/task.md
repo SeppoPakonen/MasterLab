@@ -1,5 +1,5 @@
 # Task: Convert `qtractorTakeRangeForm.cpp` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorTakeRangeForm.cpp` and convert it into MasterLab U++ conventions without attempting to compile.

@@ -32,5 +32,8 @@ using namespace Upp;
 #include "CuteCurveFile.h"
 #include "CuteEngine.h"
 #include "CuteMonitor.h"
+#include "CuteSession.h"
+#include "CuteSessionCursor.h"
+#include "CuteSessionForm.h"
 #include "CuteMixer.h"
 #endif

@@ -11,5 +11,11 @@ using namespace Upp;
 #include "CuteLadspaPlugin.h"
 #include "CuteLv2Gtk2Plugin.h"
 #include "CuteLv2Plugin.h"
+#include "CutePlugin.h"
+#include "CutePluginCommand.h"
+#include "CutePluginFactory.h"
+#include "CutePluginForm.h"
+#include "CutePluginListView.h"
+#include "CutePluginSelectForm.h"
 
 #endif

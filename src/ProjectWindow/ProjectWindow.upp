@@ -10,6 +10,10 @@ file
 	AGENTS.md,
 	PLAN.md,
 	ProjectWindow.h,
-	ProjectWindow.cpp;
+	ProjectWindow.cpp,
+	CuteRubberBand.h,
+	CuteRubberBand.cpp,
+	CuteScrollView.h,
+	CuteScrollView.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";
