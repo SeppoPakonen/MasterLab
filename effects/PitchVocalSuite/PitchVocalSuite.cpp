@@ -672,6 +672,40 @@ void GenerateTestTone()
 
 void RunTests() { Upp::Cout() << "Running PitchVocalSuite Tests...\nTests completed successfully.\n"; }
 
+void VerifyPitch(const String& path, double expectedHz)
+{
+	Cout() << "Verifying pitch for: " << path << "\n";
+	am::AudioBuffer buffer;
+	if (!am::WavFile::Load(path, buffer)) {
+		Cerr() << "Failed to load file for verification.\n";
+		return;
+	}
+	
+	am::PitchAnalysisEngine engine;
+	engine.SetSampleRate(buffer.rate);
+	Vector<am::PitchPoint> points;
+	engine.Analyze(buffer.data[0].Begin(), buffer.GetFrames(), 0, points);
+	
+	if(points.IsEmpty()) {
+		Cerr() << "VERIFICATION FAILED: No pitch detected.\n";
+		return;
+	}
+
+	double totalFreq = 0;
+	for(const auto& p : points) totalFreq += p.frequency;
+	double avgFreq = totalFreq / points.GetCount();
+
+	Cout() << "Average detected frequency: " << avgFreq << " Hz\n";
+	Cout() << "Expected frequency: " << expectedHz << " Hz\n";
+	
+	if (abs(avgFreq - expectedHz) < 2.0) { // Allow 2Hz tolerance
+		Cout() << "VERIFICATION SUCCESSFUL!\n";
+	} else {
+		Cerr() << "VERIFICATION FAILED: Detected frequency is off by more than 2Hz.\n";
+	}
+}
+
+
 void TestAudio(const String& path)
 {
 	Upp::Cout() << "Testing audio file: " << path << "\n";
@@ -791,11 +825,19 @@ GUI_APP_MAIN
 	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
 	cl.AddArg("project", 'p', "Open project file", true, "path");
 	cl.AddArg("help", 'h', "Show help", false);
+	cl.AddArg("process-file", 'P', "Process an audio file", true, "input_path");
+	cl.AddArg("output", 'o', "Output file path for processing", true, "output_path");
+	cl.AddArg("pitch-shift", 'S', "Apply pitch shift in semitones", true, "semitones");
+	cl.AddArg("pitch-shift-note", 'N', "Apply pitch correction to a MIDI note", true, "midi_note");
+	cl.AddArg("verify-pitch", 'V', "Verify pitch of an audio file", true, "file_path");
+	cl.AddArg("expected-hz", 'E', "Expected frequency in Hz for verification", true, "hz");
+
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
 	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
 	if(cl.IsArg("generate-test-tone")) { GenerateTestTone(); return; }
 	if(cl.IsArg("test")) { RunTests(); return; }
 	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
+	if(cl.IsArg("verify-pitch")) { VerifyPitch(cl.GetArg("verify-pitch"), cl.IsArg("expected-hz") ? StrToDouble(cl.GetArg("expected-hz")) : 440.0); return; }
 
 	Ctrl::InitUGUI();
 	LinkLogicGui();
@@ -804,6 +846,38 @@ GUI_APP_MAIN
 	
 	if(cl.IsArg("test-audio-hw")) {
 		HardwareSimulator(processor);
+		return;
+	}
+	
+	if(cl.IsArg("process-file")) {
+		String inputPath = cl.GetArg("process-file");
+		String outputPath = cl.IsArg("output") ? cl.GetArg("output") : "processed_output.wav";
+		am::AudioBuffer inBuffer;
+		if (!am::WavFile::Load(inputPath, inBuffer)) { Cerr() << "Failed to load input file: " << inputPath << "\n"; return; }
+		processor.LoadFullAudio(inBuffer, inputPath);
+		if (cl.IsArg("pitch-shift")) { processor.SetParameter("pitch_shift_semitones", StrToDouble(cl.GetArg("pitch-shift"))); }
+		if (cl.IsArg("pitch-shift-note")) {
+			PitchNote n;
+			n.midiNote = StrInt(cl.GetArg("pitch-shift-note"));
+			n.startTime = 0;
+			n.duration = 999;
+			processor.GetNotes().Add(n);
+		}
+		am::AudioBuffer outBuffer;
+		outBuffer.Resize(inBuffer.GetChannels(), inBuffer.GetFrames());
+		outBuffer.rate = inBuffer.rate;
+		ProcessContext ctx;
+		ctx.frames = inBuffer.GetFrames();
+		ctx.sample_rate = inBuffer.rate;
+		Vector<float*> tempOutputChannels;
+		tempOutputChannels.SetCount(outBuffer.GetChannels());
+		for (int c = 0; c < outBuffer.GetChannels(); ++c) { tempOutputChannels[c] = outBuffer.data[c].Begin(); }
+		ctx.output.channels = tempOutputChannels.Begin();
+		ctx.output.channel_count = outBuffer.GetChannels();
+		ctx.output.frame_count = outBuffer.GetFrames();
+		ctx.transport.playing = true;
+		processor.Process(ctx);
+		if (am::WavFile::Save(outputPath, outBuffer)) { Cout() << "Successfully processed file to: " << outputPath << "\n"; } else { Cerr() << "Failed to save output file.\n"; }
 		return;
 	}
 
@@ -921,14 +995,19 @@ CONSOLE_APP_MAIN
 	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
 	cl.AddArg("process-file", 'P', "Process an audio file", true, "input_path");
 	cl.AddArg("output", 'o', "Output file path for processing", true, "output_path");
-	cl.AddArg("pitch-shift", 'S', "Apply pitch shift in semitones (e.g., 2.0 for +2 semitones)", true, "semitones");
+	cl.AddArg("pitch-shift", 'S', "Apply pitch shift in semitones", true, "semitones");
+	cl.AddArg("pitch-shift-note", 'N', "Apply pitch correction to a MIDI note", true, "midi_note");
+	cl.AddArg("verify-pitch", 'V', "Verify pitch of an audio file", true, "file_path");
+	cl.AddArg("expected-hz", 'E', "Expected frequency in Hz for verification", true, "hz");
 	cl.AddArg("help", 'h', "Show help", false);
+
 	if(!cl.Parse()) { cl.PrintHelp(); return; }
 	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
 	if(cl.IsArg("generate-test-tone")) { GenerateTestTone(); return; }
 	if(cl.IsArg("test")) { RunTests(); return; }
 	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
-
+	if(cl.IsArg("verify-pitch")) { VerifyPitch(cl.GetArg("verify-pitch"), cl.IsArg("expected-hz") ? StrToDouble(cl.GetArg("expected-hz")) : 440.0); return; }
+	
 	PitchVocalProcessor processor;
 	if(cl.IsArg("test-audio-hw")) {
 		HardwareSimulator(processor);
@@ -948,8 +1027,14 @@ CONSOLE_APP_MAIN
 		processor.LoadFullAudio(inBuffer, inputPath);
 		
 		if (cl.IsArg("pitch-shift")) {
-			double semitones = StrToDouble(cl.GetArg("pitch-shift"));
-			processor.SetParameter("pitch_shift_semitones", semitones);
+			processor.SetParameter("pitch_shift_semitones", StrToDouble(cl.GetArg("pitch-shift")));
+		}
+		if (cl.IsArg("pitch-shift-note")) {
+			PitchNote n;
+			n.midiNote = StrInt(cl.GetArg("pitch-shift-note"));
+			n.startTime = 0;
+			n.duration = 999;
+			processor.GetNotes().Add(n);
 		}
 		
 		am::AudioBuffer outBuffer;
