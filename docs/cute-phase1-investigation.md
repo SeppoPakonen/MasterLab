@@ -10,6 +10,7 @@
 - `src/Cute` should be treated as the new assembly root for the converted application, analogous to `src/daw`.
 - Converted qtractor classes should land in existing `src/*` package directories whenever there is an obvious home, so stub packages become populated instead of duplicated.
 - Phase 1 should avoid build validation entirely; success is measured by source coverage and structural fidelity, not by compilation.
+- Naming policy for converted outputs: classes and functions use `CapitalCase`, while variables use `lower_underscore`; camelCase should not appear in new code.
 
 ## Package Mapping Heuristics
 - `AudioCore`: 38 files. Session, engine, clip, curve, mixer, and low-level audio runtime structures.

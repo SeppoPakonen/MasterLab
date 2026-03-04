@@ -7,6 +7,14 @@
 - Write the converted result into the suggested `src/*` package so existing stubs become populated.
 - Do not try to compile, link, or fix downstream compile errors in this phase.
 
+## Naming Rules
+- Do not use camelCase in converted code.
+- Class names, struct names, enum names, and function names use `CapitalCase`.
+- Variables, data members, parameters, local temporaries, and free-standing state names use `lower_underscore`.
+- File names for converted outputs use `CapitalCase`.
+- Keep upstream source filenames only when referring to the original qtractor inputs in plan/task documentation.
+- Do not keep legacy `QTractor` product naming in converted code; use `Cute` or `MusicEditor` naming instead.
+
 ## U++ Conventions To Apply
 - Main package header owns package includes.
 - Non-main headers should not add real `#include` directives except inline `.hpp` includes when required.
