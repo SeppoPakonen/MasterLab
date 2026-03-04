@@ -1,4 +1,4 @@
-# qtractor `qtractor.qrc` Conversion Notes
+# Legacy `qtractor.qrc` Conversion Notes
 
 ## Source
 - Original file: `tmp/q/src/qtractor.qrc`
@@ -45,6 +45,7 @@ The Qt `.qrc` resource file should not be copied directly.
 Phase-2 options:
 - keep image files on disk and load them through U++ `Image` / `StreamRaster` helpers at runtime
 - generate a U++ image set package if repeated toolbar usage makes that worthwhile
+- embed selected assets through a `.brc` file, following the pattern used in `../ai-upp/reference/brc/bin.cpp` and `../ai-upp/reference/brc/bin.brc`
 - split ownership by package so icons stay near the code that uses them
 
 ## Suggested Package Ownership
@@ -57,7 +58,7 @@ Phase-2 options:
 - `Theme`: shared form action icons and common UI imagery
 
 ## Phase 2 Work Needed
-- decide whether the Cute build keeps raw image files in the runtime data directory or converts them into a U++ image package
+- decide whether the Cute build keeps raw image files in the runtime data directory, converts them into a U++ image package, or embeds subsets with `.brc`
 - create a lookup layer so converted code does not hardcode Qt resource paths like `:images/...`
 - update toolbar/menu/dialog conversions to use the new lookup layer
 

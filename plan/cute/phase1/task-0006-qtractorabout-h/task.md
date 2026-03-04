@@ -14,16 +14,16 @@ Manually read `tmp/q/src/qtractorAbout.h` and convert it into MasterLab U++ conv
 - Package rationale: Main application shell, message surfaces, and top-level window hosting.
 
 ## Conversion Notes
-- Write the converted source into `src/AudioMaster/qtractorAbout.h` or the closest package-local equivalent once the package manifest is updated.
+- Write the converted source into `src/AudioMaster/CuteAbout.h` or the closest package-local equivalent once the package manifest is updated.
 - Preserve the original main classes/functions and roughly similar code volume.
 - Reuse existing stub types or packages when they already express the same responsibility.
 - Follow `plan/cute/phase1/CONVERSION_RULES.md` and `docs/cute-phase1-investigation.md`.
 
 ## Output
-- `src/AudioMaster/qtractorAbout.h`
+- `src/AudioMaster/CuteAbout.h`
 
 ## Manifest Notes
-- Later add `qtractorAbout.h` to `src/AudioMaster/AudioMaster.upp`.
+- The converted file is now added to `src/AudioMaster/AudioMaster.upp` as `CuteAbout.h`.
 - In phase 2, replace the temporary project metadata defines with values sourced from the Cute assembly configuration header.
 
 ## Definition of Done

@@ -3,7 +3,7 @@
 ## Source
 - Original file: `tmp/q/src/config.h.cmake`
 - Phase: Cute phase 1
-- Intent: preserve the qtractor feature matrix for later U++ assembly/build integration.
+- Intent: preserve the legacy feature matrix for later U++ assembly/build integration.
 
 ## What The Original File Represents
 The file is a generated-configuration template, not ordinary application code. It captures:
@@ -74,7 +74,7 @@ These should not be blindly copied. They need package ownership:
 - `Cute` for top-level feature selection and build exposure
 
 ## LV2 Subfeature Inventory
-The original template enumerates many LV2 capability flags. That means the qtractor codebase expects fine-grained capability detection rather than a single on/off switch.
+The original template enumerates many LV2 capability flags. That means the legacy codebase expects fine-grained capability detection rather than a single on/off switch.
 
 Phase 2 implication:
 - `PluginABI/LV2` and `VSTHost` should own the final mapping

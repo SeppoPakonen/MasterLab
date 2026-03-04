@@ -10,6 +10,9 @@ uses
 	CtrlLog;
 
 file
+	CuteAbout.h,
+	CuteApplication.h,
+	CuteApplication.cpp,
 	AudioMaster.h,
 	AudioMaster.cpp,
 	MainWindow.h,

@@ -3,11 +3,11 @@
 ## Source
 - Original file: `tmp/q/src/CMakeLists.txt`
 - Phase: Cute phase 1
-- Intent: translate qtractor's Qt/CMake source inventory into U++ assembly planning without building yet.
+- Intent: translate the legacy Qt/CMake source inventory into U++ assembly planning without building yet.
 
 ## What The Original File Does
-- Declares one main executable: `qtractor`.
-- Declares one helper executable: `qtractor_plugin_scan`.
+- Declares one main executable for the legacy application.
+- Declares one helper executable for plug-in scanning.
 - Generates `config.h` from `config.h.cmake`.
 - Enables Qt autogen for `.ui`, meta-object, and resource compilation.
 - Enumerates the full direct source inventory for headers, `.cpp` files, `.ui` forms, translations, and `qtractor.qrc`.
@@ -15,7 +15,7 @@
 - Defines install payloads for translations, icons, desktop metadata, mimetypes, manpages, metronome audio files, instrument definitions, and palette presets.
 
 ## U++ Interpretation
-- `Cute` should eventually replace the qtractor CMake target as the top-level assembly invoked by `script/build.py Cute`.
+- `Cute` should eventually replace the legacy CMake target as the top-level assembly invoked by `script/build.py Cute`.
 - The direct file inventory should not become one giant package. Instead, files should be routed into existing MasterLab packages:
   - application shell -> `src/AudioMaster`
   - audio/session engine -> `src/AudioCore`
@@ -43,7 +43,7 @@ Expected phase-2 responsibilities:
 - make `script/build.py Cute` produce the executable later
 
 ## Main Executable Inventory
-The original `qtractor` target contains:
+The original main target contains:
 - 138 headers
 - 128 `.cpp` files
 - 25 `.ui` forms
@@ -52,7 +52,7 @@ The original `qtractor` target contains:
 
 Those source files are now represented in `plan/cute/phase1/BACKLOG.md` as per-file conversion tasks.
 
-## Helper Executable: `qtractor_plugin_scan`
+## Helper Executable: Plug-in Scan Tool
 The original build creates a second executable from:
 - `qtractor_plugin_scan.cpp`
 - optional VST3 SDK support sources
