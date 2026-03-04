@@ -10,7 +10,7 @@ PhaseVocoder::PhaseVocoder()
 	}
 }
 
-void PhaseVocoder::Process(AudioBuffer& buffer, double pitchShiftRatio)
+void PhaseVocoder::Process(AudioBuffer& buffer, const Vector<double>& pitchShiftRatios)
 {
 	if (buffer.GetChannels() == 0) return;
 	
@@ -24,6 +24,8 @@ void PhaseVocoder::Process(AudioBuffer& buffer, double pitchShiftRatio)
 	Vector<double> phaseAccum(nBins, 0.0);
 	
 	for (int i = 0; i < nFrames; i++) {
+		double currentPitchShiftRatio = (i < pitchShiftRatios.GetCount()) ? pitchShiftRatios[i] : 1.0;
+		
 		for (int j = 0; j < nBins; j++) {
 			double mag = abs(frames[i][j]);
 			double phase = arg(frames[i][j]);
@@ -32,7 +34,7 @@ void PhaseVocoder::Process(AudioBuffer& buffer, double pitchShiftRatio)
 			lastPhase[j] = phase;
 			
 			double freq = phaseDev / (2.0 * M_PI * hopSize / buffer.rate);
-			double newFreq = freq * pitchShiftRatio;
+			double newFreq = freq * currentPitchShiftRatio;
 			
 			phaseAccum[j] += 2.0 * M_PI * newFreq * hopSize / buffer.rate;
 			
