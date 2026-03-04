@@ -43,4 +43,7 @@ file
 	CuteAudioSndFile.cpp,
 	CuteAudioVorbisFile.cpp,
 	CuteCurve.cpp,
-	CuteEngine.cpp;
+	CuteEngine.cpp,
+	CuteMonitor.h,
+	CuteMixer.h,
+	CuteMixer.cpp;

@@ -31,4 +31,6 @@ using namespace Upp;
 #include "CuteCurve.h"
 #include "CuteCurveFile.h"
 #include "CuteEngine.h"
+#include "CuteMonitor.h"
+#include "CuteMixer.h"
 #endif
