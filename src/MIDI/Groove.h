@@ -2,7 +2,9 @@
 #define _MIDI_Groove_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include <MIDI/MIDI.h>  // Include the main MIDI package
 #include <AudioCore/AudioCore.h>
 

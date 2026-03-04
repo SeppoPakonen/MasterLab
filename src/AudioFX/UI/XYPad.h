@@ -2,12 +2,18 @@
 #define _AudioFX_UI_XYPAD_h_
 
 #include <Core/Core.h>
+
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
+
 #include "../Modulation.h"
 
 using namespace Upp;
 
 namespace UI {
+
+#ifdef GUI
 
 // XY pad for controlling two parameters simultaneously
 class XYPad : public Ctrl {
@@ -54,6 +60,8 @@ private:
     void UpdateFromParameters();
     void DrawHandle(Draw& draw);
 };
+
+#endif // GUI
 
 } // namespace UI
 

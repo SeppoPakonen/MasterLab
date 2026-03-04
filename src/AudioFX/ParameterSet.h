@@ -2,7 +2,9 @@
 #define _AudioFX_ParameterSet_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 
 using namespace Upp;
 

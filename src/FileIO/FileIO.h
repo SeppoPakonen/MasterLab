@@ -2,8 +2,10 @@
 #define _FileIO_FileIO_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlCore/CtrlCore.h>
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
 #include <AudioGraph/AudioGraph.h>

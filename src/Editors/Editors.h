@@ -1,7 +1,9 @@
 #ifndef _Editors_Editors_h_
 #define _Editors_Editors_h_
 
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include <Draw/Draw.h>
 #include <AudioCore/AudioCore.h>
 using namespace Upp;

@@ -2,7 +2,9 @@
 #define _AudioFX_DSP_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include <AudioCore/AudioCore.h>  // For audio processing types
 using am::AudioBuffer; // Make AudioCore's AudioBuffer available
 

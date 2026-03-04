@@ -2,167 +2,120 @@
 
 namespace UI {
 
-XYPad::XYPad() : parameterSet(nullptr), sensitivity(1.0, 1.0), isDragging(false) {
-    // Initialize the XY pad
-    position.x = 0;
-    position.y = 0;
-    AddFrame(BlackFrame());
+#ifdef GUI
+
+XYPad::XYPad() : parameterSet(nullptr), isDragging(false) {
+	position = Point(50, 50); // Center by default
+	sensitivity = Point(100, 100);
 }
 
 XYPad::~XYPad() {
-    // Clean up
 }
 
 void XYPad::SetParameterIds(const AudioFX::ParameterId& xId, const AudioFX::ParameterId& yId) {
-    paramX = xId;
-    paramY = yId;
-    UpdateFromParameters();
+	paramX = xId;
+	paramY = yId;
+	UpdateFromParameters();
 }
 
 void XYPad::SetPosition(double x, double y) {
-    position.x = max(0.0, min(1.0, x));
-    position.y = max(0.0, min(1.0, y));
-    UpdateParameters();
-    Refresh();
+	position.x = (int)(x * 100.0);
+	position.y = (int)(y * 100.0);
+	UpdateParameters();
+	Refresh();
 }
 
 Point XYPad::GetPosition() const {
-    return position;
+	return position;
 }
 
 void XYPad::SetParameterSet(AudioFX::ParameterSet* params) {
-    parameterSet = params;
-    UpdateFromParameters();
+	parameterSet = params;
+	UpdateFromParameters();
 }
 
 ValueMap XYPad::GetParameterValues() const {
-    ValueMap values;
-    if (parameterSet) {
-        if (!paramX.IsEmpty()) values.Set("x_param", parameterSet->Get(paramX));
-        if (!paramY.IsEmpty()) values.Set("y_param", parameterSet->Get(paramY));
-    }
-    return values;
+	ValueMap vm;
+	if(parameterSet) {
+		vm.Add("x", parameterSet->Get(paramX));
+		vm.Add("y", parameterSet->Get(paramY));
+	}
+	return vm;
 }
 
 void XYPad::SetSensitivity(double xSens, double ySens) {
-    sensitivity.x = max(0.1, min(2.0, xSens));
-    sensitivity.y = max(0.1, min(2.0, ySens));
+	sensitivity.x = (int)(xSens * 100.0);
+	sensitivity.y = (int)(ySens * 100.0);
 }
 
 void XYPad::Refresh() {
-    Refresh();
-}
-
-void XYPad::UpdateParameters() {
-    if (parameterSet) {
-        if (!paramX.IsEmpty()) {
-            double minVal = parameterSet->GetMin(paramX);
-            double maxVal = parameterSet->GetMax(paramX);
-            double val = minVal + position.x * (maxVal - minVal);
-            parameterSet->Set(paramX, val);
-        }
-        
-        if (!paramY.IsEmpty()) {
-            double minVal = parameterSet->GetMin(paramY);
-            double maxVal = parameterSet->GetMax(paramY);
-            double val = minVal + position.y * (maxVal - minVal);
-            parameterSet->Set(paramY, val);
-        }
-    }
-}
-
-void XYPad::UpdateFromParameters() {
-    if (parameterSet) {
-        if (!paramX.IsEmpty()) {
-            double minVal = parameterSet->GetMin(paramX);
-            double maxVal = parameterSet->GetMax(paramX);
-            if (maxVal != minVal) {
-                position.x = (parameterSet->Get(paramX) - minVal) / (maxVal - minVal);
-            }
-        }
-        
-        if (!paramY.IsEmpty()) {
-            double minVal = parameterSet->GetMin(paramY);
-            double maxVal = parameterSet->GetMax(paramY);
-            if (maxVal != minVal) {
-                position.y = (parameterSet->Get(paramY) - minVal) / (maxVal - minVal);
-            }
-        }
-    }
+	Ctrl::Refresh();
 }
 
 void XYPad::Paint(Draw& draw) {
-    Rect r = GetSize();
-    
-    // Draw background
-    draw.DrawRect(r, SColorFace());
-    
-    // Draw grid
-    for (int i = 1; i < 10; i++) {
-        int x = r.left + (i * r.Width()) / 10;
-        int y = r.top + (i * r.Height()) / 10;
-        draw.DrawLine(x, r.top, x, r.bottom, 1, Gray());
-        draw.DrawLine(r.left, y, r.right, y, 1, Gray());
-    }
-    
-    // Draw crosshair
-    draw.DrawLine(r.left, r.top + r.Height()/2, r.right, r.top + r.Height()/2, 1, Gray());
-    draw.DrawLine(r.left + r.Width()/2, r.top, r.left + r.Width()/2, r.bottom, 1, Gray());
-    
-    // Draw handle
-    DrawHandle(draw);
-}
-
-void XYPad::DrawHandle(Draw& draw) {
-    Rect r = GetSize();
-    int handleSize = 10;
-    
-    int x = r.left + (int)(position.x * r.Width()) - handleSize/2;
-    int y = r.top + (int)(position.y * r.Height()) - handleSize/2;
-    
-    Rect handleRect = RectC(x, y, handleSize, handleSize);
-    draw.DrawRect(handleRect, Red());
-    draw.DrawRect(handleRect.Inflated(1), Black());
+	Size sz = GetSize();
+	draw.DrawRect(sz, SColorFace());
+	draw.DrawRect(2, 2, sz.cx - 4, sz.cy - 4, SColorPaper());
+	
+	// Draw grid lines
+	draw.DrawLine(sz.cx / 2, 0, sz.cx / 2, sz.cy, 1, SColorDisabled());
+	draw.DrawLine(0, sz.cy / 2, sz.cx, sz.cy / 2, 1, SColorDisabled());
+	
+	DrawHandle(draw);
 }
 
 void XYPad::LeftDown(Point p, dword keyflags) {
-    isDragging = true;
-    Point relativePos = p - Point(0, 0);  // Replace GetTopLeft() with origin
-    Size size = GetSize();
-    
-    if (size.cx > 0 && size.cy > 0) {
-        position.x = max(0.0, min(1.0, relativePos.x / (double)size.cx));
-        position.y = max(0.0, min(1.0, relativePos.y / (double)size.cy));
-        UpdateParameters();
-        Refresh();
-    }
-    
-    SetCapture();
-    Refresh();
+	isDragging = true;
+	MouseMove(p, keyflags);
 }
 
 void XYPad::LeftUp(Point p, dword keyflags) {
-    isDragging = false;
-    Refresh();
-    ReleaseCapture();
+	isDragging = false;
 }
 
 void XYPad::MouseMove(Point p, dword keyflags) {
-    if (isDragging) {
-        Point relativePos = p - Point(0, 0);  // Replace GetTopLeft() with origin
-        Size size = GetSize();
-        
-        if (size.cx > 0 && size.cy > 0) {
-            position.x = max(0.0, min(1.0, relativePos.x / (double)size.cx));
-            position.y = max(0.0, min(1.0, relativePos.y / (double)size.cy));
-            UpdateParameters();
-            Refresh();
-        }
-    }
+	if(isDragging) {
+		Size sz = GetSize();
+		double x = (double)p.x / sz.cx;
+		double y = (double)p.y / sz.cy;
+		
+		x = clamp(x, 0.0, 1.0);
+		y = clamp(y, 0.0, 1.0);
+		
+		position.x = (int)(x * 100.0);
+		position.y = (int)(y * 100.0);
+		
+		UpdateParameters();
+		Refresh();
+	}
 }
 
 void XYPad::Layout() {
-    Refresh();
 }
+
+void XYPad::UpdateParameters() {
+	if(parameterSet) {
+		parameterSet->Set(paramX, position.x / 100.0);
+		parameterSet->Set(paramY, position.y / 100.0);
+	}
+}
+
+void XYPad::UpdateFromParameters() {
+	if(parameterSet) {
+		position.x = (int)(parameterSet->Get(paramX) * 100.0);
+		position.y = (int)(parameterSet->Get(paramY) * 100.0);
+		Refresh();
+	}
+}
+
+void XYPad::DrawHandle(Draw& draw) {
+	Size sz = GetSize();
+	int hx = position.x * sz.cx / 100;
+	int hy = position.y * sz.cy / 100;
+	
+	draw.DrawEllipse(hx - 5, hy - 5, 10, 10, Blue(), 1, Black());
+}
+
+#endif // GUI
 
 } // namespace UI

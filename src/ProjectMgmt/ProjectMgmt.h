@@ -2,8 +2,10 @@
 #define _ProjectMgmt_ProjectMgmt_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlCore/CtrlCore.h>
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include <Draw/Draw.h>
 #include <AudioCore/AudioCore.h>
 using namespace Upp;

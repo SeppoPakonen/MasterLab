@@ -3,7 +3,9 @@
 
 #include <AudioCore/AudioCore.h>
 #include <AudioFX/AudioFX.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 using namespace Upp;
 
 #include "Spectrum.h"

@@ -1,6 +1,7 @@
 #ifndef _Editors_InPlaceEditor_h_
 #define _Editors_InPlaceEditor_h_
 
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
 using namespace Upp;
 
@@ -22,5 +23,6 @@ private:
 };
 
 }
+#endif // GUI
 
 #endif

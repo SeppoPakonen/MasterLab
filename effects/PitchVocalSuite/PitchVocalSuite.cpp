@@ -1,6 +1,9 @@
 #include "PitchVocalSuite.h"
+
+#ifdef GUI
 #include <AI/LogicGui/LogicGui.h>
 #include <SoftAudio/SoftAudio.h>
+#endif
 
 // --- PitchVocalProcessor ---
 
@@ -154,6 +157,8 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 		}
 	}
 }
+
+#ifdef GUI
 
 // --- PitchVocalTopBar ---
 
@@ -596,6 +601,8 @@ bool PitchVocalEditor::Access(Visitor& v)
 	return Ctrl::Access(v);
 }
 
+#endif // GUI
+
 // --- Entry Points ---
 
 #ifdef flagDLL
@@ -715,6 +722,7 @@ void HardwareSimulator(PitchVocalProcessor& processor)
 	}
 }
 
+#ifdef GUI
 GUI_APP_MAIN
 {
 	CommandLineArguments cl;
@@ -843,3 +851,23 @@ GUI_APP_MAIN
 	stream.Stop();
 	stream.Close();
 }
+#else
+CONSOLE_APP_MAIN
+{
+	CommandLineArguments cl;
+	cl.AddArg("test", 't', "Run internal tests", false);
+	cl.AddArg("test-audio", 'a', "Load and analyze audio file", true, "path");
+	cl.AddArg("test-audio-hw", 'w', "Run virtual hardware output diagnostic", false);
+	cl.AddArg("help", 'h', "Show help", false);
+	if(!cl.Parse()) { cl.PrintHelp(); return; }
+	if(cl.IsArg("help")) { cl.PrintHelp(); return; }
+	if(cl.IsArg("test")) { RunTests(); return; }
+	if(cl.IsArg("test-audio")) { TestAudio(cl.GetArg("test-audio")); return; }
+
+	PitchVocalProcessor processor;
+	if(cl.IsArg("test-audio-hw")) {
+		HardwareSimulator(processor);
+		return;
+	}
+}
+#endif

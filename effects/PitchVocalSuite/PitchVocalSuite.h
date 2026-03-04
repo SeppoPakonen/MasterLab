@@ -1,11 +1,16 @@
 #ifndef _PitchVocalSuite_PitchVocalSuite_h_
 #define _PitchVocalSuite_PitchVocalSuite_h_
 
+#include <Core/Core.h>
+#include <Draw/Draw.h>
+#include <AudioAnalysis/PitchAnalysis.h>
+#include <PluginSDK/PluginSDK.h>
+
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
 #include <AudioUI/AudioUI.h>
-#include <AudioAnalysis/AudioAnalysis.h>
-#include <PluginSDK/PluginSDK.h>
 #include <CtrlLog/CtrlLog.h>
+#endif
 
 using namespace Upp;
 using namespace PluginSDK;
@@ -61,6 +66,8 @@ public:
 	am::AudioBuffer fullAudioBuffer;
 	int waveformBufferSize = 2048;
 };
+
+#ifdef GUI
 
 // Custom control for pitch graph editing
 class PitchGraphEditor : public Ctrl {
@@ -190,5 +197,7 @@ private:
 	String projectPath;
 	String audioPath;
 };
+
+#endif // GUI
 
 #endif

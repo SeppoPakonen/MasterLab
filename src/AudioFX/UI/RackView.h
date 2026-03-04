@@ -2,13 +2,19 @@
 #define _AudioFX_UI_RackView_h_
 
 #include <Core/Core.h>
+
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
+
 #include "../Modulation.h"
 #include "../PresetManager.h"
 
 using namespace Upp;
 
 namespace UI {
+
+#ifdef GUI
 
 // Rack view for displaying and controlling audio processing modules
 class RackView : public Ctrl {
@@ -87,6 +93,8 @@ private:
     void ModuleAdded();
     void ModuleRemoved();
 };
+
+#endif // GUI
 
 } // namespace UI
 

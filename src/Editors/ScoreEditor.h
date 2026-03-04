@@ -1,7 +1,10 @@
 #ifndef _Editors_ScoreEditor_h_
 #define _Editors_ScoreEditor_h_
 
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
+
 #include <Scores/NotationModel.h>
 #include <ProjectMgmt/ProjectMgmt.h>
 #include <FileIO/FileIO.h>
@@ -21,6 +24,8 @@ namespace am {
 
 // Forward declarations
 class ScoreProjectData;
+
+#ifdef GUI
 
 // Control interface for the Score Editor with toolbar and InfoBar
 class ScoreEditorCtrl : public Ctrl {
@@ -182,6 +187,8 @@ private:
     void SaveProjectCopy();
     void DoSaveProjectInternal() { SaveProjectInternal(); }
 };
+
+#endif // GUI
 
 }
 

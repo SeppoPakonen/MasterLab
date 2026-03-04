@@ -2,7 +2,9 @@
 #define _AudioFX_Modulation_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include "ParameterSet.h"
 #include "ModMatrix.h"
 

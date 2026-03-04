@@ -2,7 +2,9 @@
 #define _AudioFX_LatencyBuffer_h_
 
 #include <Core/Core.h>
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 #include "SignalBus.h"
 
 using namespace Upp;

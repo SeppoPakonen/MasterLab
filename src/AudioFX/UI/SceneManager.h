@@ -2,12 +2,18 @@
 #define _AudioFX_UI_SceneManager_h_
 
 #include <Core/Core.h>
+
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
+
 #include "../Modulation.h"
 
 using namespace Upp;
 
 namespace UI {
+
+#ifdef GUI
 
 // Scene manager for managing and switching between different parameter scenes
 class SceneManager : public Ctrl {
@@ -84,6 +90,8 @@ private:
     void SceneAdded();
     void SceneChanged();
 };
+
+#endif // GUI
 
 } // namespace UI
 

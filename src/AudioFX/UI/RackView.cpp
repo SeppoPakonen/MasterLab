@@ -2,121 +2,113 @@
 
 namespace UI {
 
+#ifdef GUI
+
 RackView::RackView() : presetManager(nullptr) {
-    // Initialize the rack view
-    AddFrame(BlackFrame());
 }
 
 RackView::~RackView() {
-    // Clean up modules
-    for (auto& module : modules) {
-        if (module.control) {
-            RemoveChild(module.control);
-            delete module.control;
-        }
-    }
+	for(int i = 0; i < modules.GetCount(); i++) {
+		if(modules[i].control) {
+			modules[i].control->Remove();
+		}
+	}
+	modules.Clear();
 }
 
 void RackView::AddModule(const String& name, Ctrl* control) {
-    ModuleSlot slot;
-    slot.name = name;
-    slot.control = control;
-    modules.Add(pick(slot));
-    
-    if (control) {
-        Add(*control);
-    }
-    
-    ModuleAdded();
-    RefreshLayout();
+	if(!control) return;
+	
+	ModuleSlot slot;
+	slot.name = name;
+	slot.control = control;
+	slot.bounds = Rect(0, 0, 100, 100); // Default size
+	
+	modules.Add(slot);
+	Add(*control);
+	RefreshLayout();
+	ModuleAdded();
 }
 
 void RackView::RemoveModule(const String& name) {
-    for (int i = 0; i < modules.GetCount(); i++) {
-        if (modules[i].name == name) {
-            if (modules[i].control) {
-                RemoveChild(modules[i].control);
-                delete modules[i].control;
-            }
-            modules.Remove(i);
-            break;
-        }
-    }
-    
-    ModuleRemoved();
-    RefreshLayout();
+	for(int i = 0; i < modules.GetCount(); i++) {
+		if(modules[i].name == name) {
+			if(modules[i].control) {
+				modules[i].control->Remove();
+			}
+			modules.Remove(i);
+			RefreshLayout();
+			ModuleRemoved();
+			return;
+		}
+	}
 }
 
 void RackView::RefreshLayout() {
-    int y = 0;
-    int width = GetSize().cx;
-    const int moduleHeight = 80;
-    
-    for (auto& module : modules) {
-        module.bounds = Rect(0, y, width, y + moduleHeight);
-        if (module.control) {
-            module.control->SetRect(module.bounds);
-        }
-        y += moduleHeight + 5; // 5px spacing
-    }
-    
-    SetMinSize(Size(width, y));
+	int y = 0;
+	int width = GetSize().cx;
+	
+	for(int i = 0; i < modules.GetCount(); i++) {
+		int height = 100; // Default module height
+		if(modules[i].control) {
+			modules[i].control->SetRect(0, y, width, height);
+			y += height;
+		}
+	}
 }
 
 void RackView::Refresh() {
-    RefreshLayout();
-    Refresh();
+	RefreshLayout();
+	Ctrl::Refresh();
 }
 
 void RackView::SetPresetManager(AudioFX::PresetManager* presetMgr) {
-    presetManager = presetMgr;
+	presetManager = presetMgr;
 }
 
 void RackView::LoadPreset(const String& name) {
-    if (presetManager) {
-        // Load preset using preset manager
-        // In a real implementation, this would restore parameter values
-    }
+	if(presetManager) {
+		// Implementation for loading preset into rack modules
+	}
 }
 
 void RackView::SavePreset(const String& name) {
-    if (presetManager) {
-        // Save preset using preset manager
-        // In a real implementation, this would save current parameter values
-    }
+	if(presetManager) {
+		// Implementation for saving rack state as preset
+	}
 }
 
 void RackView::ApplyAutomation(const ValueMap& automationData) {
-    // Apply automation data to modules
-    // In a real implementation, this would apply time-varying parameter changes
+	// Implementation for applying automation to rack modules
 }
 
 ValueMap RackView::GetAutomationData() const {
-    ValueMap data;
-    // In a real implementation, this would collect automation data from modules
-    return data;
+	ValueMap data;
+	// Implementation for getting automation data from rack modules
+	return data;
 }
 
 void RackView::Paint(Draw& draw) {
-    draw.DrawRect(GetSize(), SColorFace());
-    
-    // Draw module slots
-    for (const auto& module : modules) {
-        draw.DrawRect(module.bounds, GrayColor());
-        draw.DrawText(module.bounds.left + 10, module.bounds.top + 10, module.name, StdFont(), White());
-    }
+	Size sz = GetSize();
+	draw.DrawRect(sz, SColorFace());
+	
+	if(modules.IsEmpty()) {
+		draw.DrawText(sz.cx / 2 - 50, sz.cy / 2, "Rack is empty", Arial(12), SColorText());
+	}
 }
 
 void RackView::Layout() {
-    RefreshLayout();
+	RefreshLayout();
 }
 
 void RackView::ModuleAdded() {
-    // Callback when a module is added
+	// Optional callback when module is added
 }
 
 void RackView::ModuleRemoved() {
-    // Callback when a module is removed
+	// Optional callback when module is removed
 }
+
+#endif // GUI
 
 } // namespace UI

@@ -2,7 +2,10 @@
 #define _PluginSDK_PluginSDK_h_
 
 #include <Core/Core.h>
+
+#ifdef GUI
 #include <CtrlLib/CtrlLib.h>
+#endif
 
 namespace PluginSDK {
 
@@ -227,6 +230,8 @@ protected:
 	GraphVisualization graph;
 };
 
+#ifdef GUI
+
 class PluginEditor : public Upp::Ctrl {
 public:
 	typedef PluginEditor CLASSNAME;
@@ -289,6 +294,8 @@ private:
 	Upp::Label timeDisplay;
 };
 
+#endif // GUI
+
 class InstrumentProcessor : public PluginProcessor {
 public:
 	virtual void NoteOn(const NoteEvent&);
@@ -304,6 +311,7 @@ public:
 	virtual void Prepare(const AudioConfig& config);
 	virtual void Reset();
 	virtual void SetParameter(const Upp::String& id, double value);
+	virtual void SetParameterById(const Upp::String& id, double value);
 	virtual double GetParameter(const Upp::String& id) const;
 	
 	ParameterSet& Parameters();
