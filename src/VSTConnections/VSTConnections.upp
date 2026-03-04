@@ -1,4 +1,4 @@
-description "Cubase-style VST Connections window scaffolding";
+acceptflags GUI;\ndescription "Cubase-style VST Connections window scaffolding";
 
 uses
 	CtrlLib,
@@ -15,4 +15,19 @@ file
 	VSTConnectionsPresenter.h,
 	VSTConnectionsPresenter.cpp,
 	VSTConnectionsWnd.h,
-	VSTConnectionsWnd.cpp;
+	VSTConnectionsWnd.cpp,
+	CuteAudioIOMatrixForm.h,
+	CuteAudioIOMatrixForm.cpp,
+	CuteAudioIOMatrixFormLayout.md,
+	CuteBusForm.h,
+	CuteBusForm.cpp,
+	CuteBusFormLayout.md,
+	CuteConnect.h,
+	CuteConnect.cpp,
+	CuteConnectForm.h,
+	CuteConnectForm.cpp,
+	CuteConnectFormLayout.md,
+	CuteConnections.h,
+	CuteConnections.cpp;
+
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

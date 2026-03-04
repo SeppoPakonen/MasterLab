@@ -1,4 +1,4 @@
-description "Project management package\377135,206,235";
+acceptflags GUI;\ndescription "Project management package\377135,206,235";
 
 uses
 	Core,
@@ -19,4 +19,12 @@ file
 	Selection.cpp,
 	AK.h,
 	AK.key,
-	AK.cpp;
+	AK.cpp,
+	CuteCommand.h,
+	CuteCommand.cpp,
+	CuteClipCommand.h,
+	CuteClipCommand.cpp,
+	CuteCurveCommand.h,
+	CuteCurveCommand.cpp;
+
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

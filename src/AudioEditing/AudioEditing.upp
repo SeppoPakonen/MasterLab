@@ -13,5 +13,9 @@ file
 	SnapSettings.h,
 	SnapSettings.cpp,
 	FadeBehavior.h,
-	FadeBehavior.cpp;
-
+	FadeBehavior.cpp,
+	CuteClipForm.h,
+	CuteClipForm.cpp,
+	CuteClipFormLayout.md,
+	CuteClipSelect.h,
+	CuteClipSelect.cpp;

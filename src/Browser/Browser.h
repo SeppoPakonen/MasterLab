@@ -10,5 +10,6 @@ using namespace Upp;
 #include "LoopBrowser.h"
 #include "SoundBrowser.h"
 #include "Tagging.h"
+#include "CuteAudioListView.h"
 
 #endif

@@ -7,5 +7,6 @@ using namespace Upp;
 
 #include "WorkAreaTheme.h"
 #include "MeterTheme.h"
+#include "CuteComboBox.h"
 
 #endif

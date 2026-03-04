@@ -2,7 +2,7 @@
 #define _ProjectMgmt_ProjectMgmt_h_
 
 #include <Core/Core.h>
-#ifdef GUI
+#ifdef flagGUI
 #include <CtrlCore/CtrlCore.h>
 #include <CtrlLib/CtrlLib.h>
 #endif
@@ -13,6 +13,9 @@ using namespace Upp;
 #include "Commands.h"
 #include "History.h"
 #include "Selection.h"
+#include "CuteCurveCommand.h"
+#include "CuteClipCommand.h"
+#include "CuteCommand.h"
 
 // Provide ProjectMgmt namespace for compatibility with editor modules
 namespace ProjectMgmt {

@@ -2,8 +2,12 @@
 #define _AudioEditing_AudioEditing_h_
 
 #include <Core/Core.h>
+
+#ifdef flagGUI
 #include <CtrlLib/CtrlLib.h>
 #include <RichText/RichText.h>
+#endif
+
 #include <AudioCore/AudioCore.h>
 using namespace Upp;
 
@@ -11,6 +15,8 @@ using namespace Upp;
 #include "TimeStretchPrefs.h"
 #include "SnapSettings.h"
 #include "FadeBehavior.h"
+#include "CuteClipSelect.h"
+#include "CuteClipForm.h"
 
 // Ensure VectorMap is available
 
@@ -469,7 +475,7 @@ public:
     void operator<<=(AudioBus& other) {
         name = pick(other.name);
         channel_count = other.channel_count;
-        volume = other.volume;
+        volume = pick(other.volume);
         is_muted = other.is_muted;
         is_soloed = other.is_soloed;
         source_tracks = pick(other.source_tracks);
@@ -552,6 +558,8 @@ public:
     }
 };
 
+#ifdef flagGUI
+
 // Class for audio waveform visualization
 class WaveformCtrl : public Ctrl {
 private:
@@ -571,6 +579,8 @@ public:
     virtual void MouseMove(Point p, dword keyflags);
     virtual void LeftDown(Point p, dword keyflags);
 };
+
+#endif // GUI
 
 // Class to represent MIDI events
 class MidiEvent {
@@ -704,7 +714,7 @@ public:
     }
 };
 
-
+#ifdef flagGUI
 
 // Mixer channel strip control for audio tracks
 class MixerStrip : public Ctrl {
@@ -958,6 +968,8 @@ public:
     void RemoveStrip(int track_index);
 };
 
+#endif // GUI
+
 // Class to manage an entire audio project
 class AudioProject {
 private:
@@ -1001,6 +1013,8 @@ public:
     }
 };
 
+#ifdef flagGUI
+
 // Main application window for the DAW
 class AudioDAWApp : public TopWindow {
 private:
@@ -1042,6 +1056,8 @@ public:
     // Application operations
     void RefreshUI();
 };
+
+#endif // GUI
 
 // Class to handle audio editing operations
 class AudioEditor {

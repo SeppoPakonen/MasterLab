@@ -1,4 +1,4 @@
-description "Theme package\3770,100,0";
+acceptflags GUI;\ndescription "Theme package\3770,100,0";
 
 uses
 	Draw,
@@ -10,5 +10,8 @@ file
 	WorkAreaTheme.h,
 	WorkAreaTheme.cpp,
 	MeterTheme.h,
-	MeterTheme.cpp;
+	MeterTheme.cpp,
+	CuteComboBox.h,
+	CuteComboBox.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

@@ -10,5 +10,6 @@ using namespace Upp;
 #include "MidiDisplay.h"
 #include "MidiFilePrefs.h"
 #include "Groove.h"
+#include "CuteCtlEvent.h"
 
 #endif

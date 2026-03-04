@@ -1,4 +1,4 @@
-description "Browser package\3770,128,128";
+acceptflags GUI;\ndescription "Browser package\3770,128,128";
 
 uses
 	CtrlLib,
@@ -15,5 +15,8 @@ file
 	SoundBrowser.h,
 	SoundBrowser.cpp,
 	Tagging.h,
-	Tagging.cpp;
+	Tagging.cpp,
+	CuteAudioListView.h,
+	CuteAudioListView.cpp;
 
+mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

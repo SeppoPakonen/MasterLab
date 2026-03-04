@@ -16,4 +16,5 @@ file
 	MidiDisplay.h,
 	MidiDisplay.cpp,
 	MidiFilePrefs.h,
-	MidiFilePrefs.cpp;
+	MidiFilePrefs.cpp,
+	CuteCtlEvent.h;
