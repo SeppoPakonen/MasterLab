@@ -1,0 +1,18 @@
+description "Headless CLI for PitchVocalSuite";
+
+uses
+	PluginSDK,
+	AudioCore,
+	AudioAnalysis,
+	DSP,
+	FileIO;
+
+uses(BUILTIN_PORTAUDIO) plugin/portaudio;
+	
+file
+	PitchVocalSuiteCLI.h,
+	PitchVocalSuiteCLI.cpp;
+
+mainconfig
+	"Release" = "NOT GUI",
+	"Debug" = "NOT GUI";
