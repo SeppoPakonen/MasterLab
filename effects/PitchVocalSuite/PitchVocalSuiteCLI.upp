@@ -15,5 +15,4 @@ file
 	PitchVocalSuiteCLI.cpp;
 
 mainconfig
-	"Release" = "NOT GUI",
-	"Debug" = "NOT GUI";
+	"Headless" = "NOT GUI BUILTIN_PORTAUDIO";

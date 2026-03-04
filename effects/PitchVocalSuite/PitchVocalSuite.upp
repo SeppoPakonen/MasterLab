@@ -12,14 +12,14 @@ uses(GUI) AudioUI;
 uses(GUI) SoftAudio;
 uses(GUI) AI/LogicGui;
 uses(GUI) CtrlLog;
+uses(GUI) vorbis;
 
 uses(BUILTIN_PORTAUDIO) plugin/portaudio;
 	
 file
 	AGENTS.md,
 	PitchVocalSuite.h,
-	PitchVocalSuite.cpp,
-	PitchVocalSuiteCLI.upp;
+	PitchVocalSuite.cpp;
 
 mainconfig
 	"Standalone" = "GUI BUILTIN_PORTAUDIO",
