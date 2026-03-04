@@ -120,7 +120,7 @@ Upp::String PitchVocalProcessor::GetName() const
 
 void PitchVocalProcessor::Process(ProcessContext& ctx)
 {
-	// Get pitch shift parameter
+	// Get global pitch shift parameter
 	pitch_shift_semitones = GetParameter("pitch_shift_semitones");
 	double pitchShiftRatio = pow(2.0, pitch_shift_semitones / 12.0);
 
@@ -128,10 +128,37 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 	int channels = fullAudioBuffer.GetChannels();
 	
 	if (totalFrames > 0 && channels > 0) {
-		// Adjust read position based on pitch shift ratio
-		double currentSamplePos = ctx.transport.position_beats * fullAudioBuffer.rate * pitchShiftRatio;
-		
+		double currentSamplePos = ctx.transport.position_beats * fullAudioBuffer.rate;
+
 		for (int i = 0; i < ctx.frames; ++i) {
+			double time = currentSamplePos / fullAudioBuffer.rate;
+			
+			// Note-based correction
+			double noteRatio = 1.0;
+			bool noteActive = false;
+			for(const auto& note : notes) {
+				if (time >= note.startTime && time < (note.startTime + note.duration)) {
+					double targetFreq = am::PitchAnalysisEngine::MidiToFrequency(note.midiNote);
+					// Find original pitch at this time from pitchPoints
+					// (This is a simplified lookup)
+					double originalFreq = 0;
+					for(const auto& p : pitchPoints) {
+						if (p.time >= time) {
+							originalFreq = p.frequency;
+							break;
+						}
+					}
+					
+					if (originalFreq > 0) {
+						noteRatio = targetFreq / originalFreq;
+					}
+					noteActive = true;
+					break;
+				}
+			}
+			
+			double finalRatio = noteActive ? noteRatio : pitchShiftRatio;
+			
 			int64 frame = (int64)currentSamplePos;
 			for (int c = 0; c < ctx.output.channel_count; ++c) {
 				float sample = 0;
@@ -147,7 +174,7 @@ void PitchVocalProcessor::Process(ProcessContext& ctx)
 				}
 				ctx.output.GetChannel(c)[i] = sample;
 			}
-			currentSamplePos += pitchShiftRatio; // Advance playback pointer
+			currentSamplePos += finalRatio; // Advance playback pointer
 		}
 	} else {
 		// Ensure silence if no audio is loaded
