@@ -1,270 +1,165 @@
 #include "../Cool.h"
-#if 0
+#include "Xml.hpp"
 
-// Converted from tmp/k/src/xml/xml.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+namespace Xml {
 
-/*
-    SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
-*/
-
-// #include "xml.hpp"
-// #include <QDebug>
-// #include <QFile>
-// #include <QSaveFile>
-
-// static
-bool Xml::docContentFromFile(QDomDocument &doc, const QString &fileName, bool namespaceProcessing)
+static void CollectByTagName(const QDomElement& node, const QString& tag_name, bool direct_children, QVector<QDomNode>& out)
 {
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open file" << file.fileName() << "for reading";
-        return false;
-    }
-    QDomDocument::ParseOption options = QDomDocument::ParseOption::Default;
-    if (namespaceProcessing) {
-        options = QDomDocument::ParseOption::UseNamespaceProcessing;
-    }
-    if (!doc.setContent(&file, options)) {
-        qWarning() << "Failed to parse file" << file.fileName() << "to QDomDocument";
-        file.close();
-        return false;
-    }
-    file.close();
-    return true;
+	for(int i = 0; i < node.GetCount(); ++i) {
+		const QDomNode& child = node[i];
+		if(!child.IsTag())
+			continue;
+		if(child.GetTag() == tag_name) {
+			QDomNode copy(child, 1);
+			out.AddPick(pick(copy));
+		}
+		if(!direct_children)
+			CollectByTagName(child, tag_name, false, out);
+	}
 }
 
-bool Xml::docContentToFile(const QDomDocument &doc, const QString &fileName)
+static int FindNamedProperty(const QDomElement& element, const QString& tag_name, const QString& property_name)
 {
-    QSaveFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning() << "Cannot write to file" << file.fileName();
-        return false;
-    }
-    file.write(doc.toString().toUtf8());
-    if (!file.commit()) {
-        qWarning() << "Error while writing to file" << file.fileName();
-        return false;
-    }
-    return true;
+	for(int i = 0; i < element.GetCount(); ++i) {
+		const QDomNode& child = element[i];
+		if(!child.IsTag(tag_name))
+			continue;
+		if(child.Attr("name") == property_name)
+			return i;
+	}
+	return -1;
 }
 
-QString Xml::getSubTagContent(const QDomElement &element, const QString &tagName)
+bool docContentFromFile(QDomDocument& doc, const QString& file_name, bool)
 {
-    QVector<QDomNode> nodeList = getDirectChildrenByTagName(element, tagName);
-    if (!nodeList.isEmpty()) {
-        if (nodeList.size() > 1) {
-            QString str;
-            QTextStream stream(&str);
-            element.save(stream, 4);
-            qWarning() << str << "provides several " << tagName << ". We keep only first one.";
-        }
-        const QString content = nodeList.first().toElement().text();
-        return content;
-    }
-    return QString();
+	String xml_text = LoadFile(file_name);
+	if(IsNull(xml_text))
+		return false;
+	doc = ParseXML(xml_text);
+	return !doc.IsEmpty();
 }
 
-std::pair<QString, QString> Xml::getSubTagContentAndContext(const QDomElement &element, const QString &tagName)
+bool docContentToFile(const QDomDocument& doc, const QString& file_name)
 {
-    QVector<QDomNode> nodeList = getDirectChildrenByTagName(element, tagName);
-    if (!nodeList.isEmpty()) {
-        if (nodeList.size() > 1) {
-            QString str;
-            QTextStream stream(&str);
-            element.save(stream, 4);
-            qWarning() << str << "provides several " << tagName << ". We keep only first one.";
-        }
-        return {nodeList.first().toElement().text(), nodeList.first().toElement().attribute(QStringLiteral("context"))};
-    }
-    return {};
+	return SaveFile(file_name, AsXML(doc, XML_HEADER | XML_DOCTYPE | XML_PRETTY));
 }
 
-QVector<QDomNode> Xml::getDirectChildrenByTagName(const QDomElement &element, const QString &tagName)
+QString getSubTagContent(const QDomElement& element, const QString& tag_name)
 {
-    auto children = element.childNodes();
-    QVector<QDomNode> result;
-    for (int i = 0; i < children.count(); ++i) {
-        if (children.item(i).isNull() || !children.item(i).isElement()) {
-            continue;
-        }
-        QDomElement child = children.item(i).toElement();
-        if (child.tagName() == tagName) {
-            result.push_back(child);
-        }
-    }
-    return result;
+	QVector<QDomNode> nodes = getDirectChildrenByTagName(element, tag_name);
+	return nodes.IsEmpty() ? String() : nodes[0].GatherText();
 }
 
-QString Xml::getTagContentByAttribute(const QDomElement &element, const QString &tagName, const QString &attribute, const QString &value,
-                                      const QString &defaultReturn, bool directChildren)
+std::pair<QString, QString> getSubTagContentAndContext(const QDomElement& element, const QString& tag_name)
 {
-    QDomNodeList nodes;
-    if (directChildren) {
-        nodes = element.childNodes();
-    } else {
-        nodes = element.elementsByTagName(tagName);
-    }
-    for (int i = 0; i < nodes.count(); ++i) {
-        auto current = nodes.item(i);
-        if (current.isNull() || !current.isElement()) {
-            continue;
-        }
-        auto elem = current.toElement();
-        if (elem.tagName() == tagName && elem.hasAttribute(attribute)) {
-            if (elem.attribute(attribute) == value) {
-                return elem.text();
-            }
-        }
-    }
-    return defaultReturn;
+	QVector<QDomNode> nodes = getDirectChildrenByTagName(element, tag_name);
+	if(nodes.IsEmpty())
+		return {};
+	return {nodes[0].GatherText(), nodes[0].Attr("context")};
 }
 
-void Xml::addXmlProperties(QDomElement &element, const std::unordered_map<QString, QString> &properties)
+QVector<QDomNode> getDirectChildrenByTagName(const QDomElement& element, const QString& tag_name)
 {
-    for (const auto &p : properties) {
-        QDomElement prop = element.ownerDocument().createElement(QStringLiteral("property"));
-        prop.setAttribute(QStringLiteral("name"), p.first);
-        QDomText value = element.ownerDocument().createTextNode(p.second);
-        prop.appendChild(value);
-        element.appendChild(prop);
-    }
+	QVector<QDomNode> out;
+	CollectByTagName(element, tag_name, true, out);
+	return out;
 }
 
-void Xml::addXmlProperties(QDomElement &element, const QMap<QString, QString> &properties)
+QString getTagContentByAttribute(const QDomElement& element, const QString& tag_name, const QString& attribute, const QString& value,
+                                 const QString& default_return, bool direct_children)
 {
-    QMapIterator<QString, QString> i(properties);
-    while (i.hasNext()) {
-        i.next();
-        QDomElement prop = element.ownerDocument().createElement(QStringLiteral("property"));
-        prop.setAttribute(QStringLiteral("name"), i.key());
-        QDomText value = element.ownerDocument().createTextNode(i.value());
-        prop.appendChild(value);
-        element.appendChild(prop);
-    }
+	QVector<QDomNode> nodes;
+	CollectByTagName(element, tag_name, direct_children, nodes);
+	for(const QDomNode& n : nodes)
+		if(n.Attr(attribute) == value)
+			return n.GatherText();
+	return default_return;
 }
 
-QString Xml::getXmlProperty(const QDomElement &element, const QString &propertyName, const QString &defaultReturn)
+QString getXmlProperty(const QDomElement& element, const QString& property_name, const QString& default_return)
 {
-    return Xml::getTagContentByAttribute(element, QStringLiteral("property"), QStringLiteral("name"), propertyName, defaultReturn, false);
+	return getTagContentByAttribute(element, "property", "name", property_name, default_return, false);
 }
 
-QString Xml::getXmlParameter(const QDomElement &element, const QString &propertyName, const QString &defaultReturn)
+QString getXmlParameter(const QDomElement& element, const QString& property_name, const QString& default_return)
 {
-    return Xml::getTagContentByAttribute(element, QStringLiteral("parameter"), QStringLiteral("name"), propertyName, defaultReturn, false);
+	return getTagContentByAttribute(element, "parameter", "name", property_name, default_return, false);
 }
 
-void Xml::setXmlProperty(QDomElement element, const QString &propertyName, const QString &value)
+bool hasXmlProperty(const QDomElement& element, const QString& property_name)
 {
-    QDomNodeList params = element.elementsByTagName(QStringLiteral("property"));
-    // Update property if it already exists
-    bool found = false;
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == propertyName) {
-            if (e.hasChildNodes()) {
-                e.firstChild().setNodeValue(value);
-            } else {
-                QDomText resourceValue = element.ownerDocument().createTextNode(value);
-                e.appendChild(resourceValue);
-            }
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
-        // create property
-        QMap<QString, QString> map;
-        map.insert(propertyName, value);
-        addXmlProperties(element, map);
-    }
+	return FindNamedProperty(element, "property", property_name) >= 0;
 }
 
-void Xml::setXmlParameter(const QDomElement &element, const QString &propertyName, const QString &value)
+bool hasXmlParameter(const QDomElement& element, const QString& property_name)
 {
-    QDomNodeList params = element.elementsByTagName(QStringLiteral("parameter"));
-    // Update property if it already exists
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == propertyName) {
-            e.setAttribute(QStringLiteral("value"), value);
-            break;
-        }
-    }
+	return FindNamedProperty(element, "parameter", property_name) >= 0;
 }
 
-bool Xml::hasXmlParameter(const QDomElement &element, const QString &propertyName)
+void addXmlProperties(QDomElement& producer, const QMap<QString, QString>& properties)
 {
-    QDomNodeList params = element.elementsByTagName(QStringLiteral("parameter"));
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == propertyName) {
-            return true;
-        }
-    }
-    return false;
+	for(int i = 0; i < properties.GetCount(); ++i) {
+		QDomNode& prop = producer.Add("property");
+		prop.SetAttr("name", properties.GetKey(i));
+		prop.AddText(properties[i]);
+	}
 }
 
-bool Xml::hasXmlProperty(const QDomElement &element, const QString &propertyName)
+void setXmlProperty(QDomElement& element, const QString& property_name, const QString& value)
 {
-    QDomNodeList params = element.elementsByTagName(QStringLiteral("property"));
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == propertyName) {
-            return true;
-        }
-    }
-    return false;
+	int pos = FindNamedProperty(element, "property", property_name);
+	if(pos >= 0) {
+		QDomNode& prop = element.At(pos);
+		prop.Remove(0);
+		prop.AddText(value);
+		return;
+	}
+	QDomNode& prop = element.Add("property");
+	prop.SetAttr("name", property_name);
+	prop.AddText(value);
 }
 
-QMap<QString, QString> Xml::getXmlPropertyByWildcard(const QDomElement &element, const QString &propertyName)
+void setXmlParameter(QDomElement& element, const QString& property_name, const QString& value)
 {
-    QMap<QString, QString> props;
-    QDomNodeList params = element.elementsByTagName(QStringLiteral("property"));
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")).startsWith(propertyName)) {
-            props.insert(e.attribute(QStringLiteral("name")), e.text());
-        }
-    }
-    return props;
+	int pos = FindNamedProperty(element, "parameter", property_name);
+	if(pos < 0)
+		return;
+	element.At(pos).SetAttr("value", value);
 }
 
-void Xml::removeXmlProperty(QDomElement effect, const QString &name)
+void removeXmlProperty(QDomElement& effect, const QString& name)
 {
-    QDomNodeList params = effect.elementsByTagName(QStringLiteral("property"));
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == name) {
-            effect.removeChild(params.item(i));
-            break;
-        }
-    }
+	int pos = FindNamedProperty(effect, "property", name);
+	if(pos >= 0)
+		effect.Remove(pos);
 }
 
-void Xml::renameXmlProperty(const QDomElement &effect, const QString &oldName, const QString &newName)
+void renameXmlProperty(QDomElement& effect, const QString& old_name, const QString& new_name)
 {
-    QDomNodeList params = effect.elementsByTagName(QStringLiteral("property"));
-    // Update property if it already exists
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")) == oldName) {
-            e.setAttribute(QStringLiteral("name"), newName);
-            break;
-        }
-    }
+	int pos = FindNamedProperty(effect, "property", old_name);
+	if(pos >= 0)
+		effect.At(pos).SetAttr("name", new_name);
 }
 
-void Xml::removeMetaProperties(QDomElement producer)
+QMap<QString, QString> getXmlPropertyByWildcard(const QDomElement& element, const QString& property_name)
 {
-    QDomNodeList params = producer.elementsByTagName(QStringLiteral("property"));
-    for (int i = 0; i < params.count(); ++i) {
-        QDomElement e = params.item(i).toElement();
-        if (e.attribute(QStringLiteral("name")).startsWith(QLatin1String("meta"))) {
-            producer.removeChild(params.item(i));
-            --i;
-        }
-    }
+	QMap<QString, QString> out;
+	QVector<QDomNode> props = getDirectChildrenByTagName(element, "property");
+	for(const QDomNode& prop : props) {
+		String key = prop.Attr("name");
+		if(key.StartsWith(property_name))
+			out.GetAdd(key) = prop.GatherText();
+	}
+	return out;
 }
-#endif
+
+void removeMetaProperties(QDomElement& producer)
+{
+	for(int i = producer.GetCount() - 1; i >= 0; --i) {
+		const QDomNode& n = producer[i];
+		if(n.IsTag("property") && n.Attr("name").StartsWith("meta"))
+			producer.Remove(i);
+	}
+}
+
+}
