@@ -6,33 +6,29 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_transitions_transitionlist_model_Transitionfilter_hpp_
+#define _Cool_transitions_transitionlist_model_Transitionfilter_hpp_
 
-// #include "assets/assetlist/model/assetfilter.hpp"
-// #include "transitions/transitionsrepository.hpp"
-// #include <memory>
+namespace AssetListType {
+enum class AssetType : int;
+}
 
 /** @brief This class is used as a proxy model to filter the effect tree based on given criterion (name, type).
    It simply adds a filter of type
  */
-class TransitionFilter : public AssetFilter
-{
-    Q_OBJECT
-
+class TransitionFilter {
 public:
-    TransitionFilter(QObject *parent = nullptr);
+    TransitionFilter(void *parent = nullptr);
 
     /** @brief Manage the type filter
        @param enabled whether to enable this filter
        @param type Effect type to display
     */
     void setFilterType(bool enabled, AssetListType::AssetType type);
-    void reloadFilterOnFavorite() override;
-
-protected:
-    bool filterType(const std::shared_ptr<TreeItem> &item) const;
-    bool applyAll(std::shared_ptr<TreeItem> item) const override;
+    void reloadFilterOnFavorite();
 
     bool m_type_enabled;
     AssetListType::AssetType m_type_value;
 };
+
+#endif
