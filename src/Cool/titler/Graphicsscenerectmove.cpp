@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Graphicsscenerectmove.h"
 
 // Converted from tmp/k/src/titler/graphicsscenerectmove.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1375,3 +1377,4 @@ void GraphicsSceneRectMove::addNewItem(QGraphicsItem *item)
     item->setSelected(true);
     m_selectedItem = item;
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/effects/effectstack/model/abstracteffectitem.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -75,3 +76,4 @@ EffectItemType AbstractEffectItem::effectItemType() const
 {
     return m_effectItemType;
 }
+#endif

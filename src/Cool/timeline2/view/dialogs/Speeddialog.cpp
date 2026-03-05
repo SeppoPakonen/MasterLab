@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Speeddialog.h"
 
 // Converted from tmp/k/src/timeline2/view/dialogs/speeddialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -136,3 +138,4 @@ bool SpeedDialog::getPitchCompensate() const
 {
     return ui->pitchCompensate->isChecked();
 }
+#endif

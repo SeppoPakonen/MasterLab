@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Documentcheckertreemodel.h"
 
 // Converted from tmp/k/src/doc/documentcheckertreemodel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -228,3 +230,4 @@ DocumentChecker::DocumentResource DocumentCheckerTreeModel::getDocumentResource(
 {
     return m_resourceItems.value(int(index.internalId()));
 }
+#endif

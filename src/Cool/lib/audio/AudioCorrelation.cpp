@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "AudioCorrelation.h"
 
 // Converted from tmp/k/src/lib/audio/audioCorrelation.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -160,3 +162,4 @@ void AudioCorrelation::correlate(const qint64 *envMain, size_t sizeMain, const q
         *out_max = max;
     }
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/keyframes/view/keyframeview.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -810,3 +811,4 @@ void KeyframeView::copyCurrentValue(const QModelIndex &ix, const QString &paramN
     }
     pCore->pushUndo(parentCommand);
 }
+#endif

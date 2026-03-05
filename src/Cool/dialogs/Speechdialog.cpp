@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Speechdialog.h"
 
 // Converted from tmp/k/src/dialogs/speechdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -615,3 +617,4 @@ void SpeechDialog::fillSeamlessLanguages()
         }
     }
 }
+#endif

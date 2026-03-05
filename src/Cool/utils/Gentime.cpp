@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Gentime.h"
 
 // Converted from tmp/k/src/utils/gentime.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -120,3 +122,4 @@ void GenTime::setFps(double fps)
 {
     s_delta = 0.9 / fps;
 }
+#endif

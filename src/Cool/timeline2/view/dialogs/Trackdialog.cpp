@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Trackdialog.h"
 
 // Converted from tmp/k/src/timeline2/view/dialogs/trackdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -168,3 +170,4 @@ int TrackDialog::tracksCount() const
 {
     return tracks_count->value();
 }
+#endif

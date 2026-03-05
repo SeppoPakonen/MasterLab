@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/audiomixer/mixerwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -765,3 +766,4 @@ void MixerWidget::setBackgroundColor(QPalette::ColorRole role)
     pal.setColor(QPalette::Window, getMixerBackgroundColor());
     setPalette(pal);
 }
+#endif

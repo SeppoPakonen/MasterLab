@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/keyframes/model/rect/recthelper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -78,3 +79,4 @@ void RectHelper::refreshParams(int pos)
         m_monitor->setUpEffectGeometry(QRect(x - w / 2, y - h / 2, w, h));
     }
 }
+#endif

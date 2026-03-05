@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Jogshuttle.h"
 
 // Converted from tmp/k/src/jogshuttle/jogshuttle.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -224,3 +226,4 @@ int JogShuttle::keysCount(const QString &devPath)
 
     return keysCount;
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Dcresolvedialog.h"
 
 // Converted from tmp/k/src/doc/dcresolvedialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -297,3 +299,4 @@ void DCResolveDialog::setEnableChangeItems(bool enabled)
     removeSelected->setEnabled(enabled);
     usePlaceholders->setEnabled(enabled);
 }
+#endif

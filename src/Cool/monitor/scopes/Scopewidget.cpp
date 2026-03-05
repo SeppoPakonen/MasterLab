@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Scopewidget.h"
 
 // Converted from tmp/k/src/monitor/scopes/scopewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -82,3 +84,4 @@ void ScopeWidget::changeEvent(QEvent *)
     m_mutex.unlock();
     requestRefresh();
 }
+#endif

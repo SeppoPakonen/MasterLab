@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Invaliddialog.h"
 
 // Converted from tmp/k/src/project/invaliddialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -69,3 +71,4 @@ QStringList InvalidDialog::getIds() const
     }
     return ids;
 }
+#endif

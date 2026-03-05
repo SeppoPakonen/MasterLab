@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Subtitlestyleedit.h"
 
 // Converted from tmp/k/src/dialogs/subtitlestyleedit.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -360,3 +362,4 @@ void SubtitleStyleEdit::updateProperties()
     delete frame;
     preview->setPixmap(QPixmap::fromImage(p));
 }
+#endif

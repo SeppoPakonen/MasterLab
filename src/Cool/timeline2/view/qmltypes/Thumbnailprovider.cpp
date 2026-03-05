@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Thumbnailprovider.h"
 
 // Converted from tmp/k/src/timeline2/view/qmltypes/thumbnailprovider.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -87,3 +89,4 @@ QImage ThumbnailProvider::makeThumbnail(std::unique_ptr<Mlt::Producer> producer,
     int fullWidth = qRound(imageHeight * pCore->getCurrentDar());
     return KThumb::getFrame(frame.get(), imageWidth, imageHeight, fullWidth);
 }
+#endif

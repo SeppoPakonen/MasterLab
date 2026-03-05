@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Profilesdialog.h"
 
 // Converted from tmp/k/src/dialogs/profilesdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -392,3 +394,4 @@ void ProfilesDialog::showMessage(const QString &text, KMessageWidget::MessageTyp
         m_view.info_message->animatedShow();
     }
 }
+#endif

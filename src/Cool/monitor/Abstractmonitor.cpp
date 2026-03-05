@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Abstractmonitor.h"
 
 // Converted from tmp/k/src/monitor/abstractmonitor.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -37,3 +39,4 @@ bool AbstractMonitor::slotTemporaryActivateMonitor()
 {
     return m_monitorManager->activateMonitor(m_id, false);
 }
+#endif

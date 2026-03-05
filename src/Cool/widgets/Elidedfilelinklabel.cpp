@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Elidedfilelinklabel.h"
 
 // Converted from tmp/k/src/widgets/elidedfilelinklabel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -92,3 +94,4 @@ void ElidedFileLinkLabel::resizeEvent(QResizeEvent *event)
     updateLabel(currentWidth() + diff);
     QLabel::resizeEvent(event);
 }
+#endif

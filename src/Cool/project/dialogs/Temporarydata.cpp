@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Temporarydata.h"
 
 // Converted from tmp/k/src/project/dialogs/temporarydata.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -786,3 +788,4 @@ void TemporaryData::slotCleanUp()
     cleanCache();
     cleanBackup();
 }
+#endif

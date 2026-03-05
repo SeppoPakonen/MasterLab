@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "AudioCorrelationInfo.h"
 
 // Converted from tmp/k/src/lib/audio/audioCorrelationInfo.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -93,3 +95,4 @@ QImage AudioCorrelationInfo::toImage(size_t height) const
 
     return img;
 }
+#endif

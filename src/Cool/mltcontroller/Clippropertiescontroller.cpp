@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Clippropertiescontroller.h"
 
 // Converted from tmp/k/src/mltcontroller/clippropertiescontroller.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1873,3 +1875,4 @@ void ClipPropertiesController::updateStreamInfo(int streamIndex)
         m_gain->setValue(gain);
     }
 }
+#endif

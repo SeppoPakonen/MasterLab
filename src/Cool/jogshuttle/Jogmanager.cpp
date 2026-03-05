@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Jogmanager.h"
 
 // Converted from tmp/k/src/jogshuttle/jogmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -52,3 +54,4 @@ void JogManager::slotDoAction(const QString &actionName)
     }
     action->trigger();
 }
+#endif

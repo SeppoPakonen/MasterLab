@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Proxytask.h"
 
 // Converted from tmp/k/src/jobs/proxytask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -478,3 +480,4 @@ void ProxyTask::processLogInfo()
         }
     }
 }
+#endif

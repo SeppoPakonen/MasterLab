@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Previewmanager.h"
 
 // Converted from tmp/k/src/timeline2/view/previewmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -983,3 +985,4 @@ bool PreviewManager::isRunning() const
 {
     return workingPreview >= 0 || m_previewProcess.state() != QProcess::NotRunning;
 }
+#endif

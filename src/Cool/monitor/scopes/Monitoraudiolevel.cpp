@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Monitoraudiolevel.h"
 
 // Converted from tmp/k/src/monitor/scopes/monitoraudiolevel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -100,3 +102,4 @@ void MonitorAudioLevel::setVisibility(bool enable)
         m_audioLevelWidget->setVisible(enable);
     }
 }
+#endif

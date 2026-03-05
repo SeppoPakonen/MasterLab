@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/effects/effectstack/model/effectstackmodel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -2247,3 +2248,4 @@ Fun EffectStackModel::checkLambdaOrder(const std::shared_ptr<EffectItemModel> &e
     }
     return sub;
 }
+#endif

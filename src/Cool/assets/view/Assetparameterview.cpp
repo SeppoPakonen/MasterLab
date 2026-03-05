@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/assetparameterview.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -406,3 +407,4 @@ QMenu *AssetParameterView::presetMenu()
 {
     return m_presetMenu;
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "FftCorrelation.h"
 
 // Converted from tmp/k/src/lib/audio/fftCorrelation.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -131,3 +133,4 @@ void FFTCorrelation::convolve(const float *left, const size_t leftSize, const fl
 
     qCDebug(KDENLIVE_LOG) << "FFT convolution computed. Time taken: " << time.elapsed() << " ms";
 }
+#endif

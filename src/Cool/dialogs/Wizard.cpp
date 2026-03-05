@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Wizard.h"
 
 // Converted from tmp/k/src/dialogs/wizard.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -881,3 +883,4 @@ void Wizard::updateHwStatus()
     statusLabel->animatedShow();
     QTimer::singleShot(3000, statusLabel, &KMessageWidget::animatedHide);
 }
+#endif

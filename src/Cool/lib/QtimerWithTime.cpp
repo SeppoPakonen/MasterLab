@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "QtimerWithTime.h"
 
 // Converted from tmp/k/src/lib/qtimerWithTime.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -26,3 +28,4 @@ bool QTimerWithTime::isValid() const
 {
     return m_time.isValid();
 }
+#endif

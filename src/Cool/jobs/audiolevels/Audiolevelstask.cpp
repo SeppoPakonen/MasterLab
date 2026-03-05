@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiolevelstask.h"
 
 // Converted from tmp/k/src/jobs/audiolevels/audiolevelstask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -213,3 +215,4 @@ void AudioLevelsTask::run()
     }
     QMetaObject::invokeMethod(m_object, "updateAudioThumbnail", Q_ARG(bool, true));
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Saminterface.h"
 
 // Converted from tmp/k/src/pythoninterfaces/saminterface.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -141,3 +143,4 @@ bool SamInterface::installRequirements(QString reqFile)
     }
     return false;
 }
+#endif

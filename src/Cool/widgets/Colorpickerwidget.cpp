@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Colorpickerwidget.h"
 
 // Converted from tmp/k/src/widgets/colorpickerwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -362,4 +364,5 @@ void ColorPickerWidget::gotColorResponse(uint response, const QVariantMap &resul
         qWarning() << "Failed to take screenshot" << response << results;
     }
 }
+#endif
 #endif

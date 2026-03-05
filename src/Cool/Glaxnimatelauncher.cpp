@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/glaxnimatelauncher.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -258,7 +260,8 @@ bool GlaxnimateLauncher::copyToShared(const QImage &image)
             *m_stream << QStringLiteral("redraw");
             m_socket->flush();
         }
-        return true;
-    }
+    return true;
+}
     return false;
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/abstractparamwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -168,3 +169,4 @@ std::pair<AbstractParamWidget *, KeyframeContainer *> AbstractParamWidget::const
 
     return {widget, nullptr};
 }
+#endif

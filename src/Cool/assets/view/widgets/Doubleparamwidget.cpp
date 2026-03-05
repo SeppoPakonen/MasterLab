@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/doubleparamwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -61,3 +62,4 @@ void DoubleParamWidget::slotShowComment(bool show)
 {
     m_doubleWidget->slotShowComment(show);
 }
+#endif

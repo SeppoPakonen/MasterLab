@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/slidewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -209,3 +210,4 @@ const QString SlideWidget::getWipeString(wipeInfo info)
     end.append(QStringLiteral(" %1%").arg(info.endTransparency));
     return QStringLiteral("0=%1;-1=%2").arg(start, end);
 }
+#endif

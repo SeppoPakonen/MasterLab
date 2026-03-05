@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/timeline2/model/snapmodel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -140,3 +141,4 @@ int SnapModel::proposeSize(int in, int out, const std::vector<int> &boundaries, 
     unIgnore();
     return proposed_size;
 }
+#endif

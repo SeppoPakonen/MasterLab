@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Gradientwidget.h"
 
 // Converted from tmp/k/src/titler/gradientwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -264,3 +266,4 @@ void GradientWidget::loadGradients(QMap<QString, QString> gradients)
         item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
 }
+#endif

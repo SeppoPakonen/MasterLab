@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Rgbparade.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/rgbparade.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -279,3 +281,4 @@ void RGBParade::slotPaintModeChanged()
     }
     forceUpdateScope();
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Jogshuttleconfig.h"
 
 // Converted from tmp/k/src/jogshuttle/jogshuttleconfig.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -65,3 +67,4 @@ QString JogShuttleConfig::actionMap(const QStringList &actionMap)
 
     return mappings.join(DELIMITER);
 }
+#endif

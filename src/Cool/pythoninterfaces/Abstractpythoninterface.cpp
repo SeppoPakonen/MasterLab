@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Abstractpythoninterface.h"
 
 // Converted from tmp/k/src/pythoninterfaces/abstractpythoninterface.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -907,3 +909,4 @@ AbstractPythonInterface::InstallStatus AbstractPythonInterface::status() const
 {
     return m_installStatus;
 }
+#endif

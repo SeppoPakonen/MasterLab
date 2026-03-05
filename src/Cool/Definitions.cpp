@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/definitions.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -468,3 +470,4 @@ GenTime CommentedTime::endTime() const
 {
     return m_time + m_duration;
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/keyframecontainer.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1400,3 +1401,4 @@ void KeyframeContainer::addCurveEditor(const QPersistentModelIndex &index, QStri
     // NO slotCenterKeyframe
     m_curveeditorcontainer->addTab(m_curveeditorview.last(), name);
 }
+#endif

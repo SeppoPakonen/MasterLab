@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Titledocument.h"
 
 // Converted from tmp/k/src/titler/titledocument.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -805,3 +807,4 @@ int TitleDocument::frameHeight() const
 {
     return m_height;
 }
+#endif

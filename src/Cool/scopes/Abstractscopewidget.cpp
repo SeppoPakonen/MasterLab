@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Abstractscopewidget.h"
 
 // Converted from tmp/k/src/scopes/abstractscopewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -518,4 +520,5 @@ void AbstractScopeWidget::handleMouseDrag(const QPoint &, const RescaleDirection
 
 #ifdef DEBUG_ASW
 #undef DEBUG_ASW
+#endif
 #endif

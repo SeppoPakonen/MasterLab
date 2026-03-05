@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../../../Cool.h"
+#if 0
+#include "Cubicbezierspline.h"
 
 // Converted from tmp/k/src/assets/view/widgets/curves/bezier/cubicbezierspline.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -200,3 +202,4 @@ std::pair<int, BPoint::PointType> CubicBezierSpline::closestPoint(const QPointF 
     }
     return {nearestIndex, selectedPoint};
 }
+#endif

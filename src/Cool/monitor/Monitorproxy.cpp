@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Monitorproxy.h"
 
 // Converted from tmp/k/src/monitor/monitorproxy.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -789,3 +791,4 @@ void MonitorProxy::setDragType(const QString dragType)
     m_dragType = dragType;
     Q_EMIT dragTypeChanged();
 }
+#endif

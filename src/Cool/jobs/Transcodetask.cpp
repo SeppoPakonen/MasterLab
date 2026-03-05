@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Transcodetask.h"
 
 // Converted from tmp/k/src/jobs/transcodetask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -336,3 +338,4 @@ void TranscodeTask::processLogInfo()
         }
     }
 }
+#endif

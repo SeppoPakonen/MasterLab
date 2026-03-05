@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Unicodedialog.h"
 
 // Converted from tmp/k/src/titler/unicodedialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -385,3 +387,4 @@ void UnicodeWidget::wheelEvent(QWheelEvent *event)
         }
     }
 }
+#endif

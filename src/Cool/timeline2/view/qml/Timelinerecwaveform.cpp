@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Timelinerecwaveform.h"
 
 // Converted from tmp/k/src/timeline2/view/qml/timelinerecwaveform.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -97,3 +99,4 @@ void TimelineRecWaveform::paint(QPainter *painter)
         painter->drawPath(path);
     }
 }
+#endif

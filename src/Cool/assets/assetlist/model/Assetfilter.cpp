@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/assetlist/model/assetfilter.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -202,3 +203,4 @@ QModelIndex AssetFilter::getProxyIndex(const QModelIndex &current)
     QModelIndex sourceIndex = mapFromSource(current);
     return sourceIndex; // this returns an integer
 }
+#endif

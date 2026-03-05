@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/monitor/view/qmliconprovider.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -29,3 +30,4 @@ QPixmap QmlIconProvider::requestPixmap(const QString &id, QSize *size, const QSi
     return icon.pixmap(requestedSize.width() > 0 ? requestedSize.width() : m_defaultSize.width(),
                        requestedSize.height() > 0 ? requestedSize.height() : m_defaultSize.height());
 }
+#endif

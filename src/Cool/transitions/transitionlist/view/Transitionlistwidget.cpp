@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/transitions/transitionlist/view/transitionlistwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -84,3 +85,4 @@ void TransitionListWidget::switchTenBitFilter()
     KdenliveSettings::setTransitionsFilter(m_filterButton->isChecked());
     m_proxyModel->invalidate();
 }
+#endif

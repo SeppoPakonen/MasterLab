@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Modeldownloadwidget.h"
 
 // Converted from tmp/k/src/pythoninterfaces/dialogs/modeldownloadwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -94,3 +96,4 @@ void ModelDownloadWidget::jobSuccess()
 {
     m_tb->setIcon(QIcon::fromTheme(QStringLiteral("dialog-ok-apply")));
 }
+#endif

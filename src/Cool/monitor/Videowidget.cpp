@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Videowidget.h"
 
 // Converted from tmp/k/src/monitor/videowidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1418,3 +1420,4 @@ void VideoWidget::switchRuler(bool show)
     resizeVideo(width(), height());
     Q_EMIT m_proxy->rulerHeightChanged();
 }
+#endif

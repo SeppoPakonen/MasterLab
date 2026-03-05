@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/lumaliftgainparam.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -137,3 +138,4 @@ void LumaLiftGainParam::slotRefresh(int pos)
     m_gamma->setColor({values.value(QStringLiteral("gamma_r")), values.value(QStringLiteral("gamma_g")), values.value(QStringLiteral("gamma_b"))});
     m_gain->setColor({values.value(QStringLiteral("gain_r")), values.value(QStringLiteral("gain_g")), values.value(QStringLiteral("gain_b"))});
 }
+#endif

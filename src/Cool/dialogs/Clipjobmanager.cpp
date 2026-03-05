@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Clipjobmanager.h"
 
 // Converted from tmp/k/src/dialogs/clipjobmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -484,3 +486,4 @@ void ClipJobManager::updateName(QListWidgetItem *item)
     setDirty();
     m_ids.insert(m_dirty, item->text());
 }
+#endif

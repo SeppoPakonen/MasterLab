@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Abstracttask.h"
 
 // Converted from tmp/k/src/jobs/abstracttask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -136,3 +138,4 @@ void AbstractTask::setPreferredPriority(qint64 pid)
 AbstractTaskDone::~AbstractTaskDone() {
     pCore->taskManager.taskDone(m_cid, m_task);
 }
+#endif

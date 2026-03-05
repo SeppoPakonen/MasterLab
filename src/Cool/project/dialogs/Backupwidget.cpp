@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Backupwidget.h"
 
 // Converted from tmp/k/src/project/dialogs/backupwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -147,3 +149,4 @@ QString BackupWidget::selectedFile() const
     }
     return backup_list->currentItem()->data(Qt::UserRole).toString();
 }
+#endif

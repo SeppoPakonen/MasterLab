@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Scenesplittask.h"
 
 // Converted from tmp/k/src/jobs/scenesplittask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -317,3 +319,4 @@ void SceneSplitTask::processLogInfo()
         // Q_EMIT jobProgress(int(100.0 * progress / m_jobDuration));
     }
 }
+#endif

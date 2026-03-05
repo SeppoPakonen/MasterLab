@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Documentvalidator.h"
 
 // Converted from tmp/k/src/doc/documentvalidator.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -2773,3 +2775,4 @@ void DocumentValidator::fixTitleProducerLocale(QDomElement &producer)
         Xml::setXmlProperty(producer, QStringLiteral("xmldata"), doc.toString());
     }
 }
+#endif

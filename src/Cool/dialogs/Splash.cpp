@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/dialogs/splash.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -172,3 +173,4 @@ void Splash::showProgressMessage(const QString &message, int)
     QMetaObject::invokeMethod(m_rootObject, "displayProgress", Qt::DirectConnection, Q_ARG(QVariant, message));
     qApp->processEvents();
 }
+#endif

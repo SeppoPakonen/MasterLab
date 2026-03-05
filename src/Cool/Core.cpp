@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/core.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -2282,3 +2284,4 @@ void Core::closeApp()
     QApplication::closeAllWindows();
     QApplication::exit(EXIT_SUCCESS);
 }
+#endif

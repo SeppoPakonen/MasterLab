@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Melttask.h"
 
 // Converted from tmp/k/src/jobs/melttask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -87,3 +89,4 @@ void MeltTask::processLogInfo()
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "AudioStreamInfo.h"
 
 // Converted from tmp/k/src/lib/audio/audioStreamInfo.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -260,3 +262,4 @@ void AudioStreamInfo::renameStream(int ix, const QString &streamName)
         m_audioStreams.insert(ix, streamName);
     }
 }
+#endif

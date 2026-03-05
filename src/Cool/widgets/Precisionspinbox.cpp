@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Precisionspinbox.h"
 
 // Converted from tmp/k/src/widgets/precisionspinbox.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -116,3 +118,4 @@ void PrecisionSpinBox::textChanged(const QString &text)
         Q_EMIT valueChanged(val);
     }
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Subtitleedit.h"
 
 // Converted from tmp/k/src/dialogs/subtitleedit.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1730,3 +1732,4 @@ void SubtitleEdit::updateOffset()
         m_offsets.push_back({pos, {2, 1}});
     }
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/keyframes/model/rect/rotatedrecthelper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -107,3 +108,4 @@ QPersistentModelIndex RotatedRectHelper::findAnimatedRectParameter() const
     }
     return QPersistentModelIndex();
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Timelinetriangle.h"
 
 // Converted from tmp/k/src/timeline2/view/qml/timelinetriangle.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -74,3 +76,4 @@ void TimelineTriangle::paint(QPainter *painter)
     painter->setPen(Qt::white);
     // painter->drawLine(int(width()), 0, 0, int(height()));
 }
+#endif

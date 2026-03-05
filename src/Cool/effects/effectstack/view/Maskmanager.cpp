@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/effects/effectstack/view/maskmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -698,3 +699,4 @@ void MaskManager::slotOpenFolder()
     const QString filePath = current->data(0, Qt::UserRole).toString();
     pCore->highlightFileInExplorer({QUrl::fromLocalFile(filePath)});
 }
+#endif

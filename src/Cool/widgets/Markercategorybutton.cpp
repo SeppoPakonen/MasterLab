@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Markercategorybutton.h"
 
 // Converted from tmp/k/src/widgets/markercategorybutton.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -211,3 +213,4 @@ void MarkerCategoryButton::setOnlyUsed(bool onlyUsed)
     }
     Q_EMIT changed();
 }
+#endif

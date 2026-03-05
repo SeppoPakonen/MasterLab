@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Archivewidget.h"
 
 // Converted from tmp/k/src/project/dialogs/archivewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1429,3 +1431,4 @@ void ArchiveWidget::onlyTimelineItems(int onlyTimeline)
                                  KIO::convertSize((onlyTimeline == Qt::Checked) ? m_timelineSize : m_requestedSize)));
     slotCheckSpace();
 }
+#endif

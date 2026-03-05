@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Speechtotextwhisper.h"
 
 // Converted from tmp/k/src/pythoninterfaces/speechtotextwhisper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -263,3 +265,4 @@ bool SpeechToTextWhisper::installRequirements(QString reqFile)
     }
     return false;
 }
+#endif

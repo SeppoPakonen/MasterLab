@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiolevelconfig.h"
 
 // Converted from tmp/k/src/audiomixer/audiolevels/audiolevelconfig.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -72,3 +74,4 @@ void AudioLevelConfig::configChanged()
 {
     Q_EMIT pCore->audioLevelsConfigChanged();
 }
+#endif

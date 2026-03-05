@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiosignal.h"
 
 // Converted from tmp/k/src/scopes/audioscopes/audiosignal.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -216,3 +218,4 @@ double AudioSignal::valueToPixel(double in)
     // in=0 -> return 0 (null length from max), in=127/127 return 1 (max length )
     return 1.0 - log10(in) / log10(1.0 / 127.0);
 }
+#endif

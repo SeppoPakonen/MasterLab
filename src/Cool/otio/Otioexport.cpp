@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Otioexport.h"
 
 // Converted from tmp/k/src/otio/otioexport.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -282,3 +284,4 @@ QList<int> OtioExport::getOtioExportTrackOrder(const std::shared_ptr<TimelineIte
     orderedTrackIds << audioTrackIds;
     return orderedTrackIds;
 }
+#endif

@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/fontparamwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -34,3 +35,4 @@ void FontParamWidget::slotRefresh()
     const QString family = m_model->data(m_index, AssetParameterModel::ValueRole).toString();
     fontfamilywidget->setCurrentFont(QFont(family));
 }
+#endif

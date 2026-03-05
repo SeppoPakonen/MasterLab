@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Subtitletextedit.h"
 
 // Converted from tmp/k/src/widgets/subtitletextedit.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -384,3 +386,4 @@ void SubtitleTextEdit::insertCompletion(const QString &completion)
     tc.insertText(completion.right(extra));
     setTextCursor(tc);
 }
+#endif

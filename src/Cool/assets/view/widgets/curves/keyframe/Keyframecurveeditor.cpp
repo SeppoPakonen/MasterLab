@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../../../Cool.h"
+#if 0
+#include "Keyframecurveeditor.h"
 
 // Converted from tmp/k/src/assets/view/widgets/curves/keyframe/keyframecurveeditor.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -688,3 +690,4 @@ void KeyframeCurveEditor::updateKeyframeData(double val)
     }
     m_model->updateKeyframe(GenTime(keyframePos, fps), data, m_currentPointIndex, m_paramindex);
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Openglvideowidget.h"
 
 // Converted from tmp/k/src/monitor/openglvideowidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -369,3 +371,4 @@ const QStringList OpenGLVideoWidget::getGPUInfo()
     }
     return {QString::fromUtf8((const char *)glGetString(GL_VENDOR)), QString::fromUtf8((const char *)glGetString(GL_RENDERER))};
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Colorplaneexport.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/colorplaneexport.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -270,3 +272,4 @@ void ColorPlaneExport::slotColormodeChanged()
     this->update();
     slotUpdateDisplays();
 }
+#endif

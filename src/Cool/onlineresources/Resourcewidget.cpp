@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/onlineresources/resourcewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -794,3 +795,4 @@ void ResourceWidget::slotAccessTokenReceived(const QString &accessToken)
                            i18n("Error Getting Access Token from %1.", m_currentProvider->get()->name()));
     }
 }
+#endif

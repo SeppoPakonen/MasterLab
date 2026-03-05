@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Timecode.h"
 
 // Converted from tmp/k/src/utils/timecode.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -406,3 +408,4 @@ QString Timecode::scaleTimecode(QString timecode, double sourceFps, double targe
     }
     return timecode;
 }
+#endif

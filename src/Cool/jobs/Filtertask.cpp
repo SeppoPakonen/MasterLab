@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Filtertask.h"
 
 // Converted from tmp/k/src/jobs/filtertask.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -384,3 +386,4 @@ void FilterTask::processLogInfo()
         QMetaObject::invokeMethod(ptr.get(), "setProgress", Q_ARG(int, m_progress));
     }
 }
+#endif

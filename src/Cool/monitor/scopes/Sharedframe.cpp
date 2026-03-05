@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Sharedframe.h"
 
 // Converted from tmp/k/src/monitor/scopes/sharedframe.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -243,3 +245,4 @@ const int16_t *SharedFrame::get_audio() const
     int samples = get_audio_samples();
     return static_cast<int16_t *>(d->f.get_audio(format, frequency, channels, samples));
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Layoutcollection.h"
 
 // Converted from tmp/k/src/layouts/layoutcollection.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -230,3 +232,4 @@ QString LayoutCollection::getTranslatedName(const QString &id) const
     // Otherwise just return the ID
     return id;
 }
+#endif

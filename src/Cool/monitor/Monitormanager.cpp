@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Monitormanager.h"
 
 // Converted from tmp/k/src/monitor/monitormanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -926,3 +928,4 @@ void MonitorManager::markMonitorDirty(Kdenlive::MonitorId name, const QUuid uuid
         m_projectMonitor->markDirty(uuid);
     }
 }
+#endif

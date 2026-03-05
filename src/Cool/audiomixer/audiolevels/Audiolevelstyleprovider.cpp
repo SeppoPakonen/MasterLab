@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiolevelstyleprovider.h"
 
 // Converted from tmp/k/src/audiomixer/audiolevels/audiolevelstyleprovider.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -126,3 +128,4 @@ QLinearGradient AudioLevelStyleProvider::getLevelsFillGradient(Qt::Orientation o
 
     return gradient;
 }
+#endif

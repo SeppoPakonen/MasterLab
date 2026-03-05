@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "D3dvideowidget.h"
 
 // Converted from tmp/k/src/monitor/d3dvideowidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -333,3 +335,4 @@ ID3D11ShaderResourceView *D3DVideoWidget::initTexture(const void *p, int width, 
 
     return result;
 }
+#endif

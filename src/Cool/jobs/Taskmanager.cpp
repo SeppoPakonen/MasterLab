@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Taskmanager.h"
 
 // Converted from tmp/k/src/jobs/taskmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -397,3 +399,4 @@ int TaskManager::getJobProgressForClip(const ObjectId &owner)
     total /= cnt;
     return total;
 }
+#endif

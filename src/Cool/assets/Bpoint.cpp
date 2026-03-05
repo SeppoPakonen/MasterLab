@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Bpoint.h"
 
 // Converted from tmp/k/src/assets/bpoint.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -91,3 +93,4 @@ void BPoint::setHandlesLinked(bool linked)
         setH1(h1);
     }
 }
+#endif

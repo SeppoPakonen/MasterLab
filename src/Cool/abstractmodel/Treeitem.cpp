@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/abstractmodel/treeitem.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -278,3 +279,4 @@ std::vector<std::shared_ptr<TreeItem>> TreeItem::getLeaves()
     }
     return leaves;
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Documentchecker.h"
 
 // Converted from tmp/k/src/doc/documentchecker.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -2024,3 +2026,4 @@ QMap<DocumentChecker::MissingType, int> DocumentChecker::getCheckResults()
     }
     return missingResults;
 }
+#endif

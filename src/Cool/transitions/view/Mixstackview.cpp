@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/transitions/view/mixstackview.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -219,3 +220,4 @@ ObjectId MixStackView::stackOwner() const
     }
     return ObjectId();
 }
+#endif

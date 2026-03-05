@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/view/widgets/geometryeditwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -118,3 +119,4 @@ void GeometryEditWidget::slotInitMonitor(bool active, bool outside)
         });
     }
 }
+#endif

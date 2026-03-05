@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Generators.h"
 
 // Converted from tmp/k/src/jobs/audiolevels/generators.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -354,3 +356,4 @@ cleanup:
     qDebug() << "Audio levels generation took" << timer.elapsed() / 1000.0 << "s (" << MLTlengthInFrames / (timer.elapsed() / 1000.0) << "frames/s)";
     return levels;
 }
+#endif

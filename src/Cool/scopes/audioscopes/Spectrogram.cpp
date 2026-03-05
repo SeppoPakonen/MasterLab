@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Spectrogram.h"
 
 // Converted from tmp/k/src/scopes/audioscopes/spectrogram.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -548,4 +550,5 @@ void Spectrogram::resizeEvent(QResizeEvent *event)
 #undef SPECTROGRAM_HISTORY_SIZE
 #ifdef DEBUG_SPECTROGRAM
 #undef DEBUG_SPECTROGRAM
+#endif
 #endif

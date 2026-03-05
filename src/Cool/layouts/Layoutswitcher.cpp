@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Layoutswitcher.h"
 
 // Converted from tmp/k/src/layouts/layoutswitcher.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -84,3 +86,4 @@ void LayoutSwitcher::setCurrentLayout(const QString &layoutId)
         }
     }
 }
+#endif

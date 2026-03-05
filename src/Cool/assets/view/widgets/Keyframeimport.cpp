@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Keyframeimport.h"
 
 // Converted from tmp/k/src/assets/view/widgets/keyframeimport.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1448,3 +1450,4 @@ void KeyframeImport::accept()
     importSelectedData();
     QDialog::accept();
 }
+#endif

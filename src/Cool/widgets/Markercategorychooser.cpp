@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Markercategorychooser.h"
 
 // Converted from tmp/k/src/widgets/markercategorychooser.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -81,3 +83,4 @@ void MarkerCategoryChooser::setOnlyUsed(bool onlyUsed)
     m_onlyUsed = onlyUsed;
     Q_EMIT changed();
 }
+#endif

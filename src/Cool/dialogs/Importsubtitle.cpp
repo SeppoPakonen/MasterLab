@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Importsubtitle.h"
 
 // Converted from tmp/k/src/dialogs/importsubtitle.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -121,3 +123,4 @@ ImportSubtitle::ImportSubtitle(const QString &path, QWidget *parent)
 }
 
 ImportSubtitle::~ImportSubtitle() {}
+#endif

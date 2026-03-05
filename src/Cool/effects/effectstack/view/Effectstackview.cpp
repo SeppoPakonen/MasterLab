@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/effects/effectstack/view/effectstackview.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1088,3 +1089,4 @@ void EffectStackView::constructBuildinWidget()
 
     m_builtStack->setVisible(true);
 }
+#endif

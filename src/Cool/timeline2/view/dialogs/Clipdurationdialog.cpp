@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Clipdurationdialog.h"
 
 // Converted from tmp/k/src/timeline2/view/dialogs/clipdurationdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -415,3 +417,4 @@ GenTime ClipDurationDialog::duration() const
 {
     return m_dur->gentime();
 }
+#endif

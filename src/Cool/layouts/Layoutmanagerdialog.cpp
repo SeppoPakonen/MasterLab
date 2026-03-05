@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Layoutmanagerdialog.h"
 
 // Converted from tmp/k/src/layouts/layoutmanagerdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -389,3 +391,4 @@ QString LayoutManagerDialog::getSelectedLayoutId() const
     }
     return QString();
 }
+#endif

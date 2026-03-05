@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Customcamcorderdialog.h"
 
 // Converted from tmp/k/src/dialogs/customcamcorderdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -226,3 +228,4 @@ void CustomCamcorderDialog::validateInput()
     }
     currentItem->setData(Qt::UserRole, params.join(QLatin1Char(';')));
 }
+#endif

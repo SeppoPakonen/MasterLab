@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Otioutil.h"
 
 // Converted from tmp/k/src/otio/otioutil.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -174,3 +176,4 @@ QString getTimecode(const QString &fileName)
 {
     return FFmpegInfo(fileName).getTimecode();
 }
+#endif

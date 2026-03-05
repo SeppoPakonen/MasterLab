@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Projectsettings.h"
 
 // Converted from tmp/k/src/project/dialogs/projectsettings.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -988,3 +990,4 @@ const QString ProjectSettings::storageFolder() const
     }
     return QString();
 }
+#endif

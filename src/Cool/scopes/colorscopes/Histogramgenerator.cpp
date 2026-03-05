@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Histogramgenerator.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/histogramgenerator.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -215,3 +217,4 @@ void HistogramGenerator::drawComponentFull(QPainter *davinci, const int *y, cons
     davinci->drawText(cw - dist - 30, textY, i18n("max"));
     davinci->drawText(cw - 30, textY, QString::number(maxVal, 'f', 0));
 }
+#endif

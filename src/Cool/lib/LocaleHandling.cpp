@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "LocaleHandling.h"
 
 // Converted from tmp/k/src/lib/localeHandling.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -97,3 +99,4 @@ QPair<QLocale, LocaleHandling::MatchType> LocaleHandling::getQLocaleForDecimalPo
     }
     return QPair<QLocale, LocaleHandling::MatchType>(locale, matchType);
 }
+#endif

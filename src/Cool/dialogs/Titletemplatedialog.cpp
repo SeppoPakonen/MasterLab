@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Titletemplatedialog.h"
 
 // Converted from tmp/k/src/dialogs/titletemplatedialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -118,3 +120,4 @@ void TitleTemplateDialog::updatePreview()
         }
     }
 }
+#endif

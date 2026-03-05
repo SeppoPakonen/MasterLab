@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Effectbasket.h"
 
 // Converted from tmp/k/src/effects/effectbasket.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -68,3 +70,4 @@ void EffectBasket::slotAddEffect(QListWidgetItem *item)
     mimeData.insert(QStringLiteral("kdenlive/effect"), assetId);
     Q_EMIT activateAsset(mimeData);
 }
+#endif

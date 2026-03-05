@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/mainwindow.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -5779,3 +5781,4 @@ QSize MainWindow::sizeHint() const
     const QSize desktopSize = QGuiApplication::primaryScreen()->availableSize();
     return KXmlGuiWindow::sizeHint().expandedTo(desktopSize * 0.8);
 }
+#endif

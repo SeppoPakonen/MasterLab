@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Timelineplayhead.h"
 
 // Converted from tmp/k/src/timeline2/view/qml/timelineplayhead.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -28,3 +30,4 @@ void TimelinePlayhead::paint(QPainter *painter)
     path.lineTo(0, 0);
     painter->fillPath(path, m_color);
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Waveform.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/waveform.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -332,3 +334,4 @@ void Waveform::slotPaintModeChanged()
     }
     forceUpdateScope();
 }
+#endif

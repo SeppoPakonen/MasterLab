@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Pluginssettings.h"
 
 // Converted from tmp/k/src/dialogs/settings/pluginssettings.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1053,3 +1055,4 @@ void PluginsSettings::checkCuda(bool isSam)
         m_sttWhisper->installRequirements(requirementsFile);
     }
 }
+#endif

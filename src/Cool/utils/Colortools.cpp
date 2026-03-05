@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Colortools.h"
 
 // Converted from tmp/k/src/utils/colortools.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -399,3 +401,4 @@ QImage ColorTools::FixedColorCircle(const QSize &size, QRgb color)
 
     return circle;
 }
+#endif

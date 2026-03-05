@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/timeline2/model/builders/meltBuilder.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1051,3 +1052,4 @@ bool constructTrackFromMelt(const std::shared_ptr<TimelineItemModel> &timeline, 
     timeline->importTrackEffects(tid, serv);
     return true;
 }
+#endif

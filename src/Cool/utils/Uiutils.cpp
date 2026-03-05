@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Uiutils.h"
 
 // Converted from tmp/k/src/utils/uiutils.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -22,3 +24,4 @@ QIcon UiUtils::rotatedIcon(const QString &iconName, const QSize iconSize, qreal 
     pix = pix.transformed(trans);
     return QIcon(pix);
 }
+#endif

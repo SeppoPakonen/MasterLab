@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Titlewidget.h"
 
 // Converted from tmp/k/src/titler/titlewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -3688,3 +3690,4 @@ void TitleWidget::writeBaseConfig()
     titleConfig.writeEntry("patterns", ba);
     config->sync();
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Progressbutton.h"
 
 // Converted from tmp/k/src/widgets/progressbutton.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -126,3 +128,4 @@ void ProgressButton::paintEvent(QPaintEvent *event)
         painter.drawRoundedRect(rect.x(), rect.bottom() - 7, rect.width(), 6, 2, 2);
     }
 }
+#endif

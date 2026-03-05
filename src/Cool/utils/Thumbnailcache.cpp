@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/utils/thumbnailcache.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -428,3 +429,4 @@ const QDir ThumbnailCache::getDir(bool audio, bool *ok)
 {
     return pCore->projectManager()->cacheDir(audio, ok);
 }
+#endif

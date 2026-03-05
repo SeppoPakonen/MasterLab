@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Qmlmanager.h"
 
 // Converted from tmp/k/src/monitor/qmlmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -167,3 +169,4 @@ void QmlManager::effectRotoChanged(const QVariant &pts, const QVariant &centers)
     }
     Q_EMIT effectPointsChanged(mix);
 }
+#endif

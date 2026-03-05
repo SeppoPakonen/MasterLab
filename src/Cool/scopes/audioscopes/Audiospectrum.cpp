@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiospectrum.h"
 
 // Converted from tmp/k/src/scopes/audioscopes/audiospectrum.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -544,3 +546,4 @@ void AudioSpectrum::handleMouseDrag(const QPoint &movement, const RescaleDirecti
         forceUpdateScope();
     }
 }
+#endif

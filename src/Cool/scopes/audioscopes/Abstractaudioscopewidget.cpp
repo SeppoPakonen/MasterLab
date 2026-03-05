@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Abstractaudioscopewidget.h"
 
 // Converted from tmp/k/src/scopes/audioscopes/abstractaudioscopewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -54,4 +56,5 @@ QImage AbstractAudioScopeWidget::renderScope(uint accelerationFactor)
 
 #ifdef DEBUG_AASW
 #undef DEBUG_AASW
+#endif
 #endif

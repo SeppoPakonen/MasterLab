@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Jogaction.h"
 
 // Converted from tmp/k/src/jogshuttle/jogaction.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -67,3 +69,4 @@ void JogShuttleAction::slotButton(int button_id)
     }
     Q_EMIT action(m_actionMap[button_id]);
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Noteswidget.h"
 
 // Converted from tmp/k/src/project/dialogs/noteswidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -410,3 +412,4 @@ bool NotesWidget::event(QEvent *event)
     }
     return QTextEdit::event(event);
 }
+#endif

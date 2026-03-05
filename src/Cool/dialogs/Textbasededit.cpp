@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Textbasededit.h"
 
 // Converted from tmp/k/src/dialogs/textbasededit.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1782,3 +1784,4 @@ void TextBasedEdit::enableEditActions(bool enable, bool enableStart)
     button_search->setEnabled(enable);
     button_start->setEnabled(enableStart);
 }
+#endif

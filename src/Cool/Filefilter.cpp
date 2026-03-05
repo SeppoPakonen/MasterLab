@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/filefilter.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -265,3 +267,4 @@ QStringList Builder::toExtensionsList() const
 
     return allExtensions;
 }
+#endif

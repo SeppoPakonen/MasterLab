@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Rgbparadegenerator.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/rgbparadegenerator.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -222,3 +224,4 @@ QImage RGBParadeGenerator::calculateRGBParade(const QSize &paradeSize, qreal sca
 }
 
 #undef CHOP255
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Qcolorutils.h"
 
 // Converted from tmp/k/src/utils/qcolorutils.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -179,3 +181,4 @@ qreal NegQColor::saturationF() const
 {
     return qcolor.saturationF();
 }
+#endif

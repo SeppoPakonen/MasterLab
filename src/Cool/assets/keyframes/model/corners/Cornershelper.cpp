@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../../../../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/assets/keyframes/model/corners/cornershelper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -87,3 +88,4 @@ void CornersHelper::refreshParams(int pos)
         m_monitor->setUpEffectGeometry(points);
     }
 }
+#endif

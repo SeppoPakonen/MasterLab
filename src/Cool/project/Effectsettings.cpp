@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Effectsettings.h"
 
 // Converted from tmp/k/src/project/effectsettings.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -117,3 +119,4 @@ void EffectSettings::resizeEvent(QResizeEvent *event)
     checkAll->updateText(checkAll->currentWidth() + diff);
     QWidget::resizeEvent(event);
 }
+#endif

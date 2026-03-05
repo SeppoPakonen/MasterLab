@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/mltconnection.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -337,3 +339,4 @@ void MltConnection::refreshLumas()
     allImagefiles.removeDuplicates();
     (void)QtConcurrent::run(&Core::buildLumaThumbs, pCore.get(), allImagefiles);
 }
+#endif

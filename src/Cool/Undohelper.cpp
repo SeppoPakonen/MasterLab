@@ -1,4 +1,5 @@
 #include "Cool.h"
+#if 0
 
 // Converted from tmp/k/src/undohelper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -46,3 +47,4 @@ void FunctionalUndoCommand::redo()
     }
     QUndoCommand::redo();
 }
+#endif

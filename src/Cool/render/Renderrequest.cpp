@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Renderrequest.h"
 
 // Converted from tmp/k/src/render/renderrequest.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -648,3 +650,4 @@ QStringList RenderRequest::errorMessages()
 {
     return m_errors;
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Abstractgfxscopewidget.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/abstractgfxscopewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -58,4 +60,5 @@ void AbstractGfxScopeWidget::slotAutoRefreshToggled(bool autoRefresh)
 
 #ifdef DEBUG_AGSW
 #undef DEBUG_AGSW
+#endif
 #endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Spacerdialog.h"
 
 // Converted from tmp/k/src/timeline2/view/dialogs/spacerdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -44,3 +46,4 @@ int SpacerDialog::selectedTrack() const
 {
     return 0; // track_number->currentData().toInt();
 }
+#endif

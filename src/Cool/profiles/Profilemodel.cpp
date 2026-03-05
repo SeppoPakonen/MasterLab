@@ -1,4 +1,5 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
 
 // Converted from tmp/k/src/profiles/profilemodel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -336,3 +337,4 @@ bool ProfileParam::is_valid() const
 {
     return (m_frame_rate_den > 0 && m_sample_aspect_den > 0 && m_display_aspect_den > 0 && m_width > 0);
 }
+#endif

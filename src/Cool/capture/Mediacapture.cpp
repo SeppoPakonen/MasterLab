@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Mediacapture.h"
 
 // Converted from tmp/k/src/capture/mediacapture.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -457,3 +459,4 @@ void MediaCapture::resumeRecording()
         m_mediaRecorder->record();
     }
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Abstractcollapsiblewidget.h"
 
 // Converted from tmp/k/src/effects/effectstack/view/abstractcollapsiblewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -16,3 +18,4 @@ AbstractCollapsibleWidget::AbstractCollapsibleWidget(QWidget *parent)
 {
     setupUi(this);
 }
+#endif

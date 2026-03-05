@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Waveformgenerator.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/waveformgenerator.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -179,3 +181,4 @@ QImage WaveformGenerator::calculateWaveform(const QSize &waveformSize, qreal sca
     return wave;
 }
 #undef CHOP255
+#endif

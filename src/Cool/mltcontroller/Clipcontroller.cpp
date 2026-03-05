@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Clipcontroller.h"
 
 // Converted from tmp/k/src/mltcontroller/clipcontroller.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1256,3 +1258,4 @@ std::shared_ptr<Mlt::Producer> ClipController::sequenceProducer(const QUuid &)
     QReadLocker lock(&m_producerLock);
     return m_masterProducer;
 }
+#endif

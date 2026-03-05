@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Qstringutils.h"
 
 // Converted from tmp/k/src/utils/qstringutils.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -53,3 +55,4 @@ QString QStringUtils::getCleanFileName(QString filename)
     static const QRegularExpression nameRegexp("[^a-zA-Z0-9\\p{L}\\p{M} \\p{N}]");
     return filename.replace(nameRegexp, QStringLiteral("-"));
 }
+#endif

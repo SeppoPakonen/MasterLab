@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Speechtotextvosk.h"
 
 // Converted from tmp/k/src/pythoninterfaces/speechtotextvosk.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -82,3 +84,4 @@ QString SpeechToTextVosk::speechScript()
 {
     return m_scripts.value(QStringLiteral("vosk/speechtotext.py"));
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Doublewidget.h"
 
 // Converted from tmp/k/src/widgets/doublewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -116,3 +118,4 @@ void DoubleWidget::slotShowComment(bool show)
 {
     Q_UNUSED(show)
 }
+#endif

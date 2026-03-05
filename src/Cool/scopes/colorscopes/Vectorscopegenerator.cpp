@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Vectorscopegenerator.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/vectorscopegenerator.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -292,3 +294,4 @@ QImage VectorscopeGenerator::calculateVectorscope(const QSize &vectorscopeSize, 
 
     return scaledScope;
 }
+#endif

@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Transcodeseek.h"
 
 // Converted from tmp/k/src/project/transcodeseek.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -312,3 +314,4 @@ TranscodeSeek::TranscodeInfo TranscodeSeek::info(const QString &id) const
     }
     return m_clipInfos.value(id);
 }
+#endif

@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/logger.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -433,3 +435,4 @@ void Logger::log_undo(bool undo)
     u.undo = undo;
     operations.push_back(u);
 }
+#endif

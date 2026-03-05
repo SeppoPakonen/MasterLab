@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Histogram.h"
 
 // Converted from tmp/k/src/scopes/colorscopes/histogram.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -253,3 +255,4 @@ void Histogram::slotScaleChanged()
     m_logScale = m_aScaleLogarithmic->isChecked();
     forceUpdateScope();
 }
+#endif

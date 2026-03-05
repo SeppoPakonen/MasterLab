@@ -1,5 +1,7 @@
 #include "Cool.h"
 
+#if 0
+
 // Converted from tmp/k/src/powermanagementinterface.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -414,3 +416,4 @@ void PowerManagementInterface::uninhibitDimWindowsWorkspace()
 }
 
 // #include "moc_powermanagementinterface.cpp"
+#endif

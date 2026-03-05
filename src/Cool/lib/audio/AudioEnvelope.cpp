@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "AudioEnvelope.h"
 
 // Converted from tmp/k/src/lib/audio/audioEnvelope.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -182,3 +184,4 @@ void AudioEnvelope::dumpInfo()
                               << "\n* size = " << summary.audioAmplitudes.size() << "\n* max = " << summary.amplitudeMax;
     }
 }
+#endif

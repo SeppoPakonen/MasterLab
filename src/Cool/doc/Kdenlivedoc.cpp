@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Kdenlivedoc.h"
 
 // Converted from tmp/k/src/doc/kdenlivedoc.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -2934,3 +2936,4 @@ const QStringList KdenliveDoc::extractExternalEffectFiles()
     externalFiles.removeDuplicates();
     return externalFiles;
 }
+#endif

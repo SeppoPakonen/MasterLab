@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../../../Cool.h"
+#if 0
+#include "KisCurveWidget.h"
 
 // Converted from tmp/k/src/assets/view/widgets/curves/cubic/kis_curve_widget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -306,3 +308,4 @@ QList<QPointF> KisCurveWidget::getPoints() const
 {
     return m_curve.points();
 }
+#endif

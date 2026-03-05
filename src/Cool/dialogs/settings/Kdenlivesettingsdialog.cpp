@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Kdenlivesettingsdialog.h"
 
 // Converted from tmp/k/src/dialogs/settings/kdenlivesettingsdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -1574,3 +1576,4 @@ void KdenliveSettingsDialog::showHelp()
 {
     pCore->window()->appHelpActivated();
 }
+#endif

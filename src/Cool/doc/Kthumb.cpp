@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Kthumb.h"
 
 // Converted from tmp/k/src/doc/kthumb.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -152,3 +154,4 @@ int KThumb::imageVariance(const QImage &image)
     }
     return 0;
 }
+#endif

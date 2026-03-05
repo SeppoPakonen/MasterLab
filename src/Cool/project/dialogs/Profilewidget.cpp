@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Profilewidget.h"
 
 // Converted from tmp/k/src/project/dialogs/profilewidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -284,3 +286,4 @@ void ProfileWidget::slotFilterChanged()
         }
     }
 }
+#endif

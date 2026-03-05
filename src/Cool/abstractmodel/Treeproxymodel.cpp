@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../Cool.h"
+#if 0
+#include "Treeproxymodel.h"
 
 // Converted from tmp/k/src/abstractmodel/treeproxymodel.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -83,3 +85,4 @@ void TreeProxyModel::slotSetSearchString(const QString &str)
     m_searchString = str;
     invalidateFilter();
 }
+#endif

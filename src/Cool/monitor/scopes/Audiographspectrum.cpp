@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../Cool.h"
+#if 0
+#include "Audiographspectrum.h"
 
 // Converted from tmp/k/src/monitor/scopes/audiographspectrum.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -463,3 +465,4 @@ void AudioGraphSpectrum::processSpectrum()
     // Update the audio signal widget
     QMetaObject::invokeMethod(m_graphWidget, "showAudio", Qt::QueuedConnection, Q_ARG(QVector<float>, bands));
 }
+#endif

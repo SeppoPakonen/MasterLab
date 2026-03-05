@@ -1,4 +1,6 @@
-#include "Cool.h"
+#include "../../../Cool.h"
+#if 0
+#include "Listdependencyparamwidget.h"
 
 // Converted from tmp/k/src/assets/view/widgets/listdependencyparamwidget.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -193,3 +195,4 @@ void ListDependencyParamWidget::slotRefresh()
         }
     }
 }
+#endif
