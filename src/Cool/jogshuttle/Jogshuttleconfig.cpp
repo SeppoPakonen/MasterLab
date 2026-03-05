@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Jogshuttleconfig.h"
 
 // Converted from tmp/k/src/jogshuttle/jogshuttleconfig.cpp
@@ -20,51 +19,42 @@ SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 
 // #include <cstdlib>
 
-using std::string;
-using std::stringstream;
-using std::vector;
+static const char DELIMITER = ';';
+static const char KEY_VALUE_SEP = '=';
+static const char *BUTTON_PREFIX = "button";
 
-// these 2 functions will convert the action maps to and from a string representation not unlike this:
-// button1=rewind_one_frame;button2=forward_one_frame;button15=play
-
-static const QChar DELIMITER = ';';
-static const QChar KEY_VALUE_SEP = '=';
-static const QLatin1String BUTTON_PREFIX("button");
-
-QStringList JogShuttleConfig::actionMap(const QString &actionsConfig)
+QStringList JogShuttleConfig::ActionMap(const QString &actions_config)
 {
-    QStringList actionMap;
-    const QStringList mappings = actionsConfig.split(DELIMITER);
+    QStringList action_map;
+    const QStringList mappings = Split(actions_config, DELIMITER);
 
-    for (const QString &mapping : mappings) {
-        QStringList parts = mapping.split(KEY_VALUE_SEP);
-        if (parts.size() != 2) {
-            fprintf(stderr, "Invalid button configuration: %s", mapping.toLatin1().constData());
+    for (const String &mapping : mappings) {
+        Vector<String> parts = Split(mapping, KEY_VALUE_SEP);
+        if (parts.GetCount() != 2) {
+            RLOG("Invalid button configuration: " << mapping);
             continue;
         }
-        // skip the 'button' prefix
-        int button_id = QStringView(parts[0]).mid(BUTTON_PREFIX.size()).toInt();
-        // fprintf(stderr, " - Handling map key='%s' (ID=%d), value='%s'\n", parts[0].data().toLatin1(), button_id, parts[1].data().toLatin1()); // DBG
-        while (actionMap.size() <= button_id) {
-            actionMap << QString();
+        String key = parts[0];
+        if (key.StartsWith(BUTTON_PREFIX)) {
+            key = key.Mid(6);
         }
-        actionMap[button_id] = parts[1];
+        int button_id = ScanInt(key);
+        while (action_map.GetCount() <= button_id) {
+            action_map.Add(String());
+        }
+        action_map[button_id] = parts[1];
     }
-
-    // for (int i = 0; i < actionMap.size(); ++i) fprintf(stderr, "button #%d -> action '%s'\n", i, actionMap[i].data().toLatin1());  //DBG
-    return actionMap;
+    return action_map;
 }
 
-QString JogShuttleConfig::actionMap(const QStringList &actionMap)
+QString JogShuttleConfig::ActionMap(const QStringList &action_map)
 {
     QStringList mappings;
-    for (int i = 0; i < actionMap.size(); ++i) {
-        if (actionMap[i].isEmpty()) {
+    for (int i = 0; i < action_map.GetCount(); ++i) {
+        if (action_map[i].IsEmpty()) {
             continue;
         }
-        mappings << QStringLiteral("%1%2%3%4").arg(BUTTON_PREFIX).arg(i).arg(KEY_VALUE_SEP).arg(actionMap[i]);
+        mappings.Add(Format("%s%d%c%s", BUTTON_PREFIX, i, KEY_VALUE_SEP, action_map[i].Begin()));
     }
-
-    return mappings.join(DELIMITER);
+    return Join(mappings, ";");
 }
-#endif

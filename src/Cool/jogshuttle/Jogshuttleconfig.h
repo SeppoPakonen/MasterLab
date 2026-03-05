@@ -7,18 +7,20 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_jogshuttle_Jogshuttleconfig_h_
+#define _Cool_jogshuttle_Jogshuttleconfig_h_
 
-// #include <QObject>
-// #include <QString>
-// #include <QStringList>
+using QString = String;
+using QStringList = Vector<String>;
 
-// #include "jogaction.h"
-
-class JogShuttleConfig : public QObject
-{
-    Q_OBJECT
+class JogShuttleConfig {
 public:
-    static QStringList actionMap(const QString &actionMap);
-    static QString actionMap(const QStringList &actionMap);
+    static QStringList ActionMap(const QString &action_map);
+    static QString ActionMap(const QStringList &action_map);
+
+    // Compatibility wrappers.
+    static QStringList actionMap(const QString &action_map) { return ActionMap(action_map); }
+    static QString actionMap(const QStringList &action_map) { return ActionMap(action_map); }
 };
+
+#endif
