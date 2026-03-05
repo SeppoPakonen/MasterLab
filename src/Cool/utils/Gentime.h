@@ -7,7 +7,8 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Gentime_h_
+#define _Cool_utils_Gentime_h_
 
 // #include <QString>
 // #include <cmath>
@@ -39,7 +40,7 @@ public:
      * @param framesPerSecond Number of frames per second */
     int frames(double framesPerSecond) const;
 
-    QString toString() const;
+    String ToString() const;
 
     /*
      * Operators.
@@ -93,4 +94,4 @@ private:
     static double s_delta;
 };
 
-Q_DECLARE_TYPEINFO(GenTime, Q_COMPLEX_TYPE); //TODO Q_COMPLEX_TYPE is the default, but does Q_MOVABLE_TYPE fit better?
+#endif

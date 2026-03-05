@@ -1,58 +1,53 @@
 #include "../Cool.h"
-#if 0
 #include "Qstringutils.h"
 
-// Converted from tmp/k/src/utils/qstringutils.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
-/*
-    SPDX-FileCopyrightText: 2023 Julius Künzel <julius.kuenzel@kde.org>
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
-*/
-
-// #include "qstringutils.h"
-
-// #include <QFileInfo>
-// #include <QRegularExpression>
-// #include <QString>
-// #include <QStringList>
-
-QString QStringUtils::getUniqueName(const QStringList &names, const QString &name)
+static bool HasName(const QStringList& names, const String& value)
 {
-    int i = 0;
-    QString newName = name;
-    while (names.contains(newName)) {
-        // name is not unique, add a suffix
-        newName = name + QStringLiteral("-%1").arg(i);
-        i++;
-    }
-    return newName;
+	for(const String& s : names)
+		if(s == value)
+			return true;
+	return false;
 }
 
-QString QStringUtils::getUniqueFileName(const QStringList &names, const QString &name)
+QString QStringUtils::getUniqueName(const QStringList& names, const QString& name)
 {
-    int i = 0;
-    const QString baseName = QFileInfo(name).completeBaseName();
-    const QString extension = QFileInfo(name).suffix();
-    QString newName = name;
-    while (names.contains(newName)) {
-        // name is not unique, add a suffix
-        newName = baseName + QString::asprintf("-%04d.", ++i) + extension;
-    }
-    return newName;
+	int i = 0;
+	String new_name = name;
+	while(HasName(names, new_name)) {
+		new_name = Format("%s-%d", name.Begin(), i);
+		i++;
+	}
+	return new_name;
 }
 
-QString QStringUtils::appendToFilename(const QString &filename, const QString &appendix)
+QString QStringUtils::getUniqueFileName(const QStringList& names, const QString& name)
 {
-    QString name = filename.section(QLatin1Char('.'), 0, -2);
-    QString extension = filename.section(QLatin1Char('.'), -1);
-    return name + appendix + QLatin1Char('.') + extension;
+	int i = 0;
+	String base_name = GetFileTitle(name);
+	String extension = ToLower(GetFileExt(name));
+	String new_name = name;
+	while(HasName(names, new_name)) {
+		new_name = Format("%s-%04d%s", base_name.Begin(), ++i, extension.Begin());
+	}
+	return new_name;
+}
+
+QString QStringUtils::appendToFilename(const QString& filename, const QString& appendix)
+{
+	String base_name = GetFileTitle(filename);
+	String extension = GetFileExt(filename);
+	if(IsNull(extension))
+		return base_name + appendix;
+	return base_name + appendix + extension;
 }
 
 QString QStringUtils::getCleanFileName(QString filename)
 {
-    // Replace all non letter based characters with a dash
-    static const QRegularExpression nameRegexp("[^a-zA-Z0-9\\p{L}\\p{M} \\p{N}]");
-    return filename.replace(nameRegexp, QStringLiteral("-"));
+	for(int i = 0; i < filename.GetCount(); ++i) {
+		byte c = (byte)filename[i];
+		if(IsAlNum(c) || c == '_' || c == '-' || c == '.' || c == ' ')
+			continue;
+		filename.Set(i, '-');
+	}
+	return filename;
 }
-#endif

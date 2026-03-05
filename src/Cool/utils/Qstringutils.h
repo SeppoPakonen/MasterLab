@@ -6,10 +6,14 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Qstringutils_h_
+#define _Cool_utils_Qstringutils_h_
 
 // #include <QString>
 // #include <QStringList>
+
+using QString = String;
+using QStringList = Vector<String>;
 
 class QStringUtils
 {
@@ -32,3 +36,5 @@ public:
     /** Strips non alphanumeric characters from a string to have a usable filename */
     static QString getCleanFileName(QString filename);
 };
+
+#endif

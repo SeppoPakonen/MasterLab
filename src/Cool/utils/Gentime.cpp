@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Gentime.h"
 
 // Converted from tmp/k/src/utils/gentime.cpp
@@ -45,9 +44,9 @@ int GenTime::frames(double framesPerSecond) const
     return (int)floor(m_time * framesPerSecond + 0.5);
 }
 
-QString GenTime::toString() const
+String GenTime::ToString() const
 {
-    return QStringLiteral("%1 s").arg(m_time, 0, 'f', 2);
+    return Format("%.2f s", m_time);
 }
 
 GenTime GenTime::operator-()
@@ -122,4 +121,3 @@ void GenTime::setFps(double fps)
 {
     s_delta = 0.9 / fps;
 }
-#endif
