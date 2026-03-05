@@ -17,5 +17,8 @@ using namespace Upp;
 #include "CutePluginForm.h"
 #include "CutePluginListView.h"
 #include "CutePluginSelectForm.h"
+#include "CuteVst2Plugin.h"
+#include "CuteVst3Plugin.h"
+#include "CutePluginScan.h"
 
 #endif

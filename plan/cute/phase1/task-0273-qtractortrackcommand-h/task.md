@@ -1,5 +1,5 @@
 # Task: Convert `qtractorTrackCommand.h` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorTrackCommand.h` and convert it into MasterLab U++ conventions without attempting to compile.

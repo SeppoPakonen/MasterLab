@@ -36,6 +36,8 @@ file
 	CuteTimeScaleCommand.h,
 	CuteTimeScaleCommand.cpp,
 	CuteSessionCommand.h,
-	CuteSessionCommand.cpp;
+	CuteSessionCommand.cpp,
+	CuteTrackCommand.h,
+	CuteTrackCommand.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI"

@@ -34,4 +34,6 @@ file
 	CuteTempoAdjustForm.cpp,
 	CuteTempoAdjustFormLayout.md,
 	CuteTimeStretcher.h,
-	CuteTimeStretcher.cpp;
+	CuteTimeStretcher.cpp,
+	CuteWsolaTimeStretcher.h,
+	CuteWsolaTimeStretcher.cpp;

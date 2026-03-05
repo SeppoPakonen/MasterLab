@@ -1,5 +1,5 @@
 # Task: Convert `qtractorVst2Plugin.h` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractorVst2Plugin.h` and convert it into MasterLab U++ conventions without attempting to compile.

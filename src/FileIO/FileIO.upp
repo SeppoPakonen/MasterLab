@@ -30,4 +30,6 @@ file
 	Export.h,
 	Export.cpp,
 	CuteClip.cpp, // Moved from AudioCore
-	CuteCurveFile.cpp; // Moved from AudioCore
+	CuteCurveFile.cpp,
+	CuteZipFile.h,
+	CuteZipFile.cpp; // Moved from AudioCore

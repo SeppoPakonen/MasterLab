@@ -14,6 +14,21 @@ file
 	CuteRubberBand.h,
 	CuteRubberBand.cpp,
 	CuteScrollView.h,
-	CuteScrollView.cpp;
+	CuteScrollView.cpp,
+	CuteTrack.h,
+	CuteTrack.cpp,
+	CuteTrackButton.h,
+	CuteTrackButton.cpp,
+	CuteTrackForm.h,
+	CuteTrackForm.cpp,
+	CuteTrackFormLayout.md,
+	CuteTrackList.h,
+	CuteTrackList.cpp,
+	CuteTrackTime.h,
+	CuteTrackTime.cpp,
+	CuteTrackView.h,
+	CuteTrackView.cpp,
+	CuteTracks.h,
+	CuteTracks.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

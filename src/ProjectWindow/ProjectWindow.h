@@ -172,5 +172,12 @@ private:
 
 #include "CuteRubberBand.h"
 #include "CuteScrollView.h"
+#include "CuteTrack.h"
+#include "CuteTrackButton.h"
+#include "CuteTrackForm.h"
+#include "CuteTrackList.h"
+#include "CuteTrackTime.h"
+#include "CuteTrackView.h"
+#include "CuteTracks.h"
 
 #endif

@@ -11,6 +11,7 @@
 #include "Import.h"
 #include "Export.h"
 #include "CuteFileList.h"
+#include "CuteZipFile.h"
 
 #ifdef GUI
 // GUI-dependent File IO classes

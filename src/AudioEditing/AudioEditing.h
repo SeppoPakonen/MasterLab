@@ -23,6 +23,7 @@ using namespace Upp;
 #include "CuteTakeRangeForm.h"
 #include "CuteTempoAdjustForm.h"
 #include "CuteTimeStretcher.h"
+#include "CuteWsolaTimeStretcher.h"
 
 // Ensure VectorMap is available
 

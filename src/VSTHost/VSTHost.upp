@@ -34,4 +34,10 @@ file
 	CutePluginListView.cpp,
 	CutePluginSelectForm.h,
 	CutePluginSelectForm.cpp,
-	CutePluginSelectFormLayout.md;
+	CutePluginSelectFormLayout.md,
+	CuteVst2Plugin.h,
+	CuteVst2Plugin.cpp,
+	CuteVst3Plugin.h,
+	CuteVst3Plugin.cpp,
+	CutePluginScan.h,
+	CutePluginScan.cpp;

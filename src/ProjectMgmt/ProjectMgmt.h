@@ -22,6 +22,7 @@ using namespace Upp;
 #include "CutePropertyCommand.h"
 #include "CuteTimeScaleCommand.h"
 #include "CuteSessionCommand.h"
+#include "CuteTrackCommand.h"
 
 // Provide ProjectMgmt namespace for compatibility with editor modules
 namespace ProjectMgmt {

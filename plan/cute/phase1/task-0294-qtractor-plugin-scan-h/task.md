@@ -1,5 +1,5 @@
 # Task: Convert `qtractor_plugin_scan.h` to U++
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Manually read `tmp/q/src/qtractor_plugin_scan.h` and convert it into MasterLab U++ conventions without attempting to compile.
