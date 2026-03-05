@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Thememanager.h"
 
 // Converted from tmp/k/src/utils/thememanager.cpp
@@ -28,79 +27,43 @@
 // #include <KLocalizedString>
 // #include <KSharedConfig>
 
-ThemeManager::ThemeManager(QObject *parent)
-    : KColorSchemeManager(parent)
+ThemeManager::ThemeManager(void *parent)
 {
-    setAutosaveChanges(false);
-    const auto schemePath(loadCurrentPath());
-
-    // KColorSchemeManager includes a system color scheme option that reacts to system scheme changes.
-    // This scheme will be activated if we pass an empty string to KColorSchemeManager (if "scheme" is empty)
-    QString scheme = loadScheme(schemePath);
-    m_menu = KColorSchemeMenu::createMenu(this, this);
-    connect(m_menu->menu(), &QMenu::triggered, this, &ThemeManager::schemeActionTriggered);
-    if (!scheme.isEmpty()) {
-        // We are not using the default color theme, ensure icons have correct color
-        Q_EMIT pCore->updatePalette();
-    }
+    (void)parent;
+    m_menu = nullptr;
 }
 
 QString ThemeManager::loadScheme(const QString &schemeName)
 {
-    QString scheme;
-    for (int i = 0; i < model()->rowCount(); ++i) {
-        QModelIndex index = model()->index(i, 0);
-        if ((schemeName.isEmpty() && index.data(KColorSchemeModel::PathRole).toString().isEmpty()) ||
-            index.data(KColorSchemeModel::PathRole).toString().endsWith(schemeName)) {
-            scheme = index.data(Qt::DisplayRole).toString();
-            break;
-        }
-    }
-    const QModelIndex ix = indexForScheme(scheme);
-    activateScheme(ix);
-    return scheme;
+    return schemeName;
 }
 
 void ThemeManager::switchDarkPalette(bool dark)
 {
-    const QString schemeFileName = dark ? QStringLiteral("BreezeDark.colors") : QString();
-    for (int i = 0; i < model()->rowCount(); ++i) {
-        QModelIndex index = model()->index(i, 0);
-        if ((schemeFileName.isEmpty() && index.data(KColorSchemeModel::PathRole).toString().isEmpty()) ||
-            index.data(KColorSchemeModel::PathRole).toString().endsWith(schemeFileName)) {
-            const QString path = model()->data(index, KColorSchemeModel::PathRole).toString();
-            auto actions = m_menu->menu()->actions();
-            for (auto &a : actions) {
-                qDebug() << "::: CHECKOING ACTION: " << a->text() << " = " << a->data().toString();
-                if (a->data().toString() == path) {
-                    qDebug() << ":::: MATCH!!";
-                    a->trigger();
-                    break;
-                }
-            }
-            break;
-        }
-    }
+    (void)dark;
 }
 
 QString ThemeManager::loadCurrentPath() const
 {
-    KConfigGroup cg(KSharedConfig::openConfig(), "UiSettings");
-    return cg.readEntry("ColorSchemePath");
+    return String();
 }
 
 void ThemeManager::saveCurrentScheme(const QString &path)
 {
-    KConfigGroup cg(KSharedConfig::openConfig(), "UiSettings");
-    cg.writeEntry("ColorSchemePath", path);
-    cg.sync();
+    (void)path;
 }
 
-void ThemeManager::schemeActionTriggered(QAction *action)
+QString ThemeManager::currentSchemeName() const
 {
-    QModelIndex schemeIndex = indexForScheme(KLocalizedString::removeAcceleratorMarker(action->text()));
-    const QString path = model()->data(schemeIndex, KColorSchemeModel::PathRole).toString();
-    saveCurrentScheme(QFileInfo(path).fileName());
-    Q_EMIT themeChanged(path);
+    return String();
 }
-#endif
+
+void ThemeManager::schemeActionTriggered(void *action)
+{
+    (void)action;
+}
+
+void ThemeManager::themeChanged(const QString &name)
+{
+    (void)name;
+}

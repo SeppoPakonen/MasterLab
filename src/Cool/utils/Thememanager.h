@@ -7,7 +7,8 @@
     SPDX-License-Identifier: LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Thememanager_h_
+#define _Cool_utils_Thememanager_h_
 
 // Qt includes
 
@@ -17,20 +18,21 @@
 // KDE includes
 // #include <KColorSchemeManager>
 
-class ThemeManager : public KColorSchemeManager
-{
-    Q_OBJECT
+using QString = String;
+
+class KActionMenu {};
+
+class ThemeManager {
 public:
-    ThemeManager(QObject *parent);
+    ThemeManager(void *parent);
     KActionMenu *menu() { return m_menu; };
 
-public Q_SLOTS:
     void switchDarkPalette(bool dark);
-
-private Q_SLOTS:
-    void schemeActionTriggered(QAction *action);
+    void themeChanged(const QString &name);
 
 private:
+    void schemeActionTriggered(void *action);
+
     KActionMenu *m_menu;
 
     QString loadCurrentScheme() const;
@@ -38,7 +40,6 @@ private:
     void saveCurrentScheme(const QString & path);
     QString currentSchemeName() const;
     QString loadScheme(const QString &schemeName);
-
-Q_SIGNALS:
-    void themeChanged(const QString &name);
 };
+
+#endif
