@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "QtimerWithTime.h"
 
 // Converted from tmp/k/src/lib/qtimerWithTime.cpp
@@ -13,19 +12,22 @@ SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 
 // #include "qtimerWithTime.h"
 
-void QTimerWithTime::start(int msec)
+void QTimerWithTime::Start(int msec)
 {
-    QTimer::start(msec);
-    m_time.start();
+    m_interval_msec = msec;
+    m_start_time = std::chrono::steady_clock::now();
+    m_is_valid = true;
 }
 
-qint64 QTimerWithTime::elapsed() const
+int64 QTimerWithTime::Elapsed() const
 {
-    return m_time.elapsed();
+    if (!m_is_valid) {
+        return 0;
+    }
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_start_time).count();
 }
 
-bool QTimerWithTime::isValid() const
+bool QTimerWithTime::IsValid() const
 {
-    return m_time.isValid();
+    return m_is_valid;
 }
-#endif

@@ -1,5 +1,4 @@
 
-#if 0
 // Converted from tmp/k/src/lib/external/media_ctrl/mediactrl.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -390,4 +389,3 @@ void media_ctrl_open_dev(struct media_ctrl *mc, const char *devname)
         mc->fd = -1;
     }
 }
-#endif

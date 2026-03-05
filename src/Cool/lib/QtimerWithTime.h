@@ -7,19 +7,27 @@
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_lib_QtimerWithTime_h_
+#define _Cool_lib_QtimerWithTime_h_
 
-// #include <QElapsedTimer>
-// #include <QTimer>
+#include <chrono>
 
-class QTimerWithTime : public QTimer
+class QTimerWithTime
 {
-    Q_OBJECT
 public:
-    virtual void start(int msec);
-    qint64 elapsed() const;
-    bool isValid() const;
+    void Start(int msec);
+    int64 Elapsed() const;
+    bool IsValid() const;
+
+    // Qt-name compatibility wrappers for phased conversion.
+    void start(int msec) { Start(msec); }
+    int64 elapsed() const { return Elapsed(); }
+    bool isValid() const { return IsValid(); }
 
 private:
-    QElapsedTimer m_time;
+    int m_interval_msec{0};
+    bool m_is_valid{false};
+    std::chrono::steady_clock::time_point m_start_time;
 };
+
+#endif

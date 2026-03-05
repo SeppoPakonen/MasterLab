@@ -1,5 +1,3 @@
-
-#if 0
 #include "KissFft.h"
 // Converted from tmp/k/src/lib/external/kiss_fft/kiss_fft.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -417,4 +415,3 @@ int kiss_fft_next_fast_size(int n)
     }
     return n;
 }
-#endif

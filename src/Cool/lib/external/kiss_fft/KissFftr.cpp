@@ -1,5 +1,3 @@
-
-#if 0
 // Converted from tmp/k/src/lib/external/kiss_fft/kiss_fftr.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
 
@@ -152,4 +150,3 @@ void kiss_fftri(kiss_fftr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_scalar 
     }
     kiss_fft(st->substate, st->tmpbuf, (kiss_fft_cpx *)timedata);
 }
-#endif
