@@ -1,5 +1,4 @@
 #include "../../Cool.h"
-#if 0
 #include "Audiolevelconfig.h"
 
 // Converted from tmp/k/src/audiomixer/audiolevels/audiolevelconfig.cpp
@@ -21,26 +20,20 @@ AudioLevelConfig &AudioLevelConfig::instance()
 
 AudioLevelConfig::AudioLevelConfig()
 {
-    m_configFile = KSharedConfig::openConfig();
     readConfig();
 }
 
 void AudioLevelConfig::readConfig()
 {
-    KConfigGroup scopeConfig(m_configFile, "Audio_Levels");
-    m_config.levelStyle = static_cast<AudioLevel::LevelStyle>(scopeConfig.readEntry("levelStyle", static_cast<int>(AudioLevel::LevelStyle::Gradient)));
-    m_config.drawBlockLines = scopeConfig.readEntry("drawBlockLines", false);
-    m_config.peakIndicatorStyle =
-        static_cast<AudioLevel::PeakIndicatorStyle>(scopeConfig.readEntry("peakIndicatorStyle", static_cast<int>(AudioLevel::PeakIndicatorStyle::Monochrome)));
+    // Placeholder in-memory defaults for phase-1 conversion.
+    m_config.levelStyle = AudioLevel::LevelStyle::Gradient;
+    m_config.drawBlockLines = false;
+    m_config.peakIndicatorStyle = AudioLevel::PeakIndicatorStyle::Monochrome;
 }
 
 void AudioLevelConfig::writeConfig()
 {
-    KConfigGroup scopeConfig(m_configFile, "Audio_Levels");
-    scopeConfig.writeEntry("levelStyle", static_cast<int>(m_config.levelStyle));
-    scopeConfig.writeEntry("drawBlockLines", m_config.drawBlockLines);
-    scopeConfig.writeEntry("peakIndicatorStyle", static_cast<int>(m_config.peakIndicatorStyle));
-    scopeConfig.sync();
+    // No persistent backend in phase-1 placeholder.
 }
 
 void AudioLevelConfig::setLevelStyle(AudioLevel::LevelStyle style)
@@ -72,6 +65,5 @@ void AudioLevelConfig::setPeakIndicatorStyle(AudioLevel::PeakIndicatorStyle styl
 
 void AudioLevelConfig::configChanged()
 {
-    Q_EMIT pCore->audioLevelsConfigChanged();
+    // Notification wiring is deferred to later integration phase.
 }
-#endif

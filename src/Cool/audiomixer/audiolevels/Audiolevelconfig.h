@@ -6,9 +6,10 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_audiomixer_audiolevels_Audiolevelconfig_h_
+#define _Cool_audiomixer_audiolevels_Audiolevelconfig_h_
 
-// #include "audioleveltypes.h"
+#include "Audioleveltypes.h"
 // #include <KConfigGroup>
 // #include <KSharedConfig>
 // #include <QColor>
@@ -44,5 +45,6 @@ private:
     void writeConfig();
 
     Config m_config;
-    KSharedConfigPtr m_configFile;
 };
+
+#endif
