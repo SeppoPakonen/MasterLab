@@ -8,23 +8,23 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_project_Invaliddialog_h_
+#define _Cool_project_Invaliddialog_h_
 
-// #include <QDialog>
+using QString = String;
+using QStringList = Vector<String>;
 
-class QListWidget;
-
-class InvalidDialog : public QDialog
-{
-    Q_OBJECT
-
+class InvalidDialog {
 public:
-    explicit InvalidDialog(const QString &caption, const QString &message, bool infoOnly, QWidget *parent = nullptr);
-    ~InvalidDialog() override;
+    explicit InvalidDialog(const QString &caption, const QString &message, bool info_only, void *parent = nullptr);
+    ~InvalidDialog();
 
     void addClip(const QString &id, const QString &path);
     QStringList getIds() const;
 
 private:
-    QListWidget *m_clipList;
+    Vector<String> m_ids;
+    Vector<String> m_paths;
 };
+
+#endif

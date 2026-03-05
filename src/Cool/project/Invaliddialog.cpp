@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Invaliddialog.h"
 
 // Converted from tmp/k/src/project/invaliddialog.cpp
@@ -24,51 +23,25 @@
 // #include <QDialogButtonBox>
 // #include <QPushButton>
 
-InvalidDialog::InvalidDialog(const QString &caption, const QString &message, bool infoOnly, QWidget *parent)
-    : QDialog(parent)
+InvalidDialog::InvalidDialog(const QString &caption, const QString &message, bool info_only, void *parent)
 {
-    auto *mainLayout = new QVBoxLayout(this);
-    setWindowTitle(caption);
-    // Info only means users can only click on ok
-    QDialogButtonBox *buttonBox;
-    QPushButton *okButton;
-    if (infoOnly) {
-        buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
-        okButton = buttonBox->button(QDialogButtonBox::Ok);
-    } else {
-        buttonBox = new QDialogButtonBox(QDialogButtonBox::No | QDialogButtonBox::Yes);
-        okButton = buttonBox->button(QDialogButtonBox::Yes);
-    }
-    okButton->setDefault(true);
-    okButton->setShortcut(Qt::CTRL | Qt::Key_Return);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &InvalidDialog::accept);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &InvalidDialog::reject);
-
-    m_clipList = new QListWidget(this);
-    mainLayout->addWidget(new QLabel(message));
-    mainLayout->addWidget(m_clipList);
-    mainLayout->addWidget(buttonBox);
+    (void)caption;
+    (void)message;
+    (void)info_only;
+    (void)parent;
 }
 
 InvalidDialog::~InvalidDialog()
 {
-    delete m_clipList;
 }
 
 void InvalidDialog::addClip(const QString &id, const QString &path)
 {
-    auto *item = new QListWidgetItem(path);
-    item->setData(Qt::UserRole, id);
-    m_clipList->addItem(item);
+    m_ids.Add(id);
+    m_paths.Add(path);
 }
 
 QStringList InvalidDialog::getIds() const
 {
-    QStringList ids;
-    ids.reserve(m_clipList->count());
-    for (int i = 0; i < m_clipList->count(); ++i) {
-        ids << m_clipList->item(i)->data(Qt::UserRole).toString();
-    }
-    return ids;
+    return clone(m_ids);
 }
-#endif
