@@ -30,10 +30,10 @@ public:
     Item* FindFile(const Key& key);
     void RemoveFile(const Key& key);
     void Clear();
-    const Vector<Item>& GetItems() const;
+    const Array<Item>& GetItems() const;
 
 private:
-    Vector<Item> items;
+    Array<Item> items;
 };
 
 #endif

@@ -16,7 +16,7 @@ using namespace Upp;
 // VST Connections UI package for managing VST I/O routing
 namespace VSTConnections {
 
-class VSTConnectionsWindow : public WithDockManager<ParentCtrl> {
+class VSTConnectionsWindow : public ParentCtrl {
 public:
     VSTConnectionsWindow();
     void InitLayout();

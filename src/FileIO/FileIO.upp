@@ -2,7 +2,6 @@ description "Basic File IO utilities";
 
 uses
 	Core,
-	FileSel,
 	AudioCore; // FileIO depends on AudioCore
 
 uses(GUI) CtrlLib;
@@ -29,7 +28,5 @@ file
 	Import.cpp,
 	Export.h,
 	Export.cpp,
-	CuteClip.cpp, // Moved from AudioCore
-	CuteCurveFile.cpp,
 	CuteZipFile.h,
 	CuteZipFile.cpp; // Moved from AudioCore

@@ -1,0 +1,16 @@
+description "Cute application\3770,128,128";
+
+uses
+	AudioMaster,
+	CtrlLog;
+
+file
+	AGENTS.md,
+	Cute.h,
+	main.cpp,
+	CMakeListsConversion.md,
+	ConfigHeaderConversion.md,
+	ResourceManifest.md;
+
+mainconfig
+	"" = "GUI";

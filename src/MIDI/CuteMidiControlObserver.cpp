@@ -6,5 +6,5 @@ void CuteMidiControlObserver::SetSubject(CuteSubject* subject) { this->subject =
 CuteSubject* CuteMidiControlObserver::GetSubject() const { return subject; }
 void CuteMidiControlObserver::SetCurveList(CuteCurveList* curve_list) { this->curve_list = curve_list; }
 CuteCurveList* CuteMidiControlObserver::GetCurveList() const { return curve_list; }
-void CuteMidiControlObserver::SetWidget(Ctrl* widget) { this->widget = widget; }
-Ctrl* CuteMidiControlObserver::GetWidget() const { return widget; }
+void CuteMidiControlObserver::SetWidget(Upp::Ctrl* widget) { this->widget = widget; }
+Upp::Ctrl* CuteMidiControlObserver::GetWidget() const { return widget; }

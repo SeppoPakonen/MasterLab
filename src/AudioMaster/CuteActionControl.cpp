@@ -1,12 +1,5 @@
 #include "AudioMaster.h"
 
-class CuteAction {};
-class CuteMidiControlObserver {
-public:
-	virtual ~CuteMidiControlObserver() {}
-};
-class CuteSubject {};
-
 CuteActionControl* CuteActionControl::instance = nullptr;
 
 CuteActionControl::MidiObserver::MidiObserver(CuteAction* action)

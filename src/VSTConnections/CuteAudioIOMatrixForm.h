@@ -20,7 +20,7 @@ public:
     const Vector<int>& GetGroups() const;
     void InputChannelsChanged(int index);
     void OutputChannelsChanged(int index);
-    void Accept();
+    bool Accept();
     void Reject();
 
 private:

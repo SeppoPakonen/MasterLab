@@ -1,8 +1,5 @@
 #include "Devices.h"
 
-class CuteConnectorView {};
-class CutePortListItem {};
-
 Vector<String> CuteMidiConnect::icons;
 int CuteMidiConnect::icon_ref_count = 0;
 

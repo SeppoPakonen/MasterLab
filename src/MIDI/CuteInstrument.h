@@ -17,7 +17,7 @@ class CuteInstrumentKeys : public Moveable<CuteInstrumentKeys> { };
 class CuteInstrumentDrumFlags : public Moveable<CuteInstrumentDrumFlags> { };
 class CuteInstrumentDrums : public Moveable<CuteInstrumentDrums> { };
 
-class CuteInstrument {
+class CuteInstrument : public Moveable<CuteInstrument> {
 public:
     CuteInstrument();
 

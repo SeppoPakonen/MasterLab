@@ -15,7 +15,7 @@ void SceneManager::AddScene(const String& name, const AudioFX::ParameterSet& par
 	Scene s;
 	s.name = name;
 	s.params <<= params;
-	scenes.Add(s);
+	scenes.Add(pick(s));
 	SceneAdded();
 }
 

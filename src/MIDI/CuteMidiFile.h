@@ -23,7 +23,7 @@ public:
     unsigned short GetFormat() const;
     unsigned short GetTracks() const;
     unsigned short GetTicksPerBeat() const;
-    CuteMidiFileTempo* GetTempoMap() const;
+    const CuteMidiFileTempo* GetTempoMap() const;
     bool ReadTracks(Vector<CuteMidiSequence*>& seqs, unsigned short track_channel = 0);
     bool ReadTrack(CuteMidiSequence* seq, unsigned short track_channel);
     unsigned long ReadTrackDuration(unsigned short track_channel);

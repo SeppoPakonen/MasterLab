@@ -20,7 +20,6 @@ using namespace Upp;
 #include <ProjectSetup/ProjectSetup.h>
 #include <ProjectWindow/ProjectWindow.h>
 #include <FileIO/FileIO.h>
-#include <VSTConnections/VSTConnections.h>
 #include <MIDI/MIDI.h>
 
 // Package files

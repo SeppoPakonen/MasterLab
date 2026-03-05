@@ -33,7 +33,15 @@ CuteTimeScale::CuteTimeScale() {}
 void CuteTimeScale::Reset() { sample_rate = 48000; ticks_per_beat = 960; pixels_per_beat = 120; snap_per_beat = 4; display_format = Time; nodes.Clear(); markers.Clear(); }
 void CuteTimeScale::Clear() { nodes.Clear(); markers.Clear(); }
 void CuteTimeScale::Sync() {}
-void CuteTimeScale::Copy(const CuteTimeScale& time_scale) { *this = time_scale; }
+void CuteTimeScale::Copy(const CuteTimeScale& time_scale) {
+	sample_rate = time_scale.sample_rate;
+	ticks_per_beat = time_scale.ticks_per_beat;
+	pixels_per_beat = time_scale.pixels_per_beat;
+	snap_per_beat = time_scale.snap_per_beat;
+	display_format = time_scale.display_format;
+	nodes <<= time_scale.nodes;
+	markers <<= time_scale.markers;
+}
 void CuteTimeScale::SetSampleRate(int sample_rate) { this->sample_rate = sample_rate; }
 int CuteTimeScale::GetSampleRate() const { return sample_rate; }
 void CuteTimeScale::SetTicksPerBeat(int ticks_per_beat) { this->ticks_per_beat = ticks_per_beat; }

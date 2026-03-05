@@ -1,48 +1,30 @@
 #ifndef _AudioCore_CuteMonitor_h_
 #define _AudioCore_CuteMonitor_h_
 
+// Forward declarations if needed by non-GUI parts of CuteMonitor
+// (none seem necessary for a purely audio monitoring class)
+
 class CuteMonitor {
 public:
-    class Observer : public CuteMidiControlObserver {
-    public:
-        Observer(CuteMonitor* monitor = nullptr, CuteSubject* subject = nullptr);
-        void TriggerUpdate(bool update);
-    private:
-        CuteMonitor* monitor = nullptr;
-    };
-
-    class GainObserver : public Observer {
-    public:
-        GainObserver(CuteMonitor* monitor = nullptr, CuteSubject* subject = nullptr);
-    };
-
-    class PanningObserver : public Observer {
-    public:
-        PanningObserver(CuteMonitor* monitor = nullptr, CuteSubject* subject = nullptr);
-    };
-
     CuteMonitor(float gain = 1.0f, float panning = 0.0f);
     virtual ~CuteMonitor();
 
-    CuteSubject* GainSubject();
-    CuteMidiControlObserver* GainObserverPtr();
+    // Purely audio related setters/getters
     void SetGain(float gain);
     float GetGain() const;
     float GetPrevGain() const;
 
-    CuteSubject* PanningSubject();
-    CuteMidiControlObserver* PanningObserverPtr();
     void SetPanning(float panning);
     float GetPanning() const;
     float GetPrevPanning() const;
 
-    virtual void Update() = 0;
+    virtual void Update() = 0; // Still abstract, implementation will be in CuteMonitor.cpp
 
 protected:
-    CuteSubject gain_subject;
-    CuteSubject panning_subject;
-    GainObserver gain_observer;
-    PanningObserver panning_observer;
+    float gain = 1.0f;
+    float panning = 0.0f;
+    float prev_gain = 1.0f; // Track previous gain for smooth updates
+    float prev_panning = 0.0f; // Track previous panning for smooth updates
 };
 
 #endif

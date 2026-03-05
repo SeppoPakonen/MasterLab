@@ -12,13 +12,13 @@ public:
     CuteSubject* GetSubject() const;
     void SetCurveList(CuteCurveList* curve_list);
     CuteCurveList* GetCurveList() const;
-    void SetWidget(Ctrl* widget);
-    Ctrl* GetWidget() const;
+    void SetWidget(Upp::Ctrl* widget);
+    Upp::Ctrl* GetWidget() const;
 
 private:
     CuteSubject* subject = nullptr;
     CuteCurveList* curve_list = nullptr;
-    Ctrl* widget = nullptr;
+    Upp::Ctrl* widget = nullptr;
 };
 
 #endif

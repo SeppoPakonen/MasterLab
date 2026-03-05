@@ -10,9 +10,16 @@ void CuteMeterScale::Paint(Draw& draw) { last_y = 0; PaintScale(draw); }
 void CuteMeterScale::DrawLineLabel(Draw& draw, int y, const String& label) { draw.DrawText(2, max(0, y - 8), label); last_y = y; }
 
 CuteMeterValue::CuteMeterValue(CuteMeter* meter) : meter(meter) { values.Add(this); }
-CuteMeterValue::~CuteMeterValue() { int i = values.Find(this); if(i >= 0) values.Remove(i); }
+CuteMeterValue::~CuteMeterValue() {
+	for(int i = 0; i < values.GetCount(); ++i) {
+		if(values[i] == this) {
+			values.Remove(i);
+			break;
+		}
+	}
+}
 CuteMeter* CuteMeterValue::GetMeter() const { return meter; }
-void CuteMeterValue::Refresh(unsigned long stamp) { (void)stamp; Refresh(); }
+void CuteMeterValue::Refresh(unsigned long stamp) { (void)stamp; Ctrl::Refresh(); }
 void CuteMeterValue::RefreshAll() { ++stamp; for(CuteMeterValue* v : values) if(v) v->Refresh(stamp); }
 void CuteMeterValue::UpdateAll() { for(CuteMeterValue* v : values) if(v) v->Update(); }
 

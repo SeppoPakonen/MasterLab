@@ -3,6 +3,7 @@
 
 #include <Core/Core.h>
 #include <CtrlLib/CtrlLib.h> // For FileSel
+using namespace Upp;
 
 // Core File IO classes
 #include "CuteDocument.h"
@@ -13,7 +14,7 @@
 #include "CuteFileList.h"
 #include "CuteZipFile.h"
 
-#ifdef GUI
+#ifdef flagGUI
 // GUI-dependent File IO classes
 #include "CuteFileListView.h"
 #include "CuteFileSystem.h"

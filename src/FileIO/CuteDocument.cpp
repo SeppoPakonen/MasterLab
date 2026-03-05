@@ -17,7 +17,10 @@ bool CuteDocument::IsSymLink() const { return (flags & SymLink) != 0; }
 String CuteDocument::AddFile(const String& filename) { temp_files.Add(filename); return filename; }
 bool CuteDocument::Load(const String& filename, Flags flags) { this->flags = flags; name = GetFileTitle(filename); String data = LoadFile(filename); return !data.IsVoid() && LoadElement(data); }
 bool CuteDocument::Save(const String& filename, Flags flags) { this->flags = flags; name = GetFileTitle(filename); String data; if(!SaveElement(data)) return false; SaveFile(filename, data); return true; }
-bool CuteDocument::BoolFromText(const String& text) { return text.CompareNoCase("true") == 0 || text == "1" || text.CompareNoCase("yes") == 0; }
+bool CuteDocument::BoolFromText(const String& text) {
+	String lower_text = ToLower(text);
+	return lower_text == "true" || lower_text == "1" || lower_text == "yes";
+}
 String CuteDocument::TextFromBool(bool value) { return value ? "true" : "false"; }
 void CuteDocument::SetDefaultExt(const String& default_ext) { CuteDocument::default_ext = default_ext; }
 void CuteDocument::SetTemplateExt(const String& template_ext) { CuteDocument::template_ext = template_ext; }

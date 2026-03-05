@@ -9,7 +9,7 @@ int CuteMidiFile::GetMode() const { return mode; }
 unsigned short CuteMidiFile::GetFormat() const { return format; }
 unsigned short CuteMidiFile::GetTracks() const { return tracks; }
 unsigned short CuteMidiFile::GetTicksPerBeat() const { return ticks_per_beat; }
-CuteMidiFileTempo* CuteMidiFile::GetTempoMap() const { return tempo_map.Get(); }
+const CuteMidiFileTempo* CuteMidiFile::GetTempoMap() const { return tempo_map.Get(); }
 bool CuteMidiFile::ReadTracks(Vector<CuteMidiSequence*>& seqs, unsigned short track_channel) { (void)seqs; (void)track_channel; return true; }
 bool CuteMidiFile::ReadTrack(CuteMidiSequence* seq, unsigned short track_channel) { (void)seq; (void)track_channel; return true; }
 unsigned long CuteMidiFile::ReadTrackDuration(unsigned short track_channel) { (void)track_channel; return 0; }

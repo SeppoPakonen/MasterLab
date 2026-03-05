@@ -11,7 +11,7 @@ VSTTabPane::VSTTabPane() : isTreeCtrl(true), ioMatrixService(nullptr) {
 InputTabPane::InputTabPane() {
     isTreeCtrl = true;
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for Inputs tab
     treeCtrl.AddColumn("Bus Name", 150);
@@ -113,7 +113,7 @@ void InputTabPane::OnTreeSel() {
 OutputTabPane::OutputTabPane() {
     isTreeCtrl = true;
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for Outputs tab
     treeCtrl.AddColumn("Bus Name", 150);
@@ -221,7 +221,7 @@ void OutputTabPane::OnTreeSel() {
 GroupsFxTabPane::GroupsFxTabPane() {
     isTreeCtrl = false;  // This tab doesn't use tree structure according to spec
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for Groups/FX tab
     treeCtrl.AddColumn("Bus Name", 180);
@@ -293,7 +293,7 @@ void GroupsFxTabPane::OnTreeSel() {
 ExternalFxTabPane::ExternalFxTabPane() {
     isTreeCtrl = true;
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for External FX tab
     treeCtrl.AddColumn("Bus Name", 150);
@@ -412,7 +412,7 @@ void ExternalFxTabPane::OnTreeSel() {
 ExternalInstrumentsTabPane::ExternalInstrumentsTabPane() {
     isTreeCtrl = true;
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for External Instruments tab (no Send Gain column)
     treeCtrl.AddColumn("Bus Name", 150);
@@ -523,7 +523,7 @@ void ExternalInstrumentsTabPane::OnTreeSel() {
 StudioTabPane::StudioTabPane() {
     isTreeCtrl = true;
     AddFrame(toolBar);
-    AddChild(treeCtrl);
+    Add(treeCtrl.SizePos());
     
     // Define columns for Studio (Control Room) tab
     treeCtrl.AddColumn("Bus Name", 150);

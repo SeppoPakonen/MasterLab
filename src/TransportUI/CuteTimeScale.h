@@ -14,7 +14,7 @@ public:
         MaxAccidentals = 9,
     };
 
-    class Node {
+    class Node : Moveable<Node> {
     public:
         Node();
         Node(int64 frame, double tempo, int beats_per_bar, int beat_divisor);
@@ -55,7 +55,7 @@ public:
         int64 frame = 0;
     };
 
-    class Marker {
+    class Marker : Moveable<Marker> {
     public:
         Marker();
         Marker(int64 frame, int bar, const String& text, Color color);

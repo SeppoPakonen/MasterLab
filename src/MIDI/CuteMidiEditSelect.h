@@ -3,7 +3,7 @@
 
 class CuteMidiEditSelect {
 public:
-    struct Item {
+    struct Item : Moveable<Item> {
         Rect rect_event;
         unsigned int flags = 1;
     };

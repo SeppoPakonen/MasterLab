@@ -18,7 +18,7 @@ void CuteAudioIOMatrixForm::RefreshMatrix() {}
 const Vector<int>& CuteAudioIOMatrixForm::GetGroups() const { return groups; }
 void CuteAudioIOMatrixForm::InputChannelsChanged(int index) { input_channels = index; }
 void CuteAudioIOMatrixForm::OutputChannelsChanged(int index) { output_channels = index; }
-void CuteAudioIOMatrixForm::Accept() {}
+bool CuteAudioIOMatrixForm::Accept() { return true; }
 void CuteAudioIOMatrixForm::Reject() {}
 
 CuteAudioIOMatrixForm::TableWidget::TableWidget() {}

@@ -8,7 +8,7 @@
 
 NAMESPACE_UPP
 
-class VSTConnectionsWnd : public WithDockManager<ParentCtrl> {
+class VSTConnectionsWnd : public TopWindow {
 public:
 	typedef VSTConnectionsWnd CLASSNAME;
 	

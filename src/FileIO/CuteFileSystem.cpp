@@ -12,5 +12,5 @@ void CuteFileSystem::RefreshTree() {
     tree.Clear();
     if(root_path.IsEmpty())
         return;
-    tree.Add(Null, root_path);
+    tree.Add(0, CtrlImg::Dir(), root_path);
 }

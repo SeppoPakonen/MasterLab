@@ -51,7 +51,11 @@ public:
     CuteMidiSequence* GetSequence() const;
 
 private:
+    void SetFilename(const String& filename) { this->filename = filename; }
+    const String& GetFilename() const { return filename; }
+
     CuteTrack* track = nullptr;
+    String filename;
     One<Data> data;
     unsigned short track_channel = 0;
     bool session_flag = false;

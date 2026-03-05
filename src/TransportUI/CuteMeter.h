@@ -60,7 +60,7 @@ public:
     void SetScaleFactor(float scale_factor);
 
 protected:
-    HBox box;
+    ParentCtrl box;
     CuteMonitor* monitor = nullptr;
     float scale_factor = 0.0f;
     int peak_falloff = 0;

@@ -10,6 +10,18 @@ CuteMidiControl::CuteMidiControl() {}
 void CuteMidiControl::MapControl(const MapKey& key, const MapVal& value) { control_map.GetAdd(key) = value; }
 bool CuteMidiControl::UnmapControl(const MapKey& key) { int i = control_map.Find(key); if(i >= 0) { control_map.Remove(i); return true; } return false; }
 const VectorMap<CuteMidiControl::MapKey, CuteMidiControl::MapVal>& CuteMidiControl::GetControlMap() const { return control_map; }
-void CuteMidiControl::AddObserver(CuteMidiControlObserver* observer) { if(observers.Find(observer) < 0) observers.Add(observer); }
-void CuteMidiControl::RemoveObserver(CuteMidiControlObserver* observer) { int i = observers.Find(observer); if(i >= 0) observers.Remove(i); }
+void CuteMidiControl::AddObserver(CuteMidiControlObserver* observer) {
+	for(int i = 0; i < observers.GetCount(); ++i)
+		if(observers[i] == observer)
+			return;
+	observers.Add(observer);
+}
+void CuteMidiControl::RemoveObserver(CuteMidiControlObserver* observer) {
+	for(int i = 0; i < observers.GetCount(); ++i) {
+		if(observers[i] == observer) {
+			observers.Remove(i);
+			break;
+		}
+	}
+}
 const Vector<CuteMidiControlObserver*>& CuteMidiControl::GetObservers() const { return observers; }

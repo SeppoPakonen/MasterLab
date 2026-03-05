@@ -2,6 +2,9 @@
 #define _MasterLab_AudioCore_h_
 
 #include <Core/Core.h>
+#ifdef flagGUI
+#include <CtrlLib/CtrlLib.h>
+#endif
 using namespace Upp;
 
 #include "AudioTypes.h"

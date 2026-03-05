@@ -5,6 +5,7 @@
 #include <ProjectMgmt/ProjectMgmt.h>
 #include <Editors/Editors.h>
 #include <Tooling/Tooling.h>
+#include <TransportUI/TransportUI.h>
 using namespace Upp;
 
 #include "MidiChase.h"

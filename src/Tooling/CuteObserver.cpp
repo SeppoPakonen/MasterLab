@@ -7,8 +7,22 @@ float CuteSubject::GetValue() const { return value; }
 float CuteSubject::GetPrevValue() const { return prev_value; }
 float CuteSubject::GetLastValue() const { return last_value; }
 void CuteSubject::Notify(CuteObserver* sender, float value, bool update) { (void)sender; last_value = value; for(CuteObserver* o : observers) if(o) o->Update(update); }
-void CuteSubject::Attach(CuteObserver* observer) { if(observers.Find(observer) < 0) observers.Add(observer); }
-void CuteSubject::Detach(CuteObserver* observer) { int i = observers.Find(observer); if(i >= 0) observers.Remove(i); }
+void CuteSubject::Attach(CuteObserver* observer) {
+	for(int i = 0; i < observers.GetCount(); ++i) {
+		if(observers[i] == observer)
+			return;
+	}
+	observers.Add(observer);
+}
+
+void CuteSubject::Detach(CuteObserver* observer) {
+	for(int i = 0; i < observers.GetCount(); ++i) {
+		if(observers[i] == observer) {
+			observers.Remove(i);
+			return;
+		}
+	}
+}
 void CuteSubject::SetQueued(bool queued) { this->queued = queued; }
 bool CuteSubject::IsQueued() const { return queued; }
 float* CuteSubject::Data() { return &value; }

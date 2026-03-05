@@ -1,8 +1,5 @@
 #include "Devices.h"
 
-class CuteConnectorView {};
-class CutePortListItem {};
-
 Vector<String> CuteAudioConnect::icons;
 int CuteAudioConnect::icon_ref_count = 0;
 

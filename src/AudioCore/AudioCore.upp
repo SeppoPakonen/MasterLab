@@ -1,7 +1,8 @@
 description "Audio core package\3770,0,139";
 
 uses
-	Core;
+	Core,
+	CtrlLib;
 
 file
 	AGENTS.md,
@@ -16,8 +17,6 @@ file
 	IIdentified.cpp,
 	MidiPreview.h,
 	MidiPreview.cpp,
-	Mixer.h,
-	Mixer.cpp,
 	Synth.h,
 	Synth.cpp,
 	Project.h,
@@ -44,13 +43,11 @@ file
 	CuteAudioVorbisFile.cpp,
 	CuteCurve.cpp,
 	CuteEngine.cpp,
+	CuteMonitor.cpp,
 	CuteSession.h,
 	CuteSession.cpp,
 	CuteSessionCursor.h,
 	CuteSessionCursor.cpp,
 	CuteSessionForm.h,
 	CuteSessionForm.cpp,
-	CuteSessionFormLayout.md,
-	CuteMonitor.h,
-	CuteMixer.h,
-	CuteMixer.cpp;
+	CuteSessionFormLayout.md;

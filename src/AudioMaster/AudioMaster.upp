@@ -1,13 +1,14 @@
 description "Audio master package\3770,0,128";
 
 uses
+	SubWindowCtrl,
 	ProjectMgmt,
 	MediaPool,
 	ExportAudioMixdown,
 	ProjectSetup,
 	ProjectWindow,
+	Preferences,
 	FileIO,
-	VSTConnections,
 	MIDI,
 	TransportUI,
 	CtrlLog;

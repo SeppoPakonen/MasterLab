@@ -20,7 +20,7 @@ class CuteAudioFileFactory {
 public:
     enum FileType { SndFile, VorbisFile, MadFile };
 
-    struct FileFormat {
+    struct FileFormat : Moveable<CuteAudioFileFactory::FileFormat> {
         FileType type = SndFile;
         String name;
         String ext;

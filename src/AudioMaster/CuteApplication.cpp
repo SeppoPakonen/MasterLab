@@ -177,7 +177,10 @@ void CuteApplication::ClearServerState() {
 void CuteApplication::OnNewConnection() {
 	Ctrl* widget = GetMainWidget();
 	if(widget) {
-		widget->OpenMain();
+		if(MainWindow* main_window = dynamic_cast<MainWindow*>(widget))
+			main_window->OpenMain();
+		else
+			widget->Show();
 		widget->SetFocus();
 	}
 }

@@ -4,7 +4,6 @@
 class CuteTrack;
 class CuteDocument;
 class CuteMidiControlObserver;
-class Ctrl;
 
 class CuteMidiControl {
 public:
