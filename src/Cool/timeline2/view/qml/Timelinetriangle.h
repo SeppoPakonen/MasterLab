@@ -7,27 +7,32 @@
 
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
-#pragma once
-// #include <QtQuick/QQuickPaintedItem>
+#ifndef _Cool_timeline2_view_qml_Timelinetriangle_h_
+#define _Cool_timeline2_view_qml_Timelinetriangle_h_
 
-class TimelineTriangle : public QQuickPaintedItem
-{
-    Q_OBJECT
-    QML_ELEMENT
+struct QQuickItem;
+struct QPainter;
+#ifndef _Cool_qml_QColor_placeholder_
+#define _Cool_qml_QColor_placeholder_
+struct QColor {
+    int r{255};
+    int g{255};
+    int b{255};
+    int a{255};
+};
+#endif
 
-    Q_PROPERTY(QColor fillColor MEMBER m_color)
-    Q_PROPERTY(bool endFade MEMBER m_endFade)
-    Q_PROPERTY(int curveType MEMBER m_curveType NOTIFY curveChanged)
-
+class TimelineTriangle {
 public:
     TimelineTriangle(QQuickItem *parent = nullptr);
-    void paint(QPainter *painter) override;
+    void paint(QPainter *painter);
+    void curveChanged();
 
 private:
     QColor m_color;
     int m_curveType{0};
     bool m_endFade{false};
 
-Q_SIGNALS:
-    void curveChanged();
 };
+
+#endif

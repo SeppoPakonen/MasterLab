@@ -1,5 +1,4 @@
 #include "../../../Cool.h"
-#if 0
 #include "Timelineplayhead.h"
 
 // Converted from tmp/k/src/timeline2/view/qml/timelineplayhead.cpp
@@ -17,17 +16,15 @@
 // #include <QPainterPath>
 
 TimelinePlayhead::TimelinePlayhead(QQuickItem *parent)
-    : QQuickPaintedItem(parent)
 {
-    connect(this, &TimelinePlayhead::colorChanged, this, [&](const QColor &) { update(); });
+    (void)parent;
 }
 
 void TimelinePlayhead::paint(QPainter *painter)
 {
-    QPainterPath path;
-    path.moveTo(width(), 0);
-    path.lineTo(width() / 2.0, height());
-    path.lineTo(0, 0);
-    painter->fillPath(path, m_color);
+    (void)painter;
 }
-#endif
+
+void TimelinePlayhead::colorChanged(const QColor &)
+{
+}

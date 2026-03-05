@@ -8,22 +8,29 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
-// #include <QtQuick/QQuickPaintedItem>
+#ifndef _Cool_timeline2_view_qml_Timelineplayhead_h_
+#define _Cool_timeline2_view_qml_Timelineplayhead_h_
 
-class TimelinePlayhead : public QQuickPaintedItem
-{
-    Q_OBJECT
-    QML_ELEMENT
+struct QQuickItem;
+struct QPainter;
+#ifndef _Cool_qml_QColor_placeholder_
+#define _Cool_qml_QColor_placeholder_
+struct QColor {
+    int r{255};
+    int g{0};
+    int b{0};
+    int a{255};
+};
+#endif
 
-    Q_PROPERTY(QColor fillColor MEMBER m_color NOTIFY colorChanged)
-
+class TimelinePlayhead {
 public:
     TimelinePlayhead(QQuickItem *parent = nullptr);
-    void paint(QPainter *painter) override;
-Q_SIGNALS:
+    void paint(QPainter *painter);
     void colorChanged(const QColor &);
 
 private:
     QColor m_color;
 };
+
+#endif
