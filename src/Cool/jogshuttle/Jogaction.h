@@ -7,28 +7,32 @@
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_jogshuttle_Jogaction_h_
+#define _Cool_jogshuttle_Jogaction_h_
 
-// #include "jogshuttle.h"
-// #include <QObject>
-// #include <QStringList>
+using QString = String;
+using QStringList = Vector<String>;
 
-class JogShuttleAction : public QObject
+class JogShuttle;
+
+class JogShuttleAction
 {
-    Q_OBJECT public : explicit JogShuttleAction(const JogShuttle *jogShuttle, QStringList actionMap, QObject *parent = nullptr);
-    ~JogShuttleAction() override;
+public:
+    explicit JogShuttleAction(const JogShuttle *jog_shuttle, QStringList action_map, void *parent = nullptr);
+    ~JogShuttleAction();
 
 private:
-    const JogShuttle *m_jogShuttle;
+    const JogShuttle *m_jog_shuttle;
     // this is indexed by button ID, having QString() for any non-used ones.
-    QStringList m_actionMap;
+    QStringList m_action_map;
+    QString m_last_action;
 
-public Q_SLOTS:
+public:
+    void SlotShuttlePos(int);
+    void SlotButton(int);
     void slotShuttlePos(int);
     void slotButton(int);
-
-Q_SIGNALS:
-    void rewind(double);
-    void forward(double);
-    void action(const QString &);
+    const QString& lastAction() const { return m_last_action; }
 };
+
+#endif

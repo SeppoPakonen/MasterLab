@@ -9,9 +9,10 @@
     This file is part of Kdenlive. See www.kdenlive.org.
 */
 
-#pragma once
+#ifndef _Cool_jogshuttle_Jogmanager_h_
+#define _Cool_jogshuttle_Jogmanager_h_
 
-// #include <QObject>
+using QString = String;
 
 class JogShuttle;
 class JogShuttleAction;
@@ -20,14 +21,11 @@ class JogShuttleAction;
  * @class JogManager
  * @brief Turns JogShuttle support on/off according to KdenliveSettings and connects between JogShuttleAction and the actual actions.
  */
-class JogManager : public QObject
-{
-    Q_OBJECT
-
+class JogManager {
 public:
-    explicit JogManager(QObject *parent = nullptr);
+    explicit JogManager(void *parent = nullptr);
 
-private Q_SLOTS:
+private:
     void slotDoAction(const QString &actionName);
     void slotConfigurationChanged();
 
@@ -35,3 +33,5 @@ private:
     JogShuttle *m_shuttle{nullptr};
     JogShuttleAction *m_shuttleAction{nullptr};
 };
+
+#endif

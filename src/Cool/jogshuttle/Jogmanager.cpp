@@ -1,6 +1,6 @@
 #include "../Cool.h"
-#if 0
 #include "Jogmanager.h"
+#include "Jogaction.h"
 
 // Converted from tmp/k/src/jogshuttle/jogmanager.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -21,37 +21,21 @@
 // #include "kdenlivesettings.h"
 // #include "mainwindow.h"
 
-JogManager::JogManager(QObject *parent)
-    : QObject(parent)
-
+JogManager::JogManager(void *parent)
 {
+    (void)parent;
     slotConfigurationChanged();
-
-    connect(pCore->window(), &MainWindow::configurationChanged, this, &JogManager::slotConfigurationChanged);
 }
 
 void JogManager::slotConfigurationChanged()
 {
-    delete m_shuttleAction;
     m_shuttleAction = nullptr;
-    delete m_shuttle;
     m_shuttle = nullptr;
 
-    if (KdenliveSettings::enableshuttle()) {
-        m_shuttle = new JogShuttle(JogShuttle::canonicalDevice(KdenliveSettings::shuttledevice()));
-        m_shuttleAction = new JogShuttleAction(m_shuttle, JogShuttleConfig::actionMap(KdenliveSettings::shuttlebuttons()));
-
-        connect(m_shuttleAction, &JogShuttleAction::action, this, &JogManager::slotDoAction);
-    }
+    // Device wiring is deferred for phase-2 integration.
 }
 
 void JogManager::slotDoAction(const QString &actionName)
 {
-    QAction *action = pCore->window()->actionCollection()->action(actionName);
-    if (!action) {
-        fprintf(stderr, "%s", QStringLiteral("shuttle action '%1' unknown\n").arg(actionName).toLatin1().constData());
-        return;
-    }
-    action->trigger();
+    (void)actionName;
 }
-#endif
