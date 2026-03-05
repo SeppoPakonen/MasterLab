@@ -1,5 +1,5 @@
 #include "../Cool.h"
-#if 0
+#include "Docundostack.hpp"
 
 // Converted from tmp/k/src/doc/docundostack.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -14,16 +14,17 @@
 // #include <QUndoGroup>
 
 DocUndoStack::DocUndoStack(QUndoGroup *parent)
-    : QUndoStack(parent)
 {
+    (void)parent;
 }
 
 // TODO: custom undostack everywhere do that
 void DocUndoStack::push(QUndoCommand *cmd)
 {
+    (void)cmd;
     if (index() < count()) {
-        Q_EMIT invalidate(index());
+        m_count = index();
     }
-    QUndoStack::push(cmd);
+    ++m_count;
+    m_index = m_count;
 }
-#endif

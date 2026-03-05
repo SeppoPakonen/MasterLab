@@ -6,19 +6,23 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
-
-// #include <QUndoCommand>
+#ifndef _Cool_doc_Docundostack_hpp_
+#define _Cool_doc_Docundostack_hpp_
 
 class QUndoGroup;
 class QUndoCommand;
 
-class DocUndoStack : public QUndoStack
-{
-    Q_OBJECT
+class DocUndoStack {
 public:
-    explicit DocUndoStack(QUndoGroup *parent = Q_NULLPTR);
+    explicit DocUndoStack(QUndoGroup *parent = nullptr);
     void push(QUndoCommand *cmd);
-Q_SIGNALS:
-    void invalidate(int ix);
+
+    int index() const { return m_index; }
+    int count() const { return m_count; }
+
+private:
+    int m_index{0};
+    int m_count{0};
 };
+
+#endif

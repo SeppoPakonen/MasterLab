@@ -1,5 +1,5 @@
 #include "Cool.h"
-#if 0
+#include "Undohelper.hpp"
 
 // Converted from tmp/k/src/undohelper.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -22,7 +22,7 @@ FunctionalUndoCommand::FunctionalUndoCommand(Fun undo, Fun redo, const QString &
     , m_redo(std::move(redo))
     , m_undone(false)
 {
-    setText(QStringLiteral("%1 %2").arg(QTime::currentTime().toString("hh:mm")).arg(text));
+    setText(text);
 }
 
 void FunctionalUndoCommand::undo()
@@ -32,7 +32,7 @@ void FunctionalUndoCommand::undo()
 #endif
     m_undone = true;
     bool res = m_undo();
-    Q_ASSERT(res);
+    ASSERT(res);
     QUndoCommand::undo();
 }
 
@@ -43,8 +43,7 @@ void FunctionalUndoCommand::redo()
         Logger::log_undo(false);
 #endif
         bool res = m_redo();
-        Q_ASSERT(res);
+        ASSERT(res);
     }
     QUndoCommand::redo();
 }
-#endif

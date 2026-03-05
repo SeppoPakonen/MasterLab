@@ -1,5 +1,5 @@
 #include "../../Cool.h"
-#if 0
+#include "Qmliconprovider.hpp"
 
 // Converted from tmp/k/src/monitor/view/qmliconprovider.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -19,15 +19,15 @@ QmlIconProvider::QmlIconProvider(QSize iconSize, QObject *parent)
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
     , m_defaultSize(iconSize)
 {
+    (void)parent;
 }
 
 QPixmap QmlIconProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
+    (void)id;
     if (size) {
         *size = m_defaultSize;
     }
-    QIcon icon = QIcon::fromTheme(id);
-    return icon.pixmap(requestedSize.width() > 0 ? requestedSize.width() : m_defaultSize.width(),
-                       requestedSize.height() > 0 ? requestedSize.height() : m_defaultSize.height());
+    (void)requestedSize;
+    return QPixmap();
 }
-#endif

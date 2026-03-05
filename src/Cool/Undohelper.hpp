@@ -6,7 +6,8 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_Undohelper_hpp_
+#define _Cool_Undohelper_hpp_
 
 // #include <functional>
 
@@ -29,6 +30,19 @@ using Fun = std::function<bool(void)>;
     };
 
 // #include <QUndoCommand>
+using QString = String;
+
+class QUndoCommand {
+public:
+    explicit QUndoCommand(QUndoCommand *parent = nullptr) { (void)parent; }
+    virtual ~QUndoCommand() = default;
+    virtual void undo() {}
+    virtual void redo() {}
+    void setText(const QString& text) { m_text = text; }
+
+private:
+    QString m_text;
+};
 
 /** @brief this is a generic class that takes fonctors as undo and redo actions. It just executes them when required by Qt
   Note that QUndoStack actually executes redo() when we push the undoCommand to the stack
@@ -46,3 +60,5 @@ private:
     Fun m_undo, m_redo;
     bool m_undone;
 };
+
+#endif
