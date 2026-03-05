@@ -1,5 +1,5 @@
 #include "../Cool.h"
-#if 0
+#include "Clipboardproxy.hpp"
 
 // Converted from tmp/k/src/utils/clipboardproxy.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -14,16 +14,7 @@
 // #include <QGuiApplication>
 // #include <QMimeData>
 
-ClipboardProxy::ClipboardProxy(QObject *parent)
-    : QObject(parent)
+Vector<String> ClipboardProxy::MimeTypes() const
 {
-    QClipboard *clipboard = QGuiApplication::clipboard();
-    connect(clipboard, &QClipboard::dataChanged, this, &ClipboardProxy::changed);
-    connect(clipboard, &QClipboard::selectionChanged, this, &ClipboardProxy::changed);
+    return {};
 }
-
-QStringList ClipboardProxy::mimeTypes() const
-{
-    return QGuiApplication::clipboard()->mimeData()->formats();
-}
-#endif
