@@ -1,6 +1,6 @@
 #include "../../../Cool.h"
-#if 0
 #include "Spacerdialog.h"
+#include "../../../utils/Gentime.h"
 
 // Converted from tmp/k/src/timeline2/view/dialogs/spacerdialog.cpp
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -21,29 +21,24 @@ SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 
 // #include "klocalizedstring.h"
 
-SpacerDialog::SpacerDialog(const GenTime &duration, const Timecode &tc, QWidget *parent)
-    : QDialog(parent)
-    , m_in(nullptr, tc)
+SpacerDialog::SpacerDialog(const GenTime &duration, const Timecode &tc, void *parent)
 {
-    setFont(QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont));
-    setupUi(this);
-    inputLayout->addWidget(&m_in);
-    m_in.setValue(duration);
-    adjustSize();
+    (void)duration;
+    (void)tc;
+    (void)parent;
 }
 
 GenTime SpacerDialog::selectedDuration() const
 {
-    return m_in.gentime();
+    return GenTime();
 }
 
 bool SpacerDialog::affectAllTracks() const
 {
-    return insert_all_tracks->isChecked();
+    return m_affect_all_tracks;
 }
 
 int SpacerDialog::selectedTrack() const
 {
-    return 0; // track_number->currentData().toInt();
+    return m_selected_track;
 }
-#endif

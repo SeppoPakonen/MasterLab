@@ -7,27 +7,27 @@
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_timeline2_view_dialogs_Spacerdialog_h_
+#define _Cool_timeline2_view_dialogs_Spacerdialog_h_
 
-// #include "definitions.h"
-// #include "utils/timecode.h"
-// #include "widgets/timecodedisplay.h"
-// #include "ui_spacerdialog_ui.h"
+class GenTime;
+class Timecode;
 
 /** @class SpacerDialog
     @brief A dialog to specify length and track of inserted space.
     @author Jean-Baptiste Mardelle
  */
-class SpacerDialog : public QDialog, public Ui::SpacerDialog_UI
+class SpacerDialog
 {
-    Q_OBJECT
-
 public:
-    SpacerDialog(const GenTime &duration, const Timecode &tc, QWidget *parent = nullptr);
+    SpacerDialog(const GenTime &duration, const Timecode &tc, void *parent = nullptr);
     GenTime selectedDuration() const;
     int selectedTrack() const;
     bool affectAllTracks() const;
 
 private:
-    TimecodeDisplay m_in;
+    bool m_affect_all_tracks{false};
+    int m_selected_track{0};
 };
+
+#endif

@@ -6,17 +6,22 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_audiomixer_Mixerseparator_h_
+#define _Cool_audiomixer_Mixerseparator_h_
 
-// #include <QWidget>
-
-class MixerSeparator : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit MixerSeparator(QWidget *parent = nullptr);
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
-    QSize sizeHint() const override;
+struct QPaintEvent;
+struct QSize {
+    int cx{0};
+    int cy{0};
 };
+
+class MixerSeparator
+{
+public:
+    MixerSeparator();
+
+    void paintEvent(QPaintEvent *event);
+    QSize sizeHint() const;
+};
+
+#endif
