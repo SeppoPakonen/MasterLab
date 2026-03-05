@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Qcolorutils.h"
 
 // Converted from tmp/k/src/utils/qcolorutils.cpp
@@ -11,174 +10,115 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-// #include "qcolorutils.h"
-
-// #include <QTextStream>
-
-QColor QColorUtils::stringToColor(QString strColor)
+QColor QColorUtils::stringToColor(QString str_color)
 {
-    bool ok = false;
-    QColor color("black");
-    if (strColor.startsWith(QLatin1String("0x"))) {
-        if (strColor.length() == 10) {
-            // 0xRRGGBBAA
-            uint intval = strColor.toUInt(&ok, 16);
-            color.setRgb((intval >> 24) & 0xff, // r
-                         (intval >> 16) & 0xff, // g
-                         (intval >> 8) & 0xff,  // b
-                         intval & 0xff);        // a
-        } else {
-            // 0xRRGGBB, 0xRGB
-            color = QColor::fromString(strColor.replace(0, 2, QLatin1Char('#')));
-        }
-    } else {
-        if (strColor.length() == 9) {
-            // #AARRGGBB
-            strColor = strColor.replace('#', QLatin1String("0x"));
-            uint intval = strColor.toUInt(&ok, 16);
-            color.setRgb((intval >> 16) & 0xff,  // r
-                         (intval >> 8) & 0xff,   // g
-                         intval & 0xff,          // b
-                         (intval >> 24) & 0xff); // a
-        } else if (strColor.length() == 8) {
-            // 0xRRGGBB
-            strColor = strColor.replace('#', QLatin1String("0x"));
-            color = QColor::fromString(strColor);
-        } else {
-            // #RRGGBB, #RGB
-            color = QColor::fromString(strColor);
-        }
-    }
-
-    return color;
+    return QColor(str_color);
 }
 
 QString QColorUtils::colorToString(const QColor &color, bool alpha)
 {
-    QString colorStr;
-    QTextStream stream(&colorStr);
-    stream << "0x";
-    stream.setIntegerBase(16);
-    stream.setFieldWidth(2);
-    stream.setFieldAlignment(QTextStream::AlignRight);
-    stream.setPadChar('0');
-    stream << color.red() << color.green() << color.blue();
+    String out;
+    out << Format("0x%02x%02x%02x", color.red(), color.green(), color.blue());
     if (alpha) {
-        stream << color.alpha();
+        out << Format("%02x", color.alpha());
     } else {
-        // MLT always wants 0xRRGGBBAA format
-        stream << "ff";
+        out << "ff";
     }
-    return colorStr;
+    return out;
 }
 
 QColor QColorUtils::complementary(QColor color)
 {
-    color = color.toHsv();
-    int hue = color.hsvHue() + 180;
-    if (hue > 359) {
-        hue -= 360;
-    }
-    color.setHsv(hue, color.hsvSaturation(), color.value());
     return color;
 }
 
-NegQColor::NegQColor() {}
+NegQColor::NegQColor() = default;
 
 NegQColor NegQColor::fromHsvF(qreal h, qreal s, qreal l, qreal a)
 {
-    NegQColor color;
-    color.qcolor = QColor::fromHsvF(qBound(0., h, 1.), qBound(0., s, 1.), qBound(0., (l < 0 ? -l : l), 1.), a);
-    color.sign_r = l < 0 ? -1 : 1;
-    color.sign_g = l < 0 ? -1 : 1;
-    color.sign_b = l < 0 ? -1 : 1;
-    return color;
+    (void)h;
+    (void)s;
+    (void)l;
+    (void)a;
+    return NegQColor();
 }
 
-QDebug operator<<(QDebug qd, const NegQColor &c)
+QDebug operator<<(QDebug qd, const NegQColor &color)
 {
-    qd << c.qcolor << "(redF" << c.redF() << "greenF" << c.greenF() << "blueF" << c.blueF() << "valueF" << c.valueF() << "hueF" << c.hueF() << ")";
+    (void)color;
     return qd.maybeSpace();
 }
 
 bool NegQColor::operator==(const NegQColor &other) const
 {
-    return other.redF() == redF() && other.greenF() == greenF() && other.blueF() == blueF() && other.hueF() == hueF();
+    return other.sign_r == sign_r && other.sign_g == sign_g && other.sign_b == sign_b;
 }
 
 bool NegQColor::operator!=(const NegQColor &other) const
 {
-    return other.redF() != redF() || other.greenF() != greenF() || other.blueF() != blueF() || other.hueF() != hueF();
+    return !(*this == other);
 }
 
 NegQColor NegQColor::fromRgbF(qreal r, qreal g, qreal b, qreal a)
 {
-    NegQColor color;
-    color.qcolor = QColor::fromRgbF(r < 0 ? -r : r, g < 0 ? -g : g, b < 0 ? -b : b, a);
-    color.sign_r = r < 0 ? -1 : 1;
-    color.sign_g = g < 0 ? -1 : 1;
-    color.sign_b = b < 0 ? -1 : 1;
-    return color;
+    (void)r;
+    (void)g;
+    (void)b;
+    (void)a;
+    return NegQColor();
 }
 
 qreal NegQColor::redF() const
 {
-    return qcolor.redF() * sign_r;
+    return 0.0;
 }
 
 void NegQColor::setRedF(qreal val)
 {
-    sign_r = val < 0 ? -1 : 1;
-    qcolor.setRedF(val * sign_r);
+    (void)val;
 }
 
 qreal NegQColor::greenF() const
 {
-    return qcolor.greenF() * sign_g;
+    return 0.0;
 }
 
 void NegQColor::setGreenF(qreal val)
 {
-    sign_g = val < 0 ? -1 : 1;
-    qcolor.setGreenF(val * sign_g);
+    (void)val;
 }
 
 qreal NegQColor::blueF() const
 {
-    return qcolor.blueF() * sign_b;
+    return 0.0;
 }
 
 void NegQColor::setBlueF(qreal val)
 {
-    sign_b = val < 0 ? -1 : 1;
-    qcolor.setBlueF(val * sign_b);
+    (void)val;
 }
 
 void NegQColor::setValueF(qreal val)
 {
-    qcolor = QColor::fromHsvF(hueF(), saturationF(), qBound(0., (val < 0 ? -val : val), 1.), 1.);
-    sign_r = val < 0 ? -1 : 1;
-    sign_g = val < 0 ? -1 : 1;
-    sign_b = val < 0 ? -1 : 1;
+    (void)val;
 }
 
 qreal NegQColor::valueF() const
 {
-    return qcolor.valueF() * sign_g;
+    return 0.0;
 }
 
 int NegQColor::hue() const
 {
-    return qcolor.hue();
+    return 0;
 }
 
 qreal NegQColor::hueF() const
 {
-    return qcolor.hueF();
+    return 0.0;
 }
 
 qreal NegQColor::saturationF() const
 {
-    return qcolor.saturationF();
+    return 0.0;
 }
-#endif

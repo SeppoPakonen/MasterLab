@@ -7,10 +7,51 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Colortools_h_
+#define _Cool_utils_Colortools_h_
 
 // #include <QImage>
 // #include <QObject>
+
+#ifndef Q_OBJECT
+#define Q_OBJECT
+#endif
+
+#ifndef Q_SIGNALS
+#define Q_SIGNALS public
+#endif
+
+using QRgb = unsigned int;
+
+class QObject {
+public:
+    explicit QObject(QObject* parent = nullptr) { (void)parent; }
+    virtual ~QObject() = default;
+};
+
+class QSize {
+public:
+    QSize() = default;
+    QSize(int width, int height) : width_value(width), height_value(height) {}
+    int width() const { return width_value; }
+    int height() const { return height_value; }
+
+private:
+    int width_value = 0;
+    int height_value = 0;
+};
+
+class QImage {
+public:
+    QImage() = default;
+    explicit QImage(const QSize& size) : size_value(size) {}
+    const QSize& GetSize() const { return size_value; }
+
+private:
+    QSize size_value;
+};
+
+class QColor;
 
 /** @class ColorTools
     @brief \@todo Describe class ColorTools
@@ -98,3 +139,5 @@ public:
 Q_SIGNALS:
     void signalYuvWheelCalculationFinished();
 };
+
+#endif

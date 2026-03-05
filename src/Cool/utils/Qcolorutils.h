@@ -6,13 +6,60 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Qcolorutils_h_
+#define _Cool_utils_Qcolorutils_h_
 
 // #include <QDebug>
 // #include <QtGlobal>
 // #include <QColor>
 
-class QColor;
+using QString = String;
+using qreal = double;
+
+class QDebug {
+public:
+    QDebug& maybeSpace() { return *this; }
+};
+
+class QColor {
+public:
+    QColor() = default;
+    explicit QColor(const QString& value) : text_value(value) {}
+
+    int red() const { return red_value; }
+    int green() const { return green_value; }
+    int blue() const { return blue_value; }
+    int alpha() const { return alpha_value; }
+    qreal redF() const { return red_value / 255.0; }
+    qreal greenF() const { return green_value / 255.0; }
+    qreal blueF() const { return blue_value / 255.0; }
+    qreal valueF() const { return blueF(); }
+    int hue() const { return 0; }
+    qreal hueF() const { return 0.0; }
+    qreal saturationF() const { return 0.0; }
+
+    void setRgb(int r, int g, int b, int a) { red_value = r; green_value = g; blue_value = b; alpha_value = a; }
+    void setRedF(qreal) {}
+    void setGreenF(qreal) {}
+    void setBlueF(qreal) {}
+    void setHsv(int, int, int) {}
+
+    int hsvHue() const { return 0; }
+    int hsvSaturation() const { return 0; }
+    int value() const { return 0; }
+
+    static QColor fromString(const QString& value) { return QColor(value); }
+    static QColor fromHsvF(qreal, qreal, qreal, qreal = 1.0) { return QColor(); }
+    static QColor fromRgbF(qreal, qreal, qreal, qreal = 1.0) { return QColor(); }
+    QColor toHsv() const { return *this; }
+
+private:
+    QString text_value;
+    int red_value = 0;
+    int green_value = 0;
+    int blue_value = 0;
+    int alpha_value = 255;
+};
 
 class QColorUtils
 {
@@ -49,3 +96,5 @@ public:
 };
 
 QDebug operator<<(QDebug qd, const NegQColor &color);
+
+#endif

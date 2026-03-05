@@ -6,10 +6,29 @@ SPDX-FileCopyrightText: 2020 Simon A. Eugster <simon.eu@gmail.com>
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_lib_LocaleHandling_h_
+#define _Cool_lib_LocaleHandling_h_
 
 // #include <QtCore/QLocale>
 // #include <QtCore/QString>
+
+using QString = String;
+template <class A, class B>
+using QPair = std::pair<A, B>;
+
+class QLocale {
+public:
+    enum Language { AnyLanguage };
+    enum Script { AnyScript };
+    enum Country { AnyCountry };
+
+    static QLocale c() { return QLocale(); }
+    static Vector<QLocale> matchingLocales(Language, Script, Country) { return Vector<QLocale>(); }
+
+    QString decimalPoint() const { return String("."); }
+    Language language() const { return AnyLanguage; }
+    Script script() const { return AnyScript; }
+};
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
 #   define MLT_LC_CATEGORY LC_NUMERIC
@@ -42,3 +61,5 @@ public:
     static void resetLocale();
     static void resetAllLocale();
 };
+
+#endif
