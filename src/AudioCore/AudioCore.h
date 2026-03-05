@@ -37,6 +37,8 @@ using namespace Upp;
 #include "CuteMonitor.h"
 #include "CuteSession.h"
 #include "CuteSessionCursor.h"
+#ifdef flagGUI
 #include "CuteSessionForm.h"
+#endif
 #include "CuteMixer.h"
 #endif

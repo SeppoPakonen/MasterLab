@@ -1,0 +1,13 @@
+description "Cute headless CLI test harness";
+
+uses
+	Core,
+	AudioCore;
+
+file
+	AGENTS.md,
+	CuteCLI.h,
+	main.cpp;
+
+mainconfig
+	"" = "";

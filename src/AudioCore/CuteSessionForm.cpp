@@ -1,5 +1,7 @@
 #include "AudioCore.h"
 
+#ifdef flagGUI
+
 CuteSessionForm::CuteSessionForm() {
     Title("Cute Session");
     Sizeable().Zoomable();
@@ -10,3 +12,5 @@ CuteSessionForm::CuteSessionForm() {
 void CuteSessionForm::SetSession(CuteSession* session, bool session_dir_enabled) { this->session = session; this->session_dir_enabled = session_dir_enabled; if (session) properties = session->GetProperties(); session_dir.SetData(properties.session_dir); session_name.SetData(properties.session_name); description.SetData(properties.description); }
 const CuteSession::Properties& CuteSessionForm::GetProperties() const { return properties; }
 bool CuteSessionForm::IsSessionDirEnabled() const { return session_dir_enabled; }
+
+#endif

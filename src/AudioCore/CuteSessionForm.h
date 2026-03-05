@@ -1,6 +1,8 @@
 #ifndef _AudioCore_CuteSessionForm_h_
 #define _AudioCore_CuteSessionForm_h_
 
+#ifdef flagGUI
+
 class CuteSessionForm : public TopWindow {
 public:
     typedef CuteSessionForm CLASSNAME;
@@ -19,5 +21,7 @@ private:
     EditString session_name;
     DocEdit description;
 };
+
+#endif
 
 #endif
