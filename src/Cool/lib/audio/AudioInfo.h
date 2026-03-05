@@ -1,29 +1,32 @@
+#ifndef _Cool_lib_audio_AudioInfo_h_
+#define _Cool_lib_audio_AudioInfo_h_
+
 // Converted from tmp/k/src/lib/audio/audioInfo.h
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+// Phase-1 conversion: Qt/MLT-heavy implementation replaced with compile-safe U++ placeholders.
 
-/*
-SPDX-FileCopyrightText: 2012 Simon A. Eugster (Granjow)  <simon.eu@gmail.com>
-SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
-*/
+namespace std {
+template <class T>
+class shared_ptr;
+}
 
-#pragma once
-
-// #include <QList>
-// #include <memory>
-// #include <mlt++/Mlt.h>
+namespace Mlt {
+class Producer;
+}
 
 class AudioStreamInfo;
-class AudioInfo
-{
+
+class AudioInfo {
 public:
-    explicit AudioInfo(const std::shared_ptr<Mlt::Producer> &producer);
+    explicit AudioInfo(const std::shared_ptr<Mlt::Producer>& producer);
     ~AudioInfo();
 
     int size() const;
-    AudioStreamInfo const *info(int pos) const;
+    AudioStreamInfo const* info(int pos) const;
 
     void dumpInfo() const;
 
 private:
-    QList<AudioStreamInfo *> m_list;
+    Array<AudioStreamInfo> m_list;
 };
+
+#endif
