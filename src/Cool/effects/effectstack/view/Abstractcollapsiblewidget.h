@@ -7,30 +7,17 @@
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_effects_effectstack_view_Abstractcollapsiblewidget_h_
+#define _Cool_effects_effectstack_view_Abstractcollapsiblewidget_h_
 
-// #include "ui_collapsiblewidget_ui.h"
-
-// #include <QDomElement>
-// #include <QWidget>
-
-class AbstractCollapsibleWidget : public QWidget, public Ui::CollapsibleWidget_UI
+class AbstractCollapsibleWidget
 {
-    Q_OBJECT
-
 public:
-    explicit AbstractCollapsibleWidget(QWidget *parent = nullptr);
-    virtual bool isGroup() const = 0;
+    AbstractCollapsibleWidget();
+    virtual ~AbstractCollapsibleWidget() = default;
 
-Q_SIGNALS:
-    void addEffect(const QDomElement &e);
-    /** @brief Move effects in the stack one step up or down. */
-    void changeEffectPosition(const QList<int> &, bool upwards);
-    /** @brief Move effects in the stack. */
-    void moveEffect(const QList<int> &current_pos, int new_pos, int groupIndex, const QString &groupName);
-    /** @brief An effect was saved, trigger effect list reload. */
-    void reloadEffects();
-    void reloadEffect(const QString &path);
-
-    void seekToPos(int);
+    virtual bool IsGroup() const = 0;
+    bool isGroup() const { return IsGroup(); }
 };
+
+#endif

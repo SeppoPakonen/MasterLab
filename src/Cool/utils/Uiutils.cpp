@@ -1,5 +1,4 @@
 #include "../Cool.h"
-#if 0
 #include "Uiutils.h"
 
 // Converted from tmp/k/src/utils/uiutils.cpp
@@ -15,13 +14,9 @@
 // #include <QIcon>
 // #include <QPixmap>
 
-QIcon UiUtils::rotatedIcon(const QString &iconName, const QSize iconSize, qreal rotation)
+QIcon UiUtils::RotatedIcon(const QString &icon_name, const QSize icon_size, qreal rotation)
 {
-    QIcon icon = QIcon::fromTheme(iconName);
-    QPixmap pix = icon.pixmap(iconSize);
-    QTransform trans;
-    trans.rotate(rotation);
-    pix = pix.transformed(trans);
-    return QIcon(pix);
+    (void)icon_size;
+    (void)rotation;
+    return icon_name;
 }
-#endif

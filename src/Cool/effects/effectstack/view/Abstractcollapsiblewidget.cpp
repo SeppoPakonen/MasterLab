@@ -1,5 +1,4 @@
 #include "../../../Cool.h"
-#if 0
 #include "Abstractcollapsiblewidget.h"
 
 // Converted from tmp/k/src/effects/effectstack/view/abstractcollapsiblewidget.cpp
@@ -13,9 +12,6 @@ SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 
 // #include "abstractcollapsiblewidget.h"
 
-AbstractCollapsibleWidget::AbstractCollapsibleWidget(QWidget *parent)
-    : QWidget(parent)
+AbstractCollapsibleWidget::AbstractCollapsibleWidget()
 {
-    setupUi(this);
 }
-#endif

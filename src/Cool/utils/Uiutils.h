@@ -6,10 +6,16 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-#pragma once
+#ifndef _Cool_utils_Uiutils_h_
+#define _Cool_utils_Uiutils_h_
 
-// #include <QIcon>
-// #include <QString>
+using QString = String;
+using QIcon = String;
+using qreal = double;
+struct QSize {
+    int cx{0};
+    int cy{0};
+};
 
 class UiUtils
 {
@@ -17,5 +23,8 @@ public:
     /** @returns a rotated version of the icon associated with @param iconName.
      *  It will be of size @param iconSize and @param rotation.
      */
-    static QIcon rotatedIcon(const QString &iconName, const QSize iconSize, qreal rotation = -90);
+    static QIcon RotatedIcon(const QString &icon_name, const QSize icon_size, qreal rotation = -90);
+    static QIcon rotatedIcon(const QString &icon_name, const QSize icon_size, qreal rotation = -90) { return RotatedIcon(icon_name, icon_size, rotation); }
 };
+
+#endif
