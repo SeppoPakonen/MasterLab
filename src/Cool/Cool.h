@@ -4,4 +4,6 @@
 #include <Core/Core.h>
 using namespace Upp;
 
+int RunConvertedKdenliveMain(const Vector<String>& args);
+
 #endif

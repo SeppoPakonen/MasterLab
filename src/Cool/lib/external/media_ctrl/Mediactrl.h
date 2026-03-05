@@ -10,8 +10,8 @@
 
 #pragma once
 
-// #include <linux/input.h>
-// #include <sys/time.h>
+#include <linux/input.h>
+#include <sys/time.h>
 
 // just to make the code more readable
 #define KEY_RELEASE 0x00

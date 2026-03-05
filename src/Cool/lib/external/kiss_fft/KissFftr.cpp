@@ -1,4 +1,3 @@
-#include "Cool.h"
 
 // Converted from tmp/k/src/lib/external/kiss_fft/kiss_fftr.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -8,8 +7,8 @@
     SPDX-License-Identifier: BSD-3-Clause
 */
 
-// #include "kiss_fftr.h"
-// #include "_kiss_fft_guts.h"
+#include "KissFftr.h"
+#include "KissFftGuts.h"
 
 struct kiss_fftr_state
 {

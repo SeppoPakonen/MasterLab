@@ -13,9 +13,9 @@
    and defines
    typedef struct { kiss_fft_scalar r; kiss_fft_scalar i; }kiss_fft_cpx; */
 
-// #include "kiss_fft.h"
-// #include "kiss_fft_log.h"
-// #include <limits.h>
+#include "KissFft.h"
+#include "KissFftLog.h"
+#include <limits.h>
 
 #define MAXFACTORS 32
 /* e.g. an fft of length 128 has 4 factors
@@ -164,7 +164,7 @@ struct kiss_fft_state
 // Temporary buffers are used in two case:
 // 1. FFT sizes that have "bad" factors. i.e. not 2,3 and 5
 // 2. "in-place" FFTs.  Notice the quotes, since kissfft does not really do an in-place transform.
-// #include <alloca.h>
+#include <alloca.h>
 #define KISS_FFT_TMP_ALLOC(nbytes) alloca(nbytes)
 #define KISS_FFT_TMP_FREE(ptr)
 #else

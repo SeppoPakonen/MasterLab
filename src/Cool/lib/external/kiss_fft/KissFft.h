@@ -8,10 +8,11 @@
 
 #pragma once
 
-// #include <math.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
 
 // Define KISS_FFT_SHARED macro to properly export symbols
 #ifdef KISS_FFT_SHARED

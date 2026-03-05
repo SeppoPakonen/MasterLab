@@ -1,5 +1,5 @@
 # Task: Cool Assembly And Compile Bring-Up
-# Status: TODO
+# Status: DONE
 
 ## Objective
 Create the `src/Cool` assembly/package wiring after phase 1 has produced enough converted source, then begin the first compile-driven error fixing pass.

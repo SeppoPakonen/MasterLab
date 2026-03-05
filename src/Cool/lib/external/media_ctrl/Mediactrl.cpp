@@ -1,4 +1,3 @@
-#include "Cool.h"
 
 // Converted from tmp/k/src/lib/external/media_ctrl/mediactrl.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -10,23 +9,22 @@
     SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-// #include <asm/types.h>
-// #include <errno.h>
-// #include <fcntl.h>
-// #include <stdint.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
-// #include <sys/ioctl.h>
-// #include <sys/stat.h>
-// #include <sys/time.h>
-#if defined(Q_OS_LINUX)
-// #include <asm/types.h>
+#include <asm/types.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#if defined(__linux__)
+#include <asm/types.h>
 #endif
-// #include <fcntl.h>
-// #include <unistd.h>
+#include <unistd.h>
 
-// #include "mediactrl.h"
+#include "Mediactrl.h"
 
 static char *_shuttle_name = (char *)"Shuttle";
 static char *_jog_name = (char *)"Jog";

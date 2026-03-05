@@ -21,7 +21,7 @@ Manually read `tmp/k/src/lib/external/kiss_fft/kiss_fft.c` and convert it into M
 - Update package `.upp` manifest entries for created outputs.
 
 ## Output
-- `src/Cool/lib/external/kiss_fft/KissFft.c`
+- `src/Cool/lib/external/kiss_fft/KissFft.cpppp`
 
 ## Definition of Done
 - [x] Source file has been read manually.

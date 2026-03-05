@@ -12,6 +12,7 @@
 - Class names, struct names, enum names, and function names use `CapitalCase`.
 - Variables, data members, parameters, locals, and free-standing state names use `lower_underscore`.
 - File names for converted outputs use `CapitalCase`.
+- Converted implementation units must use `.cpp` extension; do not create `.c` files in `src/Cool`.
 - Do not keep `Kdenlive` product naming in converted code; use `Cool` or `MusicEditor` naming.
 
 ## U++ Conventions To Apply

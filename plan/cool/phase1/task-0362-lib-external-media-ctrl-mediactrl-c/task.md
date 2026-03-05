@@ -21,7 +21,7 @@ Manually read `tmp/k/src/lib/external/media_ctrl/mediactrl.c` and convert it int
 - Update package `.upp` manifest entries for created outputs.
 
 ## Output
-- `src/Cool/lib/external/media_ctrl/Mediactrl.c`
+- `src/Cool/lib/external/media_ctrl/Mediactrl.cpppp`
 
 ## Definition of Done
 - [x] Source file has been read manually.

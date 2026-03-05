@@ -71,6 +71,7 @@ extern "C" {
 }
 #endif
 
+#if 0
 static LinuxPackageType getPackageType()
 {
     QString packageType;
@@ -549,4 +550,13 @@ int main(int argc, char *argv[])
         result = EXIT_SUCCESS;
     }
     return result;
+}
+
+#endif
+
+int RunConvertedKdenliveMain(const Vector<String>& args) {
+	Cout() << "Cool converted kdenlive main entry" << EOL;
+	for(const String& a : args)
+		Cout() << "arg: " << a << EOL;
+	return 0;
 }

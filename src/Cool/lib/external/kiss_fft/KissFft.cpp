@@ -1,4 +1,3 @@
-#include "Cool.h"
 
 // Converted from tmp/k/src/lib/external/kiss_fft/kiss_fft.c
 // Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
@@ -8,7 +7,7 @@
     SPDX-License-Identifier: BSD-3-Clause
 */
 
-// #include "_kiss_fft_guts.h"
+#include "KissFftGuts.h"
 /* The guts header contains all the multiplication and addition macros that are defined for
  fixed or floating point complex numbers.  It also delares the kf_ internal functions.
  */
