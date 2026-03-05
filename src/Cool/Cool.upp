@@ -1,0 +1,13 @@
+description "Cool conversion package";
+
+uses
+	Core;
+
+file
+	AGENTS.md,
+	Cool.h,
+	CMakeListsConversion.md,
+	main.cpp;
+
+mainconfig
+	"" = "";

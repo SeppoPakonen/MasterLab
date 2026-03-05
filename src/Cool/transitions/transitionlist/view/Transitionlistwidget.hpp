@@ -1,0 +1,41 @@
+// Converted from tmp/k/src/transitions/transitionlist/view/transitionlistwidget.hpp
+// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+
+/*
+    SPDX-FileCopyrightText: 2017 Nicolas Carion
+    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+*/
+
+#pragma once
+
+// #include "assets/assetlist/view/assetlistwidget.hpp"
+// #include "kdenlivesettings.h"
+
+class TransitionListWidgetProxy;
+
+/** @class TransitionListWidget
+    @brief This class is a widget that display the list of available effects
+ */
+class TransitionListWidget : public AssetListWidget
+{
+    Q_OBJECT
+
+public:
+    TransitionListWidget(QAction *includeList, QAction *tenBit, QWidget *parent = Q_NULLPTR);
+    ~TransitionListWidget() override;
+    bool isEffect() const override { return false; }
+    void setFilterType(const QString &type) override;
+    bool isAudio(const QString &assetId) const override;
+    /** @brief Return mime type used for drag and drop. It will be kdenlive/composition
+     or kdenlive/transition*/
+    QString getMimeType(const QString &assetId) const override;
+    void refreshLumas();
+    void reloadCustomEffectIx(const QModelIndex &path) override;
+    void reloadTemplates() override;
+    void editCustomAsset(const QModelIndex &index) override;
+    void exportCustomEffect(const QModelIndex &index) override;
+    void switchTenBitFilter() override;
+
+public Q_SLOTS:
+    void reloadCustomEffect(const QString &path) override;
+};

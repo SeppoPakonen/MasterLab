@@ -1,0 +1,45 @@
+// Converted from tmp/k/src/assets/assetlist/model/assettreemodel.hpp
+// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+
+/*
+    SPDX-FileCopyrightText: 2017 Nicolas Carion
+    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+*/
+
+#pragma once
+
+// #include "abstractmodel/abstracttreemodel.hpp"
+// #include "assets/assetlist/view/asseticonprovider.hpp"
+
+/** @brief This class represents an effect hierarchy to be displayed as a tree
+ */
+class TreeItem;
+class QMenu;
+class KActionCategory;
+
+class AssetTreeModel : public AbstractTreeModel
+{
+
+public:
+    explicit AssetTreeModel(QObject *parent = nullptr);
+
+    enum { IdRole = Qt::UserRole + 1, NameRole, FavoriteRole, TypeRole, IncludeListRole, TenBitRole };
+    enum { NameCol = 0, IdCol = 1, TypeCol = 2, FavCol = 3, PreferredCol = 5, IncludeListCol = 6, TenBitCol = 7 };
+
+    /** @brief Helper function to retrieve name */
+    QString getName(const QModelIndex &index) const;
+    /** @brief  Helper function to retrieve description */
+    QString getDescription(bool isEffect, const QModelIndex &index) const;
+    /** @brief Helper function to retrieve if an effect is categorized as favorite */
+    bool isFavorite(const QModelIndex &index, bool isEffect) const;
+    QHash<int, QByteArray> roleNames() const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    virtual void reloadAssetMenu(QMenu *effectsMenu, KActionCategory *effectActions) = 0;
+    virtual void setFavorite(const QModelIndex &index, bool favorite, bool isEffect) = 0;
+    virtual void deleteEffect(const QModelIndex &index) = 0;
+    virtual void editCustomAsset(const QString &newName, const QString &newDescription, const QModelIndex &index) = 0;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+protected:
+    AssetIconProvider *m_assetIconProvider;
+};

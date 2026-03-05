@@ -1,0 +1,33 @@
+// Converted from tmp/k/src/timeline2/view/dialogs/spacerdialog.h
+// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+
+/*
+    SPDX-FileCopyrightText: 2008 Jean-Baptiste Mardelle <jb@kdenlive.org>
+
+SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+*/
+
+#pragma once
+
+// #include "definitions.h"
+// #include "utils/timecode.h"
+// #include "widgets/timecodedisplay.h"
+// #include "ui_spacerdialog_ui.h"
+
+/** @class SpacerDialog
+    @brief A dialog to specify length and track of inserted space.
+    @author Jean-Baptiste Mardelle
+ */
+class SpacerDialog : public QDialog, public Ui::SpacerDialog_UI
+{
+    Q_OBJECT
+
+public:
+    SpacerDialog(const GenTime &duration, const Timecode &tc, QWidget *parent = nullptr);
+    GenTime selectedDuration() const;
+    int selectedTrack() const;
+    bool affectAllTracks() const;
+
+private:
+    TimecodeDisplay m_in;
+};

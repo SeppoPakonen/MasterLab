@@ -1,0 +1,56 @@
+# Conversion Note: `ui/fontval_ui.ui`
+
+## Source
+- `tmp/k/src/ui/fontval_ui.ui`
+
+## Target
+- `src/Cool/ui/FontvalUiConversion.md`
+
+## Phase-1 Conversion Intent
+- Preserve source responsibilities and map artifact to Cool/U++ packaging notes.
+- Defer compile/integration decisions to phase 2.
+
+## Extracted Original Content
+```text
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>
+SPDX-FileCopyrightText: none
+SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+ </author>
+ <class>Fontval_UI</class>
+ <widget class="QWidget" name="Fontval_UI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>257</width>
+    <height>32</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QFontComboBox" name="fontfamilywidget"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+
+```
