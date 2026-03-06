@@ -13,8 +13,6 @@
 NAMESPACE_UPP
 
 MixerManager::MixerManager() {
-    // Setup U++ Layout components
-    // In U++, we typically use Splitters or Frames instead of QScrollArea/Layouts
     SetupUI();
 }
 
@@ -23,7 +21,6 @@ MixerManager::~MixerManager() {
 }
 
 void MixerManager::SetupUI() {
-    // TODO: Implement U++ specific UI scaffolding
 }
 
 void MixerManager::RegisterTrack(int tid, ::Mlt::Tractor* service, const String& track_tag, const String& track_name) {
@@ -31,15 +28,14 @@ void MixerManager::RegisterTrack(int tid, ::Mlt::Tractor* service, const String&
 
     std::shared_ptr<MixerWidget> mixer(new MixerWidget(tid, service, track_tag, track_name));
     
-    // In U++, we use WhenAction or specific callbacks instead of Qt signals
     mixer->WhenMuteTrack = [=](int id, bool mute) {
         if (model) {
-            // model->SetTrackProperty(id, "hide", mute ? "1" : "3");
+            model->SetTrackProperty(id, "hide", mute ? "1" : "3");
         }
     };
 
     mixers[tid] = mixer;
-    Add(mixer->SizePos()); // Placeholder for real layout
+    Add(mixer->SizePos()); 
 }
 
 void MixerManager::DeregisterTrack(int tid) {
@@ -52,9 +48,8 @@ void MixerManager::DeregisterTrack(int tid) {
 void MixerManager::SetModel(std::shared_ptr<TimelineItemModel> model_) {
     model = model_;
     
-    // Setup master mixer
     if (model) {
-        ::Mlt::Tractor* service = model->GetTractor().get();
+        ::Mlt::Tractor* service = model->GetTractor();
         master_mixer.reset(new MixerWidget(-1, service, "Master", ""));
         Add(master_mixer->SizePos());
     }
@@ -80,7 +75,6 @@ void MixerManager::ConnectMixer(bool do_connect) {
 }
 
 void MixerManager::CollapseMixers() {
-    // TODO: Implement U++ UI collapse logic
 }
 
 void MixerManager::OnRecordStateChanged(int tid, bool recording) {
@@ -118,7 +112,6 @@ void MixerManager::PauseMonitoring(bool pause) {
 }
 
 void MixerManager::Layout() {
-    // Custom layout logic for arranging track mixers and master mixer
 }
 
 END_UPP_NAMESPACE

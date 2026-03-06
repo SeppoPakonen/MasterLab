@@ -8,6 +8,9 @@ uses
 flags
 	GUI;
 
+include
+	/usr/include/mlt-7;
+
 file
 	AGENTS.md,
 	Cool.h,

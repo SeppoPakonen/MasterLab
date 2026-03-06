@@ -13,6 +13,9 @@
 #include <utility>
 #include <cassert>
 
+// Include MLT types before our shims to avoid redefinitions
+#include <framework/mlt_types.h>
+
 using namespace Upp;
 
 // specialization for std::hash<Upp::String> to support std::unordered_map
@@ -43,24 +46,6 @@ namespace std {
 
 typedef int64 qint64;
 typedef int16 qint16;
-
-// MLT keyframe types placeholders
-enum mlt_keyframe_type {
-    mlt_keyframe_linear = 0,
-    mlt_keyframe_discrete,
-    mlt_keyframe_smooth,
-    mlt_keyframe_smooth_natural,
-    mlt_keyframe_bounce_in,
-    mlt_keyframe_bounce_out,
-    mlt_keyframe_cubic_in,
-    mlt_keyframe_cubic_out,
-    mlt_keyframe_exponential_in,
-    mlt_keyframe_exponential_out,
-    mlt_keyframe_circular_in,
-    mlt_keyframe_circular_out,
-    mlt_keyframe_elastic_in,
-    mlt_keyframe_elastic_out
-};
 
 typedef String QString;
 
@@ -185,22 +170,6 @@ namespace Qt {
 
 class QMimeData {};
 
-class AbstractTreeModel : public QObject {
-public:
-    AbstractTreeModel(QObject* parent = nullptr) : QObject(parent) {}
-    virtual int columnCount(const QModelIndex& = QModelIndex()) const { return 0; }
-    virtual QVariant data(const QModelIndex&, int) const { return QVariant(); }
-    virtual bool setData(const QModelIndex&, const QVariant&, int = Qt::EditRole) { return false; }
-    virtual Qt::ItemFlags flags(const QModelIndex&) const { return 0; }
-    virtual QVariant headerData(int, Qt::Orientation, int = Qt::DisplayRole) const { return QVariant(); }
-    virtual QStringList mimeTypes() const { return QStringList(); }
-    virtual QMimeData *mimeData(const QModelIndexList&) const { return nullptr; }
-    virtual bool dropMimeData(const QMimeData*, Qt::DropAction, int, int, const QModelIndex&) { return false; }
-    virtual Qt::DropActions supportedDropActions() const { return 0; }
-    virtual void registerItem(const std::shared_ptr<class TreeItem>&) {}
-    virtual void deregisterItem(int, class TreeItem*) {}
-};
-
 struct QSize : Upp::Size {
     QSize() { cx = cy = 0; }
     QSize(int w, int h) : Upp::Size(w, h) {}
@@ -312,14 +281,14 @@ struct QDebug {
 typedef std::function<bool(void)> Fun;
 
 namespace Mlt {
-    class Profile {};
-    class Playlist {};
-    class Producer { public: void record() {} void stop() {} };
-    class Tractor {};
-    class Filter {};
-    class Transition {};
-    class Service {};
-    class Properties {};
+    class Profile;
+    class Playlist;
+    class Producer;
+    class Tractor;
+    class Filter;
+    class Transition;
+    class Service;
+    class Properties;
 }
 
 class QThreadPool {
@@ -453,30 +422,6 @@ typedef Upp::VectorMap<QString, QVariant> QVariantMap;
 class QDateTime {};
 
 class QWidget { public: QWidget(QWidget* = nullptr) {} virtual ~QWidget() {} void show() {} void setPalette(const class QPalette&) {} };
-class QMenu {};
-class QActionGroup {};
-class QToolBar {};
-class QSlider {};
-class QToolButton {};
-class QScrollBar {};
-class QLabel {};
-class QMouseEvent {};
-class QWheelEvent {};
-class QKeyEvent {};
-class QResizeEvent {};
-class QPalette {};
-class QWidgetAction : public QAction { public: QWidgetAction(QObject* p) {} virtual QWidget* createWidget(QWidget*) { return nullptr; } };
-
-class Splash : public QObject {
-public:
-    Splash(...) : QObject() {}
-    bool hasEventLoop() { return false; }
-    bool welcomeDisplayed() { return false; }
-    void deleteLater() {}
-    void fadeOut() {}
-    void setReady() {}
-    bool hasCrashRecovery() { return false; }
-};
 
 #define QT_VERSION_CHECK(a,b,c) 0
 
@@ -504,8 +449,6 @@ public:
 class QImageReader { public: static void setAllocationLimit(int) {} };
 
 class ProfileParam {};
-
-class AbstractProjectItem { public: enum DataType { NoType }; };
 
 int RunConvertedKdenliveMain(const Upp::Vector<Upp::String>& args);
 
