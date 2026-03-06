@@ -3,10 +3,10 @@
     U++ Conversion: 2026 MasterLab Team
 */
 
-#ifndef _Cool_assets_assetfilter_AssetFilter_h_
-#define _Cool_assets_assetfilter_AssetFilter_h_
+#ifndef _Cool_assets_assetlist_model_AssetFilter_h_
+#define _Cool_assets_assetlist_model_AssetFilter_h_
 
-#include "../../Definitions.h"
+#include "../../../Definitions.h"
 
 NAMESPACE_UPP
 

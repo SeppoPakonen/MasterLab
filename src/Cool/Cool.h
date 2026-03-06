@@ -217,17 +217,6 @@ struct QImage : Image {
     Size GetSize() const { return Size(*this); }
 };
 
-class QUndoCommand {
-public:
-    explicit QUndoCommand(QUndoCommand *parent = nullptr) { (void)parent; }
-    virtual ~QUndoCommand() = default;
-    virtual void Undo() {}
-    virtual void Redo() {}
-    void setText(const String& text) { m_text = text; }
-private:
-    String m_text;
-};
-
 class QAction : public QObject {};
 class QTimer : public QObject {
 public:
@@ -407,7 +396,6 @@ public:
     explicit operator bool() const { return p != nullptr; }
 };
 
-class AbstractMonitor { public: virtual void stop() {} virtual void start() {} virtual void slotPlay() {} virtual void mute(bool) {} virtual void refreshMonitorIfActive(bool) {} virtual void slotMouseSeek(int, uint) {} virtual void slotSwitchFullScreen(bool) {} virtual void slotForward(double, bool) {} virtual void slotRewind(double) {} };
 class QDir {
 public:
     QDir(const QString& = "") {}

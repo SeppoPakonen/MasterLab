@@ -32,12 +32,12 @@ public:
     std::shared_ptr<TreeItem> GetItemById(int id) const;
     std::shared_ptr<TreeItem> GetRoot() const { return root_item; }
 
+    virtual void RegisterItem(const std::shared_ptr<TreeItem>& item);
+    virtual void DeregisterItem(int id, TreeItem* item);
+
 protected:
     std::shared_ptr<TreeItem> root_item;
     std::unordered_map<int, std::weak_ptr<TreeItem>> all_items;
-
-    virtual void RegisterItem(const std::shared_ptr<TreeItem>& item);
-    virtual void DeregisterItem(int id, TreeItem* item);
 
     static int GetNextId();
     static int current_tree_id;
