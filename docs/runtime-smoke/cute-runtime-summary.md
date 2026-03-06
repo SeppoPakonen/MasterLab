@@ -1,0 +1,60 @@
+# Cute Runtime Smoke Summary
+
+- Timestamp (UTC): 2026-03-06T19:45:32Z
+- Command: timeout 5s ./bin/Cute
+- Exit code: 124
+- Critical warning line count: 246
+- Runtime log: docs/runtime-smoke/cute-runtime.log
+- GDB backtrace log: docs/runtime-smoke/cute-gdb-bt.log
+
+## First Runtime Lines
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.890: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.891: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.899: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+(Cute:89541): Gdk-CRITICAL **: 21:45:32.900: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+## First Backtrace Lines
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib64/libthread_db.so.1".
+[New Thread 0x7ffff45ff6c0 (LWP 89607)]
+[New Thread 0x7ffff3dfe6c0 (LWP 89608)]
+[New Thread 0x7ffff35fd6c0 (LWP 89609)]
+[New Thread 0x7ffff2dfc6c0 (LWP 89610)]
+[New Thread 0x7ffff25fb6c0 (LWP 89611)]
+[New Thread 0x7ffff1d796c0 (LWP 89612)]
+
+(Cute:89604): Gdk-CRITICAL **: 21:45:38.236: gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed
+
+Thread 1 "Cute" received signal SIGTRAP, Trace/breakpoint trap.
+0x00007ffff6d99c5b in g_logv () from /usr/lib64/libglib-2.0.so.0
+#0  0x00007ffff6d99c5b in g_logv () at /usr/lib64/libglib-2.0.so.0
+#1  0x00007ffff6d99efb in g_log () at /usr/lib64/libglib-2.0.so.0
+#2  0x00007ffff7bf435c in gdk_cairo_create () at /usr/lib64/libgdk-3.so.0
+#3  0x00005555558ff13a in Upp::CairoGet (b=..., isz=..., surface=0x5555561556e0, alpha_surface=0x0) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp:131
+#4  0x00005555558ff49a in Upp::ImageDraw::FetchStraight (this=0x7fffffffc310, b=...) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp:199
+#5  0x00005555558cfd2c in Upp::ImageDraw::operator Upp::Image (this=0x7fffffffc310) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp:205
+#6  0x00005555558378c7 in Upp::CairoImage (cx=30, cy=30, draw=...) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlLib/ChGtk3.cpp:94
+#7  0x0000555555837bcb in Upp::CairoImage (ctx=0x5555561631e0, cx=30, cy=30) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlLib/ChGtk3.cpp:102
+#8  0x00005555558386bf in Upp::CairoImage (cx=30, cy=30) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlLib/ChGtk3.cpp:223
+#9  0x00005555558386fd in Upp::GetBackgroundColor () at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlLib/ChGtk3.cpp:228
+#10 0x000055555573bda6 in Upp::ChHostSkin () at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlLib/ChGtk3.cpp:300
+#11 0x00005555558db3f2 in Upp::Ctrl::ReSkin () at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/Ctrl.cpp:1002
+#12 0x00005555558dbb14 in Upp::Ctrl::SetUHDEnabled (set=true) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/Ctrl.cpp:845
+#13 0x0000555555910c77 in Upp::InitGtkApp (argc=1, argv=0x7fffffffd298, envptr=0x7fffffffd2a8) at /common/active/sblo/Dev/ai-upp/uppsrc/CtrlCore/GtkApp.cpp:143
+#14 0x000055555567b9fe in main (argc=1, argv=0x7fffffffd298, envptr=0x7fffffffd2a8) at /common/active/sblo/Dev/MasterLab/src/Cute/main.cpp:4
