@@ -25,15 +25,11 @@ std::shared_ptr<AbstractTreeModel> AbstractTreeModel::Construct() {
 }
 
 int AbstractTreeModel::GetRowCount(const QModelIndex& parent) const {
-    if (parent.column() > 0) return 0;
-    
-    std::shared_ptr<TreeItem> parent_item;
     if (!parent.isValid()) {
-        parent_item = root_item;
-    } else {
-        parent_item = GetItemById(parent.row());
+        return root_item ? root_item->GetChildCount() : 0;
     }
     
+    std::shared_ptr<TreeItem> parent_item = GetItemById(parent.row());
     return parent_item ? parent_item->GetChildCount() : 0;
 }
 

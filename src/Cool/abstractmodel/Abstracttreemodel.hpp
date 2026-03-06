@@ -17,6 +17,7 @@ class TreeItem;
  */
 class AbstractTreeModel : public std::enable_shared_from_this<AbstractTreeModel> {
 public:
+    friend class TreeItem;
     AbstractTreeModel();
     virtual ~AbstractTreeModel();
 

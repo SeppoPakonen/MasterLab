@@ -2,8 +2,8 @@
 
 NAMESPACE_UPP
 
-CONSOLE_APP_MAIN {
-	SetExitCode(RunConvertedKdenliveMain(CommandLine()));
+GUI_APP_MAIN {
+	RunConvertedKdenliveMain(CommandLine());
 }
 
 END_UPP_NAMESPACE

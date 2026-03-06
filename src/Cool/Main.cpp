@@ -6,6 +6,7 @@
 
 #include "Cool.h"
 #include "Core.h"
+#include "Mainwindow.h"
 
 NAMESPACE_UPP
 
@@ -35,10 +36,13 @@ int RunConvertedKdenliveMain(const Vector<String>& args) {
 		return 1;
 	}
 
-	// Initialize UI or Headless mode
-	// pCore.InitGui(mlt_path, project_url, clips_to_load);
+	// Initialize UI
+	pCore.InitGui(mlt_path, project_url, clips_to_load);
 	
-	Cout() << "Cool Core initialized. Entry loop placeholder." << EOL;
+	// Run the application
+	if (pCore.GetWindow()) {
+		pCore.GetWindow()->Run();
+	}
 	
 	// Cleanup on exit
 	Core::Clean();

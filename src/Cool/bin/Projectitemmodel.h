@@ -27,6 +27,7 @@ class EffectStackModel;
 
 class ProjectItemModel : public AbstractTreeModel {
 public:
+    friend class TreeItem;
     typedef ProjectItemModel CLASSNAME;
 
     static std::shared_ptr<ProjectItemModel> Construct();
