@@ -7,6 +7,7 @@
 using namespace Upp;
 
 #include "AudioAtomic.h"
+#include "CuteAtomic.h"
 #include "CuteList.h"
 #include "CuteObserver.h"
 #include "CuteObserverWidget.h"

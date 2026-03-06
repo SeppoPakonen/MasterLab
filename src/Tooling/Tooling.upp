@@ -9,6 +9,7 @@ file
 	Tooling.h,
 	Tooling.cpp,
 	AudioAtomic.h,
+	CuteAtomic.h,
 	CuteList.h,
 	CuteObserver.h,
 	CuteObserver.cpp,
