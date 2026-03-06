@@ -6,6 +6,7 @@ uses
 	AudioCore;
 
 file
+	AGENTS.md,
 	VstHostPrefs.h,
 	VstHostPrefs.cpp,
 	VSTHost.h,
