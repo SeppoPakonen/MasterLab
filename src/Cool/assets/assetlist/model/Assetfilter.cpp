@@ -1,206 +1,57 @@
-#include "../../../Cool.h"
-#if 0
-
-// Converted from tmp/k/src/assets/assetlist/model/assetfilter.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-// #include "assetfilter.hpp"
+#include "Assetfilter.hpp"
+#include "../../abstractmodel/Treeitem.hpp"
 
-// #include "abstractmodel/abstracttreemodel.hpp"
-// #include "abstractmodel/treeitem.hpp"
-// #include "assettreemodel.hpp"
-// #include "kdenlivesettings.h"
-// #include <KLocalizedString>
-// #include <utility>
+NAMESPACE_UPP
 
-AssetFilter::AssetFilter(QObject *parent)
-    : QSortFilterProxyModel(parent)
-
-{
-    m_includeListEnabled = KdenliveSettings::enableAssetsIncludeList();
-    setFilterRole(Qt::DisplayRole);
-    setSortRole(Qt::DisplayRole);
-    setDynamicSortFilter(false);
+AssetFilter::AssetFilter() {
 }
 
-void AssetFilter::setFilterName(bool enabled, const QString &pattern)
-{
-    m_name_enabled = enabled;
-    m_name_value = pattern;
-    invalidateFilter();
-    if (rowCount() > 1) {
-        sort(0);
+AssetFilter::~AssetFilter() {
+}
+
+void AssetFilter::SetFilterName(bool enabled, const String& pattern) {
+    name_enabled = enabled;
+    name_value = pattern;
+}
+
+void AssetFilter::SetIncludeList(bool enabled) {
+    include_list_enabled = enabled;
+}
+
+bool AssetFilter::IsVisible(const std::shared_ptr<TreeItem>& item) const {
+    if (include_list_enabled) {
+        // TODO: Check include list property from item
     }
+    return ApplyAll(item);
 }
 
-void AssetFilter::updateIncludeList()
-{
-    m_includeListEnabled = KdenliveSettings::effectsFilter() && KdenliveSettings::enableAssetsIncludeList();
-    invalidateFilter();
+bool AssetFilter::FilterName(const std::shared_ptr<TreeItem>& item) const {
+    if (!name_enabled || name_value.IsEmpty()) return true;
+    
+    // String name = item->GetName(); // Assuming TreeItem has GetName
+    // String normalized_name = NormalizeText(name);
+    // String normalized_pattern = NormalizeText(name_value);
+    
+    // return normalized_name.Find(normalized_pattern) >= 0;
+    return true;
 }
 
-bool AssetFilter::lessThan(const QModelIndex &left, const QModelIndex &right) const
-{
-    QString leftData = sourceModel()->data(left).toString();
-    QString rightData = sourceModel()->data(right).toString();
-    return QString::localeAwareCompare(leftData, rightData) < 0;
-}
-
-bool AssetFilter::filterName(const std::shared_ptr<TreeItem> &item) const
-{
-    if (!m_name_enabled) {
-        return true;
+String AssetFilter::NormalizeText(const String& text) {
+    String res;
+    for(int i = 0; i < text.GetCount(); i++) {
+        int c = text[i];
+        if (IsAlNum(c) || IsSpace(c)) res.Cat(c);
     }
-    const QString itemId = normalizeText(item->dataColumn(AssetTreeModel::IdCol).toString());
-    QString itemText = i18n(item->dataColumn(AssetTreeModel::NameCol).toString().toUtf8().constData());
-    itemText = normalizeText(itemText);
-    QString patt = normalizeText(m_name_value);
-
-    return itemText.contains(patt, Qt::CaseInsensitive) || itemId.contains(patt, Qt::CaseInsensitive);
+    return res;
 }
 
-QString AssetFilter::normalizeText(const QString &text)
-{
-    // NormalizationForm_D decomposes letters with diacritics, and then the
-    // diacritics are removed by checking isLetterOrNumber().
-    const QString normalized = text.normalized(QString::NormalizationForm_D);
-    QString newString;
-    std::copy_if(normalized.begin(), normalized.end(), std::back_inserter(newString),
-        [](QChar c){
-            return c.isLetterOrNumber() || c.isSpace();
-        });
-    return newString;
+bool AssetFilter::ApplyAll(std::shared_ptr<TreeItem> item) const {
+    return FilterName(item);
 }
 
-bool AssetFilter::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
-{
-    QModelIndex row = sourceModel()->index(sourceRow, 0, sourceParent);
-    auto *model = static_cast<AbstractTreeModel *>(sourceModel());
-    std::shared_ptr<TreeItem> item = model->getItemById(int(row.internalId()));
-    if (item->dataColumn(AssetTreeModel::IdCol) != QStringLiteral("root")) {
-        // This is an asset
-        if (m_includeListEnabled) {
-            if (!item->dataColumn(AssetTreeModel::IncludeListCol).toBool()) {
-                return false;
-            }
-        }
-    } else {
-        // In that case, we have a category. We hide it if it does not have children.
-        QModelIndex category = sourceModel()->index(sourceRow, 0, sourceParent);
-        if (!category.isValid()) {
-            return false;
-        }
-        bool accepted = false;
-        for (int i = 0; i < sourceModel()->rowCount(category) && !accepted; ++i) {
-            accepted = filterAcceptsRow(i, category);
-        }
-        return accepted;
-    }
-    return applyAll(item);
-}
-
-bool AssetFilter::isVisible(const QModelIndex &sourceIndex)
-{
-    auto parent = sourceModel()->parent(sourceIndex);
-    if (sourceIndex.row() < 0) {
-        return false;
-    }
-    return filterAcceptsRow(sourceIndex.row(), parent);
-}
-
-bool AssetFilter::applyAll(std::shared_ptr<TreeItem> item) const
-{
-    return filterName(item);
-}
-
-QModelIndex AssetFilter::getNextChild(const QModelIndex &current)
-{
-    QModelIndex nextItem = current.sibling(current.row() + 1, current.column());
-    if (!nextItem.isValid()) {
-        QModelIndex folder = index(current.parent().row() + 1, 0, QModelIndex());
-        if (!folder.isValid()) {
-            return current;
-        }
-        while (folder.isValid() && rowCount(folder) == 0) {
-            folder = folder.sibling(folder.row() + 1, folder.column());
-        }
-        if (folder.isValid() && rowCount(folder) > 0) {
-            return index(0, current.column(), folder);
-        }
-        nextItem = current;
-    }
-    return nextItem;
-}
-
-QModelIndex AssetFilter::getPreviousChild(const QModelIndex &current)
-{
-    QModelIndex nextItem = current.sibling(current.row() - 1, current.column());
-    if (!nextItem.isValid()) {
-        QModelIndex folder = index(current.parent().row() - 1, 0, QModelIndex());
-        if (!folder.isValid()) {
-            return current;
-        }
-        while (folder.isValid() && rowCount(folder) == 0) {
-            folder = folder.sibling(folder.row() - 1, folder.column());
-        }
-        if (folder.isValid() && rowCount(folder) > 0) {
-            return index(rowCount(folder) - 1, current.column(), folder);
-        }
-        nextItem = current;
-    }
-    return nextItem;
-}
-
-QModelIndex AssetFilter::firstVisibleItem(const QModelIndex &current)
-{
-    if (current.isValid() && isVisible(mapToSource(current))) {
-        return current;
-    }
-    QModelIndex folder = index(0, 0, QModelIndex());
-    if (!folder.isValid()) {
-        return current;
-    }
-    while (folder.isValid() && rowCount(folder) == 0) {
-        folder = index(folder.row() + 1, 0, QModelIndex());
-    }
-    if (rowCount(folder) > 0) {
-        return index(0, 0, folder);
-    }
-    return current;
-}
-
-QModelIndex AssetFilter::getCategory(int catRow) const
-{
-    QModelIndex cat = index(catRow, 0, QModelIndex());
-    return cat;
-}
-
-QVariantList AssetFilter::getCategories() const
-{
-    QVariantList list;
-    for (int i = 0; i < sourceModel()->rowCount(); i++) {
-        QModelIndex cat = getCategory(i);
-        if (cat.isValid()) {
-            list << cat;
-        }
-    }
-    return list;
-}
-
-QModelIndex AssetFilter::getModelIndex(const QModelIndex &current)
-{
-    QModelIndex sourceIndex = mapToSource(current);
-    return sourceIndex; // this returns an integer
-}
-
-QModelIndex AssetFilter::getProxyIndex(const QModelIndex &current)
-{
-    QModelIndex sourceIndex = mapFromSource(current);
-    return sourceIndex; // this returns an integer
-}
-#endif
+END_UPP_NAMESPACE

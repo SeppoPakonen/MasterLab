@@ -8,7 +8,7 @@ U++ Conversion: 2026 MasterLab Team
 #include "Mainwindow.h"
 #include "monitor/Monitormanager.h"
 #include "project/Projectmanager.h"
-#include "bin/Projectitemmodel.h"
+#include "bin/Bin.h"
 #include "capture/Mediacapture.h"
 #include "dialogs/Splash.hpp"
 #include "Mltconnection.h"

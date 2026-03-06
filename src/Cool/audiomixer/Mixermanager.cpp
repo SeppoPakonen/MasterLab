@@ -12,7 +12,7 @@
 
 NAMESPACE_UPP
 
-MixerManager::MixerManager() {
+MixerManager::MixerManager(MainWindow* parent) {
     SetupUI();
 }
 
