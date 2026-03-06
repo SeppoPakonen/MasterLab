@@ -1,0 +1,45 @@
+*** Begin Patch
+*** Update File: ../ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp
+@@
+-	// Create a temporary cairo surface and context to draw ARGB32 into RGBA (Pixbuf)
+-	GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, isz.cx, isz.cy);
+-	cairo_t *cr = gdk_cairo_create(NULL); // This might not work without a drawable, let's use a surface instead
+-	
+-	// Wait, we can just use cairo_image_surface_create_for_data with the pixbuf buffer!
+-	byte *pb_data = gdk_pixbuf_get_pixels(pixbuf);
+-	int pb_stride = gdk_pixbuf_get_rowstride(pixbuf);
+-	cairo_surface_t *pb_surface = cairo_image_surface_create_for_data(pb_data, CAIRO_FORMAT_ARGB32, isz.cx, isz.cy, pb_stride);
+-	cairo_t *pb_cr = cairo_create(pb_surface);
+-	
+-	// Draw the ARGB32 surface onto the RGBA (Pixbuf) surface
+-	// GDK will handle the conversion
+-	gdk_cairo_set_source_pixbuf(pb_cr, pixbuf, 0, 0); // No, this sets pixbuf as source.
+-	// We want pixbuf as DESTINATION.
+-	
+-	// Re-think: Cairo image surface data is native-endian ARGB.
+-	// GdkPixbuf data is bytes R, G, B, A.
+-	// On little-endian, ARGB32 in memory is B, G, R, A.
+-	// So we need to swap R and B.
+-	
+-	// Since we are NOT allowed to "hot-swap" in renderer, maybe there is a GDK function to read pixels?
+-	// gdk_pixbuf_get_from_surface exists!
+-	
+-	g_object_unref(pixbuf);
+-	cairo_surface_destroy(pb_surface);
+-	cairo_destroy(pb_cr);
+-	
+-	pixbuf = gdk_pixbuf_get_from_surface(surface, 0, 0, isz.cx, isz.cy);
++	// Extract ARGB pixels from cairo image surface via gdk_pixbuf_get_from_surface.
++	// Avoid gdk_cairo_create(NULL), which triggers GDK critical warnings during startup.
++	GdkPixbuf *pixbuf = gdk_pixbuf_get_from_surface(surface, 0, 0, isz.cx, isz.cy);
+*** End Patch
+
+Apply notes:
+1. Run from MasterLab root:
+   patch -p0 < docs/patches/ai-upp-gtkdrawimage-null-window-guard.patch
+2. Rebuild:
+   script/build.py -j2 Cute
+3. Re-run smoke:
+   scripts/cute_runtime_smoke.sh
+Expected:
+- Significant reduction or removal of repeated `gdk_cairo_create: assertion 'GDK_IS_WINDOW (window)' failed` warnings.

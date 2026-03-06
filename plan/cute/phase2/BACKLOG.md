@@ -10,3 +10,4 @@ After phase 1 source conversion coverage is high enough, wire `src/Cute` as an a
 - `task-004-stub-replacement-and-behavior-parity`: replace temporary compile-safe stubs with behavior or guarded exclusions.
 - `task-005-dependency-gtk-warning-upstream-tracking`: prepare dependency-layer patch strategy and ownership note.
 - `task-006-runtime-smoke-automation`: add and run runtime smoke evidence automation for `Cute`.
+- `task-007-gtkdrawimage-upstream-patch-artifact`: provide concrete ai-upp patch artifact for GTK startup warning.
