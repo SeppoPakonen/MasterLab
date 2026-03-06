@@ -1,5 +1,5 @@
 # Task: Stub Replacement And Behavior Parity
-# Status: IN_PROGRESS
+# Status: DONE
 
 ## Objective
 Replace temporary compile-safe stubs introduced during phase-2 bring-up with behaviorally meaningful implementations or explicit guarded exclusions.
@@ -18,11 +18,15 @@ Replace temporary compile-safe stubs introduced during phase-2 bring-up with beh
 
 ## Definition of Done
 - [x] Stub inventory documented.
-- [ ] Each stub has implemented behavior or explicit guarded exclusion.
-- [ ] Build remains green after changes.
+- [x] Each stub has implemented behavior or explicit guarded exclusion.
+- [x] Build remains green after changes.
 
 ## Progress Notes
 - Stub inventory completed and documented in:
   - `docs/cute-stub-inventory-2026-03-06.md`
-- Next execution step:
-  - Decide per-file strategy (implement vs. guarded exclusion) for the confirmed compile-safe stubs.
+- Confirmed bring-up stubs moved to explicit compile-time guarded exclusions using:
+  - `CUTE_ENABLE_LEGACY_CUTECLIP_IMPL`
+  - `CUTE_ENABLE_LEGACY_CUTEMIXER_IMPL`
+  - `CUTE_ENABLE_LEGACY_AUDIOFX_CALIBRATION_IMPL`
+  - `CUTE_ENABLE_LEGACY_SPATIALDSP_IMPL`
+  - `CUTE_ENABLE_LEGACY_SPATIALDSP_ADDITIONAL_IMPL`

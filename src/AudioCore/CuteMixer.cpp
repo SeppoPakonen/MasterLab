@@ -1,3 +1,5 @@
 #include "AudioCore.h"
 
-// Legacy mixer UI implementation unit is currently a compile-safe stub.
+#ifdef CUTE_ENABLE_LEGACY_CUTEMIXER_IMPL
+// Reserved for legacy mixer UI implementation porting.
+#endif

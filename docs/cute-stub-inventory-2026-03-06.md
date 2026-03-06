@@ -43,3 +43,12 @@ These compile and are not build blockers; they remain behavior-parity debt.
 ## Current decision boundary
 - Build stability is currently prioritized.
 - Any replacement of confirmed stubs must preserve `script/build.py -j2 Cute` green status.
+
+## 2026-03-06 Execution Update
+- The confirmed bring-up stubs are now explicit compile-time guarded exclusions:
+  - `CUTE_ENABLE_LEGACY_CUTECLIP_IMPL`
+  - `CUTE_ENABLE_LEGACY_CUTEMIXER_IMPL`
+  - `CUTE_ENABLE_LEGACY_AUDIOFX_CALIBRATION_IMPL`
+  - `CUTE_ENABLE_LEGACY_SPATIALDSP_IMPL`
+  - `CUTE_ENABLE_LEGACY_SPATIALDSP_ADDITIONAL_IMPL`
+- Default behavior keeps these translation units inert while preserving package inclusion and build graph parity.

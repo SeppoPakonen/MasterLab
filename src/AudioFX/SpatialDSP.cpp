@@ -1,4 +1,5 @@
 #include "AudioFX.h"
 
-// Legacy qtractor-derived spatial DSP unit is present in package manifests,
-// but the active DSP path is implemented in DSP.* for current Cute builds.
+#ifdef CUTE_ENABLE_LEGACY_SPATIALDSP_IMPL
+// Reserved for legacy qtractor-derived spatial DSP implementation porting.
+#endif
