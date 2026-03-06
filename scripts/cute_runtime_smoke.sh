@@ -29,7 +29,7 @@ gdb -q --batch \
   -ex bt \
   --args "$BIN" >"$GDB_LOG" 2>&1 || true
 
-warn_count=$(rg -c "Gdk-CRITICAL|Gtk-CRITICAL|CRITICAL" "$RUNTIME_LOG" || true)
+warn_count=$(rg -c "Gdk-CRITICAL|Gtk-CRITICAL|CRITICAL" "$RUNTIME_LOG" || echo 0)
 
 {
   echo "# Cute Runtime Smoke Summary"
