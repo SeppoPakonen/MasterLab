@@ -1,83 +1,48 @@
-#include "../../../Cool.h"
-#if 0
-
-// Converted from tmp/k/src/assets/assetlist/view/asseticonprovider.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-// #include "asseticonprovider.hpp"
-// #include "assetlistwidget.hpp"
-// #include "effects/effectsrepository.hpp"
-// #include "transitions/transitionsrepository.hpp"
+#include "Asseticonprovider.hpp"
 
-// #include <QDebug>
-// #include <QFont>
-// #include <QPainter>
+NAMESPACE_UPP
 
-AssetIconProvider::AssetIconProvider(bool effect, QObject *parent)
-    : QObject(parent)
-    , m_effect(effect)
+VectorMap<String, Image> AssetIconProvider::icon_cache;
+
+AssetIconProvider::AssetIconProvider(bool is_effect)
+    : is_effect(is_effect)
 {
 }
 
-QImage AssetIconProvider::makeIcon(const QString &effectName)
-{
-    QPixmap pix = makePixmap(effectName);
-    return pix.toImage();
+AssetIconProvider::~AssetIconProvider() {
 }
 
-const QPixmap AssetIconProvider::makePixmap(const QString &effectName)
-{
-    QPixmap pix(30, 30);
-    if (effectName.isEmpty()) {
-        pix.fill(Qt::red);
-        return pix;
-    }
-    QFont ft = QFont();
-    // ft.setBold(true);
-    ft.setPixelSize(25);
-    uint hex = qHash(effectName.section(QLatin1Char('/'), 0, -2));
-    QString t = QStringLiteral("#") + QString::number(hex, 16).toUpper().left(6);
-    QColor col(t);
-    bool isAudio = false;
-    bool isCustom = false;
-    bool isGroup = false;
-    AssetListType::AssetType type = AssetListType::AssetType(effectName.section(QLatin1Char('/'), -2, -2).toInt());
-    if (m_effect) {
-        isAudio = AssetListWidget::isAudioType(type);
-        isCustom = AssetListWidget::isCustomType(type);
-        if (isCustom) {
-            // isGroup = EffectsRepository::get()->isGroup(effectId);
-        }
-    } else {
-        isAudio = (type == AssetListType::AssetType::AudioComposition) || (type == AssetListType::AssetType::AudioTransition);
-    }
-    QPainter p;
-    if (isCustom) {
-        pix.fill(Qt::transparent);
-        p.begin(&pix);
-        p.setPen(Qt::NoPen);
-        p.setBrush(isGroup ? Qt::magenta : Qt::red);
-        p.drawRoundedRect(pix.rect(), 4, 4);
-        p.setPen(QPen());
-    } else if (isAudio) {
-        pix.fill(Qt::transparent);
-        p.begin(&pix);
-        p.setPen(Qt::NoPen);
-        p.setBrush(col);
-        p.drawEllipse(pix.rect());
-        p.setPen(QPen());
-    } else {
-        pix.fill(col);
-        p.begin(&pix);
-    }
-    p.setFont(ft);
-    p.drawText(pix.rect(), Qt::AlignCenter, effectName.at(effectName.length() - 1));
-    p.end();
-    return pix;
+Image AssetIconProvider::MakeIcon(const String& name) {
+    if (icon_cache.Find(name) >= 0) return icon_cache.Get(name);
+    
+    Image img = CreateIcon(name);
+    icon_cache.Add(name, img);
+    return img;
 }
-#endif
+
+Image AssetIconProvider::CreateIcon(const String& name) {
+    ImageDraw id(30, 30);
+    id.DrawRect(0, 0, 30, 30, White());
+    
+    // Simple placeholder icon generation
+    Color col = Blue();
+    if (is_effect) col = Red();
+    
+    id.DrawEllipse(2, 2, 26, 26, col);
+    
+    if (!name.IsEmpty()) {
+        String label = name.Mid(name.GetLength() - 1);
+        Font font = StdFont().Bold().Height(20);
+        Size sz = GetTextSize(label, font);
+        id.DrawText((30 - sz.cx) / 2, (30 - sz.cy) / 2, label, font, White());
+    }
+    
+    return id;
+}
+
+END_UPP_NAMESPACE

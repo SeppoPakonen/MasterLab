@@ -42,10 +42,12 @@ namespace std {
 #define Q_UNUSED(x) (void)x
 #define Q_ASSERT(x) ASSERT(x)
 
-typedef Upp::int64 qint64;
-typedef Upp::int16 qint16;
+namespace Upp {
 
-typedef Upp::String QString;
+typedef int64 qint64;
+typedef int16 qint16;
+
+typedef String QString;
 
 // QVector/QList wrapper forward decl
 template <typename T> class QListWrapper;
@@ -63,25 +65,25 @@ struct QString_ {
 
 typedef double qreal;
 typedef QString QUrl;
-typedef Upp::String QByteArray;
+typedef String QByteArray;
 template <typename T1, typename T2> using QPair = std::pair<T1, T2>;
 template <typename K, typename V> using QMap = Upp::VectorMap<K, V>;
 
 template <typename T> void qRegisterMetaType(const char* = nullptr) {}
 
-struct QUuid : Upp::String {
-    QUuid() : Upp::String("") {}
-    QUuid(const Upp::String& s) : Upp::String(s) {}
-    Upp::String toString() const { return *this; }
+struct QUuid : String {
+    QUuid() : String("") {}
+    QUuid(const String& s) : String(s) {}
+    String toString() const { return *this; }
     static QUuid createUuid() { return QUuid("placeholder-uuid"); }
     bool isNull() const { return IsEmpty(); }
 };
 
-struct QColor : Upp::Color {
-    QColor() : Upp::Color(Upp::Color(0, 0, 0)) {}
-    QColor(int r, int g, int b, int a = 255) : Upp::Color(Upp::Color(r, g, b)) { (void)a; }
-    QColor(Upp::Color c) : Upp::Color(c) {}
-    explicit QColor(const QString& s) : Upp::Color(Upp::Color(0,0,0)) { (void)s; }
+struct QColor : Color {
+    QColor() : Color(Color(0, 0, 0)) {}
+    QColor(int r, int g, int b, int a = 255) : Color(Color(r, g, b)) { (void)a; }
+    QColor(Color c) : Color(c) {}
+    explicit QColor(const QString& s) : Color(Color(0,0,0)) { (void)s; }
     int red() const { return GetR(); }
     int green() const { return GetG(); }
     int blue() const { return GetB(); }
@@ -89,17 +91,18 @@ struct QColor : Upp::Color {
     double redF() const { return GetR() / 255.0; }
     double greenF() const { return GetG() / 255.0; }
     double blueF() const { return GetB() / 255.0; }
-    void setRgb(int r, int g, int b, int a = 255) { *this = Upp::Color(r, g, b); (void)a; }
+    void setRgb(int r, int g, int b, int a = 255) { *this = Color(r, g, b); (void)a; }
 };
 
-typedef Upp::Value QVariant;
-typedef Upp::uint32 QRgb;
-typedef Upp::Mutex QReadWriteLock;
-typedef Upp::Mutex QMutex;
+typedef Value QVariant;
+typedef uint32 QRgb;
+typedef Mutex QReadWriteLock;
+typedef Mutex QMutex;
 
 struct QModelIndex {
     int row_index{-1};
     int row() const { return row_index; }
+    int column() const { return 0; }
     bool isValid() const { return row_index >= 0; }
     bool operator==(const QModelIndex& other) const { return row_index == other.row_index; }
 };
@@ -109,20 +112,24 @@ inline int qHash(const QModelIndex& index) { return index.row_index; }
 typedef QModelIndex QPersistentModelIndex;
 
 // specialization for std::hash<QPersistentModelIndex>
+} // namespace Upp
+
 namespace std {
-    template<> struct hash<QPersistentModelIndex> {
-        size_t operator()(const QPersistentModelIndex& i) const {
+    template<> struct hash<Upp::QPersistentModelIndex> {
+        size_t operator()(const Upp::QPersistentModelIndex& i) const {
             return (size_t)i.row();
         }
     };
 }
 
+namespace Upp {
+
 // QVector/QList wrapper
-template <typename T> class QListWrapper : public Upp::Vector<T> {
+template <typename T> class QListWrapper : public Vector<T> {
 public:
     QListWrapper() {}
-    QListWrapper(const Upp::Vector<T>& v) : Upp::Vector<T>(v, 1) {}
-    QListWrapper<T>& operator=(const Upp::Vector<T>& v) { this->Clear(); for(const auto& x : v) this->Add(x); return *this; }
+    QListWrapper(const Vector<T>& v) : Vector<T>(v, 1) {}
+    QListWrapper<T>& operator=(const Vector<T>& v) { this->Clear(); for(const auto& x : v) this->Add(x); return *this; }
     int count() const { return this->GetCount(); }
     int length() const { return this->GetCount(); }
     int size() const { return this->GetCount(); }
@@ -143,7 +150,7 @@ typedef QListWrapper<QVariant> QVariantList;
 
 inline QStringList QString_::split(const QString& s, const QString& sep) {
     QStringList res;
-    Upp::Vector<Upp::String> parts = Upp::Split(s, (Upp::String)sep);
+    Vector<String> parts = Split(s, (String)sep);
     for(const auto& x : parts) res.Add(x);
     return res;
 }
@@ -168,10 +175,10 @@ namespace Qt {
 
 class QMimeData {};
 
-struct QSize : Upp::Size {
+struct QSize : Size {
     QSize() { cx = cy = 0; }
-    QSize(int w, int h) : Upp::Size(w, h) {}
-    QSize(Upp::Size s) : Upp::Size(s) {}
+    QSize(int w, int h) : Size(w, h) {}
+    QSize(Size s) : Size(s) {}
     int width() const { return cx; }
     int height() const { return cy; }
     void setWidth(int w) { cx = w; }
@@ -180,18 +187,16 @@ struct QSize : Upp::Size {
     bool isNull() const { return cx == 0 && cy == 0; }
 };
 
-struct QPoint : Upp::Point {
-    QPoint() { Upp::Point::x = Upp::Point::y = 0; }
-    QPoint(int x, int y) : Upp::Point(x, y) {}
-    QPoint(Upp::Point p) : Upp::Point(p) {}
-    int x() const { return Upp::Point::x; }
-    int y() const { return Upp::Point::y; }
+struct QPoint : Point {
+    QPoint() { x = y = 0; }
+    QPoint(int x, int y) : Point(x, y) {}
+    QPoint(Point p) : Point(p) {}
 };
 
-struct QRect : Upp::Rect {
+struct QRect : Rect {
     QRect() { left = top = right = bottom = 0; }
-    QRect(int x, int y, int w, int h) : Upp::Rect(x, y, x + w, y + h) {}
-    QRect(Upp::Point p, Upp::Size s) : Upp::Rect(p, s) {}
+    QRect(int x, int y, int w, int h) : Rect(x, y, x + w, y + h) {}
+    QRect(Point p, Size s) : Rect(p, s) {}
     int x() const { return left; }
     int y() const { return top; }
     int width() const { return Width(); }
@@ -205,11 +210,11 @@ struct QRectF {
     double height() const { return 0; }
 };
 
-struct QImage : Upp::Image {
+struct QImage : Image {
     QImage() {}
-    explicit QImage(const Upp::Size& size) : Upp::Image(size) {}
-    QImage(Upp::Image img) : Upp::Image(img) {}
-    Upp::Size GetSize() const { return Upp::Size(*this); }
+    explicit QImage(const Size& size) : Image(size) {}
+    QImage(Image img) : Image(img) {}
+    Size GetSize() const { return Size(*this); }
 };
 
 class QUndoCommand {
@@ -299,12 +304,12 @@ class QFileInfo {
 public:
     QFileInfo(const QString&) {}
     bool exists() const { return true; }
-    Upp::String absoluteFilePath() const { return ""; }
+    String absoluteFilePath() const { return ""; }
 };
 
 class QDomElement { public: QString tagName() const { return ""; } };
 class QDomDocument {};
-typedef Upp::String QIcon;
+typedef String QIcon;
 
 class QIODevice : public QObject {
 public:
@@ -329,7 +334,7 @@ class QAudioDevice {};
 class QMediaDevices {
 public:
     static QAudioDevice defaultAudioInput() { return QAudioDevice(); }
-    static Upp::Vector<QAudioDevice> audioInputs() { return Upp::Vector<QAudioDevice>(); }
+    static Vector<QAudioDevice> audioInputs() { return Vector<QAudioDevice>(); }
 };
 class QMediaFormat {};
 class QMediaCaptureSession : public QObject {
@@ -375,11 +380,11 @@ public:
     void start() {}
     qint64 elapsed() const { return 0; }
 };
-class QMutexLocker { public: QMutexLocker(Upp::Mutex*) {} };
+class QMutexLocker { public: QMutexLocker(Mutex*) {} };
 
 inline qreal IEC_ScaleMax(qreal v, int) { return v; }
-#define i18n(x, ...) Upp::String(x)
-#define i18nc(c, x) Upp::String(x)
+#define i18n(x, ...) String(x)
+#define i18nc(c, x) String(x)
 
 namespace QAudio {
     enum VolumeScale { LogarithmicVolumeScale, LinearVolumeScale };
@@ -407,15 +412,15 @@ class QDir {
 public:
     QDir(const QString& = "") {}
     bool exists() const { return true; }
-    void mkpath(const QString&) {}
-    Upp::String absoluteFilePath(const QString& s) const { return s; }
+    void mkpath(const String&) {}
+    String absoluteFilePath(const String& s) const { return s; }
     static QDir temp() { return QDir(); }
-    static Upp::String separator() { return "/"; }
+    static String separator() { return "/"; }
 };
 
 class SharedFrame {};
 class KRecentFilesAction {};
-typedef Upp::VectorMap<QString, QVariant> QVariantMap;
+typedef VectorMap<QString, QVariant> QVariantMap;
 class QDateTime {};
 
 class QWidget { public: QWidget(QWidget* = nullptr) {} virtual ~QWidget() {} void show() {} void setPalette(const class QPalette&) {} };
@@ -447,6 +452,8 @@ class QImageReader { public: static void setAllocationLimit(int) {} };
 
 class ProfileParam {};
 
-int RunConvertedKdenliveMain(const Upp::Vector<Upp::String>& args);
+int RunConvertedKdenliveMain(const Vector<String>& args);
+
+} // namespace Upp
 
 #endif
