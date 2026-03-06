@@ -881,7 +881,7 @@ private:
 namespace Upp {
     // Add Jsonize method for Tuple<String, double> to support serialization
     template<>
-    void Jsonize(JsonIO& jio, Tuple<String, double>& t) {
+    inline void Jsonize(JsonIO& jio, Tuple<String, double>& t) {
         jio("a", t.a)("b", t.b);
     }
 }

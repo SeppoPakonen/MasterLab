@@ -4,6 +4,7 @@ uses
 	CtrlLib;
 
 file
+	AGENTS.md,
 	Windowing.h,
 	Windowing.cpp,
 	Workspace.h,

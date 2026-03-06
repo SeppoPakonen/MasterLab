@@ -7,5 +7,15 @@
 #include "LatencyBuffer.h"
 #include "Analyzer.h"
 #include "PresetManager.h"
+#include "Effect.h"
+#include "EffectChain.h"
+#include "Compressor.h"
+#include "Crossover.h"
+#include "EQ.h"
+#include "Gain.h"
+#include "GainNormalization.h"
+#include "Limiter.h"
+#include "Splitter.h"
+#include "ZenCoreCatalogue.h"
 
 #endif

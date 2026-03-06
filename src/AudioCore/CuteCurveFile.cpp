@@ -24,7 +24,7 @@ void CuteCurveFile::Load(const String& serialized_state) {
         if(line.StartsWith("filename="))
             filename = line.Mid(9);
         else if(line.StartsWith("current="))
-            current_index = ScanUint64(line.Mid(8));
+            current_index = (unsigned long)ScanInt64(line.Mid(8));
         else if(line.StartsWith("curve-item=")) {
             Item& item = items.Add();
             item.name = line.Mid(11);
@@ -51,9 +51,9 @@ void CuteCurveFile::Apply(CuteTimeScale* time_scale) {
 }
 
 CuteCurve::Mode CuteCurveFile::ModeFromText(const String& text) {
-    if(text.CompareNoCase("Linear") == 0)
+    if(ToLower(text) == "linear")
         return CuteCurve::Linear;
-    if(text.CompareNoCase("Spline") == 0)
+    if(ToLower(text) == "spline")
         return CuteCurve::Spline;
     return CuteCurve::Hold;
 }

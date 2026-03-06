@@ -11,6 +11,7 @@ uses
 	Scores;
 
 file
+	AGENTS.md,
 	Editors.h,
 	Editors.cpp,
 	KeyEditor.h,

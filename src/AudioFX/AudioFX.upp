@@ -5,6 +5,8 @@ uses
 	AudioCore;
 
 file
+	AGENTS.md,
+	AudioFX.h,
 	DSP.h,
 	DSP.cpp,
 	SignalBus.h,
@@ -17,18 +19,39 @@ file
 	LatencyBuffer.cpp,
 	Analyzer.h,
 	Analyzer.cpp,
+	Calibration.cpp,
+	Compressor.h,
+	Compressor.cpp,
+	Crossover.h,
+	Crossover.cpp,
+	EQ.h,
+	EQ.cpp,
+	Effect.h,
+	EffectChain.h,
+	Gain.h,
+	Gain.cpp,
+	GainNormalization.h,
+	GainNormalization.cpp,
+	Limiter.h,
+	Limiter.cpp,
 	PresetManager.h,
 	PresetManager.cpp,
 	Modulation.h,
 	Modulation.cpp,
+	SpatialDSP.h,
+	SpatialDSP.cpp,
+	SpatialDSPAdditional.cpp,
+	Splitter.h,
+	Splitter.cpp,
 	UI/RackView.h,
 	UI/RackView.cpp,
 	UI/SceneManager.h,
 	UI/SceneManager.cpp,
 	UI/XYPad.h,
-	UI/XYPad.cpp;
+	UI/XYPad.cpp,
+	ZenCoreCatalogue.h,
+	ZenCoreCatalogue.cpp;
 
 mainconfig
 	"Standalone" = "GUI",
 	"Headless" = "!GUI";
-

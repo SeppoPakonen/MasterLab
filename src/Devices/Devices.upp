@@ -19,13 +19,13 @@ file
 	ReWireHost.cpp,
 	VideoDevice.h,
 	VideoDevice.cpp,
-	IOMatrixService.h,
-	IOMatrixService.cpp,
 	CuteAudioConnect.h,
 	CuteAudioConnect.cpp,
 	CuteMidiConnect.h,
 	CuteMidiConnect.cpp,
 	CuteNsmClient.h,
-	CuteNsmClient.cpp;
+	CuteNsmClient.cpp,
+	Calibration.h,
+	Calibration.cpp;
 
 mainconfig "Standalone" = "GUI", "Headless" = "!GUI";

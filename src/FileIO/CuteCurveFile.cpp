@@ -8,9 +8,9 @@ bool CuteCurveFile::Load(const String& path) {
     if (!in)
         return false;
 
-    String line;
     int current_index = -1;
-    while (in.GetLine(line)) {
+    while (!in.IsEof()) {
+        String line = in.GetLine();
         if (line.StartsWith("point")) {
             current_index = ScanInt(line.Mid(5));
             if (current_index >= 0)

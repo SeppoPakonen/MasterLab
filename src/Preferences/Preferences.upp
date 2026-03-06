@@ -13,6 +13,7 @@ uses
 	TransportPrefs;
 
 file
+	AGENTS.md,
 	Preferences.h,
 	Preferences.cpp,
 	KeyCommands.h,

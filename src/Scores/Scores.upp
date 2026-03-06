@@ -6,6 +6,7 @@ uses
 	Editors;
 
 file
+	AGENTS.md,
 	Scores.h,
 	Scores.cpp,
 	LayoutEngine.h,

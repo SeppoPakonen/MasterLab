@@ -5,6 +5,7 @@ uses
 	Editors;
 
 file
+	AGENTS.md,
 	Tooling.h,
 	Tooling.cpp,
 	AudioAtomic.h,

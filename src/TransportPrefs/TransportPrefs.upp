@@ -4,5 +4,6 @@ uses
 	AudioCore;
 
 file
+	AGENTS.md,
 	TransportPrefs.h,
 	TransportPrefs.cpp;

@@ -8,6 +8,7 @@ uses
 	TransportUI;
 
 file
+	AGENTS.md,
 	MIDI.h,
 	MIDI.cpp,
 	Groove.h,
