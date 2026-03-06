@@ -16,8 +16,6 @@
 // Include MLT types before our shims to avoid redefinitions
 #include <framework/mlt_types.h>
 
-using namespace Upp;
-
 // specialization for std::hash<Upp::String> to support std::unordered_map
 namespace std {
     template<> struct hash<Upp::String> {
@@ -44,10 +42,10 @@ namespace std {
 #define Q_UNUSED(x) (void)x
 #define Q_ASSERT(x) ASSERT(x)
 
-typedef int64 qint64;
-typedef int16 qint16;
+typedef Upp::int64 qint64;
+typedef Upp::int16 qint16;
 
-typedef String QString;
+typedef Upp::String QString;
 
 // QVector/QList wrapper forward decl
 template <typename T> class QListWrapper;
@@ -65,7 +63,7 @@ struct QString_ {
 
 typedef double qreal;
 typedef QString QUrl;
-typedef String QByteArray;
+typedef Upp::String QByteArray;
 template <typename T1, typename T2> using QPair = std::pair<T1, T2>;
 template <typename K, typename V> using QMap = Upp::VectorMap<K, V>;
 
@@ -145,7 +143,7 @@ typedef QListWrapper<QVariant> QVariantList;
 
 inline QStringList QString_::split(const QString& s, const QString& sep) {
     QStringList res;
-    Vector<String> parts = Upp::Split(s, (String)sep);
+    Upp::Vector<Upp::String> parts = Upp::Split(s, (Upp::String)sep);
     for(const auto& x : parts) res.Add(x);
     return res;
 }
@@ -301,12 +299,11 @@ class QFileInfo {
 public:
     QFileInfo(const QString&) {}
     bool exists() const { return true; }
-    QString absoluteFilePath() const { return ""; }
+    Upp::String absoluteFilePath() const { return ""; }
 };
 
 class QDomElement { public: QString tagName() const { return ""; } };
 class QDomDocument {};
-#include "abstractmodel/Treeitem.hpp"
 typedef Upp::String QIcon;
 
 class QIODevice : public QObject {
@@ -378,11 +375,11 @@ public:
     void start() {}
     qint64 elapsed() const { return 0; }
 };
-class QMutexLocker { public: QMutexLocker(QMutex*) {} };
+class QMutexLocker { public: QMutexLocker(Upp::Mutex*) {} };
 
 inline qreal IEC_ScaleMax(qreal v, int) { return v; }
-#define i18n(x, ...) String(x)
-#define i18nc(c, x) String(x)
+#define i18n(x, ...) Upp::String(x)
+#define i18nc(c, x) Upp::String(x)
 
 namespace QAudio {
     enum VolumeScale { LogarithmicVolumeScale, LinearVolumeScale };
@@ -411,9 +408,9 @@ public:
     QDir(const QString& = "") {}
     bool exists() const { return true; }
     void mkpath(const QString&) {}
-    QString absoluteFilePath(const QString& s) const { return s; }
+    Upp::String absoluteFilePath(const QString& s) const { return s; }
     static QDir temp() { return QDir(); }
-    static String separator() { return "/"; }
+    static Upp::String separator() { return "/"; }
 };
 
 class SharedFrame {};

@@ -1,84 +1,56 @@
-// Converted from tmp/k/src/dialogs/subtitleedit.h
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2020 Jean-Baptiste Mardelle
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-#pragma once
+#ifndef _Cool_dialogs_SubtitleEdit_h_
+#define _Cool_dialogs_SubtitleEdit_h_
 
-// #include "ui_editsub_ui.h"
+#include <CtrlLib/CtrlLib.h>
+#include "../Definitions.h"
+#include "../utils/Gentime.h"
+
+NAMESPACE_UPP
 
 class SubtitleModel;
 class TimecodeDisplay;
 
-class SimpleEditorEventFilter : public QObject
-{
-    Q_OBJECT
+class SubtitleEdit : public ParentCtrl {
 public:
-    explicit SimpleEditorEventFilter(QObject *parent = nullptr);
+    typedef SubtitleEdit CLASSNAME;
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
-Q_SIGNALS:
-    void singleKeyPress(QKeyEvent *event);
-    void inputMethod(QInputMethodEvent *event);
-    void shortCut(QKeyEvent *event);
-    void triggerUpdate();
-};
+    SubtitleEdit();
+    virtual ~SubtitleEdit();
 
-/**
- * @class SubtitleEdit: Subtitle edit widget
- * @brief A dialog for editing markers and guides.
- * @author Jean-Baptiste Mardelle
- */
-class SubtitleEdit : public QWidget, public Ui::SubEdit_UI
-{
-    Q_OBJECT
+    void SetModel(std::shared_ptr<SubtitleModel> model);
+    void SetActiveSubtitle(int id);
 
-public:
-    explicit SubtitleEdit(QWidget *parent = nullptr);
-    void setModel(std::shared_ptr<SubtitleModel> model);
-
-public Q_SLOTS:
-    void setActiveSubtitle(int id);
-
-private Q_SLOTS:
-    void updateSubtitle();
-    void goToPrevious();
-    void goToNext();
-    void slotZoomIn();
-    void slotZoomOut();
-    /** @brief Sync simpleSubText with subText */
-    void syncSimpleText();
-    void slotToggleBold();
-    void slotToggleItalic();
-    void slotToggleUnderline();
-    void slotToggleStrikeOut();
-    void slotSelectFont();
-    void slotResetStyle();
-    void slotSetPosition();
+    // Callbacks for owner
+    std::function<void(const String&)> WhenAddSubtitle;
+    std::function<void(int, int)>      WhenCutSubtitle;
 
 private:
-    std::shared_ptr<SubtitleModel> m_model;
-    int m_activeSub{-1};
-    int m_layer;
-    bool m_isSimpleEdit{false};
-    /** @brief A list as the pos, original length and simplified length of each
-     *  override block and escape sequences. This is used to sync the cursor position
-     */
-    std::vector<std::pair<int, std::pair<int, int>>> m_offsets;
-    GenTime m_startPos;
-    GenTime m_endPos;
+    std::shared_ptr<SubtitleModel> model;
+    int active_sub = -1;
+    int layer;
+    bool is_simple_edit = false;
+    
+    GenTime start_pos;
+    GenTime end_pos;
 
-    void updateCharInfo();
-    void applyFontSize();
-    void updateEffects();
-    void updateOffset();
-
-Q_SIGNALS:
-    void addSubtitle(const QString &);
-    void cutSubtitle(int id, int cursorPos);
-    void showSubtitleManager(int page);
+    // UI Components
+    DocEdit  sub_text;
+    ToolBar  tool_bar;
+    
+    // Logic
+    void UpdateSubtitle();
+    void GoToPrevious();
+    void GoToNext();
+    void SyncSimpleText();
+    
+    void BuildUI();
 };
+
+END_UPP_NAMESPACE
+
+#endif

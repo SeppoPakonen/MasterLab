@@ -6,6 +6,7 @@
 #ifndef _Cool_MixerManager_h_
 #define _Cool_MixerManager_h_
 
+#include <CtrlLib/CtrlLib.h>
 #include "../Definitions.h"
 
 namespace Mlt {
