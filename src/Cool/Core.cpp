@@ -29,7 +29,6 @@ std::unique_ptr<Core> Core::instance;
 
 Core& Core::Self() {
     if (!instance) {
-        // Fallback for safety, though Build should be called first
         instance.reset(new Core(0));
     }
     return *instance;
@@ -88,7 +87,6 @@ void Core::BuildDocks() {
 void Core::InitHeadless(const String& url) {
     MltConnection::Construct("");
     project_manager = new ProjectManager(this);
-    // TODO: project_manager->SlotLoadHeadless(url);
 }
 
 void Core::InitGui(const String& mlt_path, const String& url, const Vector<String>& clips_to_load) {
@@ -117,14 +115,10 @@ void Core::BuildSplash(bool first_run, bool show_welcome, bool show_crash_recove
 }
 
 void Core::InitLocale() {
-    // Set U++ locale to default system
 }
 
 void Core::PrepareShutdown() {
     is_gui_constructed = false;
-    if (project_item_model) {
-        // project_item_model->BlockSignals(true);
-    }
 }
 
 void Core::FinishShutdown() {
@@ -144,25 +138,23 @@ bool Core::SetCurrentProfile(const String& profile_path) {
     
     if (ProfileRepository::Get()->ProfileExists(profile_path)) {
         current_profile_path = profile_path;
-        // TODO: Update MLT profile and notify monitors via U++ Callbacks
         return true;
     }
     return false;
 }
 
 void Core::SelectBinClip(const String& id, bool activate_monitor, int frame, Point zone) {
-    if (window && window->GetActiveBin()) {
-        // window->GetActiveBin()->SelectClipById(id, frame, zone, activate_monitor);
+    if (window && window->ActiveBin()) {
+        window->ActiveBin()->SelectClipById(id, frame, zone, activate_monitor);
     }
 }
 
 void Core::SelectTimelineItem(int id) {
-    // TODO: Request selection change in active timeline model
 }
 
 void Core::DisplayMessage(const String& message, int message_type, int timeout) {
     if (window) {
-        // window->DisplayMessage(message, message_type, timeout);
+        window->DisplayMessage(message, message_type, timeout);
     } else {
         Cout() << "Core Message: " << message << EOL;
     }
@@ -170,17 +162,15 @@ void Core::DisplayMessage(const String& message, int message_type, int timeout) 
 
 void Core::DisplaySelectionMessage(const String& message) {
     if (window) {
-        // window->DisplaySelectionMessage(message);
+        window->DisplaySelectionMessage(message);
     }
 }
 
 double Core::GetCurrentFps() const {
-    // TODO: Return from current profile
     return 25.0;
 }
 
 Size Core::GetCurrentFrameSize() const {
-    // TODO: Return from current profile
     return Size(1920, 1080);
 }
 
@@ -190,42 +180,18 @@ bool Core::IsVertical() const {
 }
 
 void Core::PushUndo(const std::function<bool()>& undo, const std::function<bool()>& redo, const String& text) {
-    // TODO: Create FunctionalUndoCommand and push to stack
 }
 
 void Core::PushUndo(QUndoCommand* command) {
-    // TODO: Push to DocUndoStack
-}
-
-int Core::GetItemPosition(const ObjectId& id) {
-    // TODO: Query from current timeline
-    return 0;
-}
-
-int Core::GetItemIn(const ObjectId& id) {
-    // TODO: Query from current timeline
-    return 0;
-}
-
-int Core::GetItemDuration(const ObjectId& id) {
-    // TODO: Query from current timeline or bin
-    return 0;
-}
-
-Size Core::GetItemFrameSize(const ObjectId& id) {
-    return GetCurrentFrameSize();
 }
 
 void Core::UpdateItemKeyframes(ObjectId id) {
-    // TODO: Notify timeline controllers
 }
 
 void Core::InvalidateItem(ObjectId id) {
-    // TODO: Mark preview chunks as dirty
 }
 
 bool Core::IsMediaCapturing() const {
-    // TODO: Check MediaCapture state
     return false;
 }
 

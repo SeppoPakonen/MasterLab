@@ -14,6 +14,14 @@ U++ Conversion: 2026 MasterLab Team
 #include "Undohelper.hpp"
 #include "utils/Timecode.h"
 
+namespace Mlt {
+    class Repository;
+    class Producer;
+    class Profile;
+}
+
+NAMESPACE_UPP
+
 // Forward declarations for U++ converted classes
 class Bin;
 class DocUndoStack;
@@ -36,14 +44,6 @@ class TextBasedEdit;
 class GuidesList;
 class KeyframeModelList;
 class TimeRemap;
-
-namespace Mlt {
-    class Repository;
-    class Producer;
-    class Profile;
-}
-
-NAMESPACE_UPP
 
 #undef pCore
 #define pCore Core::Self()
@@ -76,6 +76,8 @@ public:
     void PrepareShutdown();
     void FinishShutdown();
 
+    void BuildDocks();
+
     // Accessors
     MainWindow*     GetWindow() { return window; }
     ProjectManager* GetProjectManager() { return project_manager; }
@@ -102,7 +104,7 @@ public:
     Size   GetCurrentFrameSize() const;
     
     // MLT Integration
-    std::unique_ptr<Mlt::Repository>& GetMltRepository();
+    std::unique_ptr<::Mlt::Repository>& GetMltRepository();
     ::Mlt::Profile& GetProjectProfile();
     
     // Logic

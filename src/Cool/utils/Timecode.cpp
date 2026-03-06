@@ -16,7 +16,6 @@ Timecode::~Timecode() {}
 
 void Timecode::SetFormat(double frames_per_second, Formats format_) {
     displayed_frames_per_second = (int)round(frames_per_second);
-    // Drop frame is usually for 29.97, 59.94, etc
     drop_frame_timecode = (abs(frames_per_second - 30000.0 / 1001.0) < 0.001);
     format = format_;
     real_fps = frames_per_second;
@@ -51,8 +50,8 @@ String Timecode::GetTimecode(const GenTime& time) const {
 int Timecode::GetFrameCount(const String& duration) const {
     if (duration.IsEmpty()) return 0;
     
-    // Simplified parsing logic for "HH:MM:SS:FF" or "HH:MM:SS,FF"
-    Vector<String> parts = Split(duration, [](int c) { return c == ':' || c == ',' || c == '.'; });
+    // U++ Split with multiple delimiters
+    Vector<String> parts = Split(duration, ":,.");
     if (parts.GetCount() < 3) return 0;
     
     int hours = StrInt(parts[0]);
@@ -101,7 +100,12 @@ const String Timecode::GetTimecodeFromFrames(int frames) const {
 
 const String Timecode::GetMask(const GenTime& t) const {
     String m = (real_fps > 100) ? "99:99:99:999" : "99:99:99:99";
-    if (drop_frame_timecode) m.Replace(":", ",");
+    if (drop_frame_timecode) {
+        // String::Replace is void, so we must use a temporary or multiple steps
+        String res = m;
+        res.Replace(":", ",");
+        m = res;
+    }
     if (t.Seconds() < 0) return "#" + m;
     return m;
 }
@@ -146,7 +150,6 @@ String Timecode::FormatMarkerDuration(int frames, double fps) {
 }
 
 String Timecode::ScaleTimecode(String timecode, double source_fps, double target_fps) {
-    // Basic scaling logic: convert to frames and back
     Timecode src(HH_MM_SS_FF, source_fps);
     Timecode dst(HH_MM_SS_FF, target_fps);
     return dst.GetTimecodeFromFrames(src.GetFrameCount(timecode));
@@ -177,8 +180,9 @@ const String Timecode::GetTimecodeSeconds(const GenTime& time) const {
 }
 
 const String Timecode::GetTimecodeDropFrame(int frames) const {
-    // Placeholder for real drop frame formatting logic
-    return GetTimecodeFromFrames(frames).Replace(":", ",");
+    String res = GetTimecodeFromFrames(frames);
+    res.Replace(":", ",");
+    return res;
 }
 
 END_UPP_NAMESPACE

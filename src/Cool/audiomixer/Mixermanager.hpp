@@ -22,7 +22,7 @@ class MixerManager : public ParentCtrl {
 public:
     typedef MixerManager CLASSNAME;
 
-    MixerManager();
+    MixerManager(MainWindow* parent = nullptr);
     virtual ~MixerManager();
 
     // Track management
@@ -51,7 +51,6 @@ private:
     std::unordered_map<int, std::shared_ptr<MixerWidget>> mixers;
     std::shared_ptr<MixerWidget> master_mixer;
     
-    std::shared_ptr<::Mlt::Tractor> master_service;
     std::shared_ptr<TimelineItemModel> model;
     
     bool is_visible_mixer_manager = false;
