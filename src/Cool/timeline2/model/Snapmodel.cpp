@@ -1,144 +1,82 @@
-#include "../../Cool.h"
-#if 0
-
-// Converted from tmp/k/src/timeline2/model/snapmodel.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
-// #include "snapmodel.hpp"
-// #include <QDebug>
-// #include <climits>
-// #include <cstdlib>
 
-SnapInterface::SnapInterface() = default;
-SnapInterface::~SnapInterface() = default;
+#include "Snapmodel.hpp"
+#include <climits>
+#include <cstdlib>
 
-SnapModel::SnapModel() = default;
+NAMESPACE_UPP
 
-void SnapModel::addPoint(int position)
-{
-    if (m_snaps.count(position) == 0) {
-        m_snaps[position] = 1;
+SnapModel::SnapModel() {
+}
+
+SnapModel::~SnapModel() {
+}
+
+void SnapModel::AddPoint(int position) {
+    int idx = snaps.Find(position);
+    if (idx < 0) {
+        snaps.Add(position, 1);
     } else {
-        m_snaps[position]++;
+        snaps[idx]++;
     }
 }
 
-void SnapModel::removePoint(int position)
-{
-    Q_ASSERT(m_snaps.count(position) > 0);
-    if (m_snaps[position] == 1) {
-        m_snaps.erase(position);
-    } else {
-        m_snaps[position]--;
-    }
-}
-
-int SnapModel::getClosestPoint(int position)
-{
-    if (m_snaps.empty()) {
-        return -1;
-    }
-    auto it = m_snaps.lower_bound(position);
-    long long int prev = INT_MIN, next = INT_MAX;
-    if (it != m_snaps.end()) {
-        next = (*it).first;
-    }
-    if (it != m_snaps.begin()) {
-        --it;
-        prev = (*it).first;
-    }
-    if (std::llabs(position - prev) < std::llabs(position - next)) {
-        return int(prev);
-    }
-    return int(next);
-}
-
-int SnapModel::getNextPoint(int position)
-{
-    if (m_snaps.empty()) {
-        return position;
-    }
-    auto it = m_snaps.lower_bound(position + 1);
-    long long int next = position;
-    if (it != m_snaps.end()) {
-        next = (*it).first;
-    }
-    return int(next);
-}
-
-int SnapModel::getPreviousPoint(int position)
-{
-    if (m_snaps.empty()) {
-        return 0;
-    }
-    auto it = m_snaps.lower_bound(position);
-    long long int prev = 0;
-    if (it != m_snaps.begin()) {
-        --it;
-        prev = (*it).first;
-    }
-    return int(prev);
-}
-
-void SnapModel::ignore(const std::vector<int> &pts)
-{
-    for (int pt : pts) {
-        removePoint(pt);
-        m_ignore.push_back(pt);
-    }
-}
-
-void SnapModel::unIgnore()
-{
-    for (const auto &pt : m_ignore) {
-        addPoint(pt);
-    }
-    m_ignore.clear();
-}
-
-int SnapModel::proposeSize(int in, int out, int size, bool right, int maxSnapDist)
-{
-    ignore({in, out});
-    int proposed_size = -1;
-    if (right) {
-        int target_pos = in + size - 1;
-        int snapped_pos = getClosestPoint(target_pos);
-        if (snapped_pos != -1 && qAbs(target_pos - snapped_pos) <= maxSnapDist) {
-            proposed_size = snapped_pos - in;
-        }
-    } else {
-        int target_pos = out + 1 - size;
-        int snapped_pos = getClosestPoint(target_pos);
-        if (snapped_pos != -1 && qAbs(target_pos - snapped_pos) <= maxSnapDist) {
-            proposed_size = out - snapped_pos;
+void SnapModel::RemovePoint(int position) {
+    int idx = snaps.Find(position);
+    if (idx >= 0) {
+        if (snaps[idx] <= 1) {
+            snaps.Remove(idx);
+        } else {
+            snaps[idx]--;
         }
     }
-    unIgnore();
-    return proposed_size;
 }
 
-int SnapModel::proposeSize(int in, int out, const std::vector<int> &boundaries, int size, bool right, int maxSnapDist)
-{
-    ignore(boundaries);
-    int proposed_size = -1;
-    if (right) {
-        int target_pos = in + size - 1;
-        int snapped_pos = getClosestPoint(target_pos);
-        if (snapped_pos != -1 && qAbs(target_pos - snapped_pos) <= maxSnapDist) {
-            proposed_size = snapped_pos - in;
-        }
-    } else {
-        int target_pos = out + 1 - size;
-        int snapped_pos = getClosestPoint(target_pos);
-        if (snapped_pos != -1 && qAbs(target_pos - snapped_pos) <= maxSnapDist) {
-            proposed_size = out - snapped_pos;
-        }
+int SnapModel::GetClosestPoint(int position) const {
+    if (snaps.IsEmpty()) return -1;
+    
+    int idx = snaps.FindLowerBound(position);
+    int prev = (idx > 0) ? snaps.GetKey(idx - 1) : -1;
+    int next = (idx < snaps.GetCount()) ? snaps.GetKey(idx) : -1;
+    
+    if (prev == -1) return next;
+    if (next == -1) return prev;
+    
+    if (abs(position - prev) < abs(position - next)) {
+        return prev;
     }
-    unIgnore();
-    return proposed_size;
+    return next;
 }
-#endif
+
+int SnapModel::GetNextPoint(int position) const {
+    if (snaps.IsEmpty()) return position;
+    
+    int idx = snaps.FindLowerBound(position + 1);
+    return (idx < snaps.GetCount()) ? snaps.GetKey(idx) : position;
+}
+
+int SnapModel::GetPreviousPoint(int position) const {
+    if (snaps.IsEmpty()) return 0;
+    
+    int idx = snaps.FindLowerBound(position);
+    return (idx > 0) ? snaps.GetKey(idx - 1) : 0;
+}
+
+void SnapModel::Ignore(const Vector<int>& points) {
+    ignored_points <<= points;
+    for (int pt : points) {
+        RemovePoint(pt);
+    }
+}
+
+void SnapModel::UnIgnore() {
+    for (int pt : ignored_points) {
+        AddPoint(pt);
+    }
+    ignored_points.Clear();
+}
+
+END_UPP_NAMESPACE
