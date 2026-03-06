@@ -28,7 +28,7 @@ class VideoWidget;
 class MonitorAudioLevel;
 class MarkerSortModel;
 
-class Monitor : public AbstractMonitor, public ParentCtrl {
+class Monitor : public AbstractMonitor {
 public:
     typedef Monitor CLASSNAME;
 
@@ -63,15 +63,16 @@ public:
     double GetFps() const;
     Size   GetProfileSize() const;
 
-    // Monitor Operations
+    // Monitor Operations Implementation
+    virtual void Mute(bool mute) override;
     virtual void Stop() override;
     virtual void Start() override;
     virtual void Play() override;
-    void Pause();
-    void Mute(bool m) override;
-    
-    void Seek(int pos);
-    void RefreshMonitor(bool visible);
+    virtual void Rewind(double speed = 0) override;
+    virtual void Forward(double speed = 0, bool allow_normal_play = false) override;
+    virtual void RefreshMonitorIfActive(bool direct_update = false) override;
+    virtual void MouseSeek(int event_delta, int modifiers) override;
+    virtual void SwitchFullScreen(bool minimize_only = false) override;
 
     // Callbacks for owner
     std::function<void(int)> WhenSeek;
@@ -90,6 +91,7 @@ private:
     
     std::shared_ptr<ProjectClip> controller;
     VideoWidget* video_widget = nullptr;
+    ToolBar      tool_bar;
     
     int position = 0;
     int length = 0;

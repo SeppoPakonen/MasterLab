@@ -49,7 +49,7 @@ bool MarkerSortModel::IsAccepted(int frame, const CommentedTime& marker) const {
     return true;
 }
 
-Vector<int> MarkerSortModel::GetIgnoredSnapPoints() const {
+const Vector<int>& MarkerSortModel::GetIgnoredSnapPoints() const {
     return ignored_positions;
 }
 

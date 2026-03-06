@@ -27,7 +27,7 @@ public:
     void SetSortColumn(int column, bool descending = false);
 
     bool IsAccepted(int frame, const CommentedTime& marker) const;
-    Vector<int> GetIgnoredSnapPoints() const;
+    const Vector<int>& GetIgnoredSnapPoints() const;
 
 private:
     Vector<int> filter_categories;

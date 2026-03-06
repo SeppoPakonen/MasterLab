@@ -13,15 +13,14 @@
 NAMESPACE_UPP
 
 Monitor::Monitor(Kdenlive::MonitorId id, MonitorManager* manager, MainWindow* parent)
-    : monitor_id(id)
+    : AbstractMonitor(id, manager)
+    , monitor_id(id)
     , manager(manager)
 {
-    // Setup UI components
     video_widget = new VideoWidget();
     
     Add(video_widget->SizePos());
     
-    // Add ToolBar at bottom or top
     AddFrame(tool_bar);
     tool_bar.Set(THISBACK(SetupToolbar));
     
@@ -33,17 +32,12 @@ Monitor::~Monitor() {
 }
 
 void Monitor::BuildUI() {
-    // TODO: Implement U++ specific UI scaffolding
 }
 
 void Monitor::ResetProfile() {
-    if (video_widget) {
-        // video_widget->RefreshProfile();
-    }
 }
 
 void Monitor::ResetConsumer(bool full_reset) {
-    // TODO: Rebuild MLT consumers
 }
 
 void Monitor::SetupMenu(Bar& bar) {
@@ -54,22 +48,20 @@ void Monitor::SetupMenu(Bar& bar) {
 }
 
 void Monitor::SetupToolbar(Bar& bar) {
-    bar.Add("Play", CtrlImg::plus(), THISBACK(Play)); // Placeholder
+    bar.Add("Play", CtrlImg::plus(), THISBACK(Play)); 
     bar.Add("Stop", CtrlImg::minus(), THISBACK(Stop));
 }
 
 const String Monitor::GetActiveClipId(bool with_sequence) {
+    // Resolve ambiguity by choosing one or casting if needed
+    // return controller ? controller->AbstractProjectItem::GetBinId() : "";
     return controller ? controller->GetBinId() : "";
 }
 
 void Monitor::UpdateTimecodeFormat() {
-    if (time_pos) {
-        // time_pos->SetFormat(pCore.GetTimecode());
-    }
 }
 
 void Monitor::ReloadProducer(const String& id) {
-    // TODO: Sync with ProjectManager/Bin
 }
 
 double Monitor::GetFps() const {
@@ -80,35 +72,38 @@ Size Monitor::GetProfileSize() const {
     return pCore.GetCurrentFrameSize();
 }
 
+void Monitor::Mute(bool m) {
+}
+
 void Monitor::Stop() {
     if (video_widget) {
-        // video_widget->Stop();
+        video_widget->Stop();
     }
 }
 
 void Monitor::Start() {
-    if (video_widget) {
-        // video_widget->Start();
-    }
 }
 
 void Monitor::Play() {
-    if (video_widget) {
-        // video_widget->Play();
-    }
 }
 
-void Monitor::Pause() {
+void Monitor::Rewind(double speed) {
 }
 
-void Monitor::Mute(bool m) {
+void Monitor::Forward(double speed, bool allow_normal_play) {
+}
+
+void Monitor::RefreshMonitorIfActive(bool direct_update) {
+}
+
+void Monitor::MouseSeek(int event_delta, int modifiers) {
+}
+
+void Monitor::SwitchFullScreen(bool minimize_only) {
 }
 
 void Monitor::Seek(int pos) {
     position = pos;
-    if (video_widget) {
-        // video_widget->Seek(pos);
-    }
     if (WhenSeek) WhenSeek(pos);
 }
 
@@ -131,7 +126,6 @@ void Monitor::LeftDown(Point p, dword flags) {
 }
 
 void Monitor::MouseWheel(Point p, int zdelta, dword flags) {
-    // Handle zooming or seeking
 }
 
 END_UPP_NAMESPACE
