@@ -1,58 +1,42 @@
-// Converted from tmp/k/src/mltconnection.h
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
 SPDX-FileCopyrightText: 2014 Till Theato <root@ttill.de>
 SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+U++ Conversion: 2026 MasterLab Team
 */
 
-#pragma once
+#ifndef _Cool_MltConnection_h_
+#define _Cool_MltConnection_h_
 
-// #include <QString>
-// #include <memory>
+#include <Core/Core.h>
+
+NAMESPACE_UPP
 
 namespace Mlt {
-class Repository;
+    class Repository;
 }
 
-/** @class MltConnection
-    @brief Initializes MLT and provides access to its API.
-    This is where the Mlt Factory is initialized, as well as the producers
- */
-class MltConnection
-{
-
+class MltConnection {
 public:
-    /** @brief Open connection to the MLT framework
-     */
-    static void construct(const QString &mltPath);
-
-    /** @brief Returns a pointer to the MLT Repository*/
-    std::unique_ptr<Mlt::Repository> &getMltRepository();
-
-    /** @brief Returns a pointer to the instance of the singleton */
-    static std::unique_ptr<MltConnection> &self();
-
-    /** @brief Updates the list of available Lumas
-     */
-    static void refreshLumas();
+    // Singleton management
+    static void Construct(const String& mlt_path);
+    static MltConnection& Self();
+    
+    // MLT accessors
+    std::unique_ptr<Mlt::Repository>& GetMltRepository() { return repository; }
+    
+    // Logic
+    static void RefreshLumas();
 
 protected:
-    /** @brief Open connection to the MLT framework
-        This constructor should be called only once
-    */
-    MltConnection(const QString &mltPath);
+    MltConnection(const String& mlt_path);
+    
+    void LocateMeltAndProfilesPath(const String& mlt_path = "");
 
-    /** @brief Locates the MLT environment.
-     * @param mltPath (optional) path to MLT environment
-     *
-     * It tries to set the paths of the MLT profiles and renderer, using
-     * mltPath, MLT_PREFIX, searching for the binary `melt`, or asking to the
-     * user. It doesn't fill any list of profiles, while its name suggests so. */
-    void locateMeltAndProfilesPath(const QString &mltPath = QString());
-
-    static std::unique_ptr<MltConnection> m_self;
-
-    /** @brief The MLT repository, useful for filter/producer requests */
-    std::unique_ptr<Mlt::Repository> m_repository;
+private:
+    static std::unique_ptr<MltConnection> instance;
+    std::unique_ptr<Mlt::Repository> repository;
 };
+
+END_UPP_NAMESPACE
+
+#endif

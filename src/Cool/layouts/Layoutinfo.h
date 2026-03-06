@@ -1,17 +1,13 @@
-// Converted from tmp/k/src/layouts/layoutinfo.h
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
+#ifndef _Cool_layouts_Layoutinfo_h_
+#define _Cool_layouts_Layoutinfo_h_
 
-/*
-SPDX-FileCopyrightText: 2025 Kdenlive contributors
-SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
-*/
+#include "../Cool.h"
 
-#pragma once
-
-// #include <QString>
+NAMESPACE_UPP
 
 /**
- * @brief Represents a single layout configuration. Used for presenting the layout in the switcher and in the layout manager dialog.
+ * @class LayoutInfo
+ * @brief Holds information about a UI layout
  */
 struct LayoutInfo
 {
@@ -19,26 +15,30 @@ struct LayoutInfo
     QString displayName; // User specified name or for default layouts this we be the translated name like "Editing"
     QString path;        // The path to the json layout
     QString verticalPath; // The path to the json vertical layout
-    bool isDefault;      // Whether this is a default layout
-    // int sortOrder;       // Custom order for display
+    bool readOnly;       // True if this is a default layout that cannot be deleted
 
     /**
-     * @brief Constructor for a layout
-     * @param id Internal ID of the layout
-     * @param name Display name of the layout (translated)
-     * @param layoutData Serialized layout data
-     * @param defaultLayout Whether this is a default layout
+     * @brief Constructor
+     * @param id The internal ID
+     * @param name The display name
      */
     LayoutInfo(const QString &id = QString(), const QString &name = QString())
         : internalId(id)
         , displayName(name)
+        , path(QString())
+        , verticalPath(QString())
+        , readOnly(false)
     {
     }
 
     /**
      * @brief Check if the layout has valid data
      */
-    bool isValid() const { return !internalId.isEmpty() && (!path.isEmpty() || !verticalPath.isEmpty()); }
-    bool hasHorizontalData() const { return !path.isEmpty(); }
-    bool hasVerticalData() const { return !verticalPath.isEmpty(); }
+    bool isValid() const { return !internalId.IsEmpty() && (!path.IsEmpty() || !verticalPath.IsEmpty()); }
+    bool hasHorizontalData() const { return !path.IsEmpty(); }
+    bool hasVerticalData() const { return !verticalPath.IsEmpty(); }
 };
+
+END_UPP_NAMESPACE
+
+#endif

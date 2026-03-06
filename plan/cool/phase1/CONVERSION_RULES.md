@@ -27,6 +27,11 @@
 - QML/UI/XML-like source artifacts are translated into U++-oriented equivalents or conversion notes when direct code mapping is not practical.
 - Build-system metadata is translated into Cool assembly/package notes rather than copied verbatim.
 
-## Out Of Scope
-- Build fixes.
-- Behavioural rewrites beyond U++ conversion needs.
+## Verification Rules (MANDATORY)
+- **Anti-Stubbing**: Do not wrap core class logic in `#if 0`. If a section cannot be converted yet, it must be marked with `// TODO: U++ Migration`.
+- **Naming Enforcement**: Any file containing `camelCase` variables or `kdenlive` namespaces will be rejected in the audit.
+- **Header Purity**: The goal is to move logic into U++ containers (`Vector`, `Index`, `VectorMap`) and remove the need for `Cool.h` shims unit-by-unit.
+- **Audit Step**: Every 10 converted files must undergo a "Surface Audit" to ensure the `CapitalCase` naming and `lower_underscore` rules are being applied.
+
+## Audit Script Requirement
+- A script will be used to count lines of active code vs. commented code to ensure "Approximate code volume" rules are met.

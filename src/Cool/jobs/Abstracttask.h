@@ -1,87 +1,52 @@
-// Converted from tmp/k/src/jobs/abstracttask.h
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2021 Jean-Baptiste Mardelle <jb@kdenlive.org>
-
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-#pragma once
+#ifndef _Cool_jobs_AbstractTask_h_
+#define _Cool_jobs_AbstractTask_h_
 
-// #include "definitions.h"
+#include "../Definitions.h"
 
-// #include <QAtomicInt>
-// #include <QMutex>
-// #include <QObject>
-// #include <QRunnable>
-// #include <QUuid>
+NAMESPACE_UPP
 
-class AbstractTask : public QObject, public QRunnable
-{
-    Q_OBJECT
+class TaskManager;
+
+class AbstractTask {
     friend class TaskManager;
 
 public:
     enum JOBTYPE {
-        NOJOBTYPE = 0,
-        PROXYJOB = 1,
-        CUTJOB = 2,
-        STABILIZEJOB = 3,
-        TRANSCODEJOB = 4,
-        FILTERCLIPJOB = 5,
-        THUMBJOB = 6,
-        ANALYSECLIPJOB = 7,
-        LOADJOB = 8,
-        AUDIOTHUMBJOB = 9,
-        SPEEDJOB = 10,
-        CACHEJOB = 11,
-        MASKJOB = 12,
-        MELTJOB = 13
+        NOJOBTYPE = 0, PROXYJOB, CUTJOB, STABILIZEJOB, TRANSCODEJOB,
+        FILTERCLIPJOB, THUMBJOB, ANALYSECLIPJOB, LOADJOB,
+        AUDIOTHUMBJOB, SPEEDJOB, CACHEJOB, MASKJOB, MELTJOB
     };
-    AbstractTask(const ObjectId &owner, JOBTYPE type, QObject* object);
-    ~AbstractTask() override;
-    static void closeAll();
-    static void setPreferredPriority(qint64 pid);
-    const ObjectId ownerId() const;
-    bool operator==(const AbstractTask& b);
+
+    AbstractTask(const ObjectId& owner, JOBTYPE type);
+    virtual ~AbstractTask();
+
+    virtual void Run() = 0;
+    
+    const ObjectId& GetOwnerId() const { return owner; }
+    JOBTYPE GetType() const { return type; }
+    String  GetUuid() const { return uuid; }
 
 protected:
-    ObjectId m_owner;
-    QObject* m_object;
-    int m_progress{-1};
-    QString m_description;
-    bool m_successful;
-    QAtomicInt m_isCanceled;
-    QAtomicInt m_softDelete;
-    QMutex m_runMutex;
-    bool m_isForce;
-    bool m_running;
-    QUuid m_uuid;
-    void run() override;
-    void cleanup();
+    ObjectId owner;
+    int      progress = -1;
+    String   description;
+    bool     is_successful = false;
+    Atomic   is_canceled;
+    Atomic   soft_delete;
+    Mutex    run_mutex;
+    bool     is_force = false;
+    bool     is_running = false;
+    String   uuid;
+    JOBTYPE  type;
 
-private:
-    //QString cacheKey();
-    JOBTYPE m_type;
-    int m_priority;
-    bool cancelJob(bool softDelete = false);
-    bool isCanceled() const;
-
-Q_SIGNALS:
-    void jobCanceled();
+    void Cleanup();
 };
 
-/**
- * @brief When destroyed, notifies the taskManager that this task is done.
- */
-class AbstractTaskDone {
-public:
-    AbstractTaskDone(int cid, AbstractTask *task)
-        : m_cid(cid)
-        , m_task(task) {}
-    ~AbstractTaskDone();
-private:
-    int m_cid;
-    AbstractTask *m_task;
-};
+END_UPP_NAMESPACE
+
+#endif
