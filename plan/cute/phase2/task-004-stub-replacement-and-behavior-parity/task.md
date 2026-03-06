@@ -1,5 +1,5 @@
 # Task: Stub Replacement And Behavior Parity
-# Status: TODO
+# Status: IN_PROGRESS
 
 ## Objective
 Replace temporary compile-safe stubs introduced during phase-2 bring-up with behaviorally meaningful implementations or explicit guarded exclusions.
@@ -17,6 +17,12 @@ Replace temporary compile-safe stubs introduced during phase-2 bring-up with beh
 - Package manifests under `src/*/*.upp`.
 
 ## Definition of Done
-- [ ] Stub inventory documented.
+- [x] Stub inventory documented.
 - [ ] Each stub has implemented behavior or explicit guarded exclusion.
 - [ ] Build remains green after changes.
+
+## Progress Notes
+- Stub inventory completed and documented in:
+  - `docs/cute-stub-inventory-2026-03-06.md`
+- Next execution step:
+  - Decide per-file strategy (implement vs. guarded exclusion) for the confirmed compile-safe stubs.
