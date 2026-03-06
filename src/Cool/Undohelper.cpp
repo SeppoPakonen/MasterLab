@@ -1,49 +1,34 @@
-#include "Cool.h"
-#include "Undohelper.hpp"
-
-// Converted from tmp/k/src/undohelper.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-// #include "undohelper.hpp"
-#ifdef CRASH_AUTO_TEST
-// #include "logger.hpp"
-#endif
-// #include <QDebug>
-// #include <QTime>
-// #include <utility>
-FunctionalUndoCommand::FunctionalUndoCommand(Fun undo, Fun redo, const QString &text, QUndoCommand *parent)
+#include "Undohelper.hpp"
+
+NAMESPACE_UPP
+
+FunctionalUndoCommand::FunctionalUndoCommand(Fun undo, Fun redo, const String& text, QUndoCommand* parent)
     : QUndoCommand(parent)
-    , m_undo(std::move(undo))
-    , m_redo(std::move(redo))
-    , m_undone(false)
+    , undo_action(std::move(undo))
+    , redo_action(std::move(redo))
 {
     setText(text);
 }
 
-void FunctionalUndoCommand::undo()
-{
-#ifdef CRASH_AUTO_TEST
-    Logger::log_undo(true);
-#endif
-    m_undone = true;
-    bool res = m_undo();
-    ASSERT(res);
-    QUndoCommand::undo();
+FunctionalUndoCommand::~FunctionalUndoCommand() {
 }
 
-void FunctionalUndoCommand::redo()
-{
-    if (m_undone) {
-#ifdef CRASH_AUTO_TEST
-        Logger::log_undo(false);
-#endif
-        bool res = m_redo();
+void FunctionalUndoCommand::Undo() {
+    undone = true;
+    bool res = undo_action();
+    ASSERT(res);
+}
+
+void FunctionalUndoCommand::Redo() {
+    if (undone) {
+        bool res = redo_action();
         ASSERT(res);
     }
-    QUndoCommand::redo();
 }
+
+END_UPP_NAMESPACE

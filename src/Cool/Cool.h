@@ -221,11 +221,11 @@ class QUndoCommand {
 public:
     explicit QUndoCommand(QUndoCommand *parent = nullptr) { (void)parent; }
     virtual ~QUndoCommand() = default;
-    virtual void undo() {}
-    virtual void redo() {}
-    void setText(const QString& text) { m_text = text; }
+    virtual void Undo() {}
+    virtual void Redo() {}
+    void setText(const String& text) { m_text = text; }
 private:
-    QString m_text;
+    String m_text;
 };
 
 class QAction : public QObject {};
