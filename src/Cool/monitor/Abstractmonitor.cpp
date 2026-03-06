@@ -1,42 +1,26 @@
-#include "../Cool.h"
-#if 0
-#include "Abstractmonitor.h"
-
-// Converted from tmp/k/src/monitor/abstractmonitor.cpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2011 Jean-Baptiste Mardelle <jb@kdenlive.org>
-
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-// #include "abstractmonitor.h"
-// #include "monitormanager.h"
+#include "Abstractmonitor.h"
+#include "Monitormanager.h"
 
-// #include "kdenlivesettings.h"
+NAMESPACE_UPP
 
-AbstractMonitor::AbstractMonitor(Kdenlive::MonitorId id, MonitorManager *manager, QWidget *parent)
-    : QWidget(parent)
-    , m_id(id)
-    , m_monitorManager(manager)
+// --- AbstractRender ---
+
+AbstractRender::AbstractRender(Kdenlive::MonitorId name)
+    : id(name)
 {
 }
 
-AbstractMonitor::~AbstractMonitor() = default;
+// --- AbstractMonitor ---
 
-bool AbstractMonitor::isActive() const
+AbstractMonitor::AbstractMonitor(Kdenlive::MonitorId id, MonitorManager* manager)
+    : id(id)
+    , monitor_manager(manager)
 {
-    return m_monitorManager->isActive(m_id);
 }
 
-bool AbstractMonitor::slotActivateMonitor()
-{
-    return m_monitorManager->activateMonitor(m_id, true);
-}
-
-bool AbstractMonitor::slotTemporaryActivateMonitor()
-{
-    return m_monitorManager->activateMonitor(m_id, false);
-}
-#endif
+END_UPP_NAMESPACE

@@ -90,6 +90,7 @@ struct SequenceInfo {
 
 // Renamed from StringMap to avoid clash with U++ internal function
 typedef VectorMap<String, String> KdenliveStringMap;
+typedef Vector<int16> audioShortVector;
 
 class ItemInfo {
 public:

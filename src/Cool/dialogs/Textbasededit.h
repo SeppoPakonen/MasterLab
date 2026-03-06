@@ -37,7 +37,7 @@ class TextBasedEdit : public ParentCtrl {
 public:
     typedef TextBasedEdit CLASSNAME;
 
-    TextBasedEdit();
+    TextBasedEdit(MainWindow* parent = nullptr);
     virtual ~TextBasedEdit();
 
     void OpenClip(std::shared_ptr<ProjectClip> clip);

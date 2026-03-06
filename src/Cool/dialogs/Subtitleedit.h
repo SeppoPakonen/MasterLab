@@ -19,7 +19,7 @@ class SubtitleEdit : public ParentCtrl {
 public:
     typedef SubtitleEdit CLASSNAME;
 
-    SubtitleEdit();
+    SubtitleEdit(MainWindow* parent = nullptr);
     virtual ~SubtitleEdit();
 
     void SetModel(std::shared_ptr<SubtitleModel> model);
