@@ -13,3 +13,4 @@ After phase 1 source conversion coverage is high enough, wire `src/Cute` as an a
 - `task-007-gtkdrawimage-upstream-patch-artifact`: provide concrete ai-upp patch artifact for GTK startup warning.
 - `task-008-gtk-upstream-patch-ab-validation`: validate patch effect with baseline/patched/restored warning counts.
 - `task-009-gtk-ab-runner-automation`: automate repeatable baseline/patched/restored GTK warning A/B measurement.
+- `task-010-gtk-patch-toggle-automation`: add explicit apply/revert workflow for local dependency patch testing.
