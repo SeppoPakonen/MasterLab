@@ -179,6 +179,8 @@ void CuteApplication::OnNewConnection() {
 	if(widget) {
 		if(MainWindow* main_window = dynamic_cast<MainWindow*>(widget))
 			main_window->OpenMain();
+		else if(CuteMainForm* main_form = dynamic_cast<CuteMainForm*>(widget))
+			main_form->Open();
 		else
 			widget->Show();
 		widget->SetFocus();
@@ -195,9 +197,10 @@ int CuteApplication::Run() {
 
 	ApplyStyleChoices(data->config);
 
-	MainWindow w;
+	CuteMainForm w;
 	SetMainWidget(&w);
-	w.OpenMain();
+	w.Setup();
+	w.Open();
 	w.Run();
 	return 0;
 }
