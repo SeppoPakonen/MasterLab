@@ -1,0 +1,11 @@
+--- ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp	2026-03-06 22:20:28.264458532 +0200
++++ ai-upp/uppsrc/CtrlCore/GtkDrawImage.cpp	2026-03-06 22:20:28.267286409 +0200
+@@ -128,7 +128,7 @@
+ 	
+ 	// Create a temporary cairo surface and context to draw ARGB32 into RGBA (Pixbuf)
+ 	GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, isz.cx, isz.cy);
+-	cairo_t *cr = gdk_cairo_create(NULL);
++	cairo_t *cr = NULL; // patched by toggle_aiupp_gtk_patch: avoid gdk_cairo_create(NULL)
+ 	
+ 	// Wait, we can just use cairo_image_surface_create_for_data with the pixbuf buffer!
+ 	byte *pb_data = gdk_pixbuf_get_pixels(pixbuf);
