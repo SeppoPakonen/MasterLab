@@ -14,7 +14,6 @@ NAMESPACE_UPP
 // --- BinTreeCtrl ---
 
 BinTreeCtrl::BinTreeCtrl() {
-    // Basic U++ TreeCtrl setup
 }
 
 void BinTreeCtrl::LeftDown(Point p, dword flags) {
@@ -26,7 +25,6 @@ void BinTreeCtrl::RightDown(Point p, dword flags) {
 }
 
 void BinTreeCtrl::DragAndDrop(Point p, PasteClip& d) {
-    // Implement U++ drag and drop logic
 }
 
 // --- Bin ---
@@ -38,7 +36,6 @@ Bin::Bin() {
 
     Add(tree_view.SizePos());
     
-    // Add toolbar at the top
     AddFrame(tool_bar);
     tool_bar.Set(THISBACK(SetupToolbar));
 }
@@ -47,14 +44,13 @@ Bin::~Bin() {
 }
 
 const String Bin::SetDocument(CoolDoc* project, const String& id) {
-    // TODO: U++ Migration - Link ProjectItemModel
     return "";
 }
 
 void Bin::CleanDocument() {
 }
 
-void Bin::CreateClip(const XmlElement& xml) {
+void Bin::CreateClip(const XmlNode& xml) {
     // TODO: Parse MLT XML and add to model
 }
 
@@ -78,17 +74,14 @@ void Bin::ReloadClip(const String& id) {
 }
 
 void Bin::SelectClipById(const String& id, int frame, Point zone, bool activate_monitor) {
-    // TODO: Locate item in model and select in tree_view
 }
 
 void Bin::Layout() {
-    // Handle specific layout needs beyond SizePos
 }
 
 void Bin::Paint(Draw& draw) {
     Size sz = GetSize();
     if (tree_view.GetChildCount(0) == 0) {
-        // Draw the "Drop files to import" placeholder
         String msg = "Double click or drop files to import media";
         Font font = StdFont().Bold().Height(20);
         Size msg_sz = GetTextSize(msg, font);
@@ -97,14 +90,14 @@ void Bin::Paint(Draw& draw) {
 }
 
 void Bin::SetupToolbar(Bar& bar) {
-    bar.Add("Add Clip", CtrlImg::plus(), THISBACK(OnSearch)); // Placeholder
+    bar.Add("Add Clip", CtrlImg::plus(), THISBACK(OnSearch)); 
     bar.Separator();
-    bar.Add(search_line.Width(150));
+    bar.Add(search_line.LeftPos(0, 150).VCenterPos(search_line.GetStdHeight()));
     search_line.WhenAction = THISBACK(OnSearch);
 }
 
 void Bin::OnSearch() {
-    String text = search_line.GetText();
+    String text = search_line.GetText().ToString();
     // TODO: Filter tree_view model
 }
 

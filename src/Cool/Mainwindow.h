@@ -94,6 +94,7 @@ private:
 
 	// Internal Setup
 	void SetupActions();
+	void FileMenu(Bar& bar);
 	void SetupMenu(Bar& bar);
 	void SetupToolbar(Bar& bar);
 	

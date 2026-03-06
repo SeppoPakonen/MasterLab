@@ -27,6 +27,7 @@ class MonitorManager;
 class VideoWidget;
 class MonitorAudioLevel;
 class MarkerSortModel;
+class MainWindow;
 
 class Monitor : public AbstractMonitor {
 public:
@@ -73,6 +74,10 @@ public:
     virtual void RefreshMonitorIfActive(bool direct_update = false) override;
     virtual void MouseSeek(int event_delta, int modifiers) override;
     virtual void SwitchFullScreen(bool minimize_only = false) override;
+
+    // Additional UI methods
+    void Seek(int pos);
+    void RefreshMonitor(bool visible);
 
     // Callbacks for owner
     std::function<void(int)> WhenSeek;

@@ -45,8 +45,9 @@ public:
 	void CleanDocument();
 
 	// Clip management
-	void CreateClip(const XmlElement& xml);
+	void CreateClip(const XmlNode& xml);
 	std::shared_ptr<ProjectClip> GetBinClip(const String& id);
+
 	
 	// Accessors
 	size_t GetClipDuration(int item_id) const;
