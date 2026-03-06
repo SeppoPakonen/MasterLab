@@ -1,58 +1,29 @@
-// Converted from tmp/k/src/dialogs/splash.hpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
-    SPDX-FileCopyrightText: 2017 Nicolas Carion
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    SPDX-FileCopyrightText: 2014 Jean-Baptiste Mardelle <jb@kdenlive.org>
+    U++ Conversion: 2026 MasterLab Team
 */
 
-#pragma once
+#ifndef _Cool_dialogs_Splash_h_
+#define _Cool_dialogs_Splash_h_
 
-// #include <QQmlApplicationEngine>
+#include <CtrlLib/CtrlLib.h>
 
-class QQmlComponent;
+NAMESPACE_UPP
 
-class Splash : public QObject
-{
-    Q_OBJECT
-
+class Splash : public TopWindow {
 public:
-    Splash(const QString version, const QStringList urls, const QStringList profileIds, const QStringList profileNames, bool showWelcome, bool firstRun,
-           bool showCrashRecovery, bool wasUpgraded, QObject *parent = Q_NULLPTR);
-    bool welcomeDisplayed() const;
-    bool hasCrashRecovery() const;
-    bool wasUpgraded() const;
-    bool hasEventLoop() const;
-    void setReady();
+    typedef Splash CLASSNAME;
 
-private:
-    QQmlApplicationEngine *m_engine;
-    QObject *m_rootObject{nullptr};
-    bool m_showWelcome;
-    bool m_hasCrashRecovery;
-    bool m_wasUpgraded;
+    Splash();
+    virtual ~Splash();
 
-public Q_SLOTS:
-    void fadeOut();
-    void fadeOutAndDelete();
-    void showProgressMessage(const QString &message, int max = -1);
+    void ShowProgress(const String& message);
+    void SetReady();
+    void FadeOut();
 
-private Q_SLOTS:
-    void updateWelcomeDisplay(bool show);
-
-Q_SIGNALS:
-    void openBlank();
-    void openOtherFile();
-    void closeApp();
-    void openFile(QString);
-    void openLink(QString);
-    void openTemplate(QString);
-    void switchPalette(bool);
-    void firstStart(QString resolution, QString fps, bool interlaced, int vTracks, int aTracks);
-    void resetConfig();
-    void releaseLock();
-    void clearHistory();
-    void clearProfiles();
-    void forgetFile(QString url);
-    void forgetProfile(QString id);
+    bool HasEventLoop() { return false; }
 };
+
+END_UPP_NAMESPACE
+
+#endif

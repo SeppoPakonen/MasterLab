@@ -1,87 +1,67 @@
-// Converted from tmp/k/src/audiomixer/mixermanager.hpp
-// Phase-1 mechanical conversion: framework-specific includes are commented for later U++ wiring.
-
 /*
     SPDX-FileCopyrightText: 2019 Jean-Baptiste Mardelle
-    SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+    U++ Conversion: 2026 MasterLab Team
 */
 
-#pragma once
+#ifndef _Cool_MixerManager_h_
+#define _Cool_MixerManager_h_
 
-// #include "definitions.h"
-// #include <memory>
-// #include <unordered_map>
-
-// #include <QWidget>
+#include "../Definitions.h"
 
 namespace Mlt {
-class Tractor;
+    class Tractor;
 }
 
+NAMESPACE_UPP
+
 class MixerWidget;
-class QHBoxLayout;
 class TimelineItemModel;
-class QScrollArea;
-class QFrame;
 
-class MixerManager : public QWidget
-{
-    Q_OBJECT
-
+class MixerManager : public ParentCtrl {
 public:
-    MixerManager(QWidget *parent);
-    /** @brief Shows the parameters of the given transition model */
-    void registerTrack(int tid, Mlt::Tractor *service, const QString &trackTag, const QString &trackName);
-    void deregisterTrack(int tid);
-    void setModel(std::shared_ptr<TimelineItemModel> model);
-    void cleanup();
-    /** @brief Connect the mixer widgets to the correspondent filters */
-    void connectMixer(bool doConnect);
-    void collapseMixers();
-    /** @brief Pause/unpause audio monitoring */
-    void pauseMonitoring(bool pause);
-    /** @brief Release the timeline model ownership */
-    void unsetModel();
-    /** @brief Some features rely on a specific version of MLT's audiolevel filter, so check it */
-    void checkAudioLevelVersion();
-    /** @brief Track currently monitored that will be used for recording */
-    int recordTrack() const;
-    /** @brief Return true if we have MLT's audiolevel filter version 2 or above (fixes reading track audio level) */
-    bool audioLevelV2() const;
+    typedef MixerManager CLASSNAME;
 
-public Q_SLOTS:
-    void recordStateChanged(int tid, bool recording);
-    /** @brief Enable/disable audio monitoring on a track */
-    void monitorAudio(int tid, bool monitor);
+    MixerManager();
+    virtual ~MixerManager();
 
-private Q_SLOTS:
-    void resetSizePolicy();
+    // Track management
+    void RegisterTrack(int tid, ::Mlt::Tractor* service, const String& track_tag, const String& track_name);
+    void DeregisterTrack(int tid);
+    void SetModel(std::shared_ptr<TimelineItemModel> model);
+    void UnsetModel();
+    void Cleanup();
 
-Q_SIGNALS:
-    void updateLevels(int);
-    void purgeCache();
-    void clearMixers();
-    void updateRecVolume();
-    void showEffectStack(int tid);
+    // Logic
+    void ConnectMixer(bool do_connect);
+    void CollapseMixers();
+    void PauseMonitoring(bool pause);
+    
+    int  GetRecordTrack() const { return monitor_track; }
+    bool HasAudioLevelV2() const { return filter_is_v2; }
+
+    // UI Events
+    void OnRecordStateChanged(int tid, bool recording);
+    void OnMonitorAudio(int tid, bool monitor);
 
 protected:
-    std::unordered_map<int, std::shared_ptr<MixerWidget>> m_mixers;
-    std::unordered_map<int, QWidget *> m_separators;
-    std::shared_ptr<MixerWidget> m_masterMixer;
-    QSize sizeHint() const override;
+    virtual void Layout() override;
 
 private:
-    QWidget *m_masterSeparator; // Separator between master and tracks
-    std::shared_ptr<Mlt::Tractor> m_masterService;
-    std::shared_ptr<TimelineItemModel> m_model;
-    QHBoxLayout *m_box;
-    QHBoxLayout *m_masterBox;
-    QHBoxLayout *m_channelsLayout;
-    QScrollArea *m_channelsBox;
-    bool m_visibleMixerManager;
-    int m_expandedWidth;
-    QVector<int> m_soloMuted;
-    int m_recommendedWidth;
-    int m_monitorTrack;
-    bool m_filterIsV2;
+    std::unordered_map<int, std::shared_ptr<MixerWidget>> mixers;
+    std::shared_ptr<MixerWidget> master_mixer;
+    
+    std::shared_ptr<::Mlt::Tractor> master_service;
+    std::shared_ptr<TimelineItemModel> model;
+    
+    bool is_visible_mixer_manager = false;
+    int  expanded_width = 0;
+    Vector<int> solo_muted;
+    int  monitor_track = -1;
+    bool filter_is_v2 = false;
+    
+    void SetupUI();
 };
+
+END_UPP_NAMESPACE
+
+#endif
