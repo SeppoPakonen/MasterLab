@@ -1,7 +1,7 @@
 #include "VSTConnections.h"
 #include "CuteConnectForm.h"
 namespace VSTConnections {
-class CuteBus {};
+
 CuteConnections::CuteConnections() { connect_form = new CuteConnectForm(); }
 CuteConnections::~CuteConnections() { delete connect_form; }
 CuteConnectForm* CuteConnections::GetConnectForm() const { return connect_form; }

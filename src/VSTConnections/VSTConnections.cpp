@@ -3,12 +3,12 @@
 namespace VSTConnections {
 
 VSTConnectionsWindow::VSTConnectionsWindow() {
-    CtrlLayout(*this, "VST Connections");
+    SizePos();
     InitLayout();
 }
 
 void VSTConnectionsWindow::InitLayout() {
-    Add(connectionsCtrl);
+    Add(connectionsCtrl.SizePos());
 }
 
 void VSTConnectionsWindow::Refresh() {

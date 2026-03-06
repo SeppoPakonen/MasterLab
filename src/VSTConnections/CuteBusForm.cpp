@@ -1,7 +1,7 @@
 #include "VSTConnections.h"
 
 namespace VSTConnections {
-class CuteBus {};
+
 CuteBusForm::CuteBusForm() {}
 void CuteBusForm::SetBus(CuteBus* bus) { this->bus = bus; }
 CuteBus* CuteBusForm::GetBus() const { return bus; }
